@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.sql.SQLException;
 
 @Controller
-public class DhisController {
-    private static Logger logger = Logger.getLogger(DhisController.class);
+public class TestReportController {
+    private static Logger logger = Logger.getLogger(TestReportController.class);
 
     @Autowired
     private DataSource dataSource;
@@ -41,24 +41,25 @@ public class DhisController {
     private void writeExcelToResponse(HttpServletResponse response) throws IOException, DRException, SQLException {
         JasperReportBuilder report = DynamicReports.report();
 
-        // TODO : pick up columns from json config
         report.columns(
                 Columns.column("Identifier", "patient_id", DataTypes.integerType()),
                 Columns.column("Created On", "date_created", DataTypes.dateType()),
                 Columns.column("Created By", "creator", DataTypes.stringType())
         )
-                .title(Components.text("Rohan's dynamic report").setHorizontalAlignment(HorizontalAlignment.CENTER))
-//                .pageFooter(Components.pageXofY())
+                .title(Components.text("Patient Listing").setHorizontalAlignment(HorizontalAlignment.CENTER))
                 .setReportName("Test Report")
-                .setDataSource("select * from patient limit 20", dataSource.getConnection()); // TODO : pick this up from a file.
+                .setDataSource("select * from patient limit 20", dataSource.getConnection());
 
         response.setContentType("application/vnd.ms-excel");
-        response.setHeader("Content-Disposition", "attachment; filename=test.xls");
+        response.setHeader("Content-Disposition", "attachment; filename=test.xlsx");
         ServletOutputStream outputStream = response.getOutputStream();
-        report.toCsv(outputStream);
+        report.toXlsx(outputStream);
+
+//        response.setContentType("application/pdf");
+//        response.setHeader("Content-Disposition", "attachment; filename=test.pdf");
+//        report.toPdf(outputStream);
 
         response.flushBuffer();
         outputStream.close();
     }
-
 }
