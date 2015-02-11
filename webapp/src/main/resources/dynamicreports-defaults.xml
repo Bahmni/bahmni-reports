@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<DynamicReports>
+
+    <!--http://dynamicreports.org/examples/dynamicreports-defaults-->
+
+    <!-- DEFAULT FONT -->
+    <font fontName="SansSerif" fontSize="10" pdfFontName="Helvetica" pdfEncoding="Cp1252" pdfEmbedded="false"/>
+
+    <!-- DEFAULT DATA TYPES -->
+    <bigDecimalType pattern="#,##0.00#" horizontalAlignment="RIGHT"/>
+    <dateType pattern="dd-MMM-yyyy" horizontalAlignment="RIGHT"/>
+
+</DynamicReports>
