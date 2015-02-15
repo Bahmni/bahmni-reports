@@ -9,18 +9,18 @@ REM !!!End of IMPORTANT!!!
 REM All config is here
 
 set MACHINE_IP=192.168.33.10
-set TEMP_DHIS_WEBAPP_WAR=/tmp/deploy_dhis_webapp
+set TEMP_REPORTS_WEBAPP_WAR=/tmp/deploy_bahmnireports_webapp
 set SCRIPTS_DIR=scripts
 set KEY_FILE=%USERPROFILE%\.vagrant.d\win_insecure_private_key.ppk
-set DHIS_WEBAPP_WAR=.\target\dhis-webapp.war
+set REPORTS_WEBAPP_WAR=.\target\bahmnireports.war
 
 if exist %KEY_FILE% (
     REM setup
     putty -ssh vagrant@%MACHINE_IP% -i %KEY_FILE% -m %SCRIPTS_DIR%/setup_environment.sh
     REM Copy war to Vagrant tmp
-    pscp  -i %KEY_FILE% %DHIS_WEBAPP_WAR% vagrant@%MACHINE_IP%:%TEMP_DHIS_WEBAPP_WAR%
-    REM Copy DHIS Webapp war to Tomcat from tmp
-    putty -ssh vagrant@%MACHINE_IP% -i %KEY_FILE% -m %SCRIPTS_DIR%/deploy_dhis_webapp_war.sh
+    pscp  -i %KEY_FILE% %REPORTS_WEBAPP_WAR% vagrant@%MACHINE_IP%:%TEMP_REPORTS_WEBAPP_WAR%
+    REM Copy Bahmni Reports Webapp war to Tomcat from tmp
+    putty -ssh vagrant@%MACHINE_IP% -i %KEY_FILE% -m %SCRIPTS_DIR%/deploy_bahmnireports_webapp_war.sh
 ) else (
     echo Use puttygen to generate win_insecure_private_key.ppk from your %USERPROFILE%\.vagrant.d\insecure_private_key that comes along with vagrant.
 )

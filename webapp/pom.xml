@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.bahmni</groupId>
-    <artifactId>dhis-webapp</artifactId>
+    <artifactId>bahmnireports</artifactId>
     <packaging>war</packaging>
     <version>1.0-SNAPSHOT</version>
 
-    <name>dhis-webapp Maven Webapp</name>
+    <name>Bahmni Reports Maven Webapp</name>
     <url>http://maven.apache.org</url>
     <properties>
         <spring.version>3.0.5.RELEASE</spring.version>
@@ -234,7 +234,6 @@
             <version>4.0.0</version>
         </dependency>
 
-
         <dependency>
             <groupId>c3p0</groupId>
             <artifactId>c3p0</artifactId>
@@ -253,7 +252,7 @@
     </dependencies>
 
     <build>
-        <finalName>dhis-webapp</finalName>
+        <finalName>bahmnireports</finalName>
     </build>
 
 

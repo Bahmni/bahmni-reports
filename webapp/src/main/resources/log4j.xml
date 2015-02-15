@@ -3,16 +3,16 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
     <appender name="console" class="org.apache.log4j.ConsoleAppender">
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [dhis-service][%C{1}] %m%n" />
+            <param name="ConversionPattern" value="%d %-5p [bahmnireports-service][%C{1}] %m%n" />
         </layout>
     </appender>
 
 
     <appender name="fileAppender" class="org.apache.log4j.RollingFileAppender">
-        <param name="File" value="${catalina.base}/logs/dhis-service.log"/>
+        <param name="File" value="${catalina.base}/logs/bahmnireports-service.log"/>
         <param name="MaxFileSize" value="10MB"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %-5p [dhis-service][%c] %m%n"/>
+            <param name="ConversionPattern" value="%d %-5p [bahmnireports-service][%c] %m%n"/>
         </layout>
     </appender>
 

@@ -1,4 +1,4 @@
-package org.bahmni.dhis.controller;
+package org.bahmni.reports.controller;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.DynamicReports;
