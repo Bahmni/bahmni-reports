@@ -1,2 +1,2 @@
 # bahmni-reports
-Bahmni Reports
+Hosts all the server side apis to create bahmni reports.
