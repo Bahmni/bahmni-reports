@@ -11,6 +11,7 @@
 
     <modules>
         <module>webapp</module>
+        <module>bahmni-reports-api</module>
     </modules>
 
     <properties>
