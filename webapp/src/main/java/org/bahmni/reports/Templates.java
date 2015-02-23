@@ -1,4 +1,4 @@
-package org.bahmni.reports.controller;
+package org.bahmni.reports;
 
 /**
  * DynamicReports - Free Java reporting library for creating reports dynamically
