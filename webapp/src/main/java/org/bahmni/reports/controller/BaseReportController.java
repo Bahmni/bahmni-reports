@@ -37,7 +37,7 @@ public class BaseReportController {
             reportBuilder = reports.findReport(reportName).run();
         } catch (SQLException e) {
             logger.error("Error running report", e);
-            response.setStatus(response.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
         String acceptHeader = request.getHeader("Accept");
         convertToResponse(acceptHeader, reportBuilder, response);
@@ -46,9 +46,12 @@ public class BaseReportController {
     private void convertToResponse(String acceptHeader, JasperReportBuilder reportBuilder, HttpServletResponse response) {
         try {
             converter.convert(acceptHeader, reportBuilder, response);
-        } catch (DRException | IOException e) {
+        } catch (DRException e) {
             logger.error("Could not convert response", e);
-            response.setStatus(response.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } catch (IOException e) {
+            logger.error("Could not convert response", e);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }
