@@ -10,14 +10,36 @@
     <version>1.0-SNAPSHOT</version>
 
     <modules>
-        <module>webapp</module>
         <module>bahmni-reports-api</module>
+        <module>webapp</module>
     </modules>
 
     <properties>
         <spring.version>4.1.4.RELEASE</spring.version>
     </properties>
 
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <target>1.7</target>
+                        <source>1.7</source>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+    
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -245,21 +267,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <configuration>
-                        <target>1.7</target>
-                        <source>1.7</source>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
     
     <repositories>
         <repository>
@@ -375,6 +382,7 @@
                         <artifactId>exec-maven-plugin</artifactId>
                         <groupId>org.codehaus.mojo</groupId>
                         <inherited>false</inherited>
+                        <version>1.2.1</version>
                         <executions>
                             <execution>
                                 <id>Deploy</id>
@@ -391,17 +399,10 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <configuration>
-                            <target>1.7</target>
-                            <source>1.7</source>
-                        </configuration>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
     </profiles>
-
+    
+    
 </project>

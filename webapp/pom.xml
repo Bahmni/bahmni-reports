@@ -19,7 +19,7 @@
         <dependency>
             <groupId>org.bahmni</groupId>
             <artifactId>reports-api</artifactId>
-            <version>${version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>

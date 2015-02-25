@@ -1,4 +1,4 @@
-package org.bahmni.reports.api.reports;
+package org.bahmni.reports.api.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.DynamicReports;
@@ -6,17 +6,17 @@ import net.sf.dynamicreports.report.builder.column.Columns;
 import net.sf.dynamicreports.report.builder.component.Components;
 import net.sf.dynamicreports.report.builder.datatype.DataTypes;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import org.bahmni.reports.api.Report;
+import org.bahmni.reports.api.model.ReportConfig;
 import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.util.Arrays;
 
 @Component(value = "dummy-report")
-public class DummyReport implements Report {
+public class DummyReportTemplate implements BaseReportTemplate {
 
     @Override
-    public JasperReportBuilder run() throws SQLException {
+    public JasperReportBuilder build(ReportConfig reportConfig) throws SQLException {
         JasperReportBuilder report = DynamicReports.report();
 
         report.columns(

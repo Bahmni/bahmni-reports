@@ -1,7 +1,7 @@
-package org.bahmni.reports;
+package org.bahmni.reports.api;
 
 /**
- * DynamicReports - Free Java reporting library for creating reports dynamically
+ * DynamicReports - Free Java reporting library for creating template dynamically
  *
  * Copyright (C) 2010 - 2015 Ricardo Mariaca
  * http://www.dynamicreports.org
