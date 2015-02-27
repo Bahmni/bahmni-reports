@@ -14,7 +14,7 @@
                   LEFT OUTER JOIN reporting_age_group as observed_age_group ON observed_age_group.report_group_name = '%s' AND
                   valid_coded_obs_view.obs_datetime BETWEEN (DATE_ADD(DATE_ADD(person.birthdate, INTERVAL observed_age_group.min_years YEAR), INTERVAL observed_age_group.min_days DAY))      
                   AND (DATE_ADD(DATE_ADD(person.birthdate, INTERVAL observed_age_group.max_years YEAR), INTERVAL observed_age_group.max_days DAY))      
-                  WHERE valid_coded_obs_view.obs_datetime BETWEEN '%s' AND '%s' AND valid_coded_obs_view.concept_full_name = '%s'
+                  WHERE cast(valid_coded_obs_view.obs_datetime as date) BETWEEN '%s' AND '%s' AND valid_coded_obs_view.concept_full_name = '%s'
                   ) AS inpatient_outcome_obs ON inpatient_outcome_obs.concept_id = question.concept_id AND inpatient_outcome_obs.value_coded = answer.concept_id      
                    AND reporting_age_group.id = inpatient_outcome_obs.age_group_id     
                   WHERE question.concept_full_name = '%s'

@@ -5,10 +5,7 @@ import net.sf.dynamicreports.report.exception.DRException;
 import org.apache.log4j.Logger;
 import org.bahmni.reports.JasperResponseConverter;
 import org.bahmni.reports.api.ReportTemplates;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,16 +13,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
+
+import static org.bahmni.reports.api.ConfigReaderUtil.findConfig;
 
 @Controller
 public class MainReportController {
 
     private static final Logger logger = Logger.getLogger(MainReportController.class);
     private ReportTemplates reportTemplates;
-    JSONParser parser = new JSONParser();
     private JasperResponseConverter converter;
 
     @Autowired
@@ -43,7 +40,8 @@ public class MainReportController {
 
             JSONObject jsonObject = findConfig(reportName, response);
 
-            JasperReportBuilder reportBuilder = reportTemplates.get((String) jsonObject.get("type")).build(jsonObject, startDate, endDate);
+            JasperReportBuilder reportBuilder = reportTemplates.get((String) jsonObject.get("type")).
+                    build(jsonObject, startDate, endDate);
 
             String responseType = request.getParameter("responseType");
             convertToResponse(responseType, reportBuilder, response);
@@ -56,21 +54,6 @@ public class MainReportController {
         }
     }
 
-    private JSONObject findConfig(String reportName, HttpServletResponse response) {
-        try {
-            JSONArray jsonArray = (JSONArray) parser.parse(new FileReader("/var/www/bahmni_config/openmrs/apps/reports/reports.json"));
-            for (Object obj : jsonArray) {
-                if (reportName.equals(((JSONObject) obj).get("name"))) {
-                    return (JSONObject) obj;
-                }
-            }
-        } catch (IOException | ParseException e) {
-            logger.error("Error finding config for report " + reportName, e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
-        return null;
-
-    }
 
     private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response) {
         try {

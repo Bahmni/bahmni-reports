@@ -10,24 +10,21 @@ import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
-import org.apache.log4j.Logger;
 import org.bahmni.reports.api.Templates;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.*;
 import java.sql.SQLException;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
+import static org.bahmni.reports.api.FileReaderUtil.getFileContent;
 
 @Component(value = "ObsCountByGenderAndAge")
-public class ObsCountByGenderAndAgeGroupTemplateBase implements BaseReportTemplate {
+public class ObsCountByGenderAndAgeGroupTemplate implements BaseReportTemplate {
 
     @Autowired
     private javax.sql.DataSource dataSource;
-
-    private static final Logger logger = Logger.getLogger(ObsCountByGenderAndAgeGroupTemplateBase.class);
 
     @Override
     public JasperReportBuilder build(JSONObject reportConfig, String startDate, String endDate) throws SQLException {
@@ -50,9 +47,12 @@ public class ObsCountByGenderAndAgeGroupTemplateBase implements BaseReportTempla
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
+        String sql = getFileContent("sql/ageGroupNameQuery.txt");
+
+        String ageGroupName = (String) reportConfig.get("ageGroupName");
+        String conceptName = (String) reportConfig.get("conceptName");
+
         JasperReportBuilder report = report();
-        String sql = getSql((String) reportConfig.get("ageGroupName"), (String) reportConfig.get("conceptName"), startDate, endDate);
-        logger.error(sql);
         report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
                 .title(cmp.text((String) reportConfig.get("name")))
                 .setColumnStyle(textStyle)
@@ -60,37 +60,9 @@ public class ObsCountByGenderAndAgeGroupTemplateBase implements BaseReportTempla
                 .setReportName((String) reportConfig.get("name"))
                 .summary(crosstab)
                 .pageFooter(Templates.footerComponent)
-                .setDataSource(sql, dataSource.getConnection());
+                .setDataSource(String.format(sql, ageGroupName, ageGroupName, startDate, endDate, conceptName, conceptName),
+                        dataSource.getConnection());
         return report;
     }
 
-
-    private String getSql(final String ageGroupName, final String conceptFullName, final String startDate, final String stopDate) {
-
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("sql/ageGroupNameQuery.txt")));
-            StringBuilder sb = new StringBuilder();
-            String line = br.readLine();
-
-            while (line != null) {
-                sb.append(line);
-                sb.append(System.lineSeparator());
-                line = br.readLine();
-            }
-
-            return String.format(sb.toString(), ageGroupName, ageGroupName, startDate, stopDate, conceptFullName, conceptFullName);
-        } catch (IOException e) {
-            logger.error("File not found", e);
-        } finally {
-            try {
-                br.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-
-    }
-    
 }

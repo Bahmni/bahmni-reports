@@ -208,6 +208,12 @@
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.powermock</groupId>
+            <artifactId>powermock-module-junit4</artifactId>
+            <version>1.5.3</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <finalName>bahmnireports</finalName>
