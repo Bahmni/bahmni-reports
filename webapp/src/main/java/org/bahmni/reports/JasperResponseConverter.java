@@ -10,9 +10,12 @@ import java.io.IOException;
 
 @Component
 public class JasperResponseConverter {
-    public void convert(String acceptHeader, JasperReportBuilder report, HttpServletResponse response) throws IOException, DRException {
+    public void convert(String responseType, JasperReportBuilder report, HttpServletResponse response) throws IOException, DRException {
+
+        response.setContentType("application/vnd.ms-excel");
+
         ServletOutputStream outputStream = response.getOutputStream();
-        switch (acceptHeader) {
+        switch (responseType) {
             case "text/html":
                 response.setContentType("text/html");
                 report.toHtml(outputStream);

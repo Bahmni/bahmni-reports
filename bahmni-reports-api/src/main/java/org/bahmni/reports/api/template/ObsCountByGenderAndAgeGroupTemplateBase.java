@@ -10,17 +10,16 @@ import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
+import org.apache.log4j.Logger;
 import org.bahmni.reports.api.Templates;
-import org.bahmni.reports.api.model.ReportConfig;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.*;
 import java.sql.SQLException;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
-import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
-import static net.sf.dynamicreports.report.builder.DynamicReports.report;
-import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
+import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 
 @Component(value = "ObsCountByGenderAndAge")
 public class ObsCountByGenderAndAgeGroupTemplateBase implements BaseReportTemplate {
@@ -28,8 +27,10 @@ public class ObsCountByGenderAndAgeGroupTemplateBase implements BaseReportTempla
     @Autowired
     private javax.sql.DataSource dataSource;
 
+    private static final Logger logger = Logger.getLogger(ObsCountByGenderAndAgeGroupTemplateBase.class);
+
     @Override
-    public JasperReportBuilder build(ReportConfig reportConfig) throws SQLException {
+    public JasperReportBuilder build(JSONObject reportConfig, String startDate, String endDate) throws SQLException {
         CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);
 
@@ -50,41 +51,46 @@ public class ObsCountByGenderAndAgeGroupTemplateBase implements BaseReportTempla
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
         JasperReportBuilder report = report();
+        String sql = getSql((String) reportConfig.get("ageGroupName"), (String) reportConfig.get("conceptName"), startDate, endDate);
+        logger.error(sql);
         report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
-                .title(cmp.text(reportConfig.getTitle()))
+                .title(cmp.text((String) reportConfig.get("title")))
                 .setColumnStyle(textStyle)
                 .setTemplate(Templates.reportTemplate)
-                .setReportName(reportConfig.getName())
+                .setReportName((String) reportConfig.get("name"))
                 .summary(crosstab)
                 .pageFooter(Templates.footerComponent)
-                .setDataSource(getSql(reportConfig.getAgeGroupName(), reportConfig.getConceptName(), reportConfig.getStartDate(), reportConfig.getStopDate()), dataSource.getConnection());
+                .setDataSource(sql, dataSource.getConnection());
         return report;
     }
 
 
-    private static String getSql(final String ageGroupName, final String conceptFullName, final String startDate, final String stopDate) {
-        return " SELECT distinct answer.concept_full_name as concept_name, " +
-                " reporting_age_group.name AS age_group, " +
-                " IF(required_obs.age_group_id IS NULL, 0, SUM(IF(required_obs.gender = 'F', 1, 0))) AS female_count, " +
-                " IF(required_obs.age_group_id IS NULL, 0, SUM(IF(required_obs.gender = 'M', 1, 0))) AS male_count, " +
-                " IF(required_obs.age_group_id IS NULL, 0, COUNT(obs_id)) as total_count " +
-                " FROM concept_view as question " +
-                " JOIN concept_answer ON question.concept_id = concept_answer.concept_id " +
-                " JOIN concept_view as answer ON answer.concept_id = concept_answer.answer_concept " +
-                " LEFT OUTER JOIN reporting_age_group ON reporting_age_group.report_group_name = '" + ageGroupName + "' " +
-                " LEFT OUTER JOIN ( " +
-                " SELECT distinct valid_coded_obs_view.obs_id, valid_coded_obs_view.concept_id, valid_coded_obs_view.value_coded, observed_age_group.id as age_group_id, person.person_id, person.gender " +
-                " FROM valid_coded_obs_view  " +
-                " LEFT OUTER JOIN person ON valid_coded_obs_view.person_id = person.person_id " +
-                " LEFT OUTER JOIN reporting_age_group as observed_age_group ON observed_age_group.report_group_name = '" + ageGroupName + "' AND " +
-                " valid_coded_obs_view.obs_datetime BETWEEN (DATE_ADD(DATE_ADD(person.birthdate, INTERVAL observed_age_group.min_years YEAR), INTERVAL observed_age_group.min_days DAY))  " +
-                " AND (DATE_ADD(DATE_ADD(person.birthdate, INTERVAL observed_age_group.max_years YEAR), INTERVAL observed_age_group.max_days DAY))  " +
-                " WHERE valid_coded_obs_view.obs_datetime BETWEEN '" + startDate + "' AND '" + stopDate + "' AND valid_coded_obs_view.concept_full_name = '" + conceptFullName + "' " +
-                " ) AS required_obs ON required_obs.concept_id = question.concept_id AND required_obs.value_coded = answer.concept_id  " +
-                "  AND reporting_age_group.id = required_obs.age_group_id " +
-                " WHERE question.concept_full_name = '" + conceptFullName + "' " +
-                " GROUP BY answer.concept_id, age_group " +
-                " ORDER BY answer.concept_id, reporting_age_group.sort_order;";
+    private String getSql(final String ageGroupName, final String conceptFullName, final String startDate, final String stopDate) {
+
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new InputStreamReader(this.getClass().getClassLoader().getResourceAsStream("sql/ageGroupNameQuery.txt")));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+
+            return String.format(sb.toString(), ageGroupName, ageGroupName, startDate, stopDate, conceptFullName, conceptFullName);
+        } catch (IOException e) {
+            logger.error("File not found", e);
+        } finally {
+            try {
+                br.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+
     }
     
 }
