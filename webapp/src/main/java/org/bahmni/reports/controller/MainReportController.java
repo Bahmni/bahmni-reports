@@ -39,14 +39,14 @@ public class MainReportController {
         try {
             String startDate = request.getParameter("startDate");
             String endDate = request.getParameter("endDate");
-            String templateType = request.getParameter("type");
+            String reportName = request.getParameter("name");
 
-            JSONObject jsonObject = findConfig(templateType, response);
+            JSONObject jsonObject = findConfig(reportName, response);
 
-            JasperReportBuilder reportBuilder = reportTemplates.get(templateType).build(jsonObject, startDate, endDate);
+            JasperReportBuilder reportBuilder = reportTemplates.get((String) jsonObject.get("type")).build(jsonObject, startDate, endDate);
 
-            String acceptHeader = request.getParameter("responseType");
-            convertToResponse(acceptHeader, reportBuilder, response);
+            String responseType = request.getParameter("responseType");
+            convertToResponse(responseType, reportBuilder, response);
 
             response.flushBuffer();
             response.getOutputStream().close();
@@ -56,25 +56,25 @@ public class MainReportController {
         }
     }
 
-    private JSONObject findConfig(String templateType, HttpServletResponse response) {
+    private JSONObject findConfig(String reportName, HttpServletResponse response) {
         try {
             JSONArray jsonArray = (JSONArray) parser.parse(new FileReader("/var/www/bahmni_config/openmrs/apps/reports/reports.json"));
-            for (Object o : jsonArray) {
-                if (templateType.equals(((JSONObject) o).get("type"))) {
-                    return (JSONObject) o;
+            for (Object obj : jsonArray) {
+                if (reportName.equals(((JSONObject) obj).get("name"))) {
+                    return (JSONObject) obj;
                 }
             }
         } catch (IOException | ParseException e) {
-            logger.error("Error finding config for report " + templateType, e);
+            logger.error("Error finding config for report " + reportName, e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
         return null;
 
     }
 
-    private void convertToResponse(String acceptHeader, JasperReportBuilder reportBuilder, HttpServletResponse response) {
+    private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response) {
         try {
-            converter.convert(acceptHeader, reportBuilder, response);
+            converter.convert(responseType, reportBuilder, response);
         } catch (DRException | IOException e) {
             logger.error("Could not convert response", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

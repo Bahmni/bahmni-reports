@@ -27,7 +27,7 @@ public class JasperResponseConverter {
                 break;
             case "application/pdf":
                 response.setContentType("application/pdf");
-                response.setHeader("Content-Disposition", "attachment; filename=test.pdf");
+                response.setHeader("Content-Disposition", "attachment; filename=Inpatient_Outcome.pdf");
                 report.toPdf(outputStream);
         }
     }
