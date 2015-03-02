@@ -7,7 +7,7 @@
 
     <changeSet author="Chethan, Shruthi" id="Reports-022420151643" runOnChange="true">
         <comment>Creating view concept</comment>
-        <createView viewName="concept_view">
+        <createView viewName="concept_view" replaceIfExists="true">
             SELECT concept.concept_id, concept_full_name.name AS concept_full_name, concept_short_name.name
             AS concept_short_name, concept_class.name AS concept_class_name,concept_datatype.name
             AS concept_datatype_name,concept.retired,concept_description.description,concept.date_created
@@ -23,7 +23,7 @@
     </changeSet>
     <changeSet author="Chethan, Shruthi" id="Reports-022520150918" runOnChange="true">
         <comment>Creating view coded obs</comment>
-        <createView viewName="coded_obs_view">
+        <createView viewName="coded_obs_view" replaceIfExists="true">
             SELECT obs.obs_id, obs.concept_id, obs.person_id, obs.value_coded, obs.obs_group_id, obs.obs_datetime,
             obs.encounter_id, obs.creator, reference_concept.concept_full_name AS concept_full_name,
             value_concept.concept_full_name AS value_concept_full_name, obs.voided FROM obs JOIN concept_view
@@ -34,7 +34,7 @@
     </changeSet>
     <changeSet author="Chethan, Shruthi" id="Reports-022520150925" runOnChange="true">
         <comment>Creating view valid coded obs</comment>
-        <createView viewName="valid_coded_obs_view">
+        <createView viewName="valid_coded_obs_view" replaceIfExists="true">
             SELECT * FROM coded_obs_view WHERE coded_obs_view.voided = 0;
         </createView>
     </changeSet>
