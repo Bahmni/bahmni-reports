@@ -12,10 +12,12 @@
             AS concept_short_name, concept_class.name AS concept_class_name,concept_datatype.name
             AS concept_datatype_name,concept.retired,concept_description.description,concept.date_created
             AS date_created FROM concept LEFT OUTER JOIN concept_name AS concept_full_name
-            ON concept_full_name.concept_id = concept.concept_id AND concept_full_name.concept_name_type = 'FULLY_SPECIFIED'
+            ON concept_full_name.concept_id = concept.concept_id AND concept_full_name.concept_name_type =
+            'FULLY_SPECIFIED'
             AND concept_full_name.locale = 'en' AND concept_full_name.voided = 0
             LEFT OUTER JOIN concept_name AS concept_short_name ON concept_short_name.concept_id = concept.concept_id
-            AND concept_short_name.concept_name_type = 'SHORT'AND concept_short_name.locale = 'en' AND concept_short_name.voided = 0
+            AND concept_short_name.concept_name_type = 'SHORT'AND concept_short_name.locale = 'en' AND
+            concept_short_name.voided = 0
             LEFT OUTER JOIN concept_class ON concept_class.concept_class_id = concept.class_id
             LEFT OUTER JOIN concept_datatype ON concept_datatype.concept_datatype_id = concept.datatype_id
             LEFT OUTER JOIN concept_description ON concept_description.concept_id = concept.concept_id;
@@ -28,7 +30,8 @@
             obs.encounter_id, obs.creator, reference_concept.concept_full_name AS concept_full_name,
             value_concept.concept_full_name AS value_concept_full_name, obs.voided FROM obs JOIN concept_view
             AS reference_concept ON reference_concept.concept_id = obs.concept_id
-            AND (reference_concept.concept_datatype_name = 'Coded' or reference_concept.concept_datatype_name = 'Boolean')
+            AND (reference_concept.concept_datatype_name = 'Coded' or reference_concept.concept_datatype_name =
+            'Boolean')
             LEFT OUTER JOIN concept_view AS value_concept ON value_concept.concept_id = obs.value_coded;
         </createView>
     </changeSet>
@@ -40,12 +43,14 @@
     </changeSet>
     <changeSet id="Reports-022620151602" author="Chethan, Sravanthi">
         <preConditions onFail="MARK_RAN">
-            <not><tableExists tableName="reporting_age_group"/></not>
+            <not>
+                <tableExists tableName="reporting_age_group"/>
+            </not>
         </preConditions>
         <comment>Creating table for reporting age group</comment>
         <createTable tableName="reporting_age_group">
             <column name="id" type="int" autoIncrement="true">
-                <constraints primaryKey="true" primaryKeyName="reporting_age_group_pk" nullable="false" />
+                <constraints primaryKey="true" primaryKeyName="reporting_age_group_pk" nullable="false"/>
             </column>
             <column name="name" type="varchar(255)">
                 <constraints nullable="false"/>
@@ -70,4 +75,89 @@
             </column>
         </createTable>
     </changeSet>
+
+    <changeSet author="Hemanth, Shruthi" id="Reports-030320150910" runOnChange="true">
+        <comment>encounter_view</comment>
+        <createView viewName="encounter_view" replaceIfExists="true">
+            SELECT
+            encounter.encounter_id,
+            encounter.patient_id,
+            encounter.visit_id,
+            encounter.location_id,
+            location.name as location_name,
+            visit.visit_type_id,
+            visit.date_started as visit_date_started,
+            visit_type.name visit_type_name,
+            encounter.encounter_type as encounter_type_id,
+            encounter_type.name as encounter_type_name,
+            encounter_datetime
+            FROM encounter
+            JOIN encounter_type ON encounter_type.encounter_type_id = encounter.encounter_type
+            LEFT OUTER JOIN visit ON encounter.visit_id = visit.visit_id
+            LEFT OUTER JOIN visit_type ON visit.visit_type_id = visit_type.visit_type_id
+            LEFT OUTER JOIN location ON encounter.location_id = location.location_id;
+        </createView>
+    </changeSet>
+
+    <changeSet author="Hemanth, Shruthi" id="Reports-030320150911" runOnChange="true">
+        <comment>patient_diagnosis_view</comment>
+        <createView viewName="patient_diagnosis_view" replaceIfExists="true">
+            SELECT distinct
+            diagnois_obs.value_coded AS diagnois_concept_id,
+            diagnois_obs.person_id,
+            diagnois_obs.value_concept_full_name AS name,
+            certainity_obs.value_concept_full_name AS certainity,
+            order_obs.value_concept_full_name AS `order`,
+            status_obs.value_concept_full_name AS status,
+            diagnois_obs.obs_datetime,
+            encounter_view.encounter_id,
+            encounter_view.visit_id,
+            encounter_view.visit_type_name,
+            encounter_view.visit_type_id
+            FROM valid_coded_obs_view AS diagnois_obs
+            JOIN obs AS diagnosis_parent_obs ON diagnois_obs.concept_full_name = 'Coded Diagnosis' AND diagnois_obs.obs_group_id = diagnosis_parent_obs.obs_id
+            JOIN valid_coded_obs_view AS certainity_obs ON certainity_obs.obs_group_id = diagnosis_parent_obs.obs_id AND certainity_obs.concept_full_name = 'Diagnosis Certainty'
+            JOIN valid_coded_obs_view AS order_obs ON order_obs.obs_group_id = diagnosis_parent_obs.obs_id AND order_obs.concept_full_name = 'Diagnosis Order'
+            LEFT OUTER JOIN valid_coded_obs_view AS status_obs ON status_obs.obs_group_id = diagnosis_parent_obs.obs_id AND status_obs.concept_full_name = 'Bahmni Diagnosis Status'
+            LEFT OUTER JOIN encounter_view ON encounter_view.encounter_id = diagnois_obs.encounter_id;
+        </createView>
+    </changeSet>
+
+    <changeSet author="Hemanth, Shruthi" id="Reports-030320150912" runOnChange="true">
+        <comment>confirmed_patient_diagnosis_view</comment>
+        <createView viewName="confirmed_patient_diagnosis_view" replaceIfExists="true">
+            SELECT * FROM patient_diagnosis_view
+            WHERE (patient_diagnosis_view.status IS NULL OR patient_diagnosis_view.status != 'Ruled Out Diagnosis')
+            AND patient_diagnosis_view.certainity = 'Confirmed';
+        </createView>
+    </changeSet>
+    
+    <changeSet author="Hemanth, Shruthi" id="Reports-030320150913" runOnChange="true">
+        <comment>concept_reference_term_map_view</comment>
+        <createView viewName="concept_reference_term_map_view" replaceIfExists="true">
+            SELECT
+            concept_reference_map.concept_id,
+            concept_map_type.name AS concept_map_type_name,
+            concept_reference_term.code,
+            concept_reference_term.name AS concept_reference_term_name,
+            concept_reference_source.name AS concept_reference_source_name
+            FROM concept_reference_term
+            JOIN concept_reference_map ON concept_reference_map.concept_reference_term_id = concept_reference_term.concept_reference_term_id
+            JOIN concept_map_type ON concept_reference_map.concept_map_type_id = concept_map_type.concept_map_type_id
+            JOIN concept_reference_source ON concept_reference_source.concept_source_id = concept_reference_term.concept_source_id;
+        </createView>
+    </changeSet>
+    <changeSet author="Hemanth, Shruthi" id="Reports-030320150914" runOnChange="true">
+        <comment>diagnosis_concept_view</comment>
+        <createView viewName="diagnosis_concept_view" replaceIfExists="true">
+            SELECT
+            concept_view.*,
+            concept_reference_term_map_view.code as icd10_code
+            FROM concept_view
+            LEFT OUTER JOIN concept_reference_term_map_view ON concept_reference_term_map_view.concept_id = concept_view.concept_id
+            AND concept_reference_term_map_view.concept_reference_source_name = 'ICD 10 - WHO'
+            AND concept_reference_term_map_view.concept_map_type_name = 'SAME-AS' WHERE concept_class_name = 'Diagnosis';
+        </createView>
+    </changeSet>
+
 </databaseChangeLog>
