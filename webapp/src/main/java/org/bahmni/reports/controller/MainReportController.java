@@ -5,7 +5,7 @@ import net.sf.dynamicreports.report.exception.DRException;
 import org.apache.log4j.Logger;
 import org.bahmni.reports.JasperResponseConverter;
 import org.bahmni.reports.api.ReportTemplates;
-import org.json.simple.JSONObject;
+import org.bahmni.reports.api.model.ReportConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,13 +38,13 @@ public class MainReportController {
             String endDate = request.getParameter("endDate");
             String reportName = request.getParameter("name");
 
-            JSONObject jsonObject = findConfig(reportName, response);
+            ReportConfig reportConfig = findConfig(reportName);
 
-            JasperReportBuilder reportBuilder = reportTemplates.get((String) jsonObject.get("type")).
-                    build(jsonObject, startDate, endDate);
+            JasperReportBuilder reportBuilder = reportTemplates.get(reportConfig.getType()).
+                    build(reportConfig, startDate, endDate);
 
             String responseType = request.getParameter("responseType");
-            convertToResponse(responseType, reportBuilder, response);
+            convertToResponse(responseType, reportBuilder, response, reportConfig.getName());
 
             response.flushBuffer();
             response.getOutputStream().close();
@@ -55,9 +55,9 @@ public class MainReportController {
     }
 
 
-    private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response) {
+    private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response, String fileName) {
         try {
-            converter.convert(responseType, reportBuilder, response);
+            converter.convert(responseType, reportBuilder, response, fileName);
         } catch (DRException | IOException e) {
             logger.error("Could not convert response", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

@@ -22,46 +22,46 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static org.bahmni.reports.api.FileReaderUtil.getFileContent;
 
-@Component(value = "ObsCountByGenderAndAge")
-public class ObsCountByGenderAndAgeGroupTemplate implements BaseReportTemplate {
+@Component(value = "DiagnosisCount")
+public class DiagnosisCountTemplate implements BaseReportTemplate {
 
     @Autowired
     private javax.sql.DataSource dataSource;
 
     @Override
     public JasperReportBuilder build(ReportConfig reportConfig, String startDate, String endDate) throws SQLException {
-        CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup("age_group", String.class)
-                .setShowTotal(false);
-
-        CrosstabColumnGroupBuilder<String> columnGroup = ctab.columnGroup("concept_name", String.class)
-                .setShowTotal(false);
-
-        CrosstabBuilder crosstab = ctab.crosstab()
-                .headerCell(DynamicReports.cmp.text("Age Group / Outcome"))
-                .rowGroups(rowGroup)
-                .columnGroups(columnGroup)
-                .measures(
-                        ctab.measure("Female", "female_count", Integer.class, Calculation.NOTHING),
-                        ctab.measure("Male", "male_count", Integer.class, Calculation.NOTHING),
-                        ctab.measure("Total", "total_count", Integer.class, Calculation.NOTHING)
-                )
-                .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()));
-
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
+        StyleBuilder cellStyle = Templates.columnStyle.setBorder(Styles.pen());
 
-        String sql = getFileContent("sql/obsCountByGenderAndAgeGroupQuery.sql");
+        CrosstabRowGroupBuilder<String> diseaseNameRowGroup = ctab.rowGroup("disease", String.class).setHeaderStyle(textStyle)
+                .setShowTotal(false);
+        CrosstabRowGroupBuilder<String> icd10RowGroup = ctab.rowGroup("icd10_code", String.class).setHeaderStyle(textStyle)
+                .setShowTotal(false);
 
-        String ageGroupName = reportConfig.getAgeGroupName();
-        String conceptName = reportConfig.getConceptName();
+        CrosstabColumnGroupBuilder<String> ageColumnGroup = ctab.columnGroup("age_group", String.class)
+                .setShowTotal(false);
+
+        CrosstabBuilder crossTab = ctab.crosstab()
+                .headerCell(DynamicReports.cmp.horizontalList(DynamicReports.cmp.text("ICD Code").setStyle(Templates.columnTitleStyle),
+                        DynamicReports.cmp.text("Disease Name").setStyle(Templates.columnTitleStyle)))
+                .rowGroups(icd10RowGroup, diseaseNameRowGroup)
+                .columnGroups(ageColumnGroup)
+                .measures(
+                        ctab.measure("Female", "female", Integer.class, Calculation.NOTHING).setStyle(textStyle),
+                        ctab.measure("Male", "male", Integer.class, Calculation.NOTHING).setStyle(textStyle)
+                )
+                .setCellStyle(cellStyle);
+
+        String sql = getFileContent("sql/diagnosisCount.sql");
 
         JasperReportBuilder report = report();
         report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
                 .setColumnStyle(textStyle)
                 .setTemplate(Templates.reportTemplate)
-                .setReportName((String) reportConfig.getName())
-                .summary(crosstab)
+                .setReportName(reportConfig.getName())
+                .summary(crossTab)
                 .pageFooter(Templates.footerComponent)
-                .setDataSource(String.format(sql, ageGroupName, ageGroupName, startDate, endDate, conceptName, conceptName),
+                .setDataSource(String.format(sql, reportConfig.getAgeGroupName(), startDate, endDate),
                         dataSource.getConnection());
         return report;
     }

@@ -1,31 +1,31 @@
 package org.bahmni.reports.api;
 
 import org.apache.log4j.Logger;
+import org.bahmni.reports.api.model.Config;
+import org.bahmni.reports.api.model.ReportConfig;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
 public class ConfigReaderUtil {
-    private static final Logger logger = Logger.getLogger(ConfigReaderUtil.class);
+    
     private static final String CONFIG_FILE = "/var/www/bahmni_config/openmrs/apps/reports/reports.json";
 
-    public static JSONObject findConfig(String reportName, HttpServletResponse response) {
-        JSONParser parser = new JSONParser();
-        try {
-            JSONArray jsonArray = (JSONArray) parser.parse(new FileReader(CONFIG_FILE));
-            for (Object obj : jsonArray) {
-                if (reportName.equals(((JSONObject) obj).get("name"))) {
-                    return (JSONObject) obj;
-                }
+    public static ReportConfig findConfig(String reportName) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Config config = objectMapper.readValue(new File(CONFIG_FILE), Config.class);
+        for (ReportConfig reportConfig : config) {
+            if (reportName.equals(reportConfig.getName())) {
+                return reportConfig;
             }
-        } catch (IOException | ParseException e) {
-            logger.error("Error finding config for report " + reportName, e);
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
         return null;
     }

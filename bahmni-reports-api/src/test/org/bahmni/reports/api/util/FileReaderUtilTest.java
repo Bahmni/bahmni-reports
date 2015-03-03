@@ -11,7 +11,7 @@ public class FileReaderUtilTest {
 
     @Test
     public void shouldReadFileContent() {
-        String content = FileReaderUtil.getFileContent("sql/ageGroupNameQuery.txt");
+        String content = FileReaderUtil.getFileContent("sql/obsCountByGenderAndAgeGroupQuery.sql");
         assertTrue(content.contains("SELECT distinct answer.concept_full_name as concept_name"));
     }
 

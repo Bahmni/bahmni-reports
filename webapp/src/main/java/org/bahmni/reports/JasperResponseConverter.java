@@ -10,7 +10,8 @@ import java.io.IOException;
 
 @Component
 public class JasperResponseConverter {
-    public void convert(String responseType, JasperReportBuilder report, HttpServletResponse response) throws IOException, DRException {
+    
+    public void convert(String responseType, JasperReportBuilder report, HttpServletResponse response, final String fileName) throws IOException, DRException {
 
         response.setContentType("application/vnd.ms-excel");
 
@@ -22,12 +23,12 @@ public class JasperResponseConverter {
                 break;
             case "application/vnd.ms-excel":
                 response.setContentType("application/vnd.ms-excel");
-                response.setHeader("Content-Disposition", "attachment; filename=Inpatient_Outcome.xlsx");
+                response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
                 report.toXlsx(outputStream);
                 break;
             case "application/pdf":
                 response.setContentType("application/pdf");
-                response.setHeader("Content-Disposition", "attachment; filename=Inpatient_Outcome.pdf");
+                response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
                 report.toPdf(outputStream);
         }
     }
