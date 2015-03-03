@@ -16,7 +16,7 @@ set REPORTS_WEBAPP_WAR=.\target\bahmnireports.war
 
 if exist %KEY_FILE% (
     REM setup
-    putty -ssh vagrant@%MACHINE_IP% -i %KEY_FILE% -m %SCRIPTS_DIR%/setup_environment.sh
+    REM putty -ssh vagrant@%MACHINE_IP% -i %KEY_FILE% -m %SCRIPTS_DIR%/setup_environment.sh
     REM Copy war to Vagrant tmp
     pscp  -i %KEY_FILE% %REPORTS_WEBAPP_WAR% vagrant@%MACHINE_IP%:%TEMP_REPORTS_WEBAPP_WAR%
     REM Copy Bahmni Reports Webapp war to Tomcat from tmp

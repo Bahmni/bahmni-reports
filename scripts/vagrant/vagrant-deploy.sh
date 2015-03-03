@@ -4,7 +4,7 @@ PATH_OF_CURRENT_SCRIPT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $PATH_OF_CURRENT_SCRIPT/vagrant_functions.sh
 
 #All config is here
-TEMP_REPORTS_WEBAPP_WAR=/tmp/deploy_bahmnireports_webapp/bahmnireports.war
+BUILD_DIR=/packages/build/bahmnireports.war
 SCRIPTS_DIR=scripts/vagrant
 SHELL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_BASE=$SHELL_DIR/../..
@@ -18,11 +18,10 @@ if [[ ! -e $REPORTS_WEBAPP_WAR ]]; then
 fi
 
 # Setup environment
-run_in_vagrant -f "$SCRIPTS_DIR/setup_environment.sh"
+#run_in_vagrant -f "$SCRIPTS_DIR/setup_environment.sh"
 
 # Copy Bahmni Reports WebApp War file to Vagrant tmp
-scp_to_vagrant $REPORTS_WEBAPP_WAR $TEMP_REPORTS_WEBAPP_WAR
-
+scp_to_vagrant $REPORTS_WEBAPP_WAR $BUILD_DIR
 
 #Deploy them from Vagrant /tmp to appropriate location
 run_in_vagrant -f "$SCRIPTS_DIR/deploy_bahmnireports_webapp_war.sh"
