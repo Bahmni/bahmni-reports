@@ -56,7 +56,7 @@ public class ObsCountByGenderAndAgeGroupTemplate implements BaseReportTemplate {
         report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
                 .setColumnStyle(textStyle)
                 .setTemplate(Templates.reportTemplate)
-                .setReportName((String) reportConfig.getName())
+                .setReportName(reportConfig.getName())
                 .summary(crosstab)
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, ageGroupName, ageGroupName, startDate, endDate, conceptName, conceptName),
