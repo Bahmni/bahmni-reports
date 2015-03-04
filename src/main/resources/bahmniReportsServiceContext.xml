@@ -14,18 +14,45 @@
     <context:annotation-config/>
     <context:component-scan base-package="org.bahmni.reports"/>
 
-    <task:annotation-driven />
+    <task:annotation-driven/>
+    <bean class="org.springframework.context.annotation.CommonAnnotationBeanPostProcessor"/>
+    <bean class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor"/>
+    <bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>
+    <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
 
-    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+    <bean id="propertyPlaceholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="ignoreResourceNotFound" value="true"/>
+        <property name="locations">
+            <list>
+                <value>classpath:openmrs.properties</value>
+                <value>classpath:openelis.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean id="openmrsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close" name="openmrsDataSource">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
-        <property name="jdbcUrl" value="jdbc:mysql://localhost:3306/openmrs"/>
-        <property name="user" value="root"/>
-        <property name="password" value="password"/>
+        <property name="jdbcUrl" value="${openmrs.url}"/>
+        <property name="user" value="${openmrs.username}"/>
+        <property name="password" value="${openmrs.password}"/>
 
         <!-- these are C3P0 properties -->
-        <property name="acquireIncrement" value="2" />
-        <property name="minPoolSize" value="1" />
-        <property name="maxPoolSize" value="15" />
+        <property name="acquireIncrement" value="2"/>
+        <property name="minPoolSize" value="1"/>
+        <property name="maxPoolSize" value="15"/>
+
+    </bean>
+
+    <bean id="openElisDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close" name="openelisDataSource">
+        <property name="driverClass" value="org.postgresql.Driver"/>
+        <property name="jdbcUrl" value="${openelis.url}"/>
+        <property name="user" value="${openelis.username}"/>
+        <property name="password" value="${openelis.password}"/>
+
+        <!-- these are C3P0 properties -->
+        <property name="acquireIncrement" value="2"/>
+        <property name="minPoolSize" value="1"/>
+        <property name="maxPoolSize" value="15"/>
 
     </bean>
 

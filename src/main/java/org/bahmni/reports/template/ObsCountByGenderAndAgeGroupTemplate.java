@@ -25,7 +25,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class ObsCountByGenderAndAgeGroupTemplate implements BaseReportTemplate {
 
     @Autowired
-    private javax.sql.DataSource dataSource;
+    private javax.sql.DataSource openmrsDataSource;
 
     @Override
     public JasperReportBuilder build(ReportConfig reportConfig, String startDate, String endDate) throws SQLException {
@@ -61,7 +61,7 @@ public class ObsCountByGenderAndAgeGroupTemplate implements BaseReportTemplate {
                 .summary(crosstab)
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, ageGroupName, ageGroupName, startDate, endDate, conceptName, conceptName),
-                        dataSource.getConnection());
+                        openmrsDataSource.getConnection());
         return report;
     }
 

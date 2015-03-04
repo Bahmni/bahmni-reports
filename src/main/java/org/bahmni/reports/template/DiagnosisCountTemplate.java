@@ -25,7 +25,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class DiagnosisCountTemplate implements BaseReportTemplate {
 
     @Autowired
-    private javax.sql.DataSource dataSource;
+    private javax.sql.DataSource openmrsDataSource;
 
     @Override
     public JasperReportBuilder build(ReportConfig reportConfig, String startDate, String endDate) throws SQLException {
@@ -61,7 +61,7 @@ public class DiagnosisCountTemplate implements BaseReportTemplate {
                 .summary(crossTab)
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, reportConfig.getAgeGroupName(), startDate, endDate),
-                        dataSource.getConnection());
+                        openmrsDataSource.getConnection());
         return report;
     }
 

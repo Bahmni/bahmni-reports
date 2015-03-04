@@ -25,7 +25,7 @@ public class TestReportController {
     private static Logger logger = Logger.getLogger(TestReportController.class);
 
     @Autowired
-    private DataSource dataSource;
+    private DataSource openmrsDataSource;
 
     @RequestMapping(value = "/test", method = RequestMethod.GET)
     @ResponseBody
@@ -48,7 +48,7 @@ public class TestReportController {
         )
                 .title(Components.text("Patient Listing").setHorizontalAlignment(HorizontalAlignment.CENTER))
                 .setReportName("Test Report")
-                .setDataSource("select * from patient limit 20", dataSource.getConnection());
+                .setDataSource("select * from patient limit 20", openmrsDataSource.getConnection());
 
         response.setContentType("application/vnd.ms-excel");
         response.setHeader("Content-Disposition", "attachment; filename=test.xlsx");
