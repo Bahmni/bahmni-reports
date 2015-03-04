@@ -30,6 +30,13 @@
                         <source>1.7</source>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <configuration>
+                        <webXml>src/main/resources/web.xml</webXml>
+                    </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
