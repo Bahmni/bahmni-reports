@@ -4,11 +4,11 @@ PATH_OF_CURRENT_SCRIPT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $PATH_OF_CURRENT_SCRIPT/vagrant_functions.sh
 
 #All config is here
-TEMP_REPORTS_WEBAPP_WAR=/tmp/deploy_bahmnireports_webapp
+TEMP_REPORTS_WEBAPP_WAR=/tmp/deploy_bahmnireports_webapp/bahmnireports.war
 SCRIPTS_DIR=scripts/vagrant
 SHELL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_BASE=$SHELL_DIR/../..
-REPORTS_WEBAPP_WAR=$PROJECT_BASE/webapp/target/bahmnireports.war
+REPORTS_WEBAPP_WAR=$PROJECT_BASE/target/reports-1.0-SNAPSHOT.war
 
 if [[ ! -e $REPORTS_WEBAPP_WAR ]]; then
     echo "----------------------------------------"
