@@ -14,18 +14,17 @@ import org.bahmni.reports.model.ReportConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
-import static net.sf.dynamicreports.report.builder.DynamicReports.report;
-import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
+import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "ObsCountByGenderAndAge")
 public class ObsCountByGenderAndAgeGroupTemplate implements BaseReportTemplate {
 
     @Autowired
-    private javax.sql.DataSource openmrsDataSource;
+    private DataSource openmrsDataSource;
 
     @Override
     public JasperReportBuilder build(ReportConfig reportConfig, String startDate, String endDate) throws SQLException {

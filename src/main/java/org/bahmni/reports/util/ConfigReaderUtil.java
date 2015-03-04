@@ -9,11 +9,9 @@ import java.io.IOException;
 
 public class ConfigReaderUtil {
 
-    private static final String CONFIG_FILE = "/var/www/bahmni_config/openmrs/apps/reports/reports.json";
-
-    public static ReportConfig findConfig(String reportName) throws IOException {
+    public ReportConfig findConfig(String reportName, String reportPropertiesPath) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        Config config = objectMapper.readValue(new File(CONFIG_FILE), Config.class);
+        Config config = objectMapper.readValue(new File(reportPropertiesPath), Config.class);
         for (ReportConfig reportConfig : config) {
             if (reportName.equals(reportConfig.getName())) {
                 return reportConfig;

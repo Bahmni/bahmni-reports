@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.ReportConfig;
 import org.bahmni.reports.template.ReportTemplates;
+import org.bahmni.reports.util.ConfigReaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,8 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import static org.bahmni.reports.util.ConfigReaderUtil.findConfig;
-
 
 @Controller
 public class MainReportController {
@@ -25,11 +24,13 @@ public class MainReportController {
     private static final Logger logger = Logger.getLogger(MainReportController.class);
     private ReportTemplates reportTemplates;
     private JasperResponseConverter converter;
+    private String reportPropertiesPath;
 
     @Autowired
-    public MainReportController(ReportTemplates reportTemplates, JasperResponseConverter converter) {
+    public MainReportController(ReportTemplates reportTemplates, JasperResponseConverter converter, String reportPropertiesPath) {
         this.reportTemplates = reportTemplates;
         this.converter = converter;
+        this.reportPropertiesPath = reportPropertiesPath;
     }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
@@ -39,7 +40,7 @@ public class MainReportController {
             String endDate = request.getParameter("endDate");
             String reportName = request.getParameter("name");
 
-            ReportConfig reportConfig = findConfig(reportName);
+            ReportConfig reportConfig = new ConfigReaderUtil().findConfig(reportName, reportPropertiesPath);
 
             JasperReportBuilder reportBuilder = reportTemplates.get(reportConfig.getType()).
                     build(reportConfig, startDate, endDate);

@@ -8,7 +8,7 @@ BUILD_DIR=/packages/build/bahmnireports.war
 SCRIPTS_DIR=scripts/vagrant
 SHELL_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_BASE=$SHELL_DIR/../..
-REPORTS_WEBAPP_WAR=$PROJECT_BASE/target/reports-1.0-SNAPSHOT.war
+REPORTS_WEBAPP_WAR=$PROJECT_BASE/target/bahmnireports.war
 
 if [[ ! -e $REPORTS_WEBAPP_WAR ]]; then
     echo "----------------------------------------"

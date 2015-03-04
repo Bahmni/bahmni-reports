@@ -1,9 +1,6 @@
-package org.bahmni.reports.api.util;
+package org.bahmni.reports.util;
 
-import org.bahmni.reports.util.FileReaderUtil;
 import org.junit.Test;
-
-import java.lang.String;
 
 import static org.junit.Assert.assertTrue;
 

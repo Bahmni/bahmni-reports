@@ -20,13 +20,12 @@
         <property name="ignoreResourceNotFound" value="true"/>
         <property name="locations">
             <list>
-                <value>classpath:bahmni-reports.properties</value>
+                <value>classpath:test.properties</value>
             </list>
         </property>
     </bean>
 
-    <bean id="openmrsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close"
-          name="openmrsDataSource">
+    <bean id="openmrsDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close" name="openmrsDataSource">
         <property name="driverClass" value="com.mysql.jdbc.Driver"/>
         <property name="jdbcUrl" value="${openmrs.url}"/>
         <property name="user" value="${openmrs.username}"/>
@@ -39,8 +38,7 @@
 
     </bean>
 
-    <bean id="openElisDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close"
-          name="openelisDataSource">
+    <bean id="openElisDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close" name="openelisDataSource">
         <property name="driverClass" value="org.postgresql.Driver"/>
         <property name="jdbcUrl" value="${openelis.url}"/>
         <property name="user" value="${openelis.username}"/>
@@ -50,9 +48,7 @@
         <property name="acquireIncrement" value="2"/>
         <property name="minPoolSize" value="1"/>
         <property name="maxPoolSize" value="15"/>
+
     </bean>
 
-    <bean id="reportPropertiesPath" class="java.lang.String" name="reportPropertiesPath">
-        <constructor-arg type="java.lang.String" value="${config.file.path}"/>
-    </bean>
 </beans>

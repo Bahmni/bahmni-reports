@@ -29,6 +29,7 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-war-plugin</artifactId>
                     <configuration>
+                        <warName>bahmnireports</warName>
                         <webXml>src/main/resources/web.xml</webXml>
                     </configuration>
                 </plugin>
