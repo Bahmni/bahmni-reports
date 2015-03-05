@@ -33,7 +33,7 @@ public class MainReportController {
         this.converter = converter;
         this.bahmniReportsProperties = bahmniReportsProperties;
     }
-
+//TODO: Better way to handle the response.
     @RequestMapping(value = "/report", method = RequestMethod.GET)
     public void getReport(HttpServletRequest request, HttpServletResponse response) throws DRException {
         try {
