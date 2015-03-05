@@ -1,13 +1,14 @@
 package org.bahmni.reports.web;
 
+import org.bahmni.reports.BahmniReports;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -19,8 +20,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebAppConfiguration(value = "classpath:web.xml")
-@ContextConfiguration(locations = "classpath:testBahmniReportsServiceContext.xml")
+@SpringApplicationConfiguration(classes = BahmniReports.class)
+@WebIntegrationTest
 @Ignore
 public class MainReportControllerTest {
 

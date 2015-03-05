@@ -3,6 +3,7 @@ package org.bahmni.reports.web;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.exception.DRException;
 import org.apache.log4j.Logger;
+import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.ReportConfig;
 import org.bahmni.reports.template.ReportTemplates;
@@ -24,13 +25,13 @@ public class MainReportController {
     private static final Logger logger = Logger.getLogger(MainReportController.class);
     private ReportTemplates reportTemplates;
     private JasperResponseConverter converter;
-    private String reportPropertiesPath;
+    private BahmniReportsProperties bahmniReportsProperties;
 
     @Autowired
-    public MainReportController(ReportTemplates reportTemplates, JasperResponseConverter converter, String reportPropertiesPath) {
+    public MainReportController(ReportTemplates reportTemplates, JasperResponseConverter converter, BahmniReportsProperties bahmniReportsProperties) {
         this.reportTemplates = reportTemplates;
         this.converter = converter;
-        this.reportPropertiesPath = reportPropertiesPath;
+        this.bahmniReportsProperties = bahmniReportsProperties;
     }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
@@ -40,7 +41,7 @@ public class MainReportController {
             String endDate = request.getParameter("endDate");
             String reportName = request.getParameter("name");
 
-            ReportConfig reportConfig = new ConfigReaderUtil().findConfig(reportName, reportPropertiesPath);
+            ReportConfig reportConfig = new ConfigReaderUtil().findConfig(reportName, bahmniReportsProperties.getConfigFilePath());
 
             JasperReportBuilder reportBuilder = reportTemplates.get(reportConfig.getType()).
                     build(reportConfig, startDate, endDate);

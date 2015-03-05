@@ -19,4 +19,4 @@
                    AND reporting_age_group.id = inpatient_outcome_obs.age_group_id     
                   WHERE question.concept_full_name = '%s'
                   GROUP BY answer.concept_id, age_group     
-                  ORDER BY answer.concept_id, reporting_age_group.sort_order; 
+                  ORDER BY answer.concept_id, reporting_age_group.sort_order;

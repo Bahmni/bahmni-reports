@@ -1,8 +1,8 @@
 package org.bahmni.reports.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.ReportConfig;
-import org.codehaus.jackson.map.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
