@@ -11,23 +11,19 @@ import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.ReportConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "ObsCountByGenderAndAge")
-public class ObsCountByGenderAndAgeGroupTemplate implements BaseReportTemplate {
-
-    @Autowired
-    private DataSource openmrsDataSource;
+public class ObsCountByGenderAndAgeGroupTemplate extends AbstractMRSReportTemplate {
 
     @Override
-    public JasperReportBuilder build(ReportConfig reportConfig, String startDate, String endDate) throws SQLException {
+    public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate) throws SQLException {
         CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);
 
@@ -60,7 +56,7 @@ public class ObsCountByGenderAndAgeGroupTemplate implements BaseReportTemplate {
                 .summary(crosstab)
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, ageGroupName, ageGroupName, startDate, endDate, conceptName, conceptName),
-                        openmrsDataSource.getConnection());
+                        connection);
         return report;
     }
 

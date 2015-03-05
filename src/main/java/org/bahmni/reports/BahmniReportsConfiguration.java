@@ -1,6 +1,7 @@
 package org.bahmni.reports;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.bahmni.reports.builder.ComboPooledDataSourceBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,28 +17,20 @@ public class BahmniReportsConfiguration {
 
     @Bean
     public ComboPooledDataSource openmrsDataSource() throws PropertyVetoException {
-        ComboPooledDataSource openmrsDataSource = new ComboPooledDataSource();
-        openmrsDataSource.setJdbcUrl(bahmniReportsProperties.getOpenmrsUrl());
-        openmrsDataSource.setUser(bahmniReportsProperties.getOpenmrsUser());
-        openmrsDataSource.setPassword(bahmniReportsProperties.getOpenmrsPassword());
-        openmrsDataSource.setDriverClass(com.mysql.jdbc.Driver.class.getName());
-        openmrsDataSource.setAcquireIncrement(2);
-        openmrsDataSource.setMinPoolSize(1);
-        openmrsDataSource.setMaxPoolSize(15);
-        return openmrsDataSource;
+        ComboPooledDataSourceBuilder comboPooledDataSourceBuilder = new ComboPooledDataSourceBuilder();
+        return comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getOpenmrsUrl())
+                .withUser(bahmniReportsProperties.getOpenmrsUser())
+                .withPassword(bahmniReportsProperties.getOpenmrsPassword())
+                .withDriver(com.mysql.jdbc.Driver.class).build();
     }
 
     @Bean
     public ComboPooledDataSource openelisDataSource() throws PropertyVetoException {
-        ComboPooledDataSource openelisDataSource = new ComboPooledDataSource();
-        openelisDataSource.setJdbcUrl(bahmniReportsProperties.getOpenelisUrl());
-        openelisDataSource.setUser(bahmniReportsProperties.getOpenelisUser());
-        openelisDataSource.setPassword(bahmniReportsProperties.getOpenelisPassword());
-        openelisDataSource.setDriverClass(org.postgresql.Driver.class.getName());
-        openelisDataSource.setAcquireIncrement(2);
-        openelisDataSource.setMinPoolSize(1);
-        openelisDataSource.setMaxPoolSize(15);
-        return openelisDataSource;
+        ComboPooledDataSourceBuilder comboPooledDataSourceBuilder = new ComboPooledDataSourceBuilder();
+        return comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getOpenelisUrl())
+                .withUser(bahmniReportsProperties.getOpenelisUser())
+                .withPassword(bahmniReportsProperties.getOpenelisPassword())
+                .withDriver(org.postgresql.Driver.class).build();
     }
 
 }

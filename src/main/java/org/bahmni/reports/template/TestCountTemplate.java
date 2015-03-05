@@ -8,28 +8,21 @@ import net.sf.dynamicreports.report.constant.GroupHeaderLayout;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
+import net.sf.dynamicreports.report.exception.DRException;
 import org.bahmni.reports.model.ReportConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
+import java.sql.Connection;
 import java.sql.SQLException;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.col;
-import static net.sf.dynamicreports.report.builder.DynamicReports.grp;
-import static net.sf.dynamicreports.report.builder.DynamicReports.report;
-import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
-import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "TestCount")
-public class TestCountTemplate implements BaseReportTemplate {
-
-    @Autowired
-    private DataSource openelisDataSource;
+public class TestCountTemplate extends AbstractElisReportTemplate {
 
     @Override
-    public JasperReportBuilder build(ReportConfig reportConfig, String startDate, String endDate) throws SQLException {
+    public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate) throws SQLException, DRException {
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 
@@ -63,7 +56,7 @@ public class TestCountTemplate implements BaseReportTemplate {
                 .setReportName(reportConfig.getName())
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, startDate, endDate),
-                        openelisDataSource.getConnection());
+                        connection);
         return report;
     }
 }

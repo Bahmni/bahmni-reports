@@ -7,11 +7,12 @@ import org.springframework.stereotype.Component;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 
 @Component
 public class JasperResponseConverter {
     
-    public void convert(String responseType, JasperReportBuilder report, HttpServletResponse response, final String fileName) throws IOException, DRException {
+    public void convert(String responseType, JasperReportBuilder report, HttpServletResponse response, final String fileName) throws IOException, DRException, SQLException {
 
         response.setContentType("application/vnd.ms-excel");
 
@@ -31,5 +32,7 @@ public class JasperResponseConverter {
                 response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
                 report.toPdf(outputStream);
         }
+        //TODO: Mihir | Find better place to close the connection
+        report.getConnection().close();
     }
 }

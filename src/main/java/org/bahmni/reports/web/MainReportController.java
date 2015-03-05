@@ -35,18 +35,19 @@ public class MainReportController {
     }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
-    public void getReport(HttpServletRequest request, HttpServletResponse response) {
+    public void getReport(HttpServletRequest request, HttpServletResponse response) throws DRException {
         try {
             String startDate = request.getParameter("startDate");
             String endDate = request.getParameter("endDate");
             String reportName = request.getParameter("name");
+            String responseType = request.getParameter("responseType");
 
             ReportConfig reportConfig = new ConfigReaderUtil().findConfig(reportName, bahmniReportsProperties.getConfigFilePath());
 
             JasperReportBuilder reportBuilder = reportTemplates.get(reportConfig.getType()).
                     build(reportConfig, startDate, endDate);
 
-            String responseType = request.getParameter("responseType");
+
             convertToResponse(responseType, reportBuilder, response, reportConfig.getName());
 
             response.flushBuffer();
@@ -58,7 +59,7 @@ public class MainReportController {
     }
 
 
-    private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response, String fileName) {
+    private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response, String fileName) throws SQLException {
         try {
             converter.convert(responseType, reportBuilder, response, fileName);
         } catch (DRException | IOException e) {

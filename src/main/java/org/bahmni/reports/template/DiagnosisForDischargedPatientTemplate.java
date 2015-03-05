@@ -10,25 +10,21 @@ import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
+import net.sf.dynamicreports.report.exception.DRException;
 import org.bahmni.reports.model.ReportConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
-import static net.sf.dynamicreports.report.builder.DynamicReports.report;
-import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
+import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "DiagnosisForDischargedPatient")
-public class DiagnosisForDischargedPatientTemplate implements BaseReportTemplate {
-
-    @Autowired
-    private javax.sql.DataSource openmrsDataSource;
+public class DiagnosisForDischargedPatientTemplate extends AbstractMRSReportTemplate {
 
     @Override
-    public JasperReportBuilder build(ReportConfig reportConfig, String startDate, String endDate) throws SQLException {
+    public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate) throws SQLException, DRException {
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
         StyleBuilder cellStyle = Templates.columnStyle.setBorder(Styles.pen());
 
@@ -61,8 +57,8 @@ public class DiagnosisForDischargedPatientTemplate implements BaseReportTemplate
                 .summary(crossTab)
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, reportConfig.getAgeGroupName(), startDate, endDate),
-                        openmrsDataSource.getConnection());
-        return report;
+                        connection);
+        return report.print();
     }
 
 }

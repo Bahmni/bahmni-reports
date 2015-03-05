@@ -12,28 +12,20 @@ import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.ReportConfig;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
+import java.sql.Connection;
 import java.sql.SQLException;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
-import static net.sf.dynamicreports.report.builder.DynamicReports.type;
-import static net.sf.dynamicreports.report.builder.DynamicReports.grp;
-import static net.sf.dynamicreports.report.builder.DynamicReports.col;
-import static net.sf.dynamicreports.report.builder.DynamicReports.report;
-import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
+import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "DiagnosisForOPDPatient")
-public class DiagnosisForOPDPatientTemplate implements BaseReportTemplate {
-
-    @Autowired
-    private javax.sql.DataSource openmrsDataSource;
+public class DiagnosisForOPDPatientTemplate extends AbstractMRSReportTemplate {
 
     @Override
-    public JasperReportBuilder build(ReportConfig reportConfig, String startDate, String endDate) throws SQLException {
+    public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate) throws SQLException {
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
         StyleBuilder cellStyle = Templates.columnStyle.setBorder(Styles.pen());
 
@@ -76,7 +68,7 @@ public class DiagnosisForOPDPatientTemplate implements BaseReportTemplate {
                 .columns(icd10Code, disease, groupName, female, male)
                 .groupBy(groupName)
                 .setDataSource(String.format(sql, startDate, endDate),
-                        openmrsDataSource.getConnection());
+                        connection);
         return report;
     }
 
