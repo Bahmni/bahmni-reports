@@ -58,7 +58,7 @@ public class DiagnosisForDischargedPatientTemplate extends AbstractMRSReportTemp
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, reportConfig.getAgeGroupName(), startDate, endDate),
                         connection);
-        return report.print();
+        return report;
     }
 
 }
