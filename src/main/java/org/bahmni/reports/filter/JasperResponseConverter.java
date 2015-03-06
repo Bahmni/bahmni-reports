@@ -33,6 +33,5 @@ public class JasperResponseConverter {
                 report.toPdf(outputStream);
         }
         //TODO: Mihir | Find better place to close the connection
-        report.getConnection().close();
     }
 }

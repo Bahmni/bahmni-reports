@@ -11,8 +11,7 @@ import java.sql.SQLException;
 public abstract class BaseReportTemplate {
     public abstract DataSource getDataSource();
 
-    public JasperReportBuilder build(ReportConfig reportConfig, String startDate, String endDate) throws SQLException, DRException {
-        Connection connection = getDataSource().getConnection();
+    public JasperReportBuilder build(Connection connection, ReportConfig reportConfig, String startDate, String endDate) throws SQLException, DRException {
         return buildReport(connection, reportConfig, startDate, endDate);
     }
 

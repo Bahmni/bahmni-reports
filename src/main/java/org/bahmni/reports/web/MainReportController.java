@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.ReportConfig;
+import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.reports.template.ReportTemplates;
 import org.bahmni.reports.util.ConfigReaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 
@@ -33,9 +35,11 @@ public class MainReportController {
         this.converter = converter;
         this.bahmniReportsProperties = bahmniReportsProperties;
     }
-//TODO: Better way to handle the response.
+
+    //TODO: Better way to handle the response.
     @RequestMapping(value = "/report", method = RequestMethod.GET)
-    public void getReport(HttpServletRequest request, HttpServletResponse response) throws DRException {
+    public void getReport(HttpServletRequest request, HttpServletResponse response) {
+        Connection connection = null;
         try {
             String startDate = request.getParameter("startDate");
             String endDate = request.getParameter("endDate");
@@ -44,17 +48,29 @@ public class MainReportController {
 
             ReportConfig reportConfig = new ConfigReaderUtil().findConfig(reportName, bahmniReportsProperties.getConfigFilePath());
 
-            JasperReportBuilder reportBuilder = reportTemplates.get(reportConfig.getType()).
-                    build(reportConfig, startDate, endDate);
-
+            BaseReportTemplate baseReportTemplate = reportTemplates.get(reportConfig.getType());
+            connection = baseReportTemplate.getDataSource().getConnection();
+            JasperReportBuilder reportBuilder = baseReportTemplate.build(connection, reportConfig, startDate, endDate);
 
             convertToResponse(responseType, reportBuilder, response, reportConfig.getName());
-
-            response.flushBuffer();
-            response.getOutputStream().close();
-        } catch (SQLException | IOException e) {
+        } catch (SQLException | IOException | DRException e) {
             logger.error("Error running report", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        } finally {
+            try {
+                response.flushBuffer();
+                response.getOutputStream().close();
+            } catch (IOException e) {
+                logger.error(e);
+            }
+
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    logger.error("Could not close connection.", e);
+                }
+            }
         }
     }
 
