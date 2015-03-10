@@ -9,7 +9,7 @@ public class FileReaderUtilTest {
     @Test
     public void shouldReadFileContent() {
         String content = FileReaderUtil.getFileContent("sql/obsCountByGenderAndAgeGroupQuery.sql");
-        assertTrue(content.contains("SELECT distinct answer.concept_full_name as concept_name"));
+        assertTrue(content.contains("SELECT\n  reporting_age_group.name"));
     }
 
 }

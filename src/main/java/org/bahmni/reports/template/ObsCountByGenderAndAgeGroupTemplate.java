@@ -64,7 +64,7 @@ public class ObsCountByGenderAndAgeGroupTemplate extends AbstractMRSReportTempla
                 .setReportName(reportConfig.getName())
                 .summary(crosstab)
                 .pageFooter(Templates.footerComponent)
-                .setDataSource(String.format(sql, ageGroupName, ageGroupName, startDate, endDate, conceptName, conceptName),
+                .setDataSource(String.format(sql, conceptName, startDate, endDate, ageGroupName),
                         connection);
         return report;
     }
