@@ -22,8 +22,8 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
-@Component(value = "ObsCountByGenderAndAge")
-public class ObsCountByGenderAndAgeGroupTemplate extends AbstractMRSReportTemplate {
+@Component(value = "codedObsCount")
+public class CodedObsCountTemplate extends AbstractMRSReportTemplate {
 
     @Override
     public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate) throws SQLException {
@@ -52,7 +52,7 @@ public class ObsCountByGenderAndAgeGroupTemplate extends AbstractMRSReportTempla
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
-        String sql = getFileContent("sql/obsCountByGenderAndAgeGroupQuery.sql");
+        String sql = getFileContent("sql/codedObsCount.sql");
 
         String ageGroupName = reportConfig.getAgeGroupName();
         String conceptName = reportConfig.getConceptName();

@@ -8,7 +8,7 @@ public class FileReaderUtilTest {
 
     @Test
     public void shouldReadFileContent() {
-        String content = FileReaderUtil.getFileContent("sql/obsCountByGenderAndAgeGroupQuery.sql");
+        String content = FileReaderUtil.getFileContent("sql/codedObsCount.sql");
         assertTrue(content.contains("SELECT\n  reporting_age_group.name"));
     }
 
