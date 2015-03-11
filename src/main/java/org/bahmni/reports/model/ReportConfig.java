@@ -10,6 +10,7 @@ public class ReportConfig {
     private String type;
     private String ageGroupName;
     private String conceptName;
+    private String sqlPath;
 
     public String getName() {
         return name;
@@ -41,5 +42,13 @@ public class ReportConfig {
 
     public void setConceptName(String conceptName) {
         this.conceptName = conceptName;
+    }
+
+    public String getSqlPath() {
+        return sqlPath;
+    }
+
+    public void setSqlPath(String sqlPath) {
+        this.sqlPath = sqlPath;
     }
 }

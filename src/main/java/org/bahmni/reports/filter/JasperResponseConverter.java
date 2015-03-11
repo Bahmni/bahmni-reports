@@ -32,6 +32,5 @@ public class JasperResponseConverter {
                 response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
                 report.toPdf(outputStream);
         }
-        //TODO: Mihir | Find better place to close the connection
     }
 }

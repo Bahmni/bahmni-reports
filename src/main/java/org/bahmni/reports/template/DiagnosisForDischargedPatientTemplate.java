@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
@@ -24,7 +25,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class DiagnosisForDischargedPatientTemplate extends AbstractMRSReportTemplate {
 
     @Override
-    public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate) throws SQLException, DRException {
+    public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
         StyleBuilder cellStyle = Templates.columnStyle.setBorder(Styles.pen());
 

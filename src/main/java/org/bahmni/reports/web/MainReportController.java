@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 @Controller
@@ -40,6 +41,7 @@ public class MainReportController {
     @RequestMapping(value = "/report", method = RequestMethod.GET)
     public void getReport(HttpServletRequest request, HttpServletResponse response) {
         Connection connection = null;
+        ArrayList<AutoCloseable> resources = new ArrayList<>();
         try {
             String startDate = request.getParameter("startDate");
             String endDate = request.getParameter("endDate");
@@ -47,12 +49,13 @@ public class MainReportController {
             String responseType = request.getParameter("responseType");
 
             ReportConfig reportConfig = new ConfigReaderUtil().findConfig(reportName, bahmniReportsProperties.getConfigFilePath());
-
             BaseReportTemplate baseReportTemplate = reportTemplates.get(reportConfig.getType());
             connection = baseReportTemplate.getDataSource().getConnection();
-            JasperReportBuilder reportBuilder = baseReportTemplate.build(connection, reportConfig, startDate, endDate);
 
+            JasperReportBuilder reportBuilder = baseReportTemplate.build(connection, reportConfig, startDate, endDate, resources);
             convertToResponse(responseType, reportBuilder, response, reportConfig.getName());
+
+            resources.add(connection);
         } catch (SQLException | IOException | DRException e) {
             logger.error("Error running report", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -64,11 +67,13 @@ public class MainReportController {
                 logger.error(e);
             }
 
-            if (connection != null) {
+            for (AutoCloseable resource : resources) {
                 try {
-                    connection.close();
-                } catch (SQLException e) {
-                    logger.error("Could not close connection.", e);
+                    if(resource != null) {
+                        resource.close();
+                    }
+                } catch (Exception e) {
+                    logger.error("Could not close resource.", e);
                 }
             }
         }

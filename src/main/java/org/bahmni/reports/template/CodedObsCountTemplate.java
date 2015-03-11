@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
 import static net.sf.dynamicreports.report.builder.DynamicReports.report;
@@ -26,7 +27,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class CodedObsCountTemplate extends AbstractMRSReportTemplate {
 
     @Override
-    public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate) throws SQLException {
+    public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException {
         CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);
 
