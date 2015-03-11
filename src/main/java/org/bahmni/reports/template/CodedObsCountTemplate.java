@@ -22,7 +22,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
-@Component(value = "codedObsCount")
+@Component(value = "CodedObsCount")
 public class CodedObsCountTemplate extends AbstractMRSReportTemplate {
 
     @Override
