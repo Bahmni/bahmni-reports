@@ -36,13 +36,16 @@ public class CodedObsCountTemplate extends AbstractMRSReportTemplate {
                 .setHeaderWidth(15)
                 .setOrderType(OrderType.ASCENDING);
 
-        CrosstabColumnGroupBuilder<String> columnGroup = ctab.columnGroup("concept_name", String.class)
+        CrosstabColumnGroupBuilder<String> columnGroupQuestions = ctab.columnGroup("concept_name", String.class)
+                .setShowTotal(false);
+
+        CrosstabColumnGroupBuilder<String> columnGroupAnswers = ctab.columnGroup("answer_concept_name", String.class)
                 .setShowTotal(false);
 
         CrosstabBuilder crosstab = ctab.crosstab()
                 .headerCell(DynamicReports.cmp.text("Age Group / Outcome"))
                 .rowGroups(sortOrderGroup, rowGroup)
-                .columnGroups(columnGroup)
+                .columnGroups(columnGroupQuestions, columnGroupAnswers)
                 .measures(
                         ctab.measure("Female", "female_count", Integer.class, Calculation.NOTHING),
                         ctab.measure("Male", "male_count", Integer.class, Calculation.NOTHING),
@@ -56,7 +59,7 @@ public class CodedObsCountTemplate extends AbstractMRSReportTemplate {
         String sql = getFileContent("sql/codedObsCount.sql");
 
         String ageGroupName = reportConfig.getAgeGroupName();
-        String conceptName = reportConfig.getConceptName();
+        String conceptNames = reportConfig.getConceptNames();
 
         JasperReportBuilder report = report();
         report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
@@ -65,7 +68,7 @@ public class CodedObsCountTemplate extends AbstractMRSReportTemplate {
                 .setReportName(reportConfig.getName())
                 .summary(crosstab)
                 .pageFooter(Templates.footerComponent)
-                .setDataSource(String.format(sql, conceptName, startDate, endDate, ageGroupName),
+                .setDataSource(String.format(sql, conceptNames, startDate, endDate, ageGroupName),
                         connection);
         return report;
     }

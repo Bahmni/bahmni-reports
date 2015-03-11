@@ -1,15 +1,16 @@
 SELECT
-  reporting_age_group.name                                                  AS age_group,
-  answer.concept_full_name                                                  AS concept_name,
-  reporting_age_group.sort_order                                            AS sort_order,
-  IF(reporting_age_group.id IS NULL, 0, SUM(IF(person.gender = 'F', 1, 0))) AS female_count,
-  IF(reporting_age_group.id IS NULL, 0, SUM(IF(person.gender = 'M', 1, 0))) AS male_count,
-  IF(reporting_age_group.id IS NULL, 0, SUM(IF(person.gender = 'O', 1, 0))) AS other_count,
-  COUNT(obs.obs_id)                                                         AS total_count
+  reporting_age_group.name                                                                         AS age_group,
+  IF(question.concept_short_name IS NULL, question.concept_full_name, question.concept_short_name) AS concept_name,
+  answer.concept_full_name                                                                         AS answer_concept_name,
+  reporting_age_group.sort_order                                                                   AS sort_order,
+  IF(reporting_age_group.id IS NULL, 0, SUM(IF(person.gender = 'F', 1, 0)))                        AS female_count,
+  IF(reporting_age_group.id IS NULL, 0, SUM(IF(person.gender = 'M', 1, 0)))                        AS male_count,
+  IF(reporting_age_group.id IS NULL, 0, SUM(IF(person.gender = 'O', 1, 0)))                        AS other_count,
+  COUNT(obs.obs_id)                                                                                AS total_count
 FROM
   reporting_age_group
   JOIN
-  concept_view AS question ON question.concept_full_name = '%s' AND question.concept_datatype_name = 'Coded'
+  concept_view AS question ON question.concept_full_name IN (%s) AND question.concept_datatype_name = 'Coded'
   INNER JOIN concept_answer
     ON question.concept_id = concept_answer.concept_id
   INNER JOIN concept_view AS answer
@@ -23,5 +24,5 @@ FROM
       DAY)) AND (DATE_ADD(DATE_ADD(person.birthdate, INTERVAL reporting_age_group.max_years YEAR), INTERVAL
                           reporting_age_group.max_days DAY))
 WHERE reporting_age_group.report_group_name = '%s'
-GROUP BY answer.concept_id, reporting_age_group.id
+GROUP BY concept_name, answer.concept_id, reporting_age_group.id
 ORDER BY answer.concept_id, reporting_age_group.sort_order;

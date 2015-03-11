@@ -9,8 +9,8 @@ public class ReportConfig {
     private String name;
     private String type;
     private String ageGroupName;
-    private String conceptName;
     private String sqlPath;
+    private String conceptNames;
 
     public String getName() {
         return name;
@@ -36,12 +36,12 @@ public class ReportConfig {
         this.ageGroupName = ageGroupName;
     }
 
-    public String getConceptName() {
-        return conceptName;
+    public String getConceptNames() {
+        return conceptNames;
     }
 
-    public void setConceptName(String conceptName) {
-        this.conceptName = conceptName;
+    public void setConceptNames(String conceptNames) {
+        this.conceptNames = conceptNames;
     }
 
     public String getSqlPath() {
