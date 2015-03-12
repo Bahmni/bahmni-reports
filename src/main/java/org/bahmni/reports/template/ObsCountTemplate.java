@@ -9,7 +9,6 @@ import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
-import net.sf.dynamicreports.report.constant.OrderType;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.exception.DRException;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
@@ -28,9 +26,9 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
-@Component(value = "nonCodedObsCount")
+@Component(value = "obsCount")
 @UsingDatasource("openmrs")
-public class NonCodedObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig> {
+public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig> {
 
     @Override
     public JasperReportBuilder build(Connection connection, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
@@ -55,7 +53,7 @@ public class NonCodedObsCountTemplate implements BaseReportTemplate<CodedObsCoun
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
-        String sql = getFileContent("sql/nonCodedObsCount.sql");
+        String sql = getFileContent("sql/obsCount.sql");
 
         String ageGroupName = reportConfig.getConfig().getAgeGroupName();
         String conceptNames = reportConfig.getConfig().getConceptNames();
