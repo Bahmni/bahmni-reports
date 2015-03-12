@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringApplicationConfiguration(classes = BahmniReports.class)
 @WebIntegrationTest
 @Ignore
-public class MainReportControllerTest {
+public class MainReportReportControllerTest {
 
     private MockMvc mockMvc;
 

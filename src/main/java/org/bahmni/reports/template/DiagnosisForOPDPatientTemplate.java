@@ -11,23 +11,23 @@ import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
-import org.bahmni.reports.model.ReportConfig;
+import org.bahmni.reports.model.Report;
+import org.bahmni.reports.model.Config;
 import org.springframework.stereotype.Component;
 
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "DiagnosisForOPDPatient")
-public class DiagnosisForOPDPatientTemplate extends AbstractMRSReportTemplate {
+public class DiagnosisForOPDPatientTemplate implements BaseReportTemplate<Config> {
 
     @Override
-    public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException {
+    public JasperReportBuilder build(Connection connection, Report<Config> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException {
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
         StyleBuilder cellStyle = Templates.columnStyle.setBorder(Styles.pen());
 
@@ -73,5 +73,4 @@ public class DiagnosisForOPDPatientTemplate extends AbstractMRSReportTemplate {
                         connection);
         return report;
     }
-
 }

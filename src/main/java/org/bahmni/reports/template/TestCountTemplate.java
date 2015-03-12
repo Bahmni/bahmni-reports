@@ -9,7 +9,9 @@ import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.exception.DRException;
-import org.bahmni.reports.model.ReportConfig;
+import org.bahmni.reports.model.Report;
+import org.bahmni.reports.model.Config;
+import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -20,10 +22,11 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "TestCount")
-public class TestCountTemplate extends AbstractElisReportTemplate {
+@UsingDatasource(value = "openelis")
+public class TestCountTemplate implements BaseReportTemplate<Config> {
 
     @Override
-    public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, Report<Config> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 

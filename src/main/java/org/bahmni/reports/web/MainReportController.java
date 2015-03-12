@@ -5,10 +5,11 @@ import net.sf.dynamicreports.report.exception.DRException;
 import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
-import org.bahmni.reports.model.ReportConfig;
+import org.bahmni.reports.model.AllDatasources;
+import org.bahmni.reports.model.Reports;
+import org.bahmni.reports.model.Report;
 import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.reports.template.ReportTemplates;
-import org.bahmni.reports.util.ConfigReaderUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,12 +30,17 @@ public class MainReportController {
     private ReportTemplates reportTemplates;
     private JasperResponseConverter converter;
     private BahmniReportsProperties bahmniReportsProperties;
+    private AllDatasources allDatasources;
 
     @Autowired
-    public MainReportController(ReportTemplates reportTemplates, JasperResponseConverter converter, BahmniReportsProperties bahmniReportsProperties) {
+    public MainReportController(ReportTemplates reportTemplates,
+                                JasperResponseConverter converter,
+                                BahmniReportsProperties bahmniReportsProperties,
+                                AllDatasources allDatasources) {
         this.reportTemplates = reportTemplates;
         this.converter = converter;
         this.bahmniReportsProperties = bahmniReportsProperties;
+        this.allDatasources = allDatasources;
     }
 
     //TODO: Better way to handle the response.
@@ -48,12 +54,12 @@ public class MainReportController {
             String reportName = request.getParameter("name");
             String responseType = request.getParameter("responseType");
 
-            ReportConfig reportConfig = new ConfigReaderUtil().findConfig(reportName, bahmniReportsProperties.getConfigFilePath());
-            BaseReportTemplate baseReportTemplate = reportTemplates.get(reportConfig.getType());
-            connection = baseReportTemplate.getDataSource().getConnection();
+            Report report = Reports.find(reportName, bahmniReportsProperties.getConfigFilePath());
+            BaseReportTemplate reportTemplate = reportTemplates.get(report.getType());
+            connection = allDatasources.dataSourceFor(reportTemplate).getConnection();
 
-            JasperReportBuilder reportBuilder = baseReportTemplate.build(connection, reportConfig, startDate, endDate, resources);
-            convertToResponse(responseType, reportBuilder, response, reportConfig.getName());
+            JasperReportBuilder reportBuilder = reportTemplate.build(connection, report, startDate, endDate, resources);
+            convertToResponse(responseType, reportBuilder, response, report.getName());
 
             resources.add(connection);
         } catch (SQLException | IOException | DRException e) {

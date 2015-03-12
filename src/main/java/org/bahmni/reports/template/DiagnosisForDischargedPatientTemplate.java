@@ -11,7 +11,9 @@ import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.exception.DRException;
-import org.bahmni.reports.model.ReportConfig;
+import org.bahmni.reports.model.DiagnosisReportConfig;
+import org.bahmni.reports.model.Report;
+import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -22,10 +24,11 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "DiagnosisForDischargedPatient")
-public class DiagnosisForDischargedPatientTemplate extends AbstractMRSReportTemplate {
+@UsingDatasource("openmrs")
+public class DiagnosisForDischargedPatientTemplate implements BaseReportTemplate<DiagnosisReportConfig> {
 
     @Override
-    public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
         StyleBuilder cellStyle = Templates.columnStyle.setBorder(Styles.pen());
 
@@ -57,9 +60,8 @@ public class DiagnosisForDischargedPatientTemplate extends AbstractMRSReportTemp
                 .setReportName(reportConfig.getName())
                 .summary(crossTab)
                 .pageFooter(Templates.footerComponent)
-                .setDataSource(String.format(sql, reportConfig.getAgeGroupName(), startDate, endDate),
+                .setDataSource(String.format(sql, reportConfig.getConfig().getAgeGroupName(), startDate, endDate),
                         connection);
         return report;
     }
-
 }

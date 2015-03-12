@@ -11,23 +11,24 @@ import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.OrderType;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
-import org.bahmni.reports.model.ReportConfig;
+import org.bahmni.reports.model.CodedObsCountConfig;
+import org.bahmni.reports.model.Report;
+import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
-import static net.sf.dynamicreports.report.builder.DynamicReports.report;
-import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
+import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "CodedObsCount")
-public class CodedObsCountTemplate extends AbstractMRSReportTemplate {
+@UsingDatasource("openmrs")
+public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig> {
 
     @Override
-    public JasperReportBuilder buildReport(Connection connection, ReportConfig reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException {
+    public JasperReportBuilder build(Connection connection, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException {
         CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);
 
@@ -58,8 +59,8 @@ public class CodedObsCountTemplate extends AbstractMRSReportTemplate {
 
         String sql = getFileContent("sql/codedObsCount.sql");
 
-        String ageGroupName = reportConfig.getAgeGroupName();
-        String conceptNames = reportConfig.getConceptNames();
+        String ageGroupName = reportConfig.getConfig().getAgeGroupName();
+        String conceptNames = reportConfig.getConfig().getConceptNames();
 
         JasperReportBuilder report = report();
         report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
@@ -72,5 +73,4 @@ public class CodedObsCountTemplate extends AbstractMRSReportTemplate {
                         connection);
         return report;
     }
-
 }
