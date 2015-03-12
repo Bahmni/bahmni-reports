@@ -64,7 +64,6 @@ public class DiagnosisCountWithoutAgeGroup{
                 .setColumnStyle(textStyle)
                 .setTemplate(Templates.reportTemplate)
                 .setReportName(reportConfig.getName())
-//                .summary(crossTab)
                 .pageFooter(Templates.footerComponent)
                 .columns(icd10Code, disease, female, male)
                 .setDataSource(String.format(sql, startDate, endDate, reportConfig.getConfig().getVisitTypes()),
