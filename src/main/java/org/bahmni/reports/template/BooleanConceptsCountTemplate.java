@@ -38,12 +38,14 @@ public class BooleanConceptsCountTemplate  implements BaseReportTemplate<CodedOb
                 .setShowTotal(false);
 
         CrosstabBuilder crosstab = ctab.crosstab()
-                .headerCell(DynamicReports.cmp.text("Boolean Concept / Age Group"))
+                .headerCell(DynamicReports.cmp.horizontalList(DynamicReports.cmp.text("Boolean Concept Name").setStyle(Templates.columnTitleStyle),
+                        DynamicReports.cmp.text("Value").setStyle(Templates.columnTitleStyle)))
                 .rowGroups(rowGroup,booleanValueRowGroup)
                 .columnGroups(columnGroup)
                 .measures(
                         ctab.measure("Female", "female", Integer.class, Calculation.SUM),
-                        ctab.measure("Male", "male", Integer.class, Calculation.SUM)
+                        ctab.measure("Male", "male", Integer.class, Calculation.SUM),
+                        ctab.measure("Other", "other", Integer.class, Calculation.SUM)
                 )
                 .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()));
 
@@ -53,7 +55,7 @@ public class BooleanConceptsCountTemplate  implements BaseReportTemplate<CodedOb
 
         String ageGroupName = reportConfig.getConfig().getAgeGroupName();
         String conceptNames = reportConfig.getConfig().getConceptNames();
-        String formattedSql  = String.format(sql, ageGroupName, startDate, endDate, conceptNames);
+        String formattedSql  = String.format(sql,startDate, endDate, conceptNames, ageGroupName);
 
         JasperReportBuilder report = report();
         report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
