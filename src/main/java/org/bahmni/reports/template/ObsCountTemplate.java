@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
@@ -30,9 +31,11 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig> {
 
+    private final String visitTypeCriteria = "and va.value_reference in (%s)";
+
     @Override
     public JasperReportBuilder build(Connection connection, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
-        CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup("age_group", String.class)
+        CrosstabRowGroupBuilder<String> ageGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);
 
         CrosstabRowGroupBuilder<String> visitAttributeGroup = ctab.rowGroup("visit_type", String.class)
@@ -43,13 +46,23 @@ public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig>
 
         CrosstabBuilder crosstab = ctab.crosstab()
                 .headerCell(DynamicReports.cmp.text("Age Group / Outcome"))
-                .rowGroups(rowGroup,visitAttributeGroup)
                 .columnGroups(columnGroup)
                 .measures(
                         ctab.measure("Female", "female", Integer.class, Calculation.SUM),
-                        ctab.measure("Male", "male", Integer.class, Calculation.SUM)
+                        ctab.measure("Male", "male", Integer.class, Calculation.SUM),
+                        ctab.measure("Other", "other", Integer.class, Calculation.SUM)
                 )
                 .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()));
+
+        String visitType = reportConfig.getConfig().getVisitTypes();
+
+        if(visitType!=null){
+            crosstab = crosstab.rowGroups(ageGroup, visitAttributeGroup);
+            visitType = String.format(visitTypeCriteria,visitType);
+        }else{
+            crosstab = crosstab.rowGroups(ageGroup);
+            visitType = "";
+        }
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
@@ -57,7 +70,7 @@ public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig>
 
         String ageGroupName = reportConfig.getConfig().getAgeGroupName();
         String conceptNames = reportConfig.getConfig().getConceptNames();
-        String formattedSql  = String.format(sql, ageGroupName, startDate, endDate, conceptNames);
+        String formattedSql  = String.format(sql, ageGroupName, startDate, endDate, conceptNames,visitType);
 
         JasperReportBuilder report = report();
         report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
