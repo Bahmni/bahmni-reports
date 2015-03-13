@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class CodedObsCountConfig implements Config{
     private String conceptNames;
     private String ageGroupName;
+    private String visitTypes;
 
 
     public String getConceptNames() {
@@ -22,5 +23,13 @@ public class CodedObsCountConfig implements Config{
 
     public void setAgeGroupName(String ageGroupName) {
         this.ageGroupName = ageGroupName;
+    }
+
+    public String getVisitTypes() {
+        return visitTypes;
+    }
+
+    public void setVisitTypes(String visitTypes) {
+        this.visitTypes = visitTypes;
     }
 }

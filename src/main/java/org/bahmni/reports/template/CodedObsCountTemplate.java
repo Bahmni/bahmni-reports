@@ -29,7 +29,7 @@ public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountCo
 
     @Override
     public JasperReportBuilder build(Connection connection, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException {
-        CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup("age_group", String.class)
+        CrosstabRowGroupBuilder<String> ageRowGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);
 
         CrosstabRowGroupBuilder<Integer> sortOrderGroup = ctab.rowGroup("sort_order", Integer.class)
@@ -45,15 +45,26 @@ public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountCo
 
         CrosstabBuilder crosstab = ctab.crosstab()
                 .headerCell(DynamicReports.cmp.text("Age Group / Outcome"))
-                .rowGroups(sortOrderGroup, rowGroup)
+                .rowGroups(sortOrderGroup, ageRowGroup)
                 .columnGroups(columnGroupQuestions, columnGroupAnswers)
                 .measures(
-                        ctab.measure("Female", "female_count", Integer.class, Calculation.NOTHING),
-                        ctab.measure("Male", "male_count", Integer.class, Calculation.NOTHING),
-                        ctab.measure("Other", "other_count", Integer.class, Calculation.NOTHING),
-                        ctab.measure("Total", "total_count", Integer.class, Calculation.NOTHING)
+                        ctab.measure("Female", "female_count", Integer.class, Calculation.SUM),
+                        ctab.measure("Male", "male_count", Integer.class, Calculation.SUM),
+                        ctab.measure("Other", "other_count", Integer.class, Calculation.SUM),
+                        ctab.measure("Total", "total_count", Integer.class, Calculation.SUM)
                 )
                 .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()));
+        String visitTypes = reportConfig.getConfig().getVisitTypes();
+        String visitFilterTemplate = "on visit_type.type in (%s)";
+
+        CrosstabRowGroupBuilder<String> visitRowGroup = ctab.rowGroup("visit", String.class)
+                .setShowTotal(false);
+        if (visitTypes != null) {
+            crosstab.addRowGroup(visitRowGroup);
+            visitFilterTemplate = String.format(visitFilterTemplate, visitTypes);
+        }else{
+            visitFilterTemplate = "";
+        }
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
@@ -69,7 +80,7 @@ public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountCo
                 .setReportName(reportConfig.getName())
                 .summary(crosstab)
                 .pageFooter(Templates.footerComponent)
-                .setDataSource(String.format(sql, conceptNames, startDate, endDate, ageGroupName),
+                .setDataSource(String.format(sql, conceptNames, visitFilterTemplate, ageGroupName, startDate, endDate),
                         connection);
         return report;
     }
