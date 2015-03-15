@@ -45,7 +45,8 @@ public class DiagnosisCountByAgeGroup{
                 .columnGroups(ageColumnGroup)
                 .measures(
                         ctab.measure("Female", "female", Integer.class, Calculation.NOTHING).setStyle(textStyle),
-                        ctab.measure("Male", "male", Integer.class, Calculation.NOTHING).setStyle(textStyle)
+                        ctab.measure("Male", "male", Integer.class, Calculation.NOTHING).setStyle(textStyle),
+                        ctab.measure("Other", "other", Integer.class, Calculation.NOTHING).setStyle(textStyle)
                 )
                 .setCellStyle(cellStyle);
 
@@ -58,8 +59,8 @@ public class DiagnosisCountByAgeGroup{
                 .setReportName(reportConfig.getName())
                 .summary(crossTab)
                 .pageFooter(Templates.footerComponent)
-                .setDataSource(String.format(sql, startDate, endDate,reportConfig.getConfig().getVisitTypes(),
-                                reportConfig.getConfig().getAgeGroupName()), connection);
+                .setDataSource(String.format(sql, reportConfig.getConfig().getAgeGroupName(), startDate, endDate,
+                        reportConfig.getConfig().getVisitTypes()), connection);
         return report;
     }
 }

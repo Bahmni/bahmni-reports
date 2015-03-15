@@ -29,35 +29,14 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class DiagnosisCountWithoutAgeGroup{
     public JasperReportBuilder build(Connection connection, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException {
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
-        StyleBuilder cellStyle = Templates.columnStyle.setBorder(Styles.pen());
-
-        CrosstabColumnGroupBuilder<String> femaleCountGroup = ctab.columnGroup("something", String.class)
-                .setShowTotal(false);
-
-        CrosstabRowGroupBuilder<String> diseaseNameRowGroup = ctab.rowGroup("disease", String.class).setHeaderStyle(textStyle)
-                .setShowTotal(false);
-        CrosstabRowGroupBuilder<String> icd10RowGroup = ctab.rowGroup("icd10_code", String.class).setHeaderStyle(textStyle)
-                .setShowTotal(false);
 
         TextColumnBuilder<String> icd10Code = col.column("ICD Code", "icd10_code", type.stringType());
         TextColumnBuilder<String> disease = col.column("Name of Disease", "disease", type.stringType());
         TextColumnBuilder<String> female = col.column("Female", "female", type.stringType());
         TextColumnBuilder<String> male = col.column("Male", "male", type.stringType());
-
-        CrosstabBuilder crossTab = ctab.crosstab()
-                .headerCell(DynamicReports.cmp.horizontalList(DynamicReports.cmp.text("ICD Code").setStyle(Templates.columnTitleStyle),
-                        DynamicReports.cmp.text("Disease Name").setStyle(Templates.columnTitleStyle)))
-                .rowGroups(icd10RowGroup, diseaseNameRowGroup)
-                .columnGroups(femaleCountGroup)
-                .measures(
-                        ctab.measure("Female", female, Calculation.NOTHING).setStyle(textStyle),
-                        ctab.measure("Male", male, Calculation.NOTHING).setStyle(textStyle)
-                )
-                .setCellStyle(cellStyle);
+        TextColumnBuilder<String> other = col.column("Other", "other", type.stringType());
 
         String sql = getFileContent("sql/diagnosisCountWithoutAgeGroup.sql");
-
-
 
         JasperReportBuilder report = report();
         report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
@@ -65,7 +44,7 @@ public class DiagnosisCountWithoutAgeGroup{
                 .setTemplate(Templates.reportTemplate)
                 .setReportName(reportConfig.getName())
                 .pageFooter(Templates.footerComponent)
-                .columns(icd10Code, disease, female, male)
+                .columns(icd10Code, disease, female, male, other)
                 .setDataSource(String.format(sql, startDate, endDate, reportConfig.getConfig().getVisitTypes()),
                         connection);
         return report;
