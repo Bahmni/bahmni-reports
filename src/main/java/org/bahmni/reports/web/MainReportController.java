@@ -6,8 +6,8 @@ import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
-import org.bahmni.reports.model.Reports;
 import org.bahmni.reports.model.Report;
+import org.bahmni.reports.model.Reports;
 import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.reports.template.ReportTemplates;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,8 @@ public class MainReportController {
             connection = allDatasources.dataSourceFor(reportTemplate).getConnection();
 
             JasperReportBuilder reportBuilder = reportTemplate.build(connection, report, startDate, endDate, resources);
-            convertToResponse(responseType, reportBuilder, response, report.getName());
+            reportBuilder = new ReportHeader().add(reportBuilder, reportName, startDate, endDate);
+            convertToResponse(responseType, reportBuilder, response, reportName);
 
             resources.add(connection);
         } catch (SQLException | IOException | DRException e) {
@@ -75,7 +76,7 @@ public class MainReportController {
 
             for (AutoCloseable resource : resources) {
                 try {
-                    if(resource != null) {
+                    if (resource != null) {
                         resource.close();
                     }
                 } catch (Exception e) {
