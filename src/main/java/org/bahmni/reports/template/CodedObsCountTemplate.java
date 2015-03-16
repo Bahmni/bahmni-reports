@@ -4,7 +4,9 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabColumnGroupBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
+import net.sf.dynamicreports.report.builder.style.ReportStyleBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
+import net.sf.dynamicreports.report.builder.style.StyleBuilders;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
@@ -45,14 +47,14 @@ public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountCo
         CrosstabColumnGroupBuilder<String> columnGroupAnswers = ctab.columnGroup("answer_concept_name", String.class)
                 .setShowTotal(false);
 
+        CrosstabColumnGroupBuilder<String> columnGroupGender = ctab.columnGroup("gender", String.class)
+                .setShowTotal(true);
+
         CrosstabBuilder crosstab = ctab.crosstab()
                 .rowGroups(sortOrderGroup, ageRowGroup)
-                .columnGroups(columnGroupQuestions, columnGroupAnswers)
+                .columnGroups(columnGroupQuestions, columnGroupAnswers, columnGroupGender)
                 .measures(
-                        ctab.measure("Female", "female_count", Integer.class, Calculation.SUM),
-                        ctab.measure("Male", "male_count", Integer.class, Calculation.SUM),
-                        ctab.measure("Other", "other_count", Integer.class, Calculation.SUM),
-                        ctab.measure("Total", "total_count", Integer.class, Calculation.SUM)
+                        ctab.measure("", "total_count", Integer.class, Calculation.SUM)
                 )
                 .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()));
         String visitTypes = reportConfig.getConfig().getVisitTypes();
