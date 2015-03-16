@@ -6,7 +6,7 @@ left outer join
 IF(p.gender = 'F', 1, 0) AS female,
 IF(p.gender = 'M', 1, 0) AS male,
 IF(p.gender = 'O', 1, 0) AS other,
-rag.name as rag_age_group from Obs obs
+rag.name as rag_age_group from obs obs
   inner join concept c on obs.concept_id = c.concept_id
   inner join concept_name cn on cn.concept_id = c.concept_id and cn.concept_name_type = 'FULLY_SPECIFIED' and cn.name in (%s)
   inner join concept_datatype cd on c.datatype_id = cd.concept_datatype_id and cd.name = 'Boolean'
