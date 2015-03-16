@@ -26,11 +26,11 @@ public class DiagnosisCount implements BaseReportTemplate<DiagnosisReportConfig>
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
         if (StringUtils.isNotBlank(reportConfig.getConfig().getAgeGroupName())){
-            return diagnosisCountByAgeGroup.build(connection, reportConfig, startDate, endDate, resources);
+            return diagnosisCountByAgeGroup.build(connection, jasperReport, reportConfig, startDate, endDate, resources);
         }
-        return diagnosisCountWithoutAgeGroup.build(connection, reportConfig, startDate, endDate, resources);
+        return diagnosisCountWithoutAgeGroup.build(connection, jasperReport, reportConfig, startDate, endDate, resources);
 
     }
 }

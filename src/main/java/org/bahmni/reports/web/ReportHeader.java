@@ -9,7 +9,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 public class ReportHeader {
 
     public JasperReportBuilder add(JasperReportBuilder jasperReportBuilder, String reportName, String startDate, String endDate) {
-        jasperReportBuilder.title(cmp.horizontalList()
+        jasperReportBuilder.addTitle(cmp.horizontalList()
                         .add(cmp.text(reportName)
                                 .setStyle(Templates.bold18CenteredStyle)
                                 .setHorizontalAlignment(HorizontalAlignment.CENTER))

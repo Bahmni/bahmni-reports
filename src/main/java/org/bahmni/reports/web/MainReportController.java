@@ -22,6 +22,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static net.sf.dynamicreports.report.builder.DynamicReports.report;
+
 
 @Controller
 public class MainReportController {
@@ -58,12 +60,13 @@ public class MainReportController {
             BaseReportTemplate reportTemplate = reportTemplates.get(report.getType());
             connection = allDatasources.dataSourceFor(reportTemplate).getConnection();
 
-            JasperReportBuilder reportBuilder = reportTemplate.build(connection, report, startDate, endDate, resources);
-            reportBuilder = new ReportHeader().add(reportBuilder, reportName, startDate, endDate);
+            JasperReportBuilder jasperReport = report();
+            jasperReport = new ReportHeader().add(jasperReport, reportName, startDate, endDate);
+            JasperReportBuilder reportBuilder = reportTemplate.build(connection, jasperReport, report, startDate, endDate, resources);
             convertToResponse(responseType, reportBuilder, response, reportName);
 
             resources.add(connection);
-        } catch (SQLException | IOException | DRException e) {
+        } catch (Throwable e) {
             logger.error("Error running report", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         } finally {

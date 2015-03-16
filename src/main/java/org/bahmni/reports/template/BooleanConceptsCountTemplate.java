@@ -8,6 +8,7 @@ import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
+import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.exception.DRException;
@@ -20,8 +21,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
-import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
@@ -29,7 +30,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class BooleanConceptsCountTemplate  implements BaseReportTemplate<CodedObsCountConfig> {
     @Override
-    public JasperReportBuilder build(Connection connection, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
         CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup("concept_name", String.class)
                 .setShowTotal(false);
         CrosstabRowGroupBuilder<String> booleanValueRowGroup = ctab.rowGroup("value_boolean", String.class)
@@ -57,14 +58,21 @@ public class BooleanConceptsCountTemplate  implements BaseReportTemplate<CodedOb
         String conceptNames = reportConfig.getConfig().getConceptNames();
         String formattedSql  = String.format(sql,ageGroupName, conceptNames, conceptNames, ageGroupName, startDate, endDate);
 
-        JasperReportBuilder report = report();
-        report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
+        jasperReport.addTitle(cmp.horizontalList()
+                        .add(cmp.text("Count of [ " + conceptNames + " ]")
+                                .setStyle(Templates.boldStyle)
+                                .setHorizontalAlignment(HorizontalAlignment.LEFT))
+                        .newRow()
+                        .add(cmp.verticalGap(10))
+        );
+
+        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
                 .setColumnStyle(textStyle)
                 .setTemplate(Templates.reportTemplate)
                 .setReportName(reportConfig.getName())
                 .summary(crosstab)
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(formattedSql, connection);
-        return report;
+        return jasperReport;
     }
 }

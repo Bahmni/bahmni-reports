@@ -1,13 +1,13 @@
 package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.builder.DynamicReports;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabColumnGroupBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
+import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.exception.DRException;
@@ -20,14 +20,16 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.*;
+import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
+import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
+import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "CodedObsByCodedObs")
 @UsingDatasource("openmrs")
 public class CodedObsByObsReportTemplate implements BaseReportTemplate<CodedObsByCodedObsReportConfig> {
     @Override
-    public JasperReportBuilder build(Connection connection, Report<CodedObsByCodedObsReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsByCodedObsReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
         String sql = getFileContent("sql/codedObsByCodedObs.sql");
 
         CodedObsByCodedObsReportConfig reportSpecificConfig = reportConfig.getConfig();
@@ -40,7 +42,6 @@ public class CodedObsByObsReportTemplate implements BaseReportTemplate<CodedObsB
                     .setShowTotal(false);
         }
 
-
         List<String> rowsGroupBy = reportSpecificConfig.getRowsGroupBy();
         CrosstabRowGroupBuilder<String>[] rowGroups = new CrosstabRowGroupBuilder[rowsGroupBy.size()];
         for (int i = 0; i < reportSpecificConfig.getRowsGroupBy().size(); i++) {
@@ -50,7 +51,6 @@ public class CodedObsByObsReportTemplate implements BaseReportTemplate<CodedObsB
         }
 
         CrosstabBuilder crosstab = ctab.crosstab()
-                .headerCell(DynamicReports.cmp.text("Age Group / Outcome"))
                 .rowGroups(rowGroups)
                 .columnGroups(columnGroups)
                 .measures(
@@ -59,9 +59,17 @@ public class CodedObsByObsReportTemplate implements BaseReportTemplate<CodedObsB
                 .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()));
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
-        JasperReportBuilder report = report();
+        StringBuilder subHeader = new StringBuilder();
+        subHeader.append(reportSpecificConfig.getRowsGroupBy().get(0)).append(" vs ").append(reportSpecificConfig.getColumnsGroupBy().get(0));
+        jasperReport.addTitle(cmp.horizontalList()
+                        .add(cmp.text(subHeader.toString())
+                                .setStyle(Templates.boldStyle)
+                                .setHorizontalAlignment(HorizontalAlignment.LEFT))
+                        .newRow()
+                        .add(cmp.verticalGap(10))
+        );
 
-        report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
+        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
                 .setColumnStyle(textStyle)
                 .setTemplate(Templates.reportTemplate)
                 .setReportName(reportConfig.getName())
@@ -78,6 +86,6 @@ public class CodedObsByObsReportTemplate implements BaseReportTemplate<CodedObsB
                         startDate,
                         endDate
                 ), connection);
-        return report;
+        return jasperReport;
     }
 }

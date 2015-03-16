@@ -26,7 +26,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class TestCountTemplate implements BaseReportTemplate<Config> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, Report<Config> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 
@@ -51,8 +51,7 @@ public class TestCountTemplate implements BaseReportTemplate<Config> {
 
         String sql = getFileContent("sql/testCount.sql");
 
-        JasperReportBuilder report = report();
-        report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
+        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
                 .setTemplate(Templates.reportTemplate)
                 .setShowColumnTitle(false)
                 .columns(departmentColumn, testColumn, totalCountColumn, positiveCountColumn, negativeCountColumn)
@@ -61,6 +60,6 @@ public class TestCountTemplate implements BaseReportTemplate<Config> {
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, startDate, endDate),
                         connection);
-        return report;
+        return jasperReport;
     }
 }

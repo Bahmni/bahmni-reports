@@ -26,7 +26,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @Component
 @UsingDatasource("openmrs")
 public class DiagnosisCountByAgeGroup{
-    public JasperReportBuilder build(Connection connection, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
         StyleBuilder cellStyle = Templates.columnStyle.setBorder(Styles.pen());
 
@@ -52,8 +52,7 @@ public class DiagnosisCountByAgeGroup{
 
         String sql = getFileContent("sql/diagnosisCountByAgeGroup.sql");
 
-        JasperReportBuilder report = report();
-        report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
+        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
                 .setColumnStyle(textStyle)
                 .setTemplate(Templates.reportTemplate)
                 .setReportName(reportConfig.getName())
@@ -61,6 +60,6 @@ public class DiagnosisCountByAgeGroup{
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, reportConfig.getConfig().getAgeGroupName(), startDate, endDate,
                         reportConfig.getConfig().getVisitTypes()), connection);
-        return report;
+        return jasperReport;
     }
 }

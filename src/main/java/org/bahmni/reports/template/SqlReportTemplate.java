@@ -16,16 +16,14 @@ import java.sql.Statement;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
-import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 public class SqlReportTemplate  implements BaseReportTemplate<SqlReportConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, Report<SqlReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
-        JasperReportBuilder report = report();
-        report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<SqlReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
                 .setTemplate(Templates.reportTemplate)
                 .setReportName(reportConfig.getName())
                 .pageFooter(Templates.footerComponent);
@@ -36,12 +34,12 @@ public class SqlReportTemplate  implements BaseReportTemplate<SqlReportConfig> {
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
         for(int i = 1; i <= columnCount; i++) {
-            report.addColumn(col.column(metaData.getColumnLabel(i), metaData.getColumnName(i), type.stringType()));
+            jasperReport.addColumn(col.column(metaData.getColumnLabel(i), metaData.getColumnName(i), type.stringType()));
         }
 
-        report.setDataSource(resultSet);
+        jasperReport.setDataSource(resultSet);
         resources.add(statement);
-        return report;
+        return jasperReport;
     }
 
     private String getSqlString(Report<SqlReportConfig> reportConfig, String startDate, String endDate) {

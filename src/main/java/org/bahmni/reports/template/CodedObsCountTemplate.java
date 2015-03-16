@@ -1,13 +1,13 @@
 package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.builder.DynamicReports;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabColumnGroupBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
+import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.OrderType;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
@@ -20,7 +20,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.*;
+import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
+import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
+import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "CodedObsCount")
@@ -28,7 +30,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException {
         CrosstabRowGroupBuilder<String> ageRowGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);
 
@@ -44,7 +46,6 @@ public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountCo
                 .setShowTotal(false);
 
         CrosstabBuilder crosstab = ctab.crosstab()
-                .headerCell(DynamicReports.cmp.text("Age Group / Outcome"))
                 .rowGroups(sortOrderGroup, ageRowGroup)
                 .columnGroups(columnGroupQuestions, columnGroupAnswers)
                 .measures(
@@ -56,6 +57,7 @@ public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountCo
                 .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()));
         String visitTypes = reportConfig.getConfig().getVisitTypes();
         String visitFilterTemplate = "on visit_type.type in (%s)";
+
 
         CrosstabRowGroupBuilder<String> visitRowGroup = ctab.rowGroup("visit", String.class)
                 .setShowTotal(false);
@@ -73,8 +75,15 @@ public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountCo
         String ageGroupName = reportConfig.getConfig().getAgeGroupName();
         String conceptNames = reportConfig.getConfig().getConceptNames();
 
-        JasperReportBuilder report = report();
-        report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
+        jasperReport.addTitle(cmp.horizontalList()
+                        .add(cmp.text("Count of [ " + conceptNames + " ]")
+                                .setStyle(Templates.boldStyle)
+                                .setHorizontalAlignment(HorizontalAlignment.LEFT))
+                        .newRow()
+                        .add(cmp.verticalGap(10))
+        );
+
+        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
                 .setColumnStyle(textStyle)
                 .setTemplate(Templates.reportTemplate)
                 .setReportName(reportConfig.getName())
@@ -82,6 +91,6 @@ public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountCo
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, conceptNames, visitFilterTemplate, ageGroupName, startDate, endDate),
                         connection);
-        return report;
+        return jasperReport;
     }
 }
