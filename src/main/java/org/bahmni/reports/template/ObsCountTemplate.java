@@ -70,7 +70,8 @@ public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig>
 
         String ageGroupName = reportConfig.getConfig().getAgeGroupName();
         String conceptNames = reportConfig.getConfig().getConceptNames();
-        String formattedSql  = String.format(sql, ageGroupName, startDate, endDate, conceptNames,visitType);
+        String formattedSql  = String.format(sql, ageGroupName,conceptNames, conceptNames,startDate, endDate,visitType);
+
 
         JasperReportBuilder report = report();
         report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
@@ -80,6 +81,7 @@ public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig>
                 .summary(crosstab)
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(formattedSql, connection);
+
         return report;
     }
 }
