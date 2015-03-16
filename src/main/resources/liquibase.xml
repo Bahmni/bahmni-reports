@@ -242,10 +242,4 @@
             END
         </createProcedure>
     </changeSet>
-    <changeSet author="Divya, Hemanth" id="Reports-120320151706" runAlways="true">
-        <comment>run setVisitStatusAttribute procedure</comment>
-        <sql>
-            call setVisitStatusAttribute();
-        </sql>
-    </changeSet>
 </databaseChangeLog>
