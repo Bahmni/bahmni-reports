@@ -55,7 +55,7 @@ public class BooleanConceptsCountTemplate  implements BaseReportTemplate<CodedOb
 
         String ageGroupName = reportConfig.getConfig().getAgeGroupName();
         String conceptNames = reportConfig.getConfig().getConceptNames();
-        String formattedSql  = String.format(sql,startDate, endDate, conceptNames, ageGroupName);
+        String formattedSql  = String.format(sql,ageGroupName, conceptNames, conceptNames, ageGroupName, startDate, endDate);
 
         JasperReportBuilder report = report();
         report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
