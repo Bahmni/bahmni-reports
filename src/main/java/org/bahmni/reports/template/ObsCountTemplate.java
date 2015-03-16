@@ -70,7 +70,7 @@ public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig>
 
         String ageGroupName = reportConfig.getConfig().getAgeGroupName();
         String conceptNames = reportConfig.getConfig().getConceptNames();
-        String formattedSql  = String.format(sql, ageGroupName,conceptNames, conceptNames,startDate, endDate,visitType);
+        String formattedSql  = String.format(sql, ageGroupName,conceptNames,ageGroupName, conceptNames,startDate, endDate,visitType);
 
 
         JasperReportBuilder report = report();
