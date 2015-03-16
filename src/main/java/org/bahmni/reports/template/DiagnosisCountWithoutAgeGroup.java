@@ -30,8 +30,8 @@ public class DiagnosisCountWithoutAgeGroup{
     public JasperReportBuilder build(Connection connection, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException {
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
-        TextColumnBuilder<String> icd10Code = col.column("ICD Code", "icd10_code", type.stringType());
         TextColumnBuilder<String> disease = col.column("Name of Disease", "disease", type.stringType());
+        TextColumnBuilder<String> icd10Code = col.column("ICD Code", "icd10_code", type.stringType());
         TextColumnBuilder<String> female = col.column("Female", "female", type.stringType());
         TextColumnBuilder<String> male = col.column("Male", "male", type.stringType());
         TextColumnBuilder<String> other = col.column("Other", "other", type.stringType());
@@ -44,7 +44,7 @@ public class DiagnosisCountWithoutAgeGroup{
                 .setTemplate(Templates.reportTemplate)
                 .setReportName(reportConfig.getName())
                 .pageFooter(Templates.footerComponent)
-                .columns(icd10Code, disease, female, male, other)
+                .columns(disease, icd10Code, female, male, other)
                 .setDataSource(String.format(sql, startDate, endDate, reportConfig.getConfig().getVisitTypes()),
                         connection);
         return report;

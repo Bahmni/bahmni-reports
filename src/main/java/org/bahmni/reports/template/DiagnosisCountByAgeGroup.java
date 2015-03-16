@@ -39,9 +39,9 @@ public class DiagnosisCountByAgeGroup{
                 .setShowTotal(false);
 
         CrosstabBuilder crossTab = ctab.crosstab()
-                .headerCell(DynamicReports.cmp.horizontalList(DynamicReports.cmp.text("ICD Code").setStyle(Templates.columnTitleStyle),
-                        DynamicReports.cmp.text("Disease Name").setStyle(Templates.columnTitleStyle)))
-                .rowGroups(icd10RowGroup, diseaseNameRowGroup)
+                .headerCell(DynamicReports.cmp.horizontalList(DynamicReports.cmp.text("Disease Name").setStyle(Templates.columnTitleStyle),
+                        DynamicReports.cmp.text("ICD Code").setStyle(Templates.columnTitleStyle)))
+                .rowGroups(diseaseNameRowGroup, icd10RowGroup)
                 .columnGroups(ageColumnGroup)
                 .measures(
                         ctab.measure("Female", "female", Integer.class, Calculation.NOTHING).setStyle(textStyle),
