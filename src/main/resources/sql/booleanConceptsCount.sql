@@ -7,6 +7,7 @@ from coded_obs_view cov
                                and cast(cov.obs_datetime AS DATE) BETWEEN '%s' AND '%s'
                                and cov.value_concept_full_name in ("True", "False")
                                and cov.concept_full_name in (%s)
-   Right outer JOIN reporting_age_group rag ON rag.report_group_name = '%s' AND
+   Right outer JOIN reporting_age_group rag ON
                                         cov.obs_datetime BETWEEN (DATE_ADD(DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY))
-                                        AND (DATE_ADD(DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY));
+                                        AND (DATE_ADD(DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
+where rag.report_group_name = '%s';
