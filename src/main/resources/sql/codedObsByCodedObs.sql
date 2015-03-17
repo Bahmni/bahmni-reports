@@ -9,7 +9,7 @@ SELECT
 FROM
   (SELECT
      ca.answer_concept                                                                AS answer,
-     ifnull(answer_concept_fully_specified_name.name, answer_concept_short_name.name) AS answer_name
+     ifnull(answer_concept_short_name.name, answer_concept_fully_specified_name.name) AS answer_name
    FROM concept c
      INNER JOIN concept_datatype cd ON c.datatype_id = cd.concept_datatype_id
      INNER JOIN concept_name question_concept_name ON c.concept_id = question_concept_name.concept_id
@@ -43,7 +43,7 @@ FROM
   INNER JOIN
   (SELECT
      ca.answer_concept                                                                AS answer,
-     ifnull(answer_concept_fully_specified_name.name, answer_concept_short_name.name) AS answer_name
+     ifnull(answer_concept_short_name.name, answer_concept_fully_specified_name.name) AS answer_name
    FROM concept c
      INNER JOIN concept_datatype cd ON c.datatype_id = cd.concept_datatype_id
      INNER JOIN concept_name question_concept_name ON c.concept_id = question_concept_name.concept_id
