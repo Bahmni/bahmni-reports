@@ -166,6 +166,7 @@
             CREATE PROCEDURE setVisitStatusAttribute()
             BEGIN
             DECLARE visit_id, visit_attribute_type_id INT;
+            DECLARE v_counter INT DEFAULT 0;
             DECLARE visit_type VARCHAR(40);
             DECLARE visit_status VARCHAR(40);
             DECLARE done INT DEFAULT FALSE;
@@ -194,7 +195,8 @@
             e.visit_id,
             et.name
             FROM encounter e JOIN encounter_type et
-            ON e.encounter_type = et.encounter_type_id AND et.name = 'DISCHARGE') AS discharge_encounter
+            ON e.encounter_type = et.encounter_type_id AND et.name = 'DISCHARGE' AND
+            e.voided = FALSE) AS discharge_encounter
             ON visit_details.visit_id = discharge_encounter.visit_id);
 
             DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
@@ -216,8 +218,7 @@
             WHERE v.name = 'VisitStatus';
             END IF;
 
-            DELETE FROM visit_attribute
-            WHERE attribute_type_id = visit_attribute_type_id;
+            TRUNCATE TABLE visit_attribute;
 
             OPEN visit_details;
 
@@ -229,14 +230,29 @@
             THEN
             LEAVE read_loop;
             END IF;
+
             IF visit_status = 'Admitted' || visit_status = 'Discharged'
             THEN
             SET visit_type = visit_status;
             END IF;
+
+            IF v_counter = 0
+            THEN
+            START TRANSACTION;
+            END IF;
+
             INSERT INTO visit_attribute (visit_id, attribute_type_id, value_reference, uuid, creator, date_created)
             VALUES (visit_id, visit_attribute_type_id, visit_type, uuid(), 1, now());
-            END LOOP;
+            SET v_counter = v_counter + 1;
 
+            IF v_counter = 1000
+            THEN
+            COMMIT;
+            SET v_counter = 0;
+            END IF;
+
+            END LOOP;
+            COMMIT;
             CLOSE visit_details;
 
             END
