@@ -15,6 +15,7 @@ import org.bahmni.reports.model.CodedObsByCodedObsReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
+import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -30,7 +31,6 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class CodedObsByObsReportTemplate implements BaseReportTemplate<CodedObsByCodedObsReportConfig> {
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsByCodedObsReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
-        String sql = getFileContent("sql/codedObsByCodedObs.sql");
 
         CodedObsByCodedObsReportConfig reportSpecificConfig = reportConfig.getConfig();
 
@@ -75,17 +75,19 @@ public class CodedObsByObsReportTemplate implements BaseReportTemplate<CodedObsB
                 .setReportName(reportConfig.getName())
                 .summary(crosstab)
                 .pageFooter(Templates.footerComponent)
-                .setDataSource(String.format(sql,
-                        reportSpecificConfig.firstConcept(),
-                        reportSpecificConfig.secondConcept(),
-                        reportSpecificConfig.getAgeGroupName(),
-                        reportSpecificConfig.firstConcept(),
-                        startDate,
-                        endDate,
-                        reportSpecificConfig.secondConcept(),
-                        startDate,
-                        endDate
-                ), connection);
+                .setDataSource(getSqlString(reportSpecificConfig,startDate, endDate), connection);
         return jasperReport;
     }
+
+    private String getSqlString(CodedObsByCodedObsReportConfig reportConfig, String startDate, String endDate) {
+        String sql = getFileContent("sql/codedObsByCodedObs.sql");
+        ST sqlTemplate = new ST(sql, '#', '#');
+        sqlTemplate.add("startDate", startDate);
+        sqlTemplate.add("endDate", endDate);
+        sqlTemplate.add("firstConcept", reportConfig.firstConcept());
+        sqlTemplate.add("secondConcept", reportConfig.secondConcept());
+        sqlTemplate.add("reportGroupName", reportConfig.getAgeGroupName());
+        return sqlTemplate.render();
+    }
+
 }

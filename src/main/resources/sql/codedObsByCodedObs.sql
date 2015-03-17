@@ -8,30 +8,75 @@ SELECT
       ELSE 0 END) as patient_count
 FROM
   (SELECT
-     answer_concept AS answer,
-     IFNULL(cn3.name, cn2.name)       AS answer_name
-   FROM concept_answer ca1
-     INNER JOIN concept_name cn1 ON ca1.concept_id = cn1.concept_id AND cn1.name = '%s' AND
-                                    cn1.voided IS FALSE AND cn1.concept_name_type = 'FULLY_SPECIFIED'
-     INNER JOIN concept_name cn2 ON ca1.answer_concept = cn2.concept_id AND
-                                    cn2.voided IS FALSE AND cn2.concept_name_type = 'FULLY_SPECIFIED'
-     LEFT JOIN concept_name cn3 ON ca1.answer_concept = cn3.concept_id AND
-                                   cn3.voided IS FALSE AND cn3.concept_name_type = 'SHORT'
-  ) first_answers
+     ca.answer_concept                                                                AS answer,
+     ifnull(answer_concept_fully_specified_name.name, answer_concept_short_name.name) AS answer_name
+   FROM concept c
+     INNER JOIN concept_datatype cd ON c.datatype_id = cd.concept_datatype_id
+     INNER JOIN concept_name question_concept_name ON c.concept_id = question_concept_name.concept_id
+                                                      AND question_concept_name.concept_name_type = 'FULLY_SPECIFIED' AND
+                                                      question_concept_name.voided IS FALSE
+     INNER JOIN concept_answer ca ON c.concept_id = ca.concept_id
+     INNER JOIN concept_name answer_concept_fully_specified_name
+       ON ca.answer_concept = answer_concept_fully_specified_name.concept_id
+          AND answer_concept_fully_specified_name.concept_name_type = 'FULLY_SPECIFIED' AND
+          answer_concept_fully_specified_name.voided IS FALSE
+     LEFT JOIN concept_name answer_concept_short_name ON ca.answer_concept = answer_concept_short_name.concept_id
+                                                         AND answer_concept_short_name.concept_name_type = 'SHORT' AND
+                                                         answer_concept_short_name.voided IS FALSE
+   WHERE question_concept_name.name = '#firstConcept#' AND cd.name = 'Coded'
+   UNION
+   SELECT
+     answer_concept_fully_specified_name.concept_id                                                                AS answer,
+     answer_concept_fully_specified_name.name AS answer_name
+   FROM concept c
+     INNER JOIN concept_datatype cd ON c.datatype_id = cd.concept_datatype_id
+     INNER JOIN concept_name question_concept_name ON c.concept_id = question_concept_name.concept_id
+                                                      AND question_concept_name.concept_name_type = 'FULLY_SPECIFIED' AND
+                                                      question_concept_name.voided IS FALSE
+     INNER JOIN global_property gp ON gp.property in ('concept.true', 'concept.false')
+     INNER JOIN concept_name answer_concept_fully_specified_name
+       ON answer_concept_fully_specified_name.concept_id = gp.property_value
+          AND answer_concept_fully_specified_name.concept_name_type = 'FULLY_SPECIFIED' AND
+          answer_concept_fully_specified_name.voided IS FALSE
+   WHERE question_concept_name.name = '#firstConcept#' AND cd.name = 'Boolean'
+   ORDER BY answer_name DESC) first_answers
   INNER JOIN
   (SELECT
-     answer_concept AS answer,
-     IFNULL(cn3.name, cn2.name)       AS answer_name
-   FROM concept_answer ca1
-     INNER JOIN concept_name cn1 ON ca1.concept_id = cn1.concept_id AND cn1.name = '%s' AND
-                                    cn1.voided IS FALSE AND cn1.concept_name_type = 'FULLY_SPECIFIED'
-     INNER JOIN concept_name cn2 ON ca1.answer_concept = cn2.concept_id AND
-                                    cn2.voided IS FALSE AND cn2.concept_name_type = 'FULLY_SPECIFIED'
-     LEFT JOIN concept_name cn3 ON ca1.answer_concept = cn3.concept_id AND
-                                   cn3.voided IS FALSE AND cn3.concept_name_type = 'SHORT'
+     ca.answer_concept                                                                AS answer,
+     ifnull(answer_concept_fully_specified_name.name, answer_concept_short_name.name) AS answer_name
+   FROM concept c
+     INNER JOIN concept_datatype cd ON c.datatype_id = cd.concept_datatype_id
+     INNER JOIN concept_name question_concept_name ON c.concept_id = question_concept_name.concept_id
+                                                      AND question_concept_name.concept_name_type = 'FULLY_SPECIFIED' AND
+                                                      question_concept_name.voided IS FALSE
+     INNER JOIN concept_answer ca ON c.concept_id = ca.concept_id
+     INNER JOIN concept_name answer_concept_fully_specified_name
+       ON ca.answer_concept = answer_concept_fully_specified_name.concept_id
+          AND answer_concept_fully_specified_name.concept_name_type = 'FULLY_SPECIFIED' AND
+          answer_concept_fully_specified_name.voided IS FALSE
+     LEFT JOIN concept_name answer_concept_short_name ON ca.answer_concept = answer_concept_short_name.concept_id
+                                                         AND answer_concept_short_name.concept_name_type = 'SHORT' AND
+                                                         answer_concept_short_name.voided IS FALSE
+   WHERE question_concept_name.name = '#secondConcept#' AND cd.name = 'Coded'
+   UNION
+   SELECT
+     answer_concept_fully_specified_name.concept_id                                                                AS answer,
+     answer_concept_fully_specified_name.name AS answer_name
+   FROM concept c
+     INNER JOIN concept_datatype cd ON c.datatype_id = cd.concept_datatype_id
+     INNER JOIN concept_name question_concept_name ON c.concept_id = question_concept_name.concept_id
+                                                      AND question_concept_name.concept_name_type = 'FULLY_SPECIFIED' AND
+                                                      question_concept_name.voided IS FALSE
+     INNER JOIN global_property gp ON gp.property in ('concept.true', 'concept.false')
+     INNER JOIN concept_name answer_concept_fully_specified_name
+       ON answer_concept_fully_specified_name.concept_id = gp.property_value
+          AND answer_concept_fully_specified_name.concept_name_type = 'FULLY_SPECIFIED' AND
+          answer_concept_fully_specified_name.voided IS FALSE
+   WHERE question_concept_name.name = '#secondConcept#' AND cd.name = 'Boolean'
+   ORDER BY answer_name DESC
   ) second_answers
   INNER JOIN (SELECT 'M' AS gender UNION SELECT 'F' AS gender) gender
-  INNER JOIN reporting_age_group rag ON rag.report_group_name = '%s'
+  INNER JOIN reporting_age_group rag ON rag.report_group_name = '#reportGroupName#'
   LEFT OUTER JOIN (
                     SELECT DISTINCT
                       o1.person_id,
@@ -42,7 +87,7 @@ FROM
                     FROM obs o1
                       INNER JOIN concept_name cn1
                         ON o1.concept_id = cn1.concept_id AND
-                           cn1.concept_name_type = 'FULLY_SPECIFIED' AND cn1.name = '%s'
+                           cn1.concept_name_type = 'FULLY_SPECIFIED' AND cn1.name = '#firstConcept#'
                            AND o1.voided = 0 AND cn1.voided = 0
                       INNER JOIN concept_name cn2
                         ON o1.value_coded = cn2.concept_id
@@ -50,7 +95,7 @@ FROM
                            AND cn2.voided = 0
                       INNER JOIN encounter e1
                         ON o1.encounter_id = e1.encounter_id
-                    WHERE o1.obs_datetime BETWEEN '%s' AND '%s'
+                    WHERE o1.obs_datetime BETWEEN '#startDate#' AND '#endDate#'
                     GROUP BY o1.person_id, cn2.concept_id, cn1.concept_id, e1.visit_id
                   ) first_concept
     ON first_concept.answer = first_answers.answer
@@ -63,7 +108,7 @@ FROM
                       INNER JOIN concept_name cn1
                         ON o1.concept_id = cn1.concept_id AND
                            cn1.concept_name_type = 'FULLY_SPECIFIED'
-                           AND cn1.name = '%s'
+                           AND cn1.name = '#secondConcept#'
                            AND o1.voided = 0 AND cn1.voided = 0
                       INNER JOIN concept_name cn2
                         ON o1.value_coded = cn2.concept_id
@@ -71,7 +116,7 @@ FROM
                            AND cn2.voided = 0
                       INNER JOIN encounter e1
                         ON o1.encounter_id = e1.encounter_id
-                    WHERE o1.obs_datetime BETWEEN '%s' AND '%s'
+                    WHERE o1.obs_datetime BETWEEN '#startDate#' AND '#endDate#'
                   ) second_concept
     ON second_concept.answer = second_answers.answer
        AND first_concept.person_id = second_concept.person_id

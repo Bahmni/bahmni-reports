@@ -17,6 +17,7 @@ import org.bahmni.reports.model.CodedObsCountConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
+import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -57,24 +58,17 @@ public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountCo
                         ctab.measure("", "total_count", Integer.class, Calculation.SUM)
                 )
                 .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()));
-        String visitTypes = reportConfig.getConfig().getVisitTypes();
-        String visitFilterTemplate = "on visit_type.type in (%s)";
-
 
         CrosstabRowGroupBuilder<String> visitRowGroup = ctab.rowGroup("visit", String.class)
                 .setShowTotal(false);
+        String visitTypes = reportConfig.getConfig().getVisitTypes();
         if (visitTypes != null) {
             crosstab.addRowGroup(visitRowGroup);
-            visitFilterTemplate = String.format(visitFilterTemplate, visitTypes);
-        }else{
-            visitFilterTemplate = "";
         }
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
-        String sql = getFileContent("sql/codedObsCount.sql");
 
-        String ageGroupName = reportConfig.getConfig().getAgeGroupName();
         String conceptNames = reportConfig.getConfig().getConceptNames();
 
         jasperReport.addTitle(cmp.horizontalList()
@@ -91,8 +85,31 @@ public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountCo
                 .setReportName(reportConfig.getName())
                 .summary(crosstab)
                 .pageFooter(Templates.footerComponent)
-                .setDataSource(String.format(sql, conceptNames, visitFilterTemplate, ageGroupName, startDate, endDate),
+                .setDataSource(getSqlString(reportConfig.getConfig(), startDate, endDate),
                         connection);
         return jasperReport;
     }
+
+    private String getSqlString(CodedObsCountConfig reportConfig, String startDate, String endDate) {
+        String sql = getFileContent("sql/codedObsCount.sql");
+
+        String visitTypes = reportConfig.getVisitTypes();
+        String visitFilterTemplate = "on visit_type.type in (%s)";
+
+        if (visitTypes != null) {
+            visitFilterTemplate = String.format(visitFilterTemplate, visitTypes);
+        } else {
+            visitFilterTemplate = "";
+        }
+
+
+        ST sqlTemplate = new ST(sql, '#', '#');
+        sqlTemplate.add("startDate", startDate);
+        sqlTemplate.add("endDate", endDate);
+        sqlTemplate.add("conceptNames", reportConfig.getConceptNames());
+        sqlTemplate.add("reportGroupName", reportConfig.getAgeGroupName());
+        sqlTemplate.add("visitFilter", visitFilterTemplate);
+        return sqlTemplate.render();
+    }
+
 }
