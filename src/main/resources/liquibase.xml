@@ -155,7 +155,7 @@
             concept_reference_term_map_view.code as icd10_code
             FROM concept_view
             LEFT OUTER JOIN concept_reference_term_map_view ON concept_reference_term_map_view.concept_id = concept_view.concept_id
-            AND concept_reference_term_map_view.concept_reference_source_name = 'ICD 10 - WHO'
+            AND concept_reference_term_map_view.concept_reference_source_name = 'ICD-10-WHO'
             AND concept_reference_term_map_view.concept_map_type_name = 'SAME-AS' WHERE concept_class_name = 'Diagnosis';
         </createView>
     </changeSet>

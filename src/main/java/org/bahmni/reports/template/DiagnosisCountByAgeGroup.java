@@ -8,6 +8,7 @@ import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
+import net.sf.dynamicreports.report.constant.OrderType;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.exception.DRException;
@@ -37,12 +38,14 @@ public class DiagnosisCountByAgeGroup{
 
         CrosstabColumnGroupBuilder<String> ageColumnGroup = ctab.columnGroup("age_group", String.class).setTotalHeaderWidth(95)
                 .setShowTotal(false);
+        CrosstabColumnGroupBuilder<Integer> ageSortOrderColumnGroup = ctab.columnGroup("age_group_sort_order", Integer.class)
+                .setShowTotal(false).setOrderType(OrderType.ASCENDING);
 
         CrosstabBuilder crossTab = ctab.crosstab()
                 .headerCell(DynamicReports.cmp.horizontalList(DynamicReports.cmp.text("Disease Name").setStyle(Templates.columnTitleStyle).setWidth(120),
                         DynamicReports.cmp.text("ICD Code").setStyle(Templates.columnTitleStyle).setWidth(60)))
                 .rowGroups(diseaseNameRowGroup, icd10RowGroup)
-                .columnGroups(ageColumnGroup)
+                .columnGroups(ageSortOrderColumnGroup, ageColumnGroup)
                 .measures(
                         ctab.measure("F", "female", Integer.class, Calculation.NOTHING).setStyle(textStyle),
                         ctab.measure("M", "male", Integer.class, Calculation.NOTHING).setStyle(textStyle),

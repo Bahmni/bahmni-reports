@@ -5,7 +5,9 @@ SELECT
   observed_age_group.name                  AS age_group,
   SUM(IF(person.gender = 'F', 1, 0))       AS female,
   SUM(IF(person.gender = 'M', 1, 0))       AS male,
-  SUM(IF(person.gender = 'O', 1, 0))       AS other
+  SUM(IF(person.gender = 'O', 1, 0))       AS other,
+  diagnosis_concept_view.icd10_code        AS "ICD Code",
+  observed_age_group.sort_order            AS age_group_sort_order
 FROM diagnosis_concept_view
   JOIN reporting_age_group AS observed_age_group ON observed_age_group.report_group_name = '%s'
   LEFT OUTER JOIN (SELECT
