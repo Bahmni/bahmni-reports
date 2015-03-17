@@ -95,7 +95,7 @@ FROM
                            AND cn2.voided = 0
                       INNER JOIN encounter e1
                         ON o1.encounter_id = e1.encounter_id
-                    WHERE o1.obs_datetime BETWEEN '#startDate#' AND '#endDate#'
+                    WHERE cast(o1.obs_datetime as date) BETWEEN '#startDate#' AND '#endDate#'
                     GROUP BY o1.person_id, cn2.concept_id, cn1.concept_id, e1.visit_id
                   ) first_concept
     ON first_concept.answer = first_answers.answer
@@ -116,7 +116,7 @@ FROM
                            AND cn2.voided = 0
                       INNER JOIN encounter e1
                         ON o1.encounter_id = e1.encounter_id
-                    WHERE o1.obs_datetime BETWEEN '#startDate#' AND '#endDate#'
+                    WHERE cast(o1.obs_datetime as date) BETWEEN '#startDate#' AND '#endDate#'
                   ) second_concept
     ON second_concept.answer = second_answers.answer
        AND first_concept.person_id = second_concept.person_id
