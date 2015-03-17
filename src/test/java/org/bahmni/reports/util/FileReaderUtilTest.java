@@ -14,11 +14,11 @@ public class FileReaderUtilTest {
 
     @Test
     public void shouldReadFileContent() {
-        String content = FileReaderUtil.getFileContent("sql/codedObsCount.sql");
-        assertTrue(content.contains("SELECT DISTINCT"));
+        String content = FileReaderUtil.getFileContent("sql/sampleSqlFile.sql");
+        assertTrue(content.contains("This is a sample sql file"));
 
-        content = FileReaderUtil.getFileContent("sql/codedObsCount.sql", false);
-        assertTrue(content.contains("SELECT DISTINCT"));
+        content = FileReaderUtil.getFileContent("sql/sampleSqlFile.sql", false);
+        assertTrue(content.contains("This is a sample sql file"));
     }
 
     @Test
