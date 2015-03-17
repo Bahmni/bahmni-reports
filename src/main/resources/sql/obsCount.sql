@@ -33,7 +33,7 @@ from
      INNER JOIN visit v on v.visit_id = e.visit_id
      INNER JOIN visit_attribute va on va.visit_id = v.visit_id
      INNER JOIN person p on p.person_id = obs.person_id
-     inner join reporting_age_group rag ON obs_datetime BETWEEN (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
+     inner join reporting_age_group rag ON DATE(obs_datetime) BETWEEN (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
       and rag.report_group_name='%s'
    where cn.name in (%s) and cast(obs.obs_datetime AS DATE) BETWEEN '%s' AND '%s' %s
    GROUP BY v.visit_id,cn.name) final on final.age_group = base.age_group and final.concept_id = base.concept_id and final.value_reference = base.value_reference
