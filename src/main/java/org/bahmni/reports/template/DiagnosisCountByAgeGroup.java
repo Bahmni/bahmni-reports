@@ -30,25 +30,25 @@ public class DiagnosisCountByAgeGroup{
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
         StyleBuilder cellStyle = Templates.columnStyle.setBorder(Styles.pen());
 
-        CrosstabRowGroupBuilder<String> diseaseNameRowGroup = ctab.rowGroup("disease", String.class).setHeaderStyle(textStyle)
+        CrosstabRowGroupBuilder<String> diseaseNameRowGroup = ctab.rowGroup("disease", String.class).setHeaderStyle(textStyle).setHeaderWidth(120)
                 .setShowTotal(false);
-        CrosstabRowGroupBuilder<String> icd10RowGroup = ctab.rowGroup("icd10_code", String.class).setHeaderStyle(textStyle)
+        CrosstabRowGroupBuilder<String> icd10RowGroup = ctab.rowGroup("icd10_code", String.class).setHeaderStyle(textStyle).setHeaderWidth(60)
                 .setShowTotal(false);
 
-        CrosstabColumnGroupBuilder<String> ageColumnGroup = ctab.columnGroup("age_group", String.class)
+        CrosstabColumnGroupBuilder<String> ageColumnGroup = ctab.columnGroup("age_group", String.class).setTotalHeaderWidth(95)
                 .setShowTotal(false);
 
         CrosstabBuilder crossTab = ctab.crosstab()
-                .headerCell(DynamicReports.cmp.horizontalList(DynamicReports.cmp.text("Disease Name").setStyle(Templates.columnTitleStyle),
-                        DynamicReports.cmp.text("ICD Code").setStyle(Templates.columnTitleStyle)))
+                .headerCell(DynamicReports.cmp.horizontalList(DynamicReports.cmp.text("Disease Name").setStyle(Templates.columnTitleStyle).setWidth(120),
+                        DynamicReports.cmp.text("ICD Code").setStyle(Templates.columnTitleStyle).setWidth(60)))
                 .rowGroups(diseaseNameRowGroup, icd10RowGroup)
                 .columnGroups(ageColumnGroup)
                 .measures(
-                        ctab.measure("Female", "female", Integer.class, Calculation.NOTHING).setStyle(textStyle),
-                        ctab.measure("Male", "male", Integer.class, Calculation.NOTHING).setStyle(textStyle),
-                        ctab.measure("Other", "other", Integer.class, Calculation.NOTHING).setStyle(textStyle)
+                        ctab.measure("F", "female", Integer.class, Calculation.NOTHING).setStyle(textStyle),
+                        ctab.measure("M", "male", Integer.class, Calculation.NOTHING).setStyle(textStyle),
+                        ctab.measure("O", "other", Integer.class, Calculation.NOTHING).setStyle(textStyle)
                 )
-                .setCellStyle(cellStyle);
+                .setCellStyle(cellStyle).setCellWidth(95);
 
         String sql = getFileContent("sql/diagnosisCountByAgeGroup.sql");
 
