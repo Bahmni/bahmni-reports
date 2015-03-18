@@ -4,9 +4,7 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabColumnGroupBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
-import net.sf.dynamicreports.report.builder.style.ReportStyleBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
-import net.sf.dynamicreports.report.builder.style.StyleBuilders;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
@@ -57,7 +55,8 @@ public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountCo
                 .measures(
                         ctab.measure("", "total_count", Integer.class, Calculation.SUM)
                 )
-                .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()));
+                .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()))
+                .setCellWidth(75);
 
         CrosstabRowGroupBuilder<String> visitRowGroup = ctab.rowGroup("visit", String.class)
                 .setShowTotal(false);
