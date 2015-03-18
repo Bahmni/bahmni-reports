@@ -19,6 +19,7 @@ import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
@@ -27,6 +28,9 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @Component(value = "MultipleCodedObsByCodedObs")
 @UsingDatasource("openmrs")
 public class MultipleCodedObsByObsReportTemplate implements BaseReportTemplate<MultipleCodedObsByCodedObsReportConfig> {
+
+    private static final List<String> FIXED_COLUMNS = Arrays.asList("gender");
+
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
                                      Report<MultipleCodedObsByCodedObsReportConfig> reportConfig, String startDate, String endDate,
@@ -37,16 +41,14 @@ public class MultipleCodedObsByObsReportTemplate implements BaseReportTemplate<M
         List<String> rowsGroupBy = reportSpecificConfig.getRowsGroupBy();
         CrosstabRowGroupBuilder<String>[] rowGroups = new CrosstabRowGroupBuilder[rowsGroupBy.size()];
         int concept_index = 1;
-        for (int i=0; i < reportSpecificConfig.getRowsGroupBy().size(); i++, concept_index++) {
-            rowGroups[i] = ctab.rowGroup("concept" + concept_index + "_name", String.class)
-                    .setShowTotal(false);
+        for (int i = 0; i < rowsGroupBy.size(); i++, concept_index++) {
+            rowGroups[i] = getRow(concept_index, rowsGroupBy.get(i));
         }
 
         List<String> columnsGroupBy = reportSpecificConfig.getColumnsGroupBy();
         CrosstabColumnGroupBuilder<String>[] columnGroups = new CrosstabColumnGroupBuilder[columnsGroupBy.size()];
-        for (int i=0; i < reportSpecificConfig.getColumnsGroupBy().size(); i++, concept_index++) {
-            columnGroups[i] = ctab.columnGroup("concept" + concept_index + "_name", String.class)
-                    .setShowTotal(false);
+        for (int i = 0; i < columnsGroupBy.size(); i++, concept_index++) {
+            columnGroups[i] = getColumn(concept_index, columnsGroupBy.get(i));
         }
 
         CrosstabBuilder crosstab = ctab.crosstab()
@@ -81,6 +83,20 @@ public class MultipleCodedObsByObsReportTemplate implements BaseReportTemplate<M
                 .pageFooter(Templates.footerComponent)
                 .setDataSource(getSqlString(reportSpecificConfig, startDate, endDate), connection);
         return jasperReport;
+    }
+
+    private CrosstabColumnGroupBuilder<String> getColumn(int concept_index, String column) {
+        if (FIXED_COLUMNS.contains(column)) {
+            return ctab.columnGroup(column, String.class).setShowTotal(false);
+        }
+        return ctab.columnGroup("concept" + concept_index + "_name", String.class).setShowTotal(false);
+    }
+
+    private CrosstabRowGroupBuilder<String> getRow(int concept_index, String row) {
+        if (FIXED_COLUMNS.contains(row)) {
+            return ctab.rowGroup(row, String.class).setShowTotal(false);
+        }
+        return ctab.rowGroup("concept" + concept_index + "_name", String.class).setShowTotal(false);
     }
 
     private String getSqlString(MultipleCodedObsByCodedObsReportConfig reportConfig, String startDate, String endDate) {
