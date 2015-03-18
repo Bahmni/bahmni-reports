@@ -29,7 +29,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class MultipleCodedObsByObsReportTemplate implements BaseReportTemplate<MultipleCodedObsByCodedObsReportConfig> {
 
-    private static final List<String> FIXED_COLUMNS = Arrays.asList("gender");
+    private static final List<String> FIXED_ROW_COLUMN_NAMES = Arrays.asList("gender", "age_group");
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
@@ -41,14 +41,24 @@ public class MultipleCodedObsByObsReportTemplate implements BaseReportTemplate<M
         List<String> rowsGroupBy = reportSpecificConfig.getRowsGroupBy();
         CrosstabRowGroupBuilder<String>[] rowGroups = new CrosstabRowGroupBuilder[rowsGroupBy.size()];
         int concept_index = 1;
-        for (int i = 0; i < rowsGroupBy.size(); i++, concept_index++) {
-            rowGroups[i] = getRow(concept_index, rowsGroupBy.get(i));
+        for (int i = 0; i < rowsGroupBy.size(); i++) {
+            if (FIXED_ROW_COLUMN_NAMES.contains(rowsGroupBy.get(i))) {
+                rowGroups[i] =  ctab.rowGroup(rowsGroupBy.get(i), String.class).setShowTotal(false);
+            } else {
+                rowGroups[i] = ctab.rowGroup("concept" + concept_index + "_name", String.class).setShowTotal(false);
+                concept_index++;
+            }
         }
 
         List<String> columnsGroupBy = reportSpecificConfig.getColumnsGroupBy();
         CrosstabColumnGroupBuilder<String>[] columnGroups = new CrosstabColumnGroupBuilder[columnsGroupBy.size()];
-        for (int i = 0; i < columnsGroupBy.size(); i++, concept_index++) {
-            columnGroups[i] = getColumn(concept_index, columnsGroupBy.get(i));
+        for (int i = 0; i < columnsGroupBy.size(); i++) {
+            if (FIXED_ROW_COLUMN_NAMES.contains(columnsGroupBy.get(i))) {
+                columnGroups[i] =  ctab.columnGroup(columnsGroupBy.get(i), String.class).setShowTotal(false);
+            } else {
+                columnGroups[i] = ctab.columnGroup("concept" + concept_index + "_name", String.class).setShowTotal(false);
+                concept_index++;
+            }
         }
 
         CrosstabBuilder crosstab = ctab.crosstab()
@@ -86,16 +96,18 @@ public class MultipleCodedObsByObsReportTemplate implements BaseReportTemplate<M
     }
 
     private CrosstabColumnGroupBuilder<String> getColumn(int concept_index, String column) {
-        if (FIXED_COLUMNS.contains(column)) {
+        if (FIXED_ROW_COLUMN_NAMES.contains(column)) {
             return ctab.columnGroup(column, String.class).setShowTotal(false);
         }
+        concept_index++;
         return ctab.columnGroup("concept" + concept_index + "_name", String.class).setShowTotal(false);
     }
 
     private CrosstabRowGroupBuilder<String> getRow(int concept_index, String row) {
-        if (FIXED_COLUMNS.contains(row)) {
+        if (FIXED_ROW_COLUMN_NAMES.contains(row)) {
             return ctab.rowGroup(row, String.class).setShowTotal(false);
         }
+        concept_index++;
         return ctab.rowGroup("concept" + concept_index + "_name", String.class).setShowTotal(false);
     }
 
@@ -107,12 +119,16 @@ public class MultipleCodedObsByObsReportTemplate implements BaseReportTemplate<M
 
         int index = 1;
         for (String conceptName : reportConfig.getRowsGroupBy()) {
-            sqlTemplate.add("concept" + index, conceptName);
-            index++;
+            if (!FIXED_ROW_COLUMN_NAMES.contains(conceptName)) {
+                sqlTemplate.add("concept" + index, conceptName);
+                index++;
+            }
         }
         for (String conceptName : reportConfig.getColumnsGroupBy()) {
-            sqlTemplate.add("concept" + index, conceptName);
-            index++;
+            if (!FIXED_ROW_COLUMN_NAMES.contains(conceptName)) {
+                sqlTemplate.add("concept" + index, conceptName);
+                index++;
+            }
         }
 
         sqlTemplate.add("reportGroupName", reportConfig.getAgeGroupName());
