@@ -30,7 +30,7 @@ FROM
      INNER JOIN reporting_age_group
        ON reporting_age_group.report_group_name = '#reportGroupName#'
      INNER JOIN (SELECT 'M' as gender UNION SELECT 'F' AS gender UNION SELECT 'O' AS gender) as gender
-     LEFT JOIN obs ON obs.concept_id = question.concept_id AND obs.value_coded = answer.concept_id
+     LEFT JOIN obs ON obs.concept_id = question.concept_id AND obs.value_coded = answer.concept_id AND obs.voided IS FALSE
      LEFT JOIN person ON obs.person_id = person.person_id AND person.gender = gender.gender
      LEFT JOIN encounter enc ON enc.encounter_id = obs.encounter_id
      LEFT JOIN visit visit ON enc.visit_id = visit.visit_id
