@@ -13,7 +13,7 @@ select base.age_group,
   final.sort_order
 from
   (select rag.name as age_group, cn.concept_id,cn.name as concept_name, rag.sort_order,va.value_reference
-   from reporting_age_group rag, concept_name cn, (select distinct value_reference from visit_attribute) va
+   from reporting_age_group rag, concept_name cn, (select distinct value_reference from visit_attribute va where va.visit_attribute_id is not null %s) va
    where rag.report_group_name = '%s' and cn.name in (%s) and cn.concept_name_type = 'FULLY_SPECIFIED') base
   left outer join
   (select cn.name as concept_name,
@@ -28,7 +28,7 @@ from
      rag.sort_order,
           p.gender as gender
    from obs obs
-     inner join concept_name cn on obs.concept_id = cn.concept_id and cn.concept_name_type = 'FULLY_SPECIFIED' and cn.voided=0
+     inner join concept_name cn on obs.concept_id = cn.concept_id and cn.concept_name_type = 'FULLY_SPECIFIED' and obs.voided = 0 and cn.voided = 0
      inner join encounter e on obs.encounter_id = e.encounter_id
      INNER JOIN visit v on v.visit_id = e.visit_id
      INNER JOIN visit_attribute va on va.visit_id = v.visit_id

@@ -7,10 +7,7 @@ import net.sf.dynamicreports.report.builder.crosstab.CrosstabColumnGroupBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
-import net.sf.dynamicreports.report.constant.Calculation;
-import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import net.sf.dynamicreports.report.constant.PageOrientation;
-import net.sf.dynamicreports.report.constant.PageType;
+import net.sf.dynamicreports.report.constant.*;
 import net.sf.dynamicreports.report.exception.DRException;
 import org.bahmni.reports.model.CodedObsCountConfig;
 import org.bahmni.reports.model.Report;
@@ -37,6 +34,11 @@ public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig>
         CrosstabRowGroupBuilder<String> ageGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);
 
+        CrosstabRowGroupBuilder<Integer> sortOrderGroup = ctab.rowGroup("sort_order", Integer.class)
+                .setShowTotal(false)
+                .setHeaderWidth(0)
+                .setOrderType(OrderType.ASCENDING);
+
         CrosstabRowGroupBuilder<String> visitAttributeGroup = ctab.rowGroup("visit_type", String.class)
                 .setShowTotal(false);
 
@@ -55,10 +57,10 @@ public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig>
         String visitType = reportConfig.getConfig().getVisitTypes();
 
         if(visitType!=null){
-            crosstab = crosstab.rowGroups(ageGroup, visitAttributeGroup);
-            visitType = String.format(visitTypeCriteria,visitType);
+            crosstab = crosstab.rowGroups(sortOrderGroup,ageGroup, visitAttributeGroup);
+            visitType = String.format(visitTypeCriteria,visitType,sortOrderGroup);
         }else{
-            crosstab = crosstab.rowGroups(ageGroup);
+            crosstab = crosstab.rowGroups(sortOrderGroup,ageGroup);
             visitType = "";
         }
 
@@ -68,7 +70,7 @@ public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig>
 
         String ageGroupName = reportConfig.getConfig().getAgeGroupName();
         String conceptNames = reportConfig.getConfig().getConceptNames();
-        String formattedSql  = String.format(sql, ageGroupName,conceptNames,ageGroupName, conceptNames,startDate, endDate,visitType);
+        String formattedSql  = String.format(sql, visitType,ageGroupName,conceptNames,ageGroupName, conceptNames,startDate, endDate,visitType);
 
         jasperReport.addTitle(cmp.horizontalList()
                         .add(cmp.text("Count of [ " + conceptNames + " ]")
