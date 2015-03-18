@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = SqlReportConfig.class, name = "sqlReport"),
         @JsonSubTypes.Type(value = CodedObsCountConfig.class, name = "codedObsCountReport"),
         @JsonSubTypes.Type(value = CodedObsByCodedObsReportConfig.class, name = "codedObsByCodedObsReport"),
+        @JsonSubTypes.Type(value = MultipleCodedObsByCodedObsReportConfig.class, name = "multipleCodedObsByCodedObsReport"),
         @JsonSubTypes.Type(value = Config.class, name = "config"), })
 public interface Config {
 }
