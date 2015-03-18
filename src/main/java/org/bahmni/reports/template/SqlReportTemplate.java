@@ -3,6 +3,7 @@ package org.bahmni.reports.template;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
+import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import net.sf.dynamicreports.report.exception.DRException;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.SqlReportConfig;
@@ -15,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
+import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
@@ -38,6 +40,7 @@ public class SqlReportTemplate  implements BaseReportTemplate<SqlReportConfig> {
         }
 
         jasperReport.setDataSource(resultSet);
+        jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
         resources.add(statement);
         return jasperReport;
     }
