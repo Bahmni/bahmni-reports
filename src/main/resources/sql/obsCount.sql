@@ -6,7 +6,7 @@ select base.age_group,
   final.female,
   final.male,
   final.other,
-  final.obs_datetime,
+  final.datetime,
   final.birthdate,
   final.age_group,
   final.gender,
@@ -22,7 +22,7 @@ from
           IF(p.gender = 'M', 1, 0) AS male,
           IF(p.gender = 'O', 1, 0) AS other,
           va.value_reference,
-     obs.obs_datetime,
+     v.date_stopped as datetime,
      p.birthdate,
           rag.name as age_group,
      rag.sort_order,
@@ -33,9 +33,9 @@ from
      INNER JOIN visit v on v.visit_id = e.visit_id
      INNER JOIN visit_attribute va on va.visit_id = v.visit_id
      INNER JOIN person p on p.person_id = obs.person_id
-     inner join reporting_age_group rag ON DATE(obs_datetime) BETWEEN (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
+     inner join reporting_age_group rag ON DATE(v.date_stopped) BETWEEN (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
       and rag.report_group_name='%s'
-   where cn.name in (%s) and cast(obs.obs_datetime AS DATE) BETWEEN '%s' AND '%s' %s
+   where cn.name in (%s) and cast(v.date_stopped AS DATE) BETWEEN '%s' AND '%s' %s AND obs.voided IS FALSE 
    GROUP BY v.visit_id,cn.name) final on final.age_group = base.age_group and final.concept_id = base.concept_id and final.value_reference = base.value_reference
   left outer join concept_name shortName on shortName.concept_id = base.concept_id and shortName.concept_name_type = 'SHORT' and shortName.voided = 0
 order by base.sort_order asc;
