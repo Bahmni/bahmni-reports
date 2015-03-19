@@ -35,7 +35,7 @@ from
      INNER JOIN person p on p.person_id = obs.person_id
      inner join reporting_age_group rag ON DATE(v.date_stopped) BETWEEN (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
       and rag.report_group_name='%s'
-   where cn.name in (%s) and cast(v.date_stopped AS DATE) BETWEEN '%s' AND '%s' %s AND obs.voided IS FALSE 
+   where cn.name in (%s) and cast(v.date_stopped AS DATE) BETWEEN '%s' AND '%s' %s AND obs.voided IS FALSE
    GROUP BY v.visit_id,cn.name) final on final.age_group = base.age_group and final.concept_id = base.concept_id and final.value_reference = base.value_reference
   left outer join concept_name shortName on shortName.concept_id = base.concept_id and shortName.concept_name_type = 'SHORT' and shortName.voided = 0
 order by base.sort_order asc;
