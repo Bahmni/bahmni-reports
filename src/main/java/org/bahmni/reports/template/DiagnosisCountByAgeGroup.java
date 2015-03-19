@@ -33,7 +33,7 @@ public class DiagnosisCountByAgeGroup{
 
         CrosstabRowGroupBuilder<String> diseaseNameRowGroup = ctab.rowGroup("disease", String.class).setHeaderStyle(textStyle).setHeaderWidth(120)
                 .setShowTotal(false);
-        CrosstabRowGroupBuilder<String> icd10RowGroup = ctab.rowGroup("icd10_code", String.class).setHeaderStyle(textStyle).setHeaderWidth(60)
+        CrosstabRowGroupBuilder<String> icd10RowGroup = ctab.rowGroup("ICD Code", String.class).setHeaderStyle(textStyle).setHeaderWidth(60)
                 .setShowTotal(false);
 
         CrosstabColumnGroupBuilder<String> ageColumnGroup = ctab.columnGroup("age_group", String.class).setTotalHeaderWidth(95)

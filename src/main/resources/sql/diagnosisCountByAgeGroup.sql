@@ -17,7 +17,7 @@ FROM diagnosis_concept_view
                    FROM obs AS diagnosis
                      JOIN concept_view AS cv
                        ON cv.concept_id = diagnosis.value_coded AND cv.concept_class_name = 'Diagnosis' AND
-                          cast(diagnosis.obs_datetime AS DATE) BETWEEN '%s' AND '%s' AND diagnosis.voided = 0
+                          cast(diagnosis.obs_datetime AS DATE) BETWEEN '%s' AND '%s' AND diagnosis.voided IS FALSE
                           AND diagnosis.obs_group_id IN (
                        SELECT confirmed.obs_id
                        FROM (
@@ -27,9 +27,11 @@ FROM diagnosis_concept_view
                                                          pcv.concept_full_name = 'Visit Diagnoses'
                                 LEFT JOIN obs AS child
                                   ON child.obs_group_id = parent.obs_id
+                                  AND child.voided IS FALSE
                                 JOIN concept_name AS confirmed
                                   ON confirmed.concept_id = child.value_coded AND confirmed.name = 'Confirmed' AND
-                                     confirmed.concept_name_type = 'FULLY_SPECIFIED') AS confirmed
+                                     confirmed.concept_name_type = 'FULLY_SPECIFIED'
+                            WHERE parent.voided IS FALSE ) AS confirmed
                        WHERE confirmed.obs_id NOT IN (SELECT parent.obs_id
                                                       FROM obs AS parent
                                                         JOIN concept_view pcv2
