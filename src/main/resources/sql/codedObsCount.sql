@@ -37,7 +37,7 @@ FROM
                               AND cast(visit.date_started AS DATE) BETWEEN (DATE_ADD(
        DATE_ADD(person.birthdate, INTERVAL reporting_age_group.min_years YEAR), INTERVAL reporting_age_group.min_days
        DAY)) AND (DATE_ADD(DATE_ADD(person.birthdate, INTERVAL reporting_age_group.max_years YEAR), INTERVAL
-                           reporting_age_group.max_days DAY)) AND cast(visit.date_started AS DATE) BETWEEN '#startDate#' AND '#endDate#'
+                           reporting_age_group.max_days DAY)) AND cast(visit.date_stopped AS DATE) BETWEEN '#startDate#' AND '#endDate#'
      LEFT JOIN visit_attribute AS attr ON visit.visit_id = attr.visit_id AND attr.value_reference = visit_type.type
      LEFT JOIN visit_attribute_type AS attr_type
        ON attr_type.visit_attribute_type_id = attr.attribute_type_id AND attr_type.name = 'VisitStatus'
