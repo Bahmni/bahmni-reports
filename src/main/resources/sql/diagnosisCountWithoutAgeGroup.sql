@@ -5,8 +5,7 @@ SELECT
   SUM(IF(person.gender = 'F', 1, 0))       AS female,
   SUM(IF(person.gender = 'M', 1, 0))       AS male,
   SUM(IF(person.gender = 'O', 1, 0))       AS other
-FROM diagnosis_concept_view
-LEFT OUTER join (select  diagnosis.value_coded, diagnosis.person_id, diagnosis.encounter_id from obs AS diagnosis
+from (select  diagnosis.value_coded, diagnosis.person_id, diagnosis.encounter_id from obs AS diagnosis
 						JOIN concept_view AS cv
 						ON cv.concept_id = diagnosis.value_coded AND cv.concept_class_name = 'Diagnosis' AND
 						cast(diagnosis.obs_datetime AS DATE) BETWEEN '%s' AND '%s'  AND diagnosis.voided = 0
@@ -53,6 +52,7 @@ LEFT OUTER join (select  diagnosis.value_coded, diagnosis.person_id, diagnosis.e
 						JOIN encounter e
 						ON e.encounter_id = filtered_diagnosis.encounter_id
 						JOIN visit_attribute va on va.visit_id = e.visit_id and va.value_reference in (%s)
+join diagnosis_concept_view
 ON diagnosis_concept_view.concept_id = filtered_diagnosis.value_coded
 GROUP BY disease, diagnosis_concept_view.icd10_code
 ORDER BY disease;

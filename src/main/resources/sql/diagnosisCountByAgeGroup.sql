@@ -7,9 +7,9 @@ SELECT
   SUM(IF(person.gender = 'O', 1, 0))       AS other,
   diagnosis_concept_view.icd10_code,
   observed_age_group.sort_order            AS age_group_sort_order
-FROM diagnosis_concept_view
-  JOIN reporting_age_group AS observed_age_group ON observed_age_group.report_group_name = '%s'
-  LEFT OUTER JOIN (SELECT
+FROM (select * from reporting_age_group where report_group_name = '%s')
+AS observed_age_group
+  left JOIN (SELECT
                      diagnosis.value_coded,
                      diagnosis.person_id,
                      diagnosis.encounter_id,
@@ -59,11 +59,10 @@ FROM diagnosis_concept_view
     ON person.person_id = filtered_diagnosis.person_id
   JOIN encounter e
     ON e.encounter_id = filtered_diagnosis.encounter_id
-  JOIN visit_attribute va ON va.visit_id = e.visit_id AND va.value_reference IN (%s)
-
-    ON diagnosis_concept_view.concept_id = filtered_diagnosis.value_coded
-       AND
-       filtered_diagnosis.obs_datetime BETWEEN (DATE_ADD(
+  JOIN visit_attribute va ON va.visit_id = e.visit_id AND va.value_reference IN ('%s')
+join diagnosis_concept_view
+    on diagnosis_concept_view.concept_id = filtered_diagnosis.value_coded
+on filtered_diagnosis.obs_datetime BETWEEN (DATE_ADD(
            DATE_ADD(person.birthdate, INTERVAL observed_age_group.min_years YEAR), INTERVAL observed_age_group.min_days
            DAY))
        AND (DATE_ADD(DATE_ADD(person.birthdate, INTERVAL observed_age_group.max_years YEAR), INTERVAL
