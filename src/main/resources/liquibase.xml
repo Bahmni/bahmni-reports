@@ -258,4 +258,43 @@
             END
         </createProcedure>
     </changeSet>
+
+    <changeSet author="Mujir, Vinay" id="Reports-032120151601" runOnChange="true">
+        <comment>Creating confirmed diagnosis view</comment>
+        <createView viewName="confirmed_diagnosis_view" replaceIfExists="true">
+            SELECT
+              diagnosis_obs.person_id     AS person_id,
+              actual_diagnosis.name       AS name,
+              actual_diagnosis.concept_id AS concept_id,
+              diagnosis_obs.obs_datetime  AS obs_datetime,
+              diagnosis_obs.encounter_id  AS encounter_id,
+              e.encounter_datetime        AS encounter_datetime,
+              v.visit_id                  AS visit_id,
+              v.date_started              AS visit_date_started,
+              v.date_stopped              AS visit_date_stopped
+            FROM obs diagnosis_obs
+              INNER JOIN concept_name diagnosis_concept_name ON diagnosis_obs.concept_id = diagnosis_concept_name.concept_id
+                                                                AND diagnosis_concept_name.name = 'Coded Diagnosis' AND
+                                                                diagnosis_concept_name.voided IS FALSE AND
+                                                                diagnosis_concept_name.concept_name_type = 'FULLY_SPECIFIED'
+              INNER JOIN concept_name actual_diagnosis ON diagnosis_obs.value_coded = actual_diagnosis.concept_id AND
+                                                          actual_diagnosis.voided IS FALSE AND
+                                                          actual_diagnosis.concept_name_type = 'FULLY_SPECIFIED'
+              INNER JOIN obs certainty ON certainty.obs_group_id = diagnosis_obs.obs_group_id
+                               AND certainty.voided IS FALSE
+                               AND certainty.concept_id = ( SELECT concept_id  FROM concept_name cn WHERE cn.name = 'Diagnosis Certainty' AND cn.concept_name_type = 'FULLY_SPECIFIED' )
+                               AND certainty.value_coded = ( SELECT concept_id FROM concept_name cn WHERE cn.name = 'Confirmed' AND cn.concept_name_type = 'FULLY_SPECIFIED' )
+              LEFT JOIN obs ruled_out ON ruled_out.obs_group_id = diagnosis_obs.obs_group_id
+                               AND ruled_out.voided IS FALSE
+                               AND ruled_out.concept_id = ( SELECT concept_id FROM concept_name cn WHERE cn.name = 'Ruled Out Diagnosis' AND cn.concept_name_type = 'FULLY_SPECIFIED' )
+              LEFT JOIN obs revised ON revised.obs_group_id = diagnosis_obs.obs_group_id
+                             AND revised.voided IS FALSE
+                             AND revised.concept_id = ( SELECT concept_id FROM concept_name cn WHERE cn.name = 'Bahmni Diagnosis Revised' AND cn.concept_name_type = 'FULLY_SPECIFIED' )
+                             AND revised.value_coded = ( SELECT property_value FROM global_property WHERE property = 'concept.true' )
+              INNER JOIN encounter e ON diagnosis_obs.encounter_id = e.encounter_id
+              INNER JOIN visit v ON e.visit_id = v.visit_id
+            WHERE revised.obs_id IS NULL AND ruled_out.obs_id IS NULL AND diagnosis_obs.voided IS FALSE;
+        </createView>
+    </changeSet>
+
 </databaseChangeLog>
