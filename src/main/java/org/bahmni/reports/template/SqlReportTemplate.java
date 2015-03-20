@@ -16,7 +16,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
@@ -36,7 +35,7 @@ public class SqlReportTemplate  implements BaseReportTemplate<SqlReportConfig> {
         ResultSetMetaData metaData = resultSet.getMetaData();
         int columnCount = metaData.getColumnCount();
         for(int i = 1; i <= columnCount; i++) {
-            jasperReport.addColumn(col.column(metaData.getColumnLabel(i), metaData.getColumnName(i), type.stringType()));
+            jasperReport.addColumn(col.column(metaData.getColumnLabel(i), metaData.getColumnLabel(i), type.stringType()));
         }
 
         jasperReport.setDataSource(resultSet);
