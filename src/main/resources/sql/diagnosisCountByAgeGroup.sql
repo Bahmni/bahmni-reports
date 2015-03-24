@@ -59,7 +59,7 @@ AS observed_age_group
     ON person.person_id = filtered_diagnosis.person_id
   JOIN encounter e
     ON e.encounter_id = filtered_diagnosis.encounter_id
-  JOIN visit_attribute va ON va.visit_id = e.visit_id AND va.value_reference IN ('%s')
+  JOIN visit_attribute va ON va.visit_id = e.visit_id AND va.value_reference IN (%s)
 join diagnosis_concept_view
     on diagnosis_concept_view.concept_id = filtered_diagnosis.value_coded
 on filtered_diagnosis.obs_datetime BETWEEN (DATE_ADD(
