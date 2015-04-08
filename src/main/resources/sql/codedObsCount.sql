@@ -13,7 +13,7 @@ FROM
      gender.gender                                                             AS gender,
      IF(question.concept_short_name IS NULL, question.concept_full_name,
         question.concept_short_name)                                           AS concept_name,
-     IF(visit_type.type IN ('Admitted', 'Discharged'), 'IPD', visit_type.type) AS visit,
+     visit_type.type AS visit,
      IF(answer.concept_short_name IS NULL, answer.concept_full_name,
         answer.concept_short_name)                                             AS answer_concept_name,
      reporting_age_group.sort_order                                            AS sort_order,
@@ -40,7 +40,7 @@ FROM
                            reporting_age_group.max_days DAY)) AND cast(visit.date_stopped AS DATE) BETWEEN '#startDate#' AND '#endDate#'
      LEFT JOIN visit_attribute AS attr ON visit.visit_id = attr.visit_id AND attr.value_reference = visit_type.type
      LEFT JOIN visit_attribute_type AS attr_type
-       ON attr_type.visit_attribute_type_id = attr.attribute_type_id AND attr_type.name = 'VisitStatus'
+       ON attr_type.visit_attribute_type_id = attr.attribute_type_id AND attr_type.name = 'Visit Status'
    ORDER BY age_group, gender, concept_name, visit, answer_concept_name, sort_order, visit_id) a
 GROUP BY a.age_group, a.gender, a.concept_name, a.visit, a.answer_concept_name, a.sort_order;
 
