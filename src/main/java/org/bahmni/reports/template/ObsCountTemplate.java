@@ -27,7 +27,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig> {
 
-    private final String visitTypeCriteria = "and va.value_reference in (%s)";
+    private final String VISIT_TYPE_CRITERIA = "and va.value_reference in (%s)";
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
@@ -58,7 +58,7 @@ public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig>
 
         if(visitType!=null){
             crosstab = crosstab.rowGroups(sortOrderGroup,ageGroup, visitAttributeGroup);
-            visitType = String.format(visitTypeCriteria,visitType,sortOrderGroup);
+            visitType = String.format(VISIT_TYPE_CRITERIA,visitType,sortOrderGroup);
         }else{
             crosstab = crosstab.rowGroups(sortOrderGroup,ageGroup);
             visitType = "";

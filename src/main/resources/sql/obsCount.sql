@@ -1,6 +1,6 @@
 select base.age_group,
   base.sort_order,
-  IF(base.value_reference IN ('Admitted', 'Discharged'), 'IPD', base.value_reference) AS visit_type,
+  base.value_reference AS visit_type,
   IF(shortName.name is null ,base.concept_name,shortName.name) as concept_name,
   final.concept_id,
   final.female,
@@ -32,6 +32,7 @@ from
      inner join encounter e on obs.encounter_id = e.encounter_id
      INNER JOIN visit v on v.visit_id = e.visit_id
      INNER JOIN visit_attribute va on va.visit_id = v.visit_id
+     INNER JOIN visit_attribute_type vat on vat.visit_attribute_type_id = va.attribute_type_id AND vat.name = 'Visit Status'
      INNER JOIN person p on p.person_id = obs.person_id
      inner join reporting_age_group rag ON DATE(v.date_stopped) BETWEEN (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
       and rag.report_group_name='%s'
