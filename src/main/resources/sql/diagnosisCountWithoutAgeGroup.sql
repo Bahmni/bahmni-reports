@@ -52,6 +52,7 @@ from (select  diagnosis.value_coded, diagnosis.person_id, diagnosis.encounter_id
 						JOIN encounter e
 						ON e.encounter_id = filtered_diagnosis.encounter_id
 						JOIN visit_attribute va on va.visit_id = e.visit_id and va.value_reference in (%s)
+						LEFT JOIN visit_attribute_type vat on vat.visit_attribute_type_id = va.attribute_type_id AND vat.name = 'Visit Status'
 join diagnosis_concept_view
 ON diagnosis_concept_view.concept_id = filtered_diagnosis.value_coded
 GROUP BY disease, diagnosis_concept_view.icd10_code
