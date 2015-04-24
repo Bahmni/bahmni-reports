@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = DiagnosisReportConfig.class, name = "diagnosisReport"),
         @JsonSubTypes.Type(value = SqlReportConfig.class, name = "sqlReport"),
         @JsonSubTypes.Type(value = CodedObsCountConfig.class, name = "codedObsCountReport"),
+        @JsonSubTypes.Type(value = ObsTemplateConfig.class, name = "obsTemplateReport"),
         @JsonSubTypes.Type(value = CodedObsByCodedObsReportConfig.class, name = "codedObsByCodedObsReport"),
         @JsonSubTypes.Type(value = MultipleCodedObsByCodedObsReportConfig.class, name = "multipleCodedObsByCodedObsReport"),
         @JsonSubTypes.Type(value = Config.class, name = "config"), })
