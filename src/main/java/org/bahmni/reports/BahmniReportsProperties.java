@@ -29,6 +29,21 @@ public class BahmniReportsProperties {
     @Value("${config.file.path}")
     private String configFilePath;
 
+    @Value("${openmrs.service.rootUrl}")
+    private String openmrsRootUrl;
+
+    @Value("${openmrs.service.user}")
+    private String openmrsServiceUser;
+
+    @Value("${openmrs.service.password}")
+    private String openmrsServicePassword;
+
+    @Value("${openmrs.connectionTimeoutInMilliseconds}")
+    private Integer openmrsConnectionTimeout;
+
+    @Value("${openmrs.replyTimeoutInMilliseconds}")
+    private Integer openmrsReplyTimeout;
+
     public String getConfigFilePath() {
         return configFilePath;
     }
@@ -55,5 +70,25 @@ public class BahmniReportsProperties {
 
     public String getOpenmrsPassword() {
         return openmrsPassword;
+    }
+
+    public String getOpenmrsRootUrl() {
+        return openmrsRootUrl;
+    }
+
+    public String getOpenmrsServiceUser() {
+        return openmrsServiceUser;
+    }
+
+    public String getOpenmrsServicePassword() {
+        return openmrsServicePassword;
+    }
+
+    public Integer getOpenmrsConnectionTimeout() {
+        return openmrsConnectionTimeout;
+    }
+
+    public Integer getOpenmrsReplyTimeout() {
+        return openmrsReplyTimeout;
     }
 }
