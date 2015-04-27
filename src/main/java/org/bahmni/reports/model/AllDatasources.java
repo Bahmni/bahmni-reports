@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 @Component
 public class AllDatasources {
@@ -14,11 +16,23 @@ public class AllDatasources {
     @Autowired
     private DataSource openelisDataSource;
 
-    public DataSource dataSourceFor(Object object) {
+    public Connection getConnectionFromDatasource(Object object){
+        Connection connection = null;
+        try {
+            connection = dataSourceFor(object).getConnection();
+            connection.setAutoCommit(false);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return  connection;
+    }
+
+    private DataSource dataSourceFor(Object object) {
         Class<?> annotatedClass = object.getClass();
         if (annotatedClass.isAnnotationPresent(UsingDatasource.class)) {
             UsingDatasource annotation = annotatedClass.getAnnotation(UsingDatasource.class);
-            return dataSourceFor(annotation.value());
+            DataSource dataSource = dataSourceFor(annotation.value());
+            return dataSource;
         }
         return null;
     }

@@ -58,7 +58,7 @@ public class MainReportController {
 
             Report report = Reports.find(reportName, bahmniReportsProperties.getConfigFilePath());
             BaseReportTemplate reportTemplate = reportTemplates.get(report.getType());
-            connection = allDatasources.dataSourceFor(reportTemplate).getConnection();
+            connection = allDatasources.getConnectionFromDatasource(reportTemplate);
 
             JasperReportBuilder jasperReport = report();
             jasperReport = new ReportHeader().add(jasperReport, reportName, startDate, endDate);
@@ -73,7 +73,10 @@ public class MainReportController {
             try {
                 response.flushBuffer();
                 response.getOutputStream().close();
+                connection.rollback();
             } catch (IOException e) {
+                logger.error(e);
+            } catch (SQLException e) {
                 logger.error(e);
             }
 
