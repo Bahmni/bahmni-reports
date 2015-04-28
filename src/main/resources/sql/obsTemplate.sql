@@ -3,9 +3,9 @@ SET @sql = NULL;
 SELECT
   GROUP_CONCAT(DISTINCT
                CONCAT(
-                   'GROUP_CONCAT(IF(cv.concept_full_name = ''',
+                   'GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = ''',
                    concept_full_name,
-                   ''', coalesce(o.value_numeric, o.value_boolean, o.value_datetime, o.value_text, o.concept_short_name, o.concept_full_name), NULL) SEPARATOR \',\') AS `',
+                   ''', coalesce(o.value_numeric, o.value_boolean, o.value_datetime, o.value_text, o.concept_short_name, o.concept_full_name), NULL)) SEPARATOR \',\') AS `',
                    concept_full_name , '`'
                )
   ) into @sql
@@ -18,7 +18,7 @@ SET @sql = CONCAT('SELECT
                   o.gender,
                   o.provider_id,
                   o.encounter_id,
-                  o.provider_name,
+                  GROUP_CONCAT(DISTINCT(o.provider_name) SEPARATOR \',\') as provider_name,
                   o.encounter_datetime,',
                  @sql,
                   ' FROM concept_view cv
@@ -50,7 +50,7 @@ SET @sql = CONCAT('SELECT
                        LEFT JOIN concept_view answer ON ob.value_coded = answer.concept_id
                        ) o ON o.concept_id = cv.concept_id
                   where cv.concept_full_name IN ( %s )
-                  group by identifier, encounter_id, provider_id
+                  group by identifier, encounter_id
                   order by identifier, encounter_id');
 
 PREPARE stmt FROM @sql;
