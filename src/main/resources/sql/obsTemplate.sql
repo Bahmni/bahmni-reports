@@ -13,6 +13,9 @@ FROM concept_view cv where cv.concept_full_name in (%s);
 
 SET @sql = CONCAT('SELECT
                   pi.identifier,
+                  concat(pat_name.given_name, \' \', pat_name.family_name) AS patient_name,
+                  person.gender,
+                  floor(DATEDIFF(DATE(ob.obs_datetime), person.birthdate) / 365)      AS age,
                   ep.provider_id,
                   ep.encounter_id,
                   concat(pn.given_name, \' \', pn.family_name) AS provider_name,
@@ -23,6 +26,8 @@ SET @sql = CONCAT('SELECT
                   LEFT JOIN concept_view answer on ob.value_coded = answer.concept_id
                   LEFT JOIN encounter e ON ob.encounter_id = e.encounter_id and cast(e.encounter_datetime AS DATE) BETWEEN \'%s\' AND \'%s\'
                   LEFT JOIN patient_identifier pi ON pi.patient_id = ob.person_id
+                  LEFT JOIN person on person.person_id = pi.patient_id
+                  LEFT JOIN person_name pat_name on pat_name.person_id = person.person_id
                   LEFT JOIN encounter_provider ep ON e.encounter_id = ep.encounter_id
                   LEFT JOIN provider p ON ep.provider_id = p.provider_id
                   LEFT JOIN person_name pn on p.person_id = pn.person_id

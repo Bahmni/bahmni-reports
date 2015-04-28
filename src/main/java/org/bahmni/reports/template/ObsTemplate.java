@@ -64,14 +64,17 @@ public class ObsTemplate implements BaseReportTemplate<ObsTemplateConfig> {
         String conceptNameInClause = StringUtils.join(conceptNames, ",");
         String sql = String.format(getFileContent("sql/obsTemplate.sql"), conceptNameInClause, startDate, endDate, conceptNameInClause.replace("'","\\'"));
 
-        TextColumnBuilder<String> patientColumn = col.column("Patient", "identifier", type.stringType());
+        TextColumnBuilder<String> patientColumn = col.column("Patient ID", "identifier", type.stringType());
+        TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "patient_name", type.stringType());
+        TextColumnBuilder<String> patientGenderColumn = col.column("Gender", "gender", type.stringType());
+        TextColumnBuilder<String> patientAgeColumn = col.column("Age", "age", type.stringType());
         TextColumnBuilder<String> providerColumn = col.column("User", "provider_name", type.stringType());
         TextColumnBuilder<String> encounterColumn = col.column("Encounter DateTime", "encounter_datetime", type.stringType());
 
         jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
                 .setTemplate(Templates.reportTemplate)
                 .setReportName(reportConfig.getName())
-                .columns(patientColumn, providerColumn, encounterColumn)
+                .columns(patientColumn, patientNameColumn, patientGenderColumn, patientAgeColumn, providerColumn, encounterColumn)
                 .pageFooter(Templates.footerComponent);
         for(ConceptDetails concept: conceptDetails){
             TextColumnBuilder<String> column = col.column(concept.getName(), concept.getFullName(), type.stringType());
