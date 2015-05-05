@@ -1,8 +1,8 @@
 select base.numeric_value_range, base.report_age_group,
-		sum(IF(base.gender = 'F', 1, 0)) AS female,
-		sum(IF(base.gender = 'M', 1, 0)) AS male,
-        sum(IF(base.gender = 'O', 1, 0)) AS other,
-        sum(IF(base.gender in ('F','M','O'), 1, 0)) AS total
+		ifnull(sum(IF(base.gender = 'F', 1, 0)),0) AS female,
+		ifnull(sum(IF(base.gender = 'M', 1, 0)),0) AS male,
+        ifnull(sum(IF(base.gender = 'O', 1, 0)),0) AS other,
+        ifnull(sum(IF(base.gender in ('F','M','O'), 1, 0)),0) AS total
 	from
 	(select rcr.name as numeric_value_range, o.value_numeric, rag.name as report_age_group, p.birthdate, date(o.obs_datetime) as obsdate, p.gender from obs o
 		inner join concept_name cn on o.concept_id=cn.concept_id

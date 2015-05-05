@@ -3,8 +3,10 @@ package org.bahmni.reports.template;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
+import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
+import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import net.sf.dynamicreports.report.exception.DRException;
 import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.Report;
@@ -26,12 +28,15 @@ public class XrayCount implements BaseReportTemplate<Config>{
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
         TextColumnBuilder<String> xrayType = col.column("X-Ray Type", "xray_type", type.stringType());
-        TextColumnBuilder<Integer> count = col.column("Count", "count", type.integerType());
+        TextColumnBuilder<Integer> count = col.column("Count", "count", type.integerType())
+                .setStyle(textStyle)
+                .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
         String sql = getFileContent("sql/xrayCount.sql");
 
-        JasperReportBuilder report = report();
-        report.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
+        jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
+
+        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
                 .setColumnStyle(textStyle)
                 .setTemplate(Templates.reportTemplate)
                 .setReportName(reportConfig.getName())
@@ -39,6 +44,6 @@ public class XrayCount implements BaseReportTemplate<Config>{
                 .columns(xrayType, count)
                 .setDataSource(String.format(sql, startDate, endDate),
                         connection);
-        return report;
+        return jasperReport;
     }
 }

@@ -53,6 +53,8 @@ public class MalariaTestComparison implements BaseReportTemplate<MalariaConfig> 
         String paraCheck = reportConfig.getConfig().getParaCheck();
         String psForMp = reportConfig.getConfig().getPsForMp();
 
+        jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
+
         jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
 
                 .setTemplate(Templates.reportTemplate)

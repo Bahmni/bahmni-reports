@@ -29,10 +29,11 @@ public class NumericConceptValuesReport implements BaseReportTemplate<NumericCon
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 
-        TextColumnBuilder<String> numericValueRange = col.column("Numberic Value Range", "numeric_value_range", type.stringType())
+        TextColumnBuilder<String> numericValueRange = col.column("Numeric Value Range", "numeric_value_range", type.stringType())
                 .setStyle(columnStyle);
         TextColumnBuilder<String> reportAgeGroup = col.column("Report Age Group", "report_age_group", type.stringType())
-                .setStyle(columnStyle);
+                .setStyle(columnStyle)
+                .setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Integer> femaleCount = col.column("Female", "female", type.integerType())
                 .setStyle(columnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
@@ -56,6 +57,8 @@ public class NumericConceptValuesReport implements BaseReportTemplate<NumericCon
         String ageGroupName = reportConfig.getConfig().getAgeGroupName();
         String rangeGroupName = reportConfig.getConfig().getRangeGroupName();
         String conceptNames = reportConfig.getConfig().getConceptNames();
+
+        jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
         jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
 

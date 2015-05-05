@@ -31,7 +31,8 @@ public class MalariaTestCount implements BaseReportTemplate<MalariaConfig> {
         TextColumnBuilder<String> testColumn = col.column("Malaria Test", "Malaria_Test", type.stringType())
                 .setStyle(columnStyle);
         TextColumnBuilder<String> resultTypeColumn = col.column("Result type", "Result_Type", type.stringType())
-                .setStyle(columnStyle);
+                .setStyle(columnStyle)
+                .setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Integer> countColumn = col.column("Count", "Count", type.integerType())
                 .setStyle(columnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);

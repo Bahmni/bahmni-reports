@@ -6,6 +6,7 @@ import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
+import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import net.sf.dynamicreports.report.exception.DRException;
 import org.bahmni.reports.model.DateConceptValuesConfig;
 import org.bahmni.reports.model.Report;
@@ -51,6 +52,8 @@ public class DateConceptValuesPatientsList implements BaseReportTemplate<DateCon
         String templateName = reportConfig.getConfig().getTemplateName();
         String conceptNames = reportConfig.getConfig().getConceptNames();
 
+        jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
+        
         jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
 
                 .setTemplate(Templates.reportTemplate)
