@@ -14,7 +14,7 @@ FROM
 	(SELECT cv.concept_full_name, o.value_datetime, o.person_id, o.encounter_id, o.obs_datetime, o.obs_group_id
 		FROM obs o INNER JOIN concept_view cv on o.concept_id = cv.concept_id
         AND cv.concept_full_name = %s
-		WHERE o.value_datetime BETWEEN '%s' AND '%s') t2
+		WHERE date(o.value_datetime) BETWEEN '%s' AND '%s' and o.voided = 0) t2
 
 ON t1.person_id = t2.person_id AND t1.encounter_id = t2.encounter_id
 GROUP BY t1.identifier, date_value

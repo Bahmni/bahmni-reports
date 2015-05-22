@@ -13,6 +13,7 @@ select base.numeric_value_range, base.report_age_group,
 			AND (DATE_ADD(DATE_ADD(birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
 		and rag.report_group_name = '%s'
 		where cn.name in (%s) and cn.concept_name_type="FULLY_SPECIFIED" and o.value_numeric is not null
-		and o.obs_datetime between '%s' and '%s') base
+		and o.voided = 0
+		and date(o.obs_datetime) between '%s' and '%s') base
 	group by base.numeric_value_range, base.report_age_group
     order by base.numeric_value_range, base.report_age_group;

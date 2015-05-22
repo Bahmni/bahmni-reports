@@ -21,15 +21,16 @@ select 	test.identifier as patient_id,
 			inner join person_name pn on pn.person_id = o.person_id
 			inner join patient_identifier pi on pi.patient_id = o.person_id
 			where cv.concept_full_name in (%s)
-				and o.obs_datetime between '%s' and '%s') test
+			and o.voided = 0
+			and date(o.obs_datetime) between '%s' and '%s') test
 
         inner join
 
         (select o.obs_group_id
 			from obs o
             inner join concept_view cv on cv.concept_id = o.concept_id
-			where cv.concept_full_name = 'LAB_ABNORMAL' and o.value_coded = 1
-				and o.obs_datetime between '%s' and '%s') abnormal
+			where cv.concept_full_name = 'LAB_ABNORMAL' and o.value_coded = 1 and o.voided = 0
+				and date(o.obs_datetime) between '%s' and '%s') abnormal
 
         on test.obs_group_id = abnormal.obs_group_id
         group by patient_id,test_name,test_result
