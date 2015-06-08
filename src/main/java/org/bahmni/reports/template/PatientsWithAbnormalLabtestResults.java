@@ -8,7 +8,6 @@ import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import net.sf.dynamicreports.report.exception.DRException;
-import org.bahmni.reports.model.MalariaConfig;
 import org.bahmni.reports.model.PatientsWithAbnormalLabtestResultsConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
