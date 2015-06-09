@@ -16,6 +16,7 @@ import org.bahmni.reports.template.ObsCountGroupByValue;
         @JsonSubTypes.Type(value = CodedObsCountConfig.class, name = "codedObsCountReport"),
         @JsonSubTypes.Type(value = ObsTemplateConfig.class, name = "obsTemplateReport"),
         @JsonSubTypes.Type(value = ObsCountGroupByValueConfig.class, name = "obsCountGroupByValueReport"),
+        @JsonSubTypes.Type(value = ObsCountByConceptClassConfig.class, name = "obsCountByConceptClassReport"),
         @JsonSubTypes.Type(value = CodedObsByCodedObsReportConfig.class, name = "codedObsByCodedObsReport"),
         @JsonSubTypes.Type(value = MultipleCodedObsByCodedObsReportConfig.class, name = "multipleCodedObsByCodedObsReport"),
         @JsonSubTypes.Type(value = NumericConceptValuesConfig.class, name = "numericConceptValuesReport"),

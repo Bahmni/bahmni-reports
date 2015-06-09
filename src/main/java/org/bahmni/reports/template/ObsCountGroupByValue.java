@@ -35,7 +35,7 @@ public class ObsCountGroupByValue implements BaseReportTemplate<ObsCountGroupByV
 
         TextColumnBuilder<String> conceptColumn = col.column("Concept Name", "Name", type.stringType())
                 .setStyle(columnStyle);
-        TextColumnBuilder<String> valueColumn = col.column("Obs Value", "Value", type.stringType())
+        TextColumnBuilder<String> valueColumn = col.column("Observation", "Value", type.stringType())
                 .setStyle(columnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Integer> countColumn = col.column("Count", "Count", type.integerType())
@@ -70,49 +70,5 @@ public class ObsCountGroupByValue implements BaseReportTemplate<ObsCountGroupByV
                 .setDataSource(String.format(sql,conceptNames,startDate, endDate),
                         connection);
         return jasperReport;
-
-//        CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup("Name", String.class)
-//                .setShowTotal(false);
-//        CrosstabRowGroupBuilder<String> valueRowGroup = ctab.rowGroup("Value", String.class)
-//                .setShowTotal(false);
-//        CrosstabColumnGroupBuilder<String> columnGroup = ctab.columnGroup("Count", String.class)
-//                .setShowTotal(false);
-////        TextColumnBuilder<Integer> countColumn = col.column("Count", "Count", type.integerType())
-////                .setStyle(stl.style().setRightBorder(stl.pen1Point()))
-////                .setHorizontalAlignment(HorizontalAlignment.CENTER);
-//
-//        CrosstabBuilder crosstab = ctab.crosstab()
-//                .headerCell(DynamicReports.cmp.horizontalList(DynamicReports.cmp.text("Value").setStyle(Templates.columnTitleStyle),
-//                        DynamicReports.cmp.text("Value").setStyle(Templates.columnTitleStyle)))
-//                .rowGroups(rowGroup, valueRowGroup)
-//                .columnGroups(columnGroup)
-//                .measures(
-//                        ctab.measure("Count", "Count", Integer.class, Calculation.SUM))
-//                .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()));
-//
-//        StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
-//
-//        String sql = getFileContent ("sql/obsCountGroupByValue.sql");
-//
-//        String conceptNames = reportConfig.getConfig().getConceptNames();
-//        String formattedSql  = String.format(sql, conceptNames, startDate, endDate);
-//
-//        jasperReport.addTitle(cmp.horizontalList()
-//                        .add(cmp.text("Count of [ " + conceptNames + " ]")
-//                                .setStyle(Templates.boldStyle)
-//                                .setHorizontalAlignment(HorizontalAlignment.LEFT))
-//                        .newRow()
-//                        .add(cmp.verticalGap(10))
-//        );
-//
-//        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
-//                .setColumnStyle(textStyle)
-//                .setTemplate(Templates.reportTemplate)
-////                .columns(countColumn)
-//                .setReportName(reportConfig.getName())
-//                .summary(crosstab)
-//                .pageFooter(Templates.footerComponent)
-//                .setDataSource(formattedSql, connection);
-//        return jasperReport;
     }
 }
