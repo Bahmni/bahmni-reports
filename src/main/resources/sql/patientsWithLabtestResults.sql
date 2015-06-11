@@ -4,7 +4,8 @@ select 	test.identifier as patient_id,
         test.gender as gender,
         test.age as age,
         test.concept_full_name as test_name,
-        concat(coalesce(test.value_text,''),coalesce(test.value_numeric,''),COALESCE(test.value_coded,'')) as test_result
+        concat(coalesce(test.value_text,''),coalesce(test.value_numeric,''),COALESCE(test.value_coded,'')) as test_result,
+        if(abnormal.value_coded = 1, 'Abnormal',if( abnormal.value_coded = 2, 'Normal','')) as abnormality
         from
 		(select pi.identifier,
 			pn.given_name, pn.family_name, p.gender,
@@ -26,10 +27,10 @@ select 	test.identifier as patient_id,
 
         inner join
 
-        (select o.obs_group_id
+        (select o.obs_group_id,o.value_coded
 			from obs o
             inner join concept_view cv on cv.concept_id = o.concept_id
-			where cv.concept_full_name = 'LAB_ABNORMAL' and o.value_coded = 1 and o.voided = 0
+			where cv.concept_full_name = 'LAB_ABNORMAL' and o.value_coded in (if('abnormal' in (%s),1,2),if('normal' in (%s),2,1)) and o.voided = 0
 				and date(o.obs_datetime) between '%s' and '%s') abnormal
 
         on test.obs_group_id = abnormal.obs_group_id

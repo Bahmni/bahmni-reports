@@ -8,25 +8,24 @@ import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import net.sf.dynamicreports.report.exception.DRException;
-import org.bahmni.reports.model.PatientsWithAbnormalLabtestResultsConfig;
+import org.bahmni.reports.model.PatientsWithLabtestResultsConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
-@Component(value = "PatientsWithAbnormalLabtestResults")
+@Component(value = "PatientsWithLabtestResults")
 @UsingDatasource(value = "openmrs")
-public class PatientsWithAbnormalLabtestResults implements BaseReportTemplate<PatientsWithAbnormalLabtestResultsConfig> {
+public class PatientsWithLabtestResults implements BaseReportTemplate<PatientsWithLabtestResultsConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<PatientsWithAbnormalLabtestResultsConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<PatientsWithLabtestResultsConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
 
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
@@ -47,11 +46,13 @@ public class PatientsWithAbnormalLabtestResults implements BaseReportTemplate<Pa
                 .setStyle(columnStyle);
         TextColumnBuilder<String> testResultColumn = col.column("Test Result", "test_result", type.stringType())
                 .setStyle(columnStyle);
+        TextColumnBuilder<String> abnormalityColumn = col.column("Abnormality", "abnormality", type.stringType())
+                .setStyle(columnStyle);
 
 
-        String sql = getFileContent("sql/patientsWithAbnormalLabtestResults.sql");
+        String sql = getFileContent("sql/patientsWithLabtestResults.sql");
         String conceptNames = reportConfig.getConfig().getConceptNames();
-
+        String abnormalityTypes = reportConfig.getConfig().getAbnormalityTypes();
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
@@ -59,10 +60,10 @@ public class PatientsWithAbnormalLabtestResults implements BaseReportTemplate<Pa
 
                 .setTemplate(Templates.reportTemplate)
                 .setShowColumnTitle(true)
-                .columns(patientIdColumn, firstNameColumn, lastNameColumn, genderColumn, ageColumn, testNameColumn, testResultColumn)
+                .columns(patientIdColumn, firstNameColumn, lastNameColumn, genderColumn, ageColumn, testNameColumn, testResultColumn,abnormalityColumn)
                 .setReportName(reportConfig.getName())
                 .pageFooter(Templates.footerComponent)
-                .setDataSource(String.format(sql, conceptNames, startDate, endDate, startDate, endDate),
+                .setDataSource(String.format(sql, conceptNames, startDate, endDate, abnormalityTypes, abnormalityTypes, startDate, endDate),
                         connection);
         return jasperReport;
     }
