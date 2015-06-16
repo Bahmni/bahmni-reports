@@ -2,7 +2,7 @@ package org.bahmni.reports.model;
 
 import java.util.List;
 
-public class ObsCountGroupByValueConfig implements Config {
+public class ObsValueCountConfig implements Config {
 
     private String conceptNames;
 
