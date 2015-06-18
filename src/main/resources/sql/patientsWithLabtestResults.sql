@@ -1,11 +1,16 @@
-select 	test.identifier as patient_id,
-		test.given_name as first_name,
-        test.family_name as last_name,
-        test.gender as gender,
-        test.age as age,
-        test.concept_full_name as test_name,
+select result.identifier as patient_id,
+	result.given_name as first_name,
+	result.family_name as last_name,
+	result.gender as gender,
+	result.age as age,
+    result.test_date as test_date,
+    result.concept_full_name as test_name,
+    result.test_result as test_result,
+    result.test_outcome as test_outcome
+	from 
+	(select test.identifier, test.given_name, test.family_name, test.gender, test.age, date(test.obs_datetime) as test_date, test.concept_full_name,
         concat(coalesce(test.value_text,''),coalesce(test.value_numeric,''),coalesce(test.value_coded,'')) as test_result,
-        if(abnormal.value_coded = 1,'Abnormal','Normal') as abnormality
+        if(abnormal.value_coded = 1,'Abnormal','Normal') as test_outcome
         from
 		(select pi.identifier,
 			pn.given_name, pn.family_name, p.gender,
@@ -14,7 +19,9 @@ select 	test.identifier as patient_id,
             o.obs_group_id,
             o.value_text,
             o.value_numeric,
-            cv2.concept_full_name as value_coded
+            cv2.concept_full_name as value_coded,
+            o.obs_datetime,
+            o.person_id
 			from obs o
 			inner join concept_view cv on cv.concept_id = o.concept_id
 			left join concept_view cv2 on cv2.concept_id = o.value_coded
@@ -27,14 +34,15 @@ select 	test.identifier as patient_id,
 
         left join
 
-        (select o.obs_group_id,o.value_coded
+        (select o.obs_id, o.obs_group_id,o.value_coded,cv.concept_full_name
 			from obs o
             inner join concept_view cv on cv.concept_id = o.concept_id
-			where cv.concept_full_name = 'LAB_ABNORMAL' and o.value_coded in (if('abnormal' in (%s),1,2),if('normal' in (%s),2,1)) and o.voided = 0
+			where cv.concept_full_name = 'LAB_ABNORMAL' and o.voided = 0
 				and date(o.obs_datetime) between '%s' and '%s') abnormal
 
         on test.obs_group_id = abnormal.obs_group_id
         -- Dont consider the obs (parent obs for lab results observation) when there is no test result for it
-        where concat(coalesce(test.value_text,''),coalesce(test.value_numeric,''),coalesce(test.value_coded,'')) != ''
+        where concat(coalesce(test.value_text,''),coalesce(test.value_numeric,''),coalesce(test.value_coded,'')) != '') result
+        where result.test_outcome in (%s)
         group by patient_id,test_name,test_result
-        order by patient_id;
+        order by test_outcome,patient_id;

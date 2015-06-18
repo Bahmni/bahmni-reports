@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
@@ -42,17 +43,20 @@ public class PatientsWithLabtestResults implements BaseReportTemplate<PatientsWi
         TextColumnBuilder<Integer> ageColumn = col.column("Age (in yrs)", "age", type.integerType())
                 .setStyle(columnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
+        TextColumnBuilder<Date> testDateColumn = col.column("Test Date", "test_date", type.dateType())
+                .setStyle(columnStyle)
+                .setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> testNameColumn = col.column("Test Name", "test_name", type.stringType())
                 .setStyle(columnStyle);
         TextColumnBuilder<String> testResultColumn = col.column("Test Result", "test_result", type.stringType())
                 .setStyle(columnStyle);
-        TextColumnBuilder<String> abnormalityColumn = col.column("Abnormality", "abnormality", type.stringType())
+        TextColumnBuilder<String> abnormalityColumn = col.column("Test Outcome", "test_outcome", type.stringType())
                 .setStyle(columnStyle);
 
 
         String sql = getFileContent("sql/patientsWithLabtestResults.sql");
         String conceptNames = reportConfig.getConfig().getConceptNames();
-        String abnormalityTypes = reportConfig.getConfig().getAbnormalityTypes();
+        String testOutcome = reportConfig.getConfig().getTestOutcome();
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
@@ -60,10 +64,10 @@ public class PatientsWithLabtestResults implements BaseReportTemplate<PatientsWi
 
                 .setTemplate(Templates.reportTemplate)
                 .setShowColumnTitle(true)
-                .columns(patientIdColumn, firstNameColumn, lastNameColumn, genderColumn, ageColumn, testNameColumn, testResultColumn,abnormalityColumn)
+                .columns(patientIdColumn, firstNameColumn, lastNameColumn, genderColumn, ageColumn, testDateColumn, testNameColumn, testResultColumn,abnormalityColumn)
                 .setReportName(reportConfig.getName())
                 .pageFooter(Templates.footerComponent)
-                .setDataSource(String.format(sql, conceptNames, startDate, endDate, abnormalityTypes, abnormalityTypes, startDate, endDate),
+                .setDataSource(String.format(sql, conceptNames, startDate, endDate, startDate, endDate, testOutcome),
                         connection);
         return jasperReport;
     }

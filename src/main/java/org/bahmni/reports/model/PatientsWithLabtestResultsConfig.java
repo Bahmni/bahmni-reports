@@ -5,14 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PatientsWithLabtestResultsConfig implements Config{
     private String conceptNames;
-    private String abnormalityTypes;
+    private String testOutcome;
 
-    public String getAbnormalityTypes() {
-        return abnormalityTypes;
+    public String getTestOutcome() {
+        return testOutcome;
     }
 
-    public void setAbnormalityTypes(String abnormalityTypes) {
-        this.abnormalityTypes = abnormalityTypes;
+    public void setTestOutcome(String testOutcome) {
+        this.testOutcome = testOutcome;
     }
 
     public String getConceptNames() {
