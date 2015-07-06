@@ -19,7 +19,7 @@ SET @sql = CONCAT('SELECT
       visit_attribute.date_changed                                               AS "Date of Discharge",
       pi.identifier                                                              AS "Patient ID",
       CONCAT(pn.given_name, " ", pn.family_name)                                 AS "Patient Name",
-      floor(datediff(visit_attribute.date_created, p.birthdate) / 365)           AS "Age",',
+      floor(datediff(#filterColumn#, p.birthdate) / 365)                         AS "Age",',
       @patientAttributePivot,
       ',',
       @conceptObsPivot ,
