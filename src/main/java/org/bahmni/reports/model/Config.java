@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = NumericConceptValuesConfig.class, name = "numericConceptValuesReport"),
         @JsonSubTypes.Type(value = DateConceptValuesConfig.class, name = "dateConceptValuesReport"),
         @JsonSubTypes.Type(value = PatientsWithLabtestResultsConfig.class, name = "patientsWithLabtestResultsReport"),
+        @JsonSubTypes.Type(value = IpdPatientsConfig.class, name = "ipdPatientsReport"),
         @JsonSubTypes.Type(value = Config.class, name = "config"), })
 public interface Config {
 }
