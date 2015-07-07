@@ -41,6 +41,9 @@ SET @sql = CONCAT('SELECT
                        answer.concept_full_name
                      FROM obs ob
                        JOIN encounter e ON ob.encounter_id = e.encounter_id AND cast(e.encounter_datetime AS DATE) BETWEEN \'%s\' AND \'%s\'  AND ob.voided IS FALSE
+                       JOIN (select encounter_id from obs
+                                            where concept_id = (select concept_id from concept_view where concept_full_name = \'%s\') and voided is false) e1
+                       ON e.encounter_id = e1.encounter_id
                        JOIN patient_identifier pi ON pi.patient_id = ob.person_id
                        JOIN person ON person.person_id = pi.patient_id
                        JOIN person_name pat_name ON pat_name.person_id = person.person_id
