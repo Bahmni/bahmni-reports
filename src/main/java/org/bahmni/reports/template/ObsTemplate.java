@@ -62,7 +62,7 @@ public class ObsTemplate implements BaseReportTemplate<ObsTemplateConfig> {
         }
 
         String conceptNameInClause = StringUtils.join(conceptNames, ",");
-        String sql = String.format(getFileContent("sql/obsTemplate.sql"), conceptNameInClause, startDate, endDate, conceptNameInClause.replace("'","\\'"));
+        String sql = String.format(getFileContent("sql/obsTemplate.sql"), conceptNameInClause, startDate, endDate, templateName,  conceptNameInClause.replace("'","\\'"));
 
         TextColumnBuilder<String> patientColumn = col.column("Patient ID", "identifier", type.stringType());
         TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "patient_name", type.stringType());
