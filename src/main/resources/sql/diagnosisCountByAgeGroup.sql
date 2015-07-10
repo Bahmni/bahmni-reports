@@ -1,5 +1,4 @@
 SELECT
-  ''                                       AS something,
   diagnosis_concept_view.concept_full_name AS disease,
   observed_age_group.name                  AS age_group,
   SUM(IF(person.gender = 'F', 1, 0))       AS female,

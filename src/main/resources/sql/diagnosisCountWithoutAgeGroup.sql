@@ -1,5 +1,4 @@
 SELECT
-  ''                                       AS something,
   diagnosis_concept_view.concept_full_name AS disease,
   diagnosis_concept_view.icd10_code,
   SUM(IF(person.gender = 'F', 1, 0))       AS female,
