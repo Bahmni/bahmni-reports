@@ -5,6 +5,7 @@ import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
+import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import net.sf.dynamicreports.report.exception.DRException;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.IpdPatientsConfig;
@@ -37,6 +38,7 @@ public class IpdPatientsReport implements BaseReportTemplate<IpdPatientsConfig> 
 
         TextColumnBuilder<String> patientIDColumn = col.column("Patient ID", "Patient ID", type.stringType()).setStyle(columnStyle);
         TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "Patient Name", type.stringType()).setStyle(columnStyle);
+        TextColumnBuilder<String> genderColumn = col.column("Gender", "Gender", type.stringType()).setStyle(columnStyle);
         TextColumnBuilder<Date> admissionDateColumn = col.column("Date of Admission", "Date of Admission", type.dateType()).setStyle(columnStyle);
         TextColumnBuilder<Date> dischargeDateColumn = col.column("Date of Discharge", "Date of Discharge", type.dateType()).setStyle(columnStyle);
         TextColumnBuilder<String> ageColumn = col.column("Age", "Age", type.stringType()).setStyle(columnStyle);
@@ -44,11 +46,12 @@ public class IpdPatientsReport implements BaseReportTemplate<IpdPatientsConfig> 
 
 
 
-        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
+        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE);
+        jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL)
                 .setTemplate(Templates.reportTemplate)
                 .setShowColumnTitle(true)
                 .setReportName(reportConfig.getName())
-                .columns(admissionDateColumn, patientIDColumn, patientNameColumn, ageColumn)
+                .columns(admissionDateColumn, patientIDColumn, patientNameColumn, genderColumn, ageColumn)
                 .pageFooter(Templates.footerComponent);
 
         addColumns(jasperReport, reportConfig.getConfig().getPatientAttributes(), columnStyle);
