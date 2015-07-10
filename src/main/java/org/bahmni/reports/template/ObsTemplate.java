@@ -5,7 +5,6 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
-import net.sf.dynamicreports.report.exception.DRException;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.ConceptDetails;
@@ -20,9 +19,7 @@ import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -37,13 +34,16 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "obsTemplate")
 @UsingDatasource("openmrs")
-public class ObsTemplate implements BaseReportTemplate<ObsTemplateConfig> {
+public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
     @Autowired
     private BahmniReportsProperties bahmniReportsProperties;
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsTemplateConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException, URISyntaxException, IOException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsTemplateConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+
+        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+
         String templateName = reportConfig.getConfig().getTemplateName();
 
 
@@ -51,18 +51,25 @@ public class ObsTemplate implements BaseReportTemplate<ObsTemplateConfig> {
                 bahmniReportsProperties.getOpenmrsServicePassword(), bahmniReportsProperties.getOpenmrsConnectionTimeout(), bahmniReportsProperties.getOpenmrsReplyTimeout());
         HttpClient httpClient = new HttpClient(connectionDetails, new OpenMRSLoginAuthenticator(connectionDetails));
 
-        String url = bahmniReportsProperties.getOpenmrsRootUrl() +"/reference-data/leafConcepts?conceptName=" + URLEncoder.encode(templateName, "UTF-8");
-        String response = httpClient.get(new URI(url));
+        List<ConceptDetails> conceptDetails = null;
+        try {
+            String url = bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/leafConcepts?conceptName=" + URLEncoder.encode(templateName, "UTF-8");
+            String response = null;
+            response = httpClient.get(new URI(url));
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        List<ConceptDetails> conceptDetails = objectMapper.readValue(response, new TypeReference<List<ConceptDetails>>() {});
+            ObjectMapper objectMapper = new ObjectMapper();
+            conceptDetails = objectMapper.readValue(response, new TypeReference<List<ConceptDetails>>() {
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         List<String> conceptNames = new ArrayList<>();
         for (ConceptDetails conceptDetail : conceptDetails) {
-           conceptNames.add( "'" + conceptDetail.getFullName() +  "'");
+            conceptNames.add("'" + conceptDetail.getFullName() + "'");
         }
 
         String conceptNameInClause = StringUtils.join(conceptNames, ",");
-        String sql = String.format(getFileContent("sql/obsTemplate.sql"), conceptNameInClause, startDate, endDate, templateName,  conceptNameInClause.replace("'","\\'"));
+        String sql = String.format(getFileContent("sql/obsTemplate.sql"), conceptNameInClause, startDate, endDate, templateName, conceptNameInClause.replace("'", "\\'"));
 
         TextColumnBuilder<String> patientColumn = col.column("Patient ID", "identifier", type.stringType());
         TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "patient_name", type.stringType());
@@ -71,29 +78,31 @@ public class ObsTemplate implements BaseReportTemplate<ObsTemplateConfig> {
         TextColumnBuilder<String> providerColumn = col.column("User", "provider_name", type.stringType());
         TextColumnBuilder<String> encounterColumn = col.column("Encounter DateTime", "encounter_datetime", type.stringType());
 
-        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
-                .setTemplate(Templates.reportTemplate)
-                .setReportName(reportConfig.getName())
-                .columns(patientColumn, patientNameColumn, patientGenderColumn, patientAgeColumn, providerColumn, encounterColumn)
-                .pageFooter(Templates.footerComponent);
-        for(ConceptDetails concept: conceptDetails){
+        jasperReport.columns(patientColumn, patientNameColumn, patientGenderColumn, patientAgeColumn, providerColumn, encounterColumn);
+
+        for (ConceptDetails concept : conceptDetails) {
             TextColumnBuilder<String> column = col.column(concept.getName(), concept.getFullName(), type.stringType());
             jasperReport.addColumn(column);
         }
 
-        Statement stmt = connection.createStatement();
-        boolean hasMoreResultSets= stmt.execute(sql);
-        while ( hasMoreResultSets ||
-                stmt.getUpdateCount() != -1 ) { //if there are any more queries to be processed
-            if ( hasMoreResultSets ) {
-                ResultSet rs = stmt.getResultSet();
-                if(rs.isBeforeFirst()) {
-                    jasperReport.setDataSource(rs);
-                    return jasperReport;
+        Statement stmt = null;
+        try {
+            stmt = connection.createStatement();
+            boolean hasMoreResultSets = stmt.execute(sql);
+            while (hasMoreResultSets ||
+                    stmt.getUpdateCount() != -1) { //if there are any more queries to be processed
+                if (hasMoreResultSets) {
+                    ResultSet rs = stmt.getResultSet();
+                    if (rs.isBeforeFirst()) {
+                        jasperReport.setDataSource(rs);
+                        return jasperReport;
+                    }
                 }
+                hasMoreResultSets = stmt.getMoreResults(); //true if it is a resultset
             }
-            hasMoreResultSets = stmt.getMoreResults(); //true if it is a resultset
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return  jasperReport;
+        return jasperReport;
     }
 }

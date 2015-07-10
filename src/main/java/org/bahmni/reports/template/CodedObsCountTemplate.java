@@ -18,7 +18,6 @@ import org.springframework.stereotype.Component;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
@@ -28,10 +27,13 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "CodedObsCount")
 @UsingDatasource("openmrs")
-public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig> {
+public class CodedObsCountTemplate extends BaseReportTemplate<CodedObsCountConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+
+        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+
         CrosstabRowGroupBuilder<String> ageRowGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);
 
@@ -78,12 +80,8 @@ public class CodedObsCountTemplate implements BaseReportTemplate<CodedObsCountCo
                         .add(cmp.verticalGap(10))
         );
 
-        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
-                .setColumnStyle(textStyle)
-                .setTemplate(Templates.reportTemplate)
-                .setReportName(reportConfig.getName())
+        jasperReport.setColumnStyle(textStyle)
                 .summary(crosstab)
-                .pageFooter(Templates.footerComponent)
                 .setDataSource(getSqlString(reportConfig.getConfig(), startDate, endDate),
                         connection);
         return jasperReport;

@@ -8,14 +8,12 @@ import net.sf.dynamicreports.report.constant.GroupHeaderLayout;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
-import net.sf.dynamicreports.report.exception.DRException;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
@@ -23,10 +21,12 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "TestCount")
 @UsingDatasource(value = "openelis")
-public class TestCountTemplate implements BaseReportTemplate<Config> {
+public class TestCountTemplate extends BaseReportTemplate<Config> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+
+        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 
@@ -51,13 +51,9 @@ public class TestCountTemplate implements BaseReportTemplate<Config> {
 
         String sql = getFileContent("sql/testCount.sql");
 
-        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
-                .setTemplate(Templates.reportTemplate)
-                .setShowColumnTitle(false)
+        jasperReport.setShowColumnTitle(false)
                 .columns(departmentColumn, testColumn, totalCountColumn, positiveCountColumn, negativeCountColumn)
                 .groupBy(departmentGroup)
-                .setReportName(reportConfig.getName())
-                .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, startDate, endDate),
                         connection);
         return jasperReport;

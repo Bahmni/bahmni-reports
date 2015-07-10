@@ -5,18 +5,14 @@ import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.subtotal.AggregationSubtotalBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
-import net.sf.dynamicreports.report.exception.DRException;
-import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.ObsCountByConceptClassConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
@@ -24,9 +20,11 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "ObsCountByConceptClass")
 @UsingDatasource(value = "openmrs")
-public class ObsCountByConceptClass implements BaseReportTemplate<ObsCountByConceptClassConfig>{
+public class ObsCountByConceptClass extends BaseReportTemplate<ObsCountByConceptClassConfig>{
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountByConceptClassConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountByConceptClassConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType){
+        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
         StyleBuilder subtotalStyle = stl.style().bold().setHorizontalAlignment(HorizontalAlignment.RIGHT);
@@ -49,11 +47,8 @@ public class ObsCountByConceptClass implements BaseReportTemplate<ObsCountByConc
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
-        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
+        jasperReport
                 .setColumnStyle(textStyle)
-                .setTemplate(Templates.reportTemplate)
-                .setReportName(reportConfig.getName())
-                .pageFooter(Templates.footerComponent)
                 .columns(conceptName, obsCount)
                 .subtotalsAtSummary(totalCount)
                 .setDataSource(String.format(sql, conceptClassNames, startDate, endDate),

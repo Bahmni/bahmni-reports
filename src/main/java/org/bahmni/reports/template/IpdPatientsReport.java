@@ -6,7 +6,6 @@ import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
-import net.sf.dynamicreports.report.exception.DRException;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.IpdPatientsConfig;
 import org.bahmni.reports.model.Report;
@@ -26,10 +25,12 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "ipdPatients")
 @UsingDatasource("openmrs")
-public class IpdPatientsReport implements BaseReportTemplate<IpdPatientsConfig> {
+public class IpdPatientsReport extends BaseReportTemplate<IpdPatientsConfig> {
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<IpdPatientsConfig> reportConfig,
-                                     String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+                                     String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+
+        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
 
         String patientAttributes = sqlStringListParameter(reportConfig.getConfig().getPatientAttributes());
         String conceptNames = sqlStringListParameter(reportConfig.getConfig().getConceptNames());
@@ -44,15 +45,9 @@ public class IpdPatientsReport implements BaseReportTemplate<IpdPatientsConfig> 
         TextColumnBuilder<String> ageColumn = col.column("Age", "Age", type.stringType()).setStyle(columnStyle);
         TextColumnBuilder<String> diagnosisColumn = col.column("Diagnosis", "Diagnosis", type.stringType()).setStyle(columnStyle);
 
-
-
-        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE);
-        jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL)
-                .setTemplate(Templates.reportTemplate)
-                .setShowColumnTitle(true)
-                .setReportName(reportConfig.getName())
-                .columns(admissionDateColumn, patientIDColumn, patientNameColumn, genderColumn, ageColumn)
-                .pageFooter(Templates.footerComponent);
+        jasperReport.setShowColumnTitle(true)
+                .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL)
+                .columns(admissionDateColumn, patientIDColumn, patientNameColumn, genderColumn, ageColumn);
 
         addColumns(jasperReport, reportConfig.getConfig().getPatientAttributes(), columnStyle);
         addColumns(jasperReport, reportConfig.getConfig().getAddressAttributes(), columnStyle);
@@ -63,17 +58,22 @@ public class IpdPatientsReport implements BaseReportTemplate<IpdPatientsConfig> 
         addColumns(jasperReport, reportConfig.getConfig().getConceptNames(), columnStyle);
 
         String sqlString = getSqlString(patientAttributes, conceptNames, startDate, endDate, getFilterColumn(reportConfig));
-        Statement stmt = connection.createStatement();
-        boolean hasMoreResultSets= stmt.execute(sqlString);
-        while ( hasMoreResultSets || stmt.getUpdateCount() != -1 ) { //if there are any more queries to be processed
-            if ( hasMoreResultSets ) {
-                ResultSet rs = stmt.getResultSet();
-                if(rs.isBeforeFirst()) {
-                    jasperReport.setDataSource(rs);
-                    return jasperReport;
+        Statement stmt = null;
+        try {
+            stmt = connection.createStatement();
+            boolean hasMoreResultSets = stmt.execute(sqlString);
+            while (hasMoreResultSets || stmt.getUpdateCount() != -1) { //if there are any more queries to be processed
+                if (hasMoreResultSets) {
+                    ResultSet rs = stmt.getResultSet();
+                    if (rs.isBeforeFirst()) {
+                        jasperReport.setDataSource(rs);
+                        return jasperReport;
+                    }
                 }
+                hasMoreResultSets = stmt.getMoreResults(); //true if it is a resultset
             }
-            hasMoreResultSets = stmt.getMoreResults(); //true if it is a resultset
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
         return jasperReport;
@@ -104,7 +104,7 @@ public class IpdPatientsReport implements BaseReportTemplate<IpdPatientsConfig> 
 
     private String getFilterColumn(Report<IpdPatientsConfig> reportConfig) {
         String filterBy = reportConfig.getConfig().getFilterBy();
-        if("Date of Discharge".equals(filterBy)) {
+        if ("Date of Discharge".equals(filterBy)) {
             return "visit_attribute.date_changed";
         }
         return "visit_attribute.date_created";

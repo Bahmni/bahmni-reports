@@ -1,6 +1,7 @@
 package org.bahmni.reports.web;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.exception.DRException;
 import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
@@ -55,6 +56,7 @@ public class MainReportController {
             String endDate = request.getParameter("endDate");
             String reportName = request.getParameter("name");
             String responseType = request.getParameter("responseType");
+            PageType pageType = request.getParameter("paperSize").equals("A3") ? PageType.A3 : PageType.A4;
 
             Report report = Reports.find(reportName, bahmniReportsProperties.getConfigFilePath());
             BaseReportTemplate reportTemplate = reportTemplates.get(report.getType());
@@ -62,7 +64,8 @@ public class MainReportController {
 
             JasperReportBuilder jasperReport = report();
             jasperReport = new ReportHeader().add(jasperReport, reportName, startDate, endDate);
-            JasperReportBuilder reportBuilder = reportTemplate.build(connection, jasperReport, report, startDate, endDate, resources);
+
+            JasperReportBuilder reportBuilder = reportTemplate.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
             convertToResponse(responseType, reportBuilder, response, reportName);
 
             resources.add(connection);

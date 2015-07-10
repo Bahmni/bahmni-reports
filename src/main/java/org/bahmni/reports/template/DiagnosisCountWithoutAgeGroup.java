@@ -20,7 +20,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "DiagnosisCountWithoutAgeGroup")
 public class DiagnosisCountWithoutAgeGroup{
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) {
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
         TextColumnBuilder<String> disease = col.column("Name of Disease", "disease", type.stringType());
@@ -31,11 +31,7 @@ public class DiagnosisCountWithoutAgeGroup{
 
         String sql = getFileContent("sql/diagnosisCountWithoutAgeGroup.sql");
 
-        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
-                .setColumnStyle(textStyle)
-                .setTemplate(Templates.reportTemplate)
-                .setReportName(reportConfig.getName())
-                .pageFooter(Templates.footerComponent)
+        jasperReport.setColumnStyle(textStyle)
                 .columns(disease, icd10Code, female, male, other)
                 .setDataSource(String.format(sql, startDate, endDate, reportConfig.getConfig().getVisitTypes()),
                         connection);

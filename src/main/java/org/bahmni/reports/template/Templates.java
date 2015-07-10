@@ -59,6 +59,8 @@ public class Templates {
     public static final ComponentBuilder<?, ?> dynamicReportsComponent;
     public static final ComponentBuilder<?, ?> footerComponent;
 
+    public static final ReportTemplateBuilder excelReportTemplate;
+
     static {
         rootStyle           = stl.style().setPadding(2);
         boldStyle           = stl.style(rootStyle).bold();
@@ -106,6 +108,22 @@ public class Templates {
                 .setCrosstabGroupTotalStyle(crosstabGroupTotalStyle)
                 .setCrosstabGrandTotalStyle(crosstabGrandTotalStyle)
                 .setCrosstabCellStyle(crosstabCellStyle)
+                .setTableOfContentsCustomizer(tableOfContentsCustomizer);
+
+        excelReportTemplate = template()
+                .setLocale(Locale.ENGLISH)
+                .setColumnStyle(columnStyle)
+                .setColumnTitleStyle(columnTitleStyle)
+                .setGroupStyle(groupStyle)
+                .setGroupTitleStyle(groupStyle)
+                .setSubtotalStyle(subtotalStyle)
+                .highlightDetailEvenRows()
+                .crosstabHighlightEvenRows()
+                .setCrosstabGroupStyle(crosstabGroupStyle)
+                .setCrosstabGroupTotalStyle(crosstabGroupTotalStyle)
+                .setCrosstabGrandTotalStyle(crosstabGrandTotalStyle)
+                .setCrosstabCellStyle(crosstabCellStyle)
+                .ignorePagination()
                 .setTableOfContentsCustomizer(tableOfContentsCustomizer);
 
         currencyType = new CurrencyType();

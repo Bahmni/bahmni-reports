@@ -2,6 +2,7 @@ package org.bahmni.reports.filter;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.exception.DRException;
+import org.bahmni.reports.template.Templates;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletOutputStream;
@@ -15,7 +16,6 @@ public class JasperResponseConverter {
     public void convert(String responseType, JasperReportBuilder report, HttpServletResponse response, final String fileName) throws IOException, DRException, SQLException {
 
         response.setContentType("application/vnd.ms-excel");
-
         ServletOutputStream outputStream = response.getOutputStream();
         switch (responseType) {
             case "text/html":
@@ -25,6 +25,7 @@ public class JasperResponseConverter {
             case "application/vnd.ms-excel":
                 response.setContentType("application/vnd.ms-excel");
                 response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
+                report.setTemplate(Templates.excelReportTemplate);
                 report.toXlsx(outputStream);
                 break;
             case "application/pdf":

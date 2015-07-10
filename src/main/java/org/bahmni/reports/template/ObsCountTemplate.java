@@ -8,14 +8,12 @@ import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.*;
-import net.sf.dynamicreports.report.exception.DRException;
 import org.bahmni.reports.model.CodedObsCountConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
@@ -25,12 +23,14 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "obsCount")
 @UsingDatasource("openmrs")
-public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig> {
+public class ObsCountTemplate extends BaseReportTemplate<CodedObsCountConfig> {
 
     private final String VISIT_TYPE_CRITERIA = "and va.value_reference in (%s)";
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+
         CrosstabRowGroupBuilder<String> ageGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);
 
@@ -80,12 +80,8 @@ public class ObsCountTemplate implements BaseReportTemplate<CodedObsCountConfig>
                         .add(cmp.verticalGap(10))
         );
 
-        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
-                .setColumnStyle(textStyle)
-                .setTemplate(Templates.reportTemplate)
-                .setReportName(reportConfig.getName())
+        jasperReport.setColumnStyle(textStyle)
                 .summary(crosstab)
-                .pageFooter(Templates.footerComponent)
                 .setDataSource(formattedSql, connection);
 
         return jasperReport;

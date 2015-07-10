@@ -5,15 +5,12 @@ import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.group.ColumnGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.*;
-import net.sf.dynamicreports.report.exception.DRException;
-import org.bahmni.reports.model.DateConceptValuesConfig;
 import org.bahmni.reports.model.NumericConceptValuesConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
@@ -21,11 +18,12 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "NumericConceptValuesCount")
 @UsingDatasource(value = "openmrs")
-public class NumericConceptValuesReport implements BaseReportTemplate<NumericConceptValuesConfig> {
+public class NumericConceptValuesReport extends BaseReportTemplate<NumericConceptValuesConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<NumericConceptValuesConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<NumericConceptValuesConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
+        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 
@@ -60,14 +58,9 @@ public class NumericConceptValuesReport implements BaseReportTemplate<NumericCon
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
-        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
-
-                .setTemplate(Templates.reportTemplate)
-                .setShowColumnTitle(false)
+        jasperReport.setShowColumnTitle(false)
                 .columns(numericValueRange, reportAgeGroup, femaleCount, maleCount, otherCount, totalCount)
                 .groupBy(numericValueGroup)
-                .setReportName(reportConfig.getName())
-                .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, rangeGroupName, ageGroupName, conceptNames, startDate, endDate),
                         connection);
         return jasperReport;

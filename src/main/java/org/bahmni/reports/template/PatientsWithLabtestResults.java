@@ -7,14 +7,12 @@ import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
-import net.sf.dynamicreports.report.exception.DRException;
 import org.bahmni.reports.model.PatientsWithLabtestResultsConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -23,11 +21,12 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "PatientsWithLabtestResults")
 @UsingDatasource(value = "openmrs")
-public class PatientsWithLabtestResults implements BaseReportTemplate<PatientsWithLabtestResultsConfig> {
+public class PatientsWithLabtestResults extends BaseReportTemplate<PatientsWithLabtestResultsConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<PatientsWithLabtestResultsConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<PatientsWithLabtestResultsConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
+        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 
@@ -60,13 +59,8 @@ public class PatientsWithLabtestResults implements BaseReportTemplate<PatientsWi
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
-        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
-
-                .setTemplate(Templates.reportTemplate)
-                .setShowColumnTitle(true)
+        jasperReport.setShowColumnTitle(true)
                 .columns(patientIdColumn, firstNameColumn, lastNameColumn, genderColumn, ageColumn, testDateColumn, testNameColumn, testResultColumn,abnormalityColumn)
-                .setReportName(reportConfig.getName())
-                .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, conceptNames, startDate, endDate, startDate, endDate, testOutcome),
                         connection);
         return jasperReport;

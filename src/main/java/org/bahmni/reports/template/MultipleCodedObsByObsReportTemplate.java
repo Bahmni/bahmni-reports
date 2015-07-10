@@ -10,7 +10,6 @@ import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
-import net.sf.dynamicreports.report.exception.DRException;
 import org.bahmni.reports.model.MultipleCodedObsByCodedObsReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -27,14 +25,15 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "MultipleCodedObsByCodedObs")
 @UsingDatasource("openmrs")
-public class MultipleCodedObsByObsReportTemplate implements BaseReportTemplate<MultipleCodedObsByCodedObsReportConfig> {
+public class MultipleCodedObsByObsReportTemplate extends BaseReportTemplate<MultipleCodedObsByCodedObsReportConfig> {
 
     private static final List<String> FIXED_ROW_COLUMN_NAMES = Arrays.asList("gender", "age_group");
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
                                      Report<MultipleCodedObsByCodedObsReportConfig> reportConfig, String startDate, String endDate,
-                                     List<AutoCloseable> resources) throws SQLException, DRException {
+                                     List<AutoCloseable> resources, PageType pageType) {
+        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
 
         MultipleCodedObsByCodedObsReportConfig reportSpecificConfig = reportConfig.getConfig();
 
@@ -85,12 +84,8 @@ public class MultipleCodedObsByObsReportTemplate implements BaseReportTemplate<M
                         .add(cmp.verticalGap(10))
         );
 
-        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
-                .setColumnStyle(textStyle)
-                .setTemplate(Templates.reportTemplate)
-                .setReportName(reportConfig.getName())
+        jasperReport.setColumnStyle(textStyle)
                 .summary(crosstab)
-                .pageFooter(Templates.footerComponent)
                 .setDataSource(getSqlString(reportSpecificConfig, startDate, endDate), connection);
         return jasperReport;
     }

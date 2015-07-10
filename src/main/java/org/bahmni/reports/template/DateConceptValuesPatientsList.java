@@ -7,14 +7,12 @@ import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
-import net.sf.dynamicreports.report.exception.DRException;
 import org.bahmni.reports.model.DateConceptValuesConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -23,11 +21,12 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @Component(value = "DateConceptValuesPatientsList")
 @UsingDatasource(value = "openmrs")
-public class DateConceptValuesPatientsList implements BaseReportTemplate<DateConceptValuesConfig> {
+public class DateConceptValuesPatientsList extends BaseReportTemplate<DateConceptValuesConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DateConceptValuesConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DateConceptValuesConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
+        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 
@@ -54,13 +53,8 @@ public class DateConceptValuesPatientsList implements BaseReportTemplate<DateCon
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
         
-        jasperReport.setPageFormat(PageType.A3, PageOrientation.LANDSCAPE)
-
-                .setTemplate(Templates.reportTemplate)
-                .setShowColumnTitle(true)
+        jasperReport.setShowColumnTitle(true)
                 .columns(patientIdentifier, givenName, familyName, gender, age, dateValue)
-                .setReportName(reportConfig.getName())
-                .pageFooter(Templates.footerComponent)
                 .setDataSource(String.format(sql, templateName, conceptNames, startDate, endDate),
                         connection);
         return jasperReport;

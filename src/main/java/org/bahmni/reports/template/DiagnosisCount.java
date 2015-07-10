@@ -1,7 +1,7 @@
 package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.exception.DRException;
+import net.sf.dynamicreports.report.constant.PageType;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.DiagnosisReportConfig;
 import org.bahmni.reports.model.Report;
@@ -10,12 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 @Component(value = "diagnosisCount")
 @UsingDatasource("openmrs")
-public class DiagnosisCount implements BaseReportTemplate<DiagnosisReportConfig> {
+public class DiagnosisCount extends BaseReportTemplate<DiagnosisReportConfig> {
     private DiagnosisCountByAgeGroup diagnosisCountByAgeGroup;
     private DiagnosisCountWithoutAgeGroup diagnosisCountWithoutAgeGroup;
 
@@ -26,7 +25,9 @@ public class DiagnosisCount implements BaseReportTemplate<DiagnosisReportConfig>
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) throws SQLException, DRException {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+
         if (StringUtils.isNotBlank(reportConfig.getConfig().getAgeGroupName())){
             return diagnosisCountByAgeGroup.build(connection, jasperReport, reportConfig, startDate, endDate, resources);
         }
