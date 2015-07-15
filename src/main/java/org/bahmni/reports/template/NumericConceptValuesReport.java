@@ -9,6 +9,7 @@ import org.bahmni.reports.model.NumericConceptValuesConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
+import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
 import java.util.List;
@@ -51,18 +52,32 @@ public class NumericConceptValuesReport extends BaseReportTemplate<NumericConcep
                 .showColumnHeaderAndFooter()
                 .setPadding(30);
 
-        String sql = getFileContent("sql/numericConceptValuesCount.sql");
         String ageGroupName = reportConfig.getConfig().getAgeGroupName();
         String rangeGroupName = reportConfig.getConfig().getRangeGroupName();
         String conceptNames = reportConfig.getConfig().getConceptNames();
+        Boolean countOncePerPatient = reportConfig.getConfig().getCountOncePerPatient();
+        String sqlString = getSqlString(ageGroupName, rangeGroupName, conceptNames, countOncePerPatient, startDate, endDate);
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
         jasperReport.setShowColumnTitle(false)
-                .columns(numericValueRange, reportAgeGroup, femaleCount, maleCount, otherCount, totalCount)
                 .groupBy(numericValueGroup)
-                .setDataSource(String.format(sql, rangeGroupName, ageGroupName, conceptNames, startDate, endDate),
-                        connection);
+                .columns(reportAgeGroup, femaleCount, maleCount, otherCount, totalCount)
+                .setDataSource(sqlString, connection);
+
         return jasperReport;
+    }
+
+    private String getSqlString(String ageGroupName, String rangeGroupName, String conceptNames, Boolean countOncePerPatient, String startDate, String endDate) {
+        String sql = getFileContent("sql/numericConceptValuesCount.sql");
+        ST sqlTemplate = new ST(sql, '#', '#');
+        sqlTemplate.add("ageGroupName", ageGroupName);
+        sqlTemplate.add("rangeGroupName", rangeGroupName);
+        sqlTemplate.add("conceptNames", conceptNames);
+        sqlTemplate.add("countOncePerPatient", countOncePerPatient);
+        sqlTemplate.add("startDate", startDate);
+        sqlTemplate.add("endDate", endDate);
+
+        return sqlTemplate.render();
     }
 }
