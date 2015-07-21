@@ -23,8 +23,6 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
-
-@Component(value = "booleanConceptsCount")
 @UsingDatasource("openmrs")
 public class BooleanConceptsCountTemplate  extends BaseReportTemplate<CodedObsCountConfig> {
     @Override

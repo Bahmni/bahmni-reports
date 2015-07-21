@@ -17,9 +17,8 @@ import java.util.List;
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
-@Component(value = "NumericConceptValuesCount")
 @UsingDatasource(value = "openmrs")
-public class NumericConceptValuesReport extends BaseReportTemplate<NumericConceptValuesConfig> {
+public class NumericConceptValuesReportTemplate extends BaseReportTemplate<NumericConceptValuesConfig> {
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<NumericConceptValuesConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {

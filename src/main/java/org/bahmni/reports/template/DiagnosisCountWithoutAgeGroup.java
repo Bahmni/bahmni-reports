@@ -7,6 +7,7 @@ import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.DiagnosisReportConfig;
 import org.bahmni.reports.model.Report;
+import org.bahmni.reports.model.UsingDatasource;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -17,9 +18,8 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
-
-@Component(value = "DiagnosisCountWithoutAgeGroup")
-public class DiagnosisCountWithoutAgeGroup{
+@UsingDatasource("openmrs")
+public class DiagnosisCountWithoutAgeGroup extends BaseReportTemplate<DiagnosisReportConfig>{
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) {
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 

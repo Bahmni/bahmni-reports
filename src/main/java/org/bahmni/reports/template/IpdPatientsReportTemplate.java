@@ -23,9 +23,8 @@ import java.util.List;
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
-@Component(value = "ipdPatients")
 @UsingDatasource("openmrs")
-public class IpdPatientsReport extends BaseReportTemplate<IpdPatientsConfig> {
+public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsConfig> {
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<IpdPatientsConfig> reportConfig,
                                      String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {

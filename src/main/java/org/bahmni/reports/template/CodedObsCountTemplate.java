@@ -25,7 +25,6 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
-@Component(value = "CodedObsCount")
 @UsingDatasource("openmrs")
 public class CodedObsCountTemplate extends BaseReportTemplate<CodedObsCountConfig> {
 

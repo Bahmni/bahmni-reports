@@ -10,7 +10,6 @@ import org.bahmni.reports.model.AllDatasources;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.Reports;
 import org.bahmni.reports.template.BaseReportTemplate;
-import org.bahmni.reports.template.ReportTemplates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,17 +29,14 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 public class MainReportController {
 
     private static final Logger logger = Logger.getLogger(MainReportController.class);
-    private ReportTemplates reportTemplates;
     private JasperResponseConverter converter;
     private BahmniReportsProperties bahmniReportsProperties;
     private AllDatasources allDatasources;
 
     @Autowired
-    public MainReportController(ReportTemplates reportTemplates,
-                                JasperResponseConverter converter,
+    public MainReportController(JasperResponseConverter converter,
                                 BahmniReportsProperties bahmniReportsProperties,
                                 AllDatasources allDatasources) {
-        this.reportTemplates = reportTemplates;
         this.converter = converter;
         this.bahmniReportsProperties = bahmniReportsProperties;
         this.allDatasources = allDatasources;
@@ -56,10 +52,10 @@ public class MainReportController {
             String endDate = request.getParameter("endDate");
             String reportName = request.getParameter("name");
             String responseType = request.getParameter("responseType");
-            PageType pageType = request.getParameter("paperSize").equals("A3") ? PageType.A3 : PageType.A4;
+            PageType pageType = "A3".equals(request.getParameter("paperSize")) ? PageType.A3 : PageType.A4;
 
             Report report = Reports.find(reportName, bahmniReportsProperties.getConfigFilePath());
-            BaseReportTemplate reportTemplate = reportTemplates.get(report.getType());
+            BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
             connection = allDatasources.getConnectionFromDatasource(reportTemplate);
 
             JasperReportBuilder jasperReport = report();

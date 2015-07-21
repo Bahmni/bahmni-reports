@@ -19,7 +19,6 @@ import java.util.List;
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
-@Component(value = "PatientsWithLabtestResults")
 @UsingDatasource(value = "openmrs")
 public class PatientsWithLabtestResults extends BaseReportTemplate<PatientsWithLabtestResultsConfig> {
 

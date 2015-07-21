@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.sql.Connection;
 import java.util.List;
 
-@Component(value = "diagnosisCount")
 @UsingDatasource("openmrs")
 public class DiagnosisCount extends BaseReportTemplate<DiagnosisReportConfig> {
     private DiagnosisCountByAgeGroup diagnosisCountByAgeGroup;

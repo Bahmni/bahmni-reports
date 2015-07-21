@@ -23,7 +23,6 @@ import java.util.List;
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
-@Component(value = "MultipleCodedObsByCodedObs")
 @UsingDatasource("openmrs")
 public class MultipleCodedObsByObsReportTemplate extends BaseReportTemplate<MultipleCodedObsByCodedObsReportConfig> {
 

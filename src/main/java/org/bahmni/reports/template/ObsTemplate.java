@@ -32,12 +32,14 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
-@Component(value = "obsTemplate")
 @UsingDatasource("openmrs")
 public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
-    @Autowired
     private BahmniReportsProperties bahmniReportsProperties;
+
+    public ObsTemplate(BahmniReportsProperties bahmniReportsProperties) {
+        this.bahmniReportsProperties = bahmniReportsProperties;
+    }
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsTemplateConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {

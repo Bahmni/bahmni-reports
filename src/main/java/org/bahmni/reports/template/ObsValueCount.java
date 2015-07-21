@@ -16,7 +16,6 @@ import java.util.List;
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
-@Component(value = "ObsValueCount")
 @UsingDatasource("openmrs")
 public class ObsValueCount extends BaseReportTemplate<ObsValueCountConfig> {
     @Override
