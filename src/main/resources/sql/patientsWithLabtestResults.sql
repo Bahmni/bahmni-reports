@@ -28,9 +28,9 @@ select result.identifier as patient_id,
 			inner join person p on p.person_id = o.person_id
 			inner join person_name pn on pn.person_id = o.person_id
 			inner join patient_identifier pi on pi.patient_id = o.person_id
-			where cv.concept_full_name in (%s)
+			where cv.concept_full_name in (#conceptNames#)
 			and o.voided = 0
-			and date(o.obs_datetime) between '%s' and '%s') test
+			and date(o.obs_datetime) between '#startDate#' and '#endDate#') test
 
         left join
 
@@ -38,11 +38,11 @@ select result.identifier as patient_id,
 			from obs o
             inner join concept_view cv on cv.concept_id = o.concept_id
 			where cv.concept_full_name = 'LAB_ABNORMAL' and o.voided = 0
-				and date(o.obs_datetime) between '%s' and '%s') abnormal
+				and date(o.obs_datetime) between '#startDate#' and '#endDate#') abnormal
 
         on test.obs_group_id = abnormal.obs_group_id
         -- Dont consider the obs (parent obs for lab results observation) when there is no test result for it
         where concat(coalesce(test.value_text,''),coalesce(test.value_numeric,''),coalesce(test.value_coded,'')) != '') result
-        where result.test_outcome in (%s)
+        where result.test_outcome in (#testOutcome#)
         group by patient_id,test_name,test_result
         order by test_outcome,patient_id;

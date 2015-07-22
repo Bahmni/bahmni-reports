@@ -10,7 +10,8 @@ import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.model.ObsCountByConceptClassConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
-import org.springframework.stereotype.Component;
+import org.bahmni.reports.util.SqlUtil;
+import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
 import java.util.List;
@@ -21,8 +22,8 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource(value = "openmrs")
 public class ObsCountByConceptClass extends BaseReportTemplate<ObsCountByConceptClassConfig>{
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountByConceptClassConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType){
-        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountByConceptClassConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType){
+        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
@@ -42,7 +43,7 @@ public class ObsCountByConceptClass extends BaseReportTemplate<ObsCountByConcept
                 .setLabelStyle(subtotalStyle);
 
         String sql = getFileContent("sql/obsCountByConceptClass.sql");
-        String conceptClassNames = reportConfig.getConfig().getConceptClassNames();
+        String conceptClassNames = SqlUtil.toCommaSeparatedSqlString(report.getConfig().getConceptClassNames());
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
@@ -50,8 +51,16 @@ public class ObsCountByConceptClass extends BaseReportTemplate<ObsCountByConcept
                 .setColumnStyle(textStyle)
                 .columns(conceptName, obsCount)
                 .subtotalsAtSummary(totalCount)
-                .setDataSource(String.format(sql, conceptClassNames, startDate, endDate),
+                .setDataSource(getFormattedSql(sql, report.getConfig(), startDate, endDate),
                         connection);
         return jasperReport;
+    }
+
+    private String getFormattedSql(String formattedSql, ObsCountByConceptClassConfig reportConfig, String startDate, String endDate) {
+        ST sqlTemplate = new ST(formattedSql, '#', '#');
+        sqlTemplate.add("conceptClassNames", SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptClassNames()));
+        sqlTemplate.add("startDate", startDate);
+        sqlTemplate.add("endDate", endDate);
+        return sqlTemplate.render();
     }
 }

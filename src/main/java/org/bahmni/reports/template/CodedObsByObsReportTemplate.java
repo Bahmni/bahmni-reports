@@ -27,11 +27,11 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class CodedObsByObsReportTemplate extends BaseReportTemplate<CodedObsByCodedObsReportConfig> {
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsByCodedObsReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsByCodedObsReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
-        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
 
-        CodedObsByCodedObsReportConfig reportSpecificConfig = reportConfig.getConfig();
+        CodedObsByCodedObsReportConfig reportSpecificConfig = report.getConfig();
 
         List<String> columnsGroupBy = reportSpecificConfig.getColumnsGroupBy();
         CrosstabColumnGroupBuilder<String>[] columnGroups = new CrosstabColumnGroupBuilder[columnsGroupBy.size()];

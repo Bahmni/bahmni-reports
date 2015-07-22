@@ -7,7 +7,7 @@ SELECT
 from (select  diagnosis.value_coded, diagnosis.person_id, diagnosis.encounter_id from obs AS diagnosis
 						JOIN concept_view AS cv
 						ON cv.concept_id = diagnosis.value_coded AND cv.concept_class_name = 'Diagnosis' AND
-						cast(diagnosis.obs_datetime AS DATE) BETWEEN '%s' AND '%s'  AND diagnosis.voided = 0
+						cast(diagnosis.obs_datetime AS DATE) BETWEEN '#startDate#' AND '#endDate#'  AND diagnosis.voided = 0
 						AND diagnosis.obs_group_id IN (
 													select distinct confirmed.obs_id from (
 																		SELECT DISTINCT parent.obs_id
@@ -50,7 +50,7 @@ from (select  diagnosis.value_coded, diagnosis.person_id, diagnosis.encounter_id
 						ON person.person_id = filtered_diagnosis.person_id
 						JOIN encounter e
 						ON e.encounter_id = filtered_diagnosis.encounter_id
-						JOIN visit_attribute va on va.visit_id = e.visit_id and va.value_reference in (%s)
+						JOIN visit_attribute va on va.visit_id = e.visit_id and va.value_reference in (#visitTypes#)
 						LEFT JOIN visit_attribute_type vat on vat.visit_attribute_type_id = va.attribute_type_id AND vat.name = 'Visit Status'
 join diagnosis_concept_view
 ON diagnosis_concept_view.concept_id = filtered_diagnosis.value_coded

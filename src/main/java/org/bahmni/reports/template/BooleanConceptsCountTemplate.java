@@ -13,6 +13,7 @@ import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.ObsCountConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -26,8 +27,8 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class BooleanConceptsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
-        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
         CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup("concept_name", String.class)
                 .setShowTotal(false);
         CrosstabRowGroupBuilder<String> booleanValueRowGroup = ctab.rowGroup("value_boolean", String.class)
@@ -50,15 +51,11 @@ public class BooleanConceptsCountTemplate extends BaseReportTemplate<ObsCountCon
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
-        String sql = getFileContent ("sql/booleanConceptsCount.sql");
+        String sql = getFileContent("sql/booleanConceptsCount.sql");
 
-        String ageGroupName = reportConfig.getConfig().getAgeGroupName();
-        String conceptNames = reportConfig.getConfig().getConceptNames();
-        String formattedSql  = String.format(sql,ageGroupName, conceptNames, conceptNames, ageGroupName, startDate, endDate);
-
-        formattedSql = getFormattedSql(formattedSql,reportConfig.getConfig());
+        String formattedSql = getFormattedSql(sql, report.getConfig(), startDate, endDate);
         jasperReport.addTitle(cmp.horizontalList()
-                        .add(cmp.text("Count of [ " + conceptNames + " ]")
+                        .add(cmp.text("Count of " + report.getConfig().getConceptNames().toString())
                                 .setStyle(Templates.boldStyle)
                                 .setHorizontalAlignment(HorizontalAlignment.LEFT))
                         .newRow()
@@ -71,13 +68,17 @@ public class BooleanConceptsCountTemplate extends BaseReportTemplate<ObsCountCon
         return jasperReport;
     }
 
-    private String getFormattedSql(String formattedSql, ObsCountConfig reportConfig) {
+    private String getFormattedSql(String formattedSql, ObsCountConfig reportConfig, String startDate, String endDate) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
         if ("false".equalsIgnoreCase(reportConfig.getCountOnlyClosedVisits())) {
             sqlTemplate.add("endDateField", "obs.obs_datetime");
         } else {
             sqlTemplate.add("endDateField", "v.date_stopped");
         }
+        sqlTemplate.add("ageGroupName", reportConfig.getAgeGroupName());
+        sqlTemplate.add("conceptNames",  SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptNames()));
+        sqlTemplate.add("startDate",  startDate);
+        sqlTemplate.add("endDate",  endDate);
         return sqlTemplate.render();
     }
 }

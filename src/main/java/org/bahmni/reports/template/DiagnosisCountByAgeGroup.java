@@ -9,16 +9,13 @@ import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.OrderType;
-import net.sf.dynamicreports.report.constant.PageOrientation;
-import net.sf.dynamicreports.report.constant.PageType;
-import net.sf.dynamicreports.report.exception.DRException;
 import org.bahmni.reports.model.DiagnosisReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
-import org.springframework.stereotype.Component;
+import org.bahmni.reports.util.SqlUtil;
+import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
@@ -56,8 +53,17 @@ public class DiagnosisCountByAgeGroup extends BaseReportTemplate<DiagnosisReport
 
         jasperReport.setColumnStyle(textStyle)
                 .summary(crossTab)
-                .setDataSource(String.format(sql, reportConfig.getConfig().getAgeGroupName(), startDate, endDate,
-                        reportConfig.getConfig().getVisitTypes()), connection);
+                .setDataSource(getFormattedSql(sql, reportConfig.getConfig(), startDate, endDate), connection);
         return jasperReport;
+    }
+
+    private String getFormattedSql(String formattedSql, DiagnosisReportConfig reportConfig, String startDate, String endDate) {
+        ST sqlTemplate = new ST(formattedSql, '#', '#');
+
+        sqlTemplate.add("ageGroupName", reportConfig.getAgeGroupName());
+        sqlTemplate.add("visitType", SqlUtil.toCommaSeparatedSqlString(reportConfig.getVisitTypes()));
+        sqlTemplate.add("startDate",  startDate);
+        sqlTemplate.add("endDate", endDate);
+        return sqlTemplate.render();
     }
 }

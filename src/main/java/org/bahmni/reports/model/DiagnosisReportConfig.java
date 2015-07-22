@@ -6,7 +6,7 @@ public class DiagnosisReportConfig implements Config {
 
     private String ageGroupName;
 
-    private String visitTypes;
+    private List<String> visitTypes;
 
     public String getAgeGroupName() {
         return ageGroupName;
@@ -16,12 +16,12 @@ public class DiagnosisReportConfig implements Config {
         this.ageGroupName = ageGroupName;
     }
 
-    public void setVisitTypes(String visitTypes) {
-        this.visitTypes = visitTypes;
+    public List<String> getVisitTypes() {
+        return visitTypes;
     }
 
-    public String getVisitTypes() {
-        return visitTypes;
+    public void setVisitTypes(List<String> visitTypes) {
+        this.visitTypes = visitTypes;
     }
 }
 

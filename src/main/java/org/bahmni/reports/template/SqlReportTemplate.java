@@ -22,10 +22,10 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class SqlReportTemplate extends BaseReportTemplate<SqlReportConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<SqlReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
-        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<SqlReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
 
-        String sqlString = getSqlString(reportConfig, startDate, endDate);
+        String sqlString = getSqlString(report, startDate, endDate);
         ResultSet resultSet = null;
         Statement statement = null;
         ResultSetMetaData metaData;

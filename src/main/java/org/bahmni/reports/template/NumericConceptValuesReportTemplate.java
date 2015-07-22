@@ -8,7 +8,7 @@ import net.sf.dynamicreports.report.constant.*;
 import org.bahmni.reports.model.NumericConceptValuesConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
-import org.springframework.stereotype.Component;
+import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -21,9 +21,9 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class NumericConceptValuesReportTemplate extends BaseReportTemplate<NumericConceptValuesConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<NumericConceptValuesConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<NumericConceptValuesConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
-        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 
@@ -51,11 +51,11 @@ public class NumericConceptValuesReportTemplate extends BaseReportTemplate<Numer
                 .showColumnHeaderAndFooter()
                 .setPadding(30);
 
-        String ageGroupName = reportConfig.getConfig().getAgeGroupName();
-        String rangeGroupName = reportConfig.getConfig().getRangeGroupName();
-        String conceptNames = reportConfig.getConfig().getConceptNames();
-        Boolean countOncePerPatient = reportConfig.getConfig().getCountOncePerPatient();
-        String sqlString = getSqlString(ageGroupName, rangeGroupName, conceptNames, countOncePerPatient, startDate, endDate);
+        String ageGroupName = report.getConfig().getAgeGroupName();
+        String rangeGroupName = report.getConfig().getRangeGroupName();
+        List<String> conceptNames = report.getConfig().getConceptNames();
+        Boolean countOncePerPatient = report.getConfig().getCountOncePerPatient();
+        String sqlString = getSqlString(ageGroupName, rangeGroupName, SqlUtil.toCommaSeparatedSqlString(conceptNames), countOncePerPatient, startDate, endDate);
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 

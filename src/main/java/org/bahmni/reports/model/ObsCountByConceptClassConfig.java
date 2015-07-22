@@ -1,14 +1,16 @@
 package org.bahmni.reports.model;
 
+import java.util.List;
+
 public class ObsCountByConceptClassConfig implements Config {
 
-    private String conceptClassNames;
+    private List<String> conceptClassNames;
 
-    public String getConceptClassNames() {
+    public List<String> getConceptClassNames() {
         return conceptClassNames;
     }
 
-    public void setConceptClassNames(String conceptClassNames) {
+    public void setConceptClassNames(List<String> conceptClassNames) {
         this.conceptClassNames = conceptClassNames;
     }
 }

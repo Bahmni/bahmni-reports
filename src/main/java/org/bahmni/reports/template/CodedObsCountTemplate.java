@@ -10,9 +10,12 @@ import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.OrderType;
 import net.sf.dynamicreports.report.constant.PageType;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.ObsCountConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -27,9 +30,9 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
-        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
 
         CrosstabRowGroupBuilder<String> ageRowGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);
@@ -59,18 +62,18 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
         CrosstabRowGroupBuilder<String> visitRowGroup = ctab.rowGroup("visit", String.class)
                 .setShowTotal(false);
-        String visitTypes = reportConfig.getConfig().getVisitTypes();
-        if (visitTypes != null) {
+        List<String> visitTypes = report.getConfig().getVisitTypes();
+        if (CollectionUtils.isNotEmpty(visitTypes)) {
             crosstab.addRowGroup(visitRowGroup);
         }
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
 
-        String conceptNames = reportConfig.getConfig().getConceptNames();
+        List<String> conceptNames = report.getConfig().getConceptNames();
 
         jasperReport.addTitle(cmp.horizontalList()
-                        .add(cmp.text("Count of [ " + conceptNames + " ]")
+                        .add(cmp.text("Count of " + conceptNames.toString() )
                                 .setStyle(Templates.boldStyle)
                                 .setHorizontalAlignment(HorizontalAlignment.LEFT))
                         .newRow()
@@ -79,7 +82,7 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
         jasperReport.setColumnStyle(textStyle)
                 .summary(crosstab)
-                .setDataSource(getSqlString(reportConfig.getConfig(), startDate, endDate),
+                .setDataSource(getSqlString(report.getConfig(), startDate, endDate),
                         connection);
         return jasperReport;
     }
@@ -87,10 +90,10 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
     private String getSqlString(ObsCountConfig reportConfig, String startDate, String endDate) {
         String sql = getFileContent("sql/codedObsCount.sql");
 
-        String visitTypes = reportConfig.getVisitTypes();
+        String visitTypes = SqlUtil.toCommaSeparatedSqlString(reportConfig.getVisitTypes());
         String visitFilterTemplate = "on visit_type.type in (%s)";
 
-        if (visitTypes != null) {
+        if (StringUtils.isNotBlank(visitTypes)) {
             visitFilterTemplate = String.format(visitFilterTemplate, visitTypes);
         } else {
             visitFilterTemplate = "";
@@ -100,7 +103,7 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         ST sqlTemplate = new ST(sql, '#', '#');
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
-        sqlTemplate.add("conceptNames", reportConfig.getConceptNames());
+        sqlTemplate.add("conceptNames", SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptNames()));
         sqlTemplate.add("reportGroupName", reportConfig.getAgeGroupName());
         sqlTemplate.add("visitFilter", visitFilterTemplate);
         if("false".equalsIgnoreCase(reportConfig.getCountOnlyClosedVisits())){

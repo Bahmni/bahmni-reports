@@ -16,7 +16,7 @@ FROM (SELECT
            bool.value_boolean
          FROM reporting_age_group rag, concept_name cn, (SELECT 'True' AS value_boolean
                                                          UNION SELECT 'False' AS value_boolean) bool
-         WHERE rag.report_group_name = '%s' AND cn.name IN (%s)) base
+         WHERE rag.report_group_name = '#ageGroupName#' AND cn.name IN (#conceptNames#)) base
         LEFT OUTER JOIN
         (SELECT
            cn.name,
@@ -31,7 +31,7 @@ FROM (SELECT
          FROM obs obs
            INNER JOIN concept c ON obs.concept_id = c.concept_id AND obs.voided = 0
            INNER JOIN concept_name cn
-             ON cn.concept_id = c.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.name IN (%s)
+             ON cn.concept_id = c.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED' AND cn.name IN (#conceptNames#)
            INNER JOIN concept_datatype cd ON c.datatype_id = cd.concept_datatype_id AND cd.name = 'Boolean'
            INNER JOIN concept_name cbvn ON obs.value_coded = cbvn.concept_id AND cbvn.name IN ('True', 'False')
            INNER JOIN person p ON p.person_id = obs.person_id
@@ -41,8 +41,8 @@ FROM (SELECT
                DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY))
                                                  AND (DATE_ADD(DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR),
                                                                INTERVAL rag.max_days DAY))
-                                                 AND rag.report_group_name = '%s'
-         WHERE cast(#endDateField# AS DATE) BETWEEN '%s' AND '%s'
+                                                 AND rag.report_group_name = '#ageGroupName#'
+         WHERE cast(#endDateField# AS DATE) BETWEEN '#startDate#' AND '#endDate#'
                AND obs.voided IS FALSE) result
           ON base.age_group = result.rag_age_group
              AND base.concept_name = result.name

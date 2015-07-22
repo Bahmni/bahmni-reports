@@ -24,13 +24,13 @@ public class DiagnosisCount extends BaseReportTemplate<DiagnosisReportConfig> {
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
-        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
 
-        if (StringUtils.isNotBlank(reportConfig.getConfig().getAgeGroupName())){
-            return diagnosisCountByAgeGroup.build(connection, jasperReport, reportConfig, startDate, endDate, resources);
+        if (StringUtils.isNotBlank(report.getConfig().getAgeGroupName())){
+            return diagnosisCountByAgeGroup.build(connection, jasperReport, report, startDate, endDate, resources);
         }
-        return diagnosisCountWithoutAgeGroup.build(connection, jasperReport, reportConfig, startDate, endDate, resources);
+        return diagnosisCountWithoutAgeGroup.build(connection, jasperReport, report, startDate, endDate, resources);
 
     }
 }

@@ -3,14 +3,12 @@ package org.bahmni.reports.template;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
-import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.IpdPatientsConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
-import org.springframework.stereotype.Component;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -26,13 +24,13 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsConfig> {
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<IpdPatientsConfig> reportConfig,
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<IpdPatientsConfig> report,
                                      String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
-        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
 
-        String patientAttributes = sqlStringListParameter(reportConfig.getConfig().getPatientAttributes());
-        String conceptNames = sqlStringListParameter(reportConfig.getConfig().getConceptNames());
+        String patientAttributes = sqlStringListParameter(report.getConfig().getPatientAttributes());
+        String conceptNames = sqlStringListParameter(report.getConfig().getConceptNames());
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 
@@ -48,15 +46,15 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL)
                 .columns(admissionDateColumn, patientIDColumn, patientNameColumn, genderColumn, ageColumn);
 
-        addColumns(jasperReport, reportConfig.getConfig().getPatientAttributes(), columnStyle);
-        addColumns(jasperReport, reportConfig.getConfig().getAddressAttributes(), columnStyle);
+        addColumns(jasperReport, report.getConfig().getPatientAttributes(), columnStyle);
+        addColumns(jasperReport, report.getConfig().getAddressAttributes(), columnStyle);
 
         jasperReport.columns(diagnosisColumn);
         jasperReport.columns(dischargeDateColumn);
 
-        addColumns(jasperReport, reportConfig.getConfig().getConceptNames(), columnStyle);
+        addColumns(jasperReport, report.getConfig().getConceptNames(), columnStyle);
 
-        String sqlString = getSqlString(patientAttributes, conceptNames, startDate, endDate, getFilterColumn(reportConfig));
+        String sqlString = getSqlString(patientAttributes, conceptNames, startDate, endDate, getFilterColumn(report));
         Statement stmt = null;
         try {
             stmt = connection.createStatement();

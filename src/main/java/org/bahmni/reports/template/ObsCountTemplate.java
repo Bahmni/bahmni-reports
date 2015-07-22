@@ -8,9 +8,11 @@ import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.*;
+import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.ObsCountConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -27,8 +29,8 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
     private final String VISIT_TYPE_CRITERIA = "and va.value_reference in (%s)";
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
-        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
 
         CrosstabRowGroupBuilder<String> ageGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);
@@ -54,9 +56,9 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
                 )
                 .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()));
 
-        String visitType = reportConfig.getConfig().getVisitTypes();
+        String visitType = SqlUtil.toCommaSeparatedSqlString(report.getConfig().getVisitTypes());
 
-        if(visitType!=null){
+        if(StringUtils.isNotBlank(visitType)){
             crosstab = crosstab.rowGroups(sortOrderGroup,ageGroup, visitAttributeGroup);
             visitType = String.format(VISIT_TYPE_CRITERIA,visitType,sortOrderGroup);
         }else{
@@ -68,14 +70,10 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
         String sql = getFileContent("sql/obsCount.sql");
 
-        String ageGroupName = reportConfig.getConfig().getAgeGroupName();
-        String conceptNames = reportConfig.getConfig().getConceptNames();
-        String formattedSql  = String.format(sql, visitType,ageGroupName,conceptNames,ageGroupName, conceptNames,startDate, endDate,visitType);
-
-        formattedSql = getFormattedSql(formattedSql,reportConfig.getConfig());
+        String formattedSql  = getFormattedSql(sql, report.getConfig(), visitType, startDate, endDate);
 
         jasperReport.addTitle(cmp.horizontalList()
-                        .add(cmp.text("Count of [ " + conceptNames + " ]")
+                        .add(cmp.text("Count of " + report.getConfig().getConceptNames().toString())
                                 .setStyle(Templates.boldStyle)
                                 .setHorizontalAlignment(HorizontalAlignment.LEFT))
                         .newRow()
@@ -89,13 +87,18 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         return jasperReport;
     }
 
-    private String getFormattedSql(String formattedSql, ObsCountConfig reportConfig) {
+    private String getFormattedSql(String formattedSql, ObsCountConfig reportConfig, String visitType, String startDate, String endDate) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
         if("false".equalsIgnoreCase(reportConfig.getCountOnlyClosedVisits())){
             sqlTemplate.add("endDateField", "obs.obs_datetime");
         }else{
             sqlTemplate.add("endDateField", "v.date_stopped");
         }
+        sqlTemplate.add("visitType", visitType);
+        sqlTemplate.add("ageGroupName", reportConfig.getAgeGroupName());
+        sqlTemplate.add("conceptNames", SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptNames()));
+        sqlTemplate.add("startDate",  startDate);
+        sqlTemplate.add("endDate",  endDate);
         return sqlTemplate.render();
     }
 }

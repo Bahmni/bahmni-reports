@@ -2,11 +2,21 @@ package org.bahmni.reports.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.List;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DateConceptValuesConfig implements Config{
-    private String conceptNames;
+
+    private List<String> conceptNames;
     private String templateName;
 
+    public List<String> getConceptNames() {
+        return conceptNames;
+    }
+
+    public void setConceptNames(List<String> conceptNames) {
+        this.conceptNames = conceptNames;
+    }
 
     public String getTemplateName() {
         return templateName;
@@ -16,11 +26,4 @@ public class DateConceptValuesConfig implements Config{
         this.templateName = templateName;
     }
 
-    public String getConceptNames() {
-        return conceptNames;
-    }
-
-    public void setConceptNames(String conceptNames) {
-        this.conceptNames = conceptNames;
-    }
 }

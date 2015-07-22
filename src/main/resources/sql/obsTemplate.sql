@@ -9,7 +9,7 @@ SELECT
                    concept_full_name , '`'
                )
   ) into @sql
-FROM concept_view cv where cv.concept_full_name in (%s);
+FROM concept_view cv where cv.concept_full_name in (#conceptNameInClause#);
 
 SET @sql = CONCAT('SELECT
                   o.identifier,
@@ -40,9 +40,9 @@ SET @sql = CONCAT('SELECT
                        answer.concept_short_name,
                        answer.concept_full_name
                      FROM obs ob
-                       JOIN encounter e ON ob.encounter_id = e.encounter_id AND cast(e.encounter_datetime AS DATE) BETWEEN \'%s\' AND \'%s\'  AND ob.voided IS FALSE
+                       JOIN encounter e ON ob.encounter_id = e.encounter_id AND cast(e.encounter_datetime AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'  AND ob.voided IS FALSE
                        JOIN (select encounter_id from obs
-                                            where concept_id = (select concept_id from concept_view where concept_full_name = \'%s\') and voided is false) e1
+                                            where concept_id = (select concept_id from concept_view where concept_full_name = \'#templateName#\') and voided is false) e1
                        ON e.encounter_id = e1.encounter_id
                        JOIN patient_identifier pi ON pi.patient_id = ob.person_id
                        JOIN person ON person.person_id = pi.patient_id
@@ -52,7 +52,7 @@ SET @sql = CONCAT('SELECT
                        JOIN person_name pn ON p.person_id = pn.person_id
                        LEFT JOIN concept_view answer ON ob.value_coded = answer.concept_id
                        ) o ON o.concept_id = cv.concept_id
-                  where cv.concept_full_name IN ( %s )
+                  where cv.concept_full_name IN ( #conceptNameInClauseEscapeQuote# )
                   group by identifier, encounter_id
                   order by identifier, encounter_id');
 

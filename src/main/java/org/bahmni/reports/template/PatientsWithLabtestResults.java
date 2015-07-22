@@ -4,13 +4,13 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.model.PatientsWithLabtestResultsConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
-import org.springframework.stereotype.Component;
+import org.bahmni.reports.util.SqlUtil;
+import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
 import java.util.Date;
@@ -23,9 +23,9 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class PatientsWithLabtestResults extends BaseReportTemplate<PatientsWithLabtestResultsConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<PatientsWithLabtestResultsConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<PatientsWithLabtestResultsConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
-        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 
@@ -53,15 +53,22 @@ public class PatientsWithLabtestResults extends BaseReportTemplate<PatientsWithL
 
 
         String sql = getFileContent("sql/patientsWithLabtestResults.sql");
-        String conceptNames = reportConfig.getConfig().getConceptNames();
-        String testOutcome = reportConfig.getConfig().getTestOutcome();
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
         jasperReport.setShowColumnTitle(true)
                 .columns(patientIdColumn, firstNameColumn, lastNameColumn, genderColumn, ageColumn, testDateColumn, testNameColumn, testResultColumn,abnormalityColumn)
-                .setDataSource(String.format(sql, conceptNames, startDate, endDate, startDate, endDate, testOutcome),
+                .setDataSource(getFormattedSql(sql, report.getConfig(), startDate, endDate),
                         connection);
         return jasperReport;
+    }
+
+    private String getFormattedSql(String formattedSql, PatientsWithLabtestResultsConfig reportConfig, String startDate, String endDate) {
+        ST sqlTemplate = new ST(formattedSql, '#', '#');
+        sqlTemplate.add("conceptNames",  SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptNames()));
+        sqlTemplate.add("testOutcome",  SqlUtil.toCommaSeparatedSqlString(reportConfig.getTestOutcome()));
+        sqlTemplate.add("startDate", startDate);
+        sqlTemplate.add("endDate", endDate);
+        return sqlTemplate.render();
     }
 }

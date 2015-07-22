@@ -6,6 +6,7 @@ import org.mockito.Mock;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -55,7 +56,7 @@ public class ConceptUtilTest {
         initMocks(this);
         when(httpClient.get(new URI("http://localhost:8080/openmrs/ws/rest/v1/concept/concept1"))).thenReturn(responseBoolean);
         when(httpClient.get(new URI("http://localhost:8080/openmrs/ws/rest/v1/concept/concept2"))).thenReturn(responseCoded);
-        ConceptDataTypes content = ConceptUtil.getConceptDataType(new String[]{"concept1", "concept2"}, httpClient, openmrsRootUrl);
+        ConceptDataTypes content = ConceptUtil.getConceptDataType(Arrays.asList("concept1", "concept2"), httpClient, openmrsRootUrl);
     }
 
     @Test
@@ -63,7 +64,7 @@ public class ConceptUtilTest {
         initMocks(this);
         when(httpClient.get(new URI("http://localhost:8080/openmrs/ws/rest/v1/concept/concept1"))).thenReturn(responseBoolean);
         when(httpClient.get(new URI("http://localhost:8080/openmrs/ws/rest/v1/concept/concept2"))).thenReturn(responseBoolean);
-        ConceptDataTypes content = ConceptUtil.getConceptDataType(new String[]{"concept1", "concept2"}, httpClient, openmrsRootUrl);
+        ConceptDataTypes content = ConceptUtil.getConceptDataType(Arrays.asList("concept1", "concept2"), httpClient, openmrsRootUrl);
         assertEquals(content, ConceptDataTypes.Boolean);
     }
 }

@@ -8,12 +8,10 @@ import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.MultipleCodedObsByCodedObsReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
-import org.springframework.stereotype.Component;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -30,11 +28,11 @@ public class MultipleCodedObsByObsReportTemplate extends BaseReportTemplate<Mult
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
-                                     Report<MultipleCodedObsByCodedObsReportConfig> reportConfig, String startDate, String endDate,
+                                     Report<MultipleCodedObsByCodedObsReportConfig> report, String startDate, String endDate,
                                      List<AutoCloseable> resources, PageType pageType) {
-        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
 
-        MultipleCodedObsByCodedObsReportConfig reportSpecificConfig = reportConfig.getConfig();
+        MultipleCodedObsByCodedObsReportConfig reportSpecificConfig = report.getConfig();
 
         List<String> rowsGroupBy = reportSpecificConfig.getRowsGroupBy();
         CrosstabRowGroupBuilder<String>[] rowGroups = new CrosstabRowGroupBuilder[rowsGroupBy.size()];

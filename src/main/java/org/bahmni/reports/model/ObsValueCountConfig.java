@@ -4,13 +4,13 @@ import java.util.List;
 
 public class ObsValueCountConfig implements Config {
 
-    private String conceptNames;
+    private List<String> conceptNames;
 
-    public String getConceptNames() {
+    public List<String> getConceptNames() {
         return conceptNames;
     }
 
-    public void setConceptNames(String conceptNames) {
+    public void setConceptNames(List<String> conceptNames) {
         this.conceptNames = conceptNames;
     }
 }

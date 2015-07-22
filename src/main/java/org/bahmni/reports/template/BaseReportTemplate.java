@@ -14,11 +14,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 public abstract class BaseReportTemplate<T extends Config> {
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<T> reportConfig,
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<T> report,
                                      String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         jasperReport.setPageFormat(pageType, PageOrientation.LANDSCAPE);
         jasperReport.pageFooter(Templates.footerComponent);
-        jasperReport.setReportName(reportConfig.getName());
+        jasperReport.setReportName(report.getName());
         jasperReport.setTemplate(Templates.reportTemplate);
         return jasperReport;
     }

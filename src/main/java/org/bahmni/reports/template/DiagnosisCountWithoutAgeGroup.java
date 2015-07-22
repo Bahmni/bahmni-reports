@@ -3,15 +3,13 @@ package org.bahmni.reports.template;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
-import net.sf.dynamicreports.report.constant.PageOrientation;
-import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.DiagnosisReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
-import org.springframework.stereotype.Component;
+import org.bahmni.reports.util.SqlUtil;
+import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
@@ -33,8 +31,16 @@ public class DiagnosisCountWithoutAgeGroup extends BaseReportTemplate<DiagnosisR
 
         jasperReport.setColumnStyle(textStyle)
                 .columns(disease, icd10Code, female, male, other)
-                .setDataSource(String.format(sql, startDate, endDate, reportConfig.getConfig().getVisitTypes()),
+                .setDataSource(getFormattedSql(sql, reportConfig.getConfig(), startDate, endDate),
                         connection);
         return jasperReport;
+    }
+
+    private String getFormattedSql(String formattedSql, DiagnosisReportConfig reportConfig, String startDate, String endDate) {
+        ST sqlTemplate = new ST(formattedSql, '#', '#');
+        sqlTemplate.add("visitTypes",  SqlUtil.toCommaSeparatedSqlString(reportConfig.getVisitTypes()));
+        sqlTemplate.add("startDate",  startDate);
+        sqlTemplate.add("endDate", endDate);
+        return sqlTemplate.render();
     }
 }

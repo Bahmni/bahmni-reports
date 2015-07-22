@@ -3,21 +3,16 @@ package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.BahmniReportsProperties;
-import org.bahmni.reports.model.ConceptDetails;
-import org.bahmni.reports.model.ObsTemplateConfig;
-import org.bahmni.reports.model.Report;
-import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.model.*;
 import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
 import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.stringtemplate.v4.ST;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -42,11 +37,11 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsTemplateConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsTemplateConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
-        super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
+        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
 
-        String templateName = reportConfig.getConfig().getTemplateName();
+        String templateName = report.getConfig().getTemplateName();
 
 
         ConnectionDetails connectionDetails = new ConnectionDetails(bahmniReportsProperties.getOpenmrsRootUrl() + "/session", bahmniReportsProperties.getOpenmrsServiceUser(),
@@ -71,7 +66,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         }
 
         String conceptNameInClause = StringUtils.join(conceptNames, ",");
-        String sql = String.format(getFileContent("sql/obsTemplate.sql"), conceptNameInClause, startDate, endDate, templateName, conceptNameInClause.replace("'", "\\'"));
+        String sql = getFormattedSql(getFileContent("sql/obsTemplate.sql"), report.getConfig(), conceptNameInClause, startDate, endDate);
 
         TextColumnBuilder<String> patientColumn = col.column("Patient ID", "identifier", type.stringType());
         TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "patient_name", type.stringType());
@@ -106,5 +101,15 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
             e.printStackTrace();
         }
         return jasperReport;
+    }
+
+    private String getFormattedSql(String formattedSql, ObsTemplateConfig reportConfig, String conceptNameInClause, String startDate, String endDate) {
+        ST sqlTemplate = new ST(formattedSql, '#', '#');
+        sqlTemplate.add("conceptNameInClause", conceptNameInClause);
+        sqlTemplate.add("conceptNameInClauseEscapeQuote", conceptNameInClause.replace("'", "\\'"));
+        sqlTemplate.add("templateName",  reportConfig.getTemplateName());
+        sqlTemplate.add("startDate",  startDate);
+        sqlTemplate.add("endDate",  endDate);
+        return sqlTemplate.render();
     }
 }
