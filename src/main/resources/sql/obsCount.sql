@@ -10,7 +10,8 @@ select base.age_group,
   final.birthdate,
   final.age_group,
   final.gender,
-  final.sort_order
+  final.sort_order,
+  final.male+final.other+final.female AS total
 from
   (select rag.name as age_group, cn.concept_id,cn.name as concept_name, rag.sort_order,va.value_reference
    from reporting_age_group rag, concept_name cn, (select distinct value_reference from visit_attribute va where va.visit_attribute_id is not null %s) va

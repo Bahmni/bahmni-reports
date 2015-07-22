@@ -7,7 +7,8 @@ FROM (SELECT
         female,
         male,
         other,
-        result.visit_id
+        result.visit_id,
+        male+other+female AS total
       FROM
         (SELECT
            rag.name AS age_group,

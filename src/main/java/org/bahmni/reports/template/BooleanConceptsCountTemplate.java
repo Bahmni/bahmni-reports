@@ -43,7 +43,8 @@ public class BooleanConceptsCountTemplate  extends BaseReportTemplate<CodedObsCo
                 .measures(
                         ctab.measure("Female", "female", Integer.class, Calculation.SUM),
                         ctab.measure("Male", "male", Integer.class, Calculation.SUM),
-                        ctab.measure("Other", "other", Integer.class, Calculation.SUM)
+                        ctab.measure("Other", "other", Integer.class, Calculation.SUM),
+                        ctab.measure("Total", "total", Integer.class, Calculation.SUM)
                 )
                 .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()));
 
