@@ -9,12 +9,10 @@ import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.OrderType;
-import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
-import org.bahmni.reports.model.CodedObsCountConfig;
+import org.bahmni.reports.model.ObsCountConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
-import org.springframework.stereotype.Component;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -26,10 +24,10 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource("openmrs")
-public class CodedObsCountTemplate extends BaseReportTemplate<CodedObsCountConfig> {
+public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
         super.build(connection, jasperReport, reportConfig, startDate, endDate, resources, pageType);
 
@@ -86,7 +84,7 @@ public class CodedObsCountTemplate extends BaseReportTemplate<CodedObsCountConfi
         return jasperReport;
     }
 
-    private String getSqlString(CodedObsCountConfig reportConfig, String startDate, String endDate) {
+    private String getSqlString(ObsCountConfig reportConfig, String startDate, String endDate) {
         String sql = getFileContent("sql/codedObsCount.sql");
 
         String visitTypes = reportConfig.getVisitTypes();
@@ -105,6 +103,11 @@ public class CodedObsCountTemplate extends BaseReportTemplate<CodedObsCountConfi
         sqlTemplate.add("conceptNames", reportConfig.getConceptNames());
         sqlTemplate.add("reportGroupName", reportConfig.getAgeGroupName());
         sqlTemplate.add("visitFilter", visitFilterTemplate);
+        if("false".equalsIgnoreCase(reportConfig.getCountOnlyClosedVisits())){
+            sqlTemplate.add("endDateField", "obs.obs_datetime");
+        }else{
+            sqlTemplate.add("endDateField", "visit.date_stopped");
+        }
         return sqlTemplate.render();
     }
 

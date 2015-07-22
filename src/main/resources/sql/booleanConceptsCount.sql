@@ -26,7 +26,7 @@ FROM (SELECT
            IF(p.gender = 'O', 1, 0) AS other,
            rag.name                 AS rag_age_group,
            p.person_id,
-           v.date_stopped datetime,
+           #endDateField# datetime,
            v.visit_id
          FROM obs obs
            INNER JOIN concept c ON obs.concept_id = c.concept_id AND obs.voided = 0
@@ -37,12 +37,12 @@ FROM (SELECT
            INNER JOIN person p ON p.person_id = obs.person_id
            INNER JOIN encounter encounter ON encounter.encounter_id = obs.encounter_id
            INNER JOIN visit v ON encounter.visit_id = v.visit_id
-           INNER JOIN reporting_age_group rag ON v.date_stopped BETWEEN (DATE_ADD(
+           INNER JOIN reporting_age_group rag ON #endDateField# BETWEEN (DATE_ADD(
                DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY))
                                                  AND (DATE_ADD(DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR),
                                                                INTERVAL rag.max_days DAY))
                                                  AND rag.report_group_name = '%s'
-         WHERE cast(v.date_stopped AS DATE) BETWEEN '%s' AND '%s'
+         WHERE cast(#endDateField# AS DATE) BETWEEN '%s' AND '%s'
                AND obs.voided IS FALSE) result
           ON base.age_group = result.rag_age_group
              AND base.concept_name = result.name

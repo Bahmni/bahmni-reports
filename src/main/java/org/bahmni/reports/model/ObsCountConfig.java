@@ -3,10 +3,13 @@ package org.bahmni.reports.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CodedObsCountConfig implements Config{
+public class ObsCountConfig implements Config {
+
     private String conceptNames;
     private String ageGroupName;
     private String visitTypes;
+    //Dont give boolean here... Default value of boolean is false, and which contradicts with requirement (Default true, if no config element found),
+    private String countOnlyClosedVisits;
 
 
     public String getConceptNames() {
@@ -31,5 +34,13 @@ public class CodedObsCountConfig implements Config{
 
     public void setVisitTypes(String visitTypes) {
         this.visitTypes = visitTypes;
+    }
+
+    public String getCountOnlyClosedVisits() {
+        return countOnlyClosedVisits;
+    }
+
+    public void setCountOnlyClosedVisits(String countOnlyClosedVisits) {
+        this.countOnlyClosedVisits = countOnlyClosedVisits;
     }
 }

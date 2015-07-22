@@ -3,7 +3,7 @@ package org.bahmni.reports.report;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
-import org.bahmni.reports.model.CodedObsCountConfig;
+import org.bahmni.reports.model.ObsCountConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.reports.template.BooleanConceptsCountTemplate;
@@ -16,10 +16,8 @@ import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
 import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
 
-import java.util.Arrays;
 
-
-public class ObsCountReport extends Report<CodedObsCountConfig>{
+public class ObsCountReport extends Report<ObsCountConfig>{
 
     private static final Logger logger = Logger.getLogger(ObsCountReport.class);
 
