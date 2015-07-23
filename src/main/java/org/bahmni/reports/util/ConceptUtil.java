@@ -46,7 +46,7 @@ public class ConceptUtil {
             dataTypes.add(getConceptDataType(concept, httpClient, openmrsRootUrl));
         }
         if (dataTypes.size() != 1) {
-            throw new ConceptDataTypeException("Multiple Concept datatypes found.. Only single datatype is supported");
+            return ConceptDataTypes.Others;
         }
         Iterator<ConceptDataTypes> iterator = dataTypes.iterator();
         return iterator.next();
