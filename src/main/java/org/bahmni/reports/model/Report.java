@@ -29,7 +29,8 @@ import org.bahmni.reports.template.BaseReportTemplate;
         @JsonSubTypes.Type(value = PatientsWithLabtestResultsReport.class, name = "PatientsWithLabtestResults"),
         @JsonSubTypes.Type(value = DateConceptValuesPatientsListReport.class, name = "DateConceptValuesPatientsList"),
         @JsonSubTypes.Type(value = MultipleCodedObsByCodedObsReport.class, name = "MultipleCodedObsByCodedObs"),
-        @JsonSubTypes.Type(value = CodedObsByCodedObsReport.class, name = "CodedObsByCodedObs")
+        @JsonSubTypes.Type(value = CodedObsByCodedObsReport.class, name = "CodedObsByCodedObs"),
+        @JsonSubTypes.Type(value = VisitAggregateCountReport.class, name = "VisitAggregateCount")
 })
 
 public abstract class Report <T extends Config> {
