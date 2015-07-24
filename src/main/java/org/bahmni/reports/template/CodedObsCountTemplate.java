@@ -113,5 +113,4 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         }
         return sqlTemplate.render();
     }
-
 }
