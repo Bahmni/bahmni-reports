@@ -70,8 +70,7 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
         String sql = getFileContent("sql/obsCount.sql");
 
-        String formattedSql  = getFormattedSql(sql, report.getConfig(), visitType, startDate, endDate);
-
+        String initialformattedSql  = getFormattedSql(sql, report.getConfig(), visitType, startDate, endDate);
         jasperReport.addTitle(cmp.horizontalList()
                         .add(cmp.text("Count of " + report.getConfig().getConceptNames().toString())
                                 .setStyle(Templates.boldStyle)
@@ -82,9 +81,14 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
         jasperReport.setColumnStyle(textStyle)
                 .summary(crosstab)
-                .setDataSource(formattedSql, connection);
+                .setDataSource(initialformattedSql, connection);
 
         return jasperReport;
+    }
+
+    private String appendCountOnceForPatient(String formattedSql, ObsCountConfig reportConfig) {
+
+        return formattedSql;
     }
 
     private String getFormattedSql(String formattedSql, ObsCountConfig reportConfig, String visitType, String startDate, String endDate) {
@@ -99,6 +103,11 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         sqlTemplate.add("conceptNames", SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptNames()));
         sqlTemplate.add("startDate",  startDate);
         sqlTemplate.add("endDate",  endDate);
+        if("true".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))){
+            sqlTemplate.add("countOncePerPatient", " group by concept_id, person_id;");
+        }else{
+            sqlTemplate.add("countOncePerPatient", ";");
+        }
         return sqlTemplate.render();
     }
 }

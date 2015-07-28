@@ -1,7 +1,9 @@
+-- noinspection SqlNoDataSourceInspection
 SELECT *
 FROM (SELECT
         base.age_group,
         person_id,
+        concept_id,
         base.concept_name,
         base.value_boolean,
         female,
@@ -26,6 +28,7 @@ FROM (SELECT
            IF(p.gender = 'O', 1, 0) AS other,
            rag.name                 AS rag_age_group,
            p.person_id,
+           obs.concept_id,
            #endDateField# datetime,
            v.visit_id
          FROM obs obs
@@ -49,4 +52,3 @@ FROM (SELECT
              AND
              result.value_boolean = base.value_boolean
       ORDER BY result.datetime DESC) AS result_data
-GROUP BY age_group, person_id, concept_name, female, male, other, visit_id;

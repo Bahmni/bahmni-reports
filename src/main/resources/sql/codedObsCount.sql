@@ -5,6 +5,8 @@ SELECT
   a.visit               visit,
   a.answer_concept_name answer_concept_name,
   a.sort_order          sort_order,
+  a.concept_id,
+  person_id,
   sum(CASE WHEN a.visit_id IS NOT NULL AND a.value_reference IS NOT NULL AND a.gender IS NOT NULL THEN 1
       ELSE 0 END)       total_count
 FROM
@@ -18,7 +20,9 @@ FROM
         answer.concept_short_name)                                             AS answer_concept_name,
      reporting_age_group.sort_order                                            AS sort_order,
      visit.visit_id                                                            AS visit_id,
-     attr.value_reference                                                      AS value_reference
+     attr.value_reference                                                      AS value_reference,
+     question.concept_id,
+     person.person_id
    FROM
      concept_view AS question
      INNER JOIN concept_answer
@@ -41,6 +45,6 @@ FROM
      LEFT JOIN visit_attribute AS attr ON visit.visit_id = attr.visit_id AND attr.value_reference = visit_type.type
      LEFT JOIN visit_attribute_type AS attr_type
        ON attr_type.visit_attribute_type_id = attr.attribute_type_id AND attr_type.name = 'Visit Status'
+   #countOncePerPatientInitialCond#
    ORDER BY age_group, gender, concept_name, visit, answer_concept_name, sort_order, visit_id) a
-GROUP BY a.age_group, a.gender, a.concept_name, a.visit, a.answer_concept_name, a.sort_order;
-
+   #countOncePerPatient#

@@ -53,7 +53,8 @@ public class BooleanConceptsCountTemplate extends BaseReportTemplate<ObsCountCon
 
         String sql = getFileContent("sql/booleanConceptsCount.sql");
 
-        String formattedSql = getFormattedSql(sql, report.getConfig(), startDate, endDate);
+        String initialformattedSql = getFormattedSql(sql, report.getConfig(), startDate, endDate);
+        String formattedSql = appendCountOnceForPatient(initialformattedSql, report.getConfig());
         jasperReport.addTitle(cmp.horizontalList()
                         .add(cmp.text("Count of " + report.getConfig().getConceptNames().toString())
                                 .setStyle(Templates.boldStyle)
@@ -77,8 +78,18 @@ public class BooleanConceptsCountTemplate extends BaseReportTemplate<ObsCountCon
         }
         sqlTemplate.add("ageGroupName", reportConfig.getAgeGroupName());
         sqlTemplate.add("conceptNames",  SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptNames()));
-        sqlTemplate.add("startDate",  startDate);
-        sqlTemplate.add("endDate",  endDate);
+        sqlTemplate.add("startDate", startDate);
+        sqlTemplate.add("endDate", endDate);
         return sqlTemplate.render();
+    }
+
+    private String appendCountOnceForPatient(String formattedSql, ObsCountConfig reportConfig){
+        String temp = "GROUP BY age_group, person_id, concept_name, female, male, other, ";
+        if("true".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))){
+            formattedSql = formattedSql + temp + "concept_id, person_id;";
+        }else{
+            formattedSql = formattedSql + temp + "visit_id;";
+        }
+        return formattedSql;
     }
 }

@@ -79,10 +79,10 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
                         .newRow()
                         .add(cmp.verticalGap(10))
         );
-
+        String initialformattedSql = getSqlString(report.getConfig(), startDate, endDate);
         jasperReport.setColumnStyle(textStyle)
                 .summary(crosstab)
-                .setDataSource(getSqlString(report.getConfig(), startDate, endDate),
+                .setDataSource(initialformattedSql,
                         connection);
         return jasperReport;
     }
@@ -110,6 +110,13 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
             sqlTemplate.add("endDateField", "obs.obs_datetime");
         }else{
             sqlTemplate.add("endDateField", "visit.date_stopped");
+        }
+        if("true".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))){
+            sqlTemplate.add("countOncePerPatientInitialCond", "GROUP by age_group, gender, concept_name, visit, sort_order, person_id");
+            sqlTemplate.add("countOncePerPatient", " WHERE a.person_id IS NOT NULL GROUP BY a.concept_id, a. person_id;");
+        }else{
+            sqlTemplate.add("countOncePerPatientInitialCond", "");
+            sqlTemplate.add("countOncePerPatient", "GROUP BY a.age_group, a.gender, a.concept_name, a.answer_concept_name, a.sort_order, a.visit;");
         }
         return sqlTemplate.render();
     }

@@ -1,5 +1,5 @@
-select base.age_group,
-  base.sort_order,
+select * from (select base.age_group as base_age_group,
+  base.sort_order as base_sort_order,
   base.value_reference AS visit_type,
   IF(shortName.name is null ,base.concept_name,shortName.name) as concept_name,
   final.concept_id,
@@ -11,6 +11,7 @@ select base.age_group,
   final.age_group,
   final.gender,
   final.sort_order,
+  final.person_id,
   final.male+final.other+final.female AS total
 from
   (select rag.name as age_group, cn.concept_id,cn.name as concept_name, rag.sort_order,va.value_reference
@@ -27,7 +28,8 @@ from
      p.birthdate,
           rag.name as age_group,
      rag.sort_order,
-          p.gender as gender
+          p.gender as gender,
+          p.person_id
    from obs obs
      inner join concept_name cn on obs.concept_id = cn.concept_id and cn.concept_name_type = 'FULLY_SPECIFIED' and obs.voided = 0 and cn.voided = 0
      inner join encounter e on obs.encounter_id = e.encounter_id
@@ -40,4 +42,4 @@ from
    where cn.name in (#conceptNames#) and cast(#endDateField# AS DATE) BETWEEN '#startDate#' AND '#endDate#' #visitType# AND obs.voided IS FALSE
    GROUP BY v.visit_id,cn.name) final on final.age_group = base.age_group and final.concept_id = base.concept_id and final.value_reference = base.value_reference
   left outer join concept_name shortName on shortName.concept_id = base.concept_id and shortName.concept_name_type = 'SHORT' and shortName.voided = 0
-order by base.sort_order asc;
+order by base.sort_order asc) as result #countOncePerPatient#

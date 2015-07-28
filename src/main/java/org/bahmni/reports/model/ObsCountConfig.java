@@ -12,6 +12,7 @@ public class ObsCountConfig implements Config {
     private List<String> visitTypes;
     //Dont give boolean here... Default value of boolean is false, and which contradicts with requirement (Default true, if no config element found),
     private String countOnlyClosedVisits;
+    private String countOncePerPatient;
 
     public List<String> getConceptNames() {
         return conceptNames;
@@ -41,7 +42,18 @@ public class ObsCountConfig implements Config {
         return countOnlyClosedVisits;
     }
 
+
+    public String getCountOncePerPatient() {
+        return countOncePerPatient;
+    }
+
     public void setCountOnlyClosedVisits(String countOnlyClosedVisits) {
         this.countOnlyClosedVisits = countOnlyClosedVisits;
     }
+
+    public void setCountOncePerPatient(String countOncePerPatient) {
+        this.countOncePerPatient = countOncePerPatient;
+    }
+
+
 }
