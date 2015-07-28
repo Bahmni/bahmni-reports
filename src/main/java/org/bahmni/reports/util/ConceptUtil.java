@@ -1,7 +1,5 @@
 package org.bahmni.reports.util;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.log4j.Logger;
 import org.bahmni.webclients.HttpClient;
 import org.codehaus.jackson.JsonNode;
@@ -30,7 +28,7 @@ public class ConceptUtil {
             String type = nameNode.path("display").getTextValue();
             try {
                 return ConceptDataTypes.valueOf(type);
-            } catch (Exception e) {
+            } catch (IllegalArgumentException e) {
                 return ConceptDataTypes.Others;
             }
         } catch (Exception e) {

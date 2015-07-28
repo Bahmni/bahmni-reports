@@ -60,7 +60,7 @@ public class DiagnosisCountByAgeGroup extends BaseReportTemplate<DiagnosisReport
     private String getFormattedSql(String formattedSql, DiagnosisReportConfig reportConfig, String startDate, String endDate) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
 
-        sqlTemplate.add("ageGroupName", reportConfig.getAgeGroupName());
+        sqlTemplate.add("ageGroupName", reportConfig.getAgeGroupName(true));
         sqlTemplate.add("visitType", SqlUtil.toCommaSeparatedSqlString(reportConfig.getVisitTypes()));
         sqlTemplate.add("startDate",  startDate);
         sqlTemplate.add("endDate", endDate);

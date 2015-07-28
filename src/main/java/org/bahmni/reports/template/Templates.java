@@ -73,7 +73,7 @@ public class Templates {
                 .setFontSize(18);
         bold22CenteredStyle = stl.style(boldCenteredStyle)
                 .setFontSize(22);
-        columnStyle         = stl.style(rootStyle).setVerticalAlignment(VerticalAlignment.MIDDLE);
+        columnStyle         = stl.style(rootStyle).setVerticalAlignment(VerticalAlignment.MIDDLE).setHorizontalAlignment(HorizontalAlignment.CENTER);
         columnTitleStyle    = stl.style(columnStyle)
                 .setBorder(stl.pen1Point())
                 .setHorizontalAlignment(HorizontalAlignment.CENTER)

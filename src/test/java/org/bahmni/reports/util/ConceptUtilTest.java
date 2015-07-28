@@ -51,14 +51,6 @@ public class ConceptUtilTest {
         assertEquals(content, ConceptDataTypes.Boolean);
     }
 
-    @Test(expected = ConceptDataTypeException.class)
-    public void shouldThrowErrorWhenMultipleConceptDataTypesAreSpecified() throws ConceptDataTypeException, URISyntaxException {
-        initMocks(this);
-        when(httpClient.get(new URI("http://localhost:8080/openmrs/ws/rest/v1/concept/concept1"))).thenReturn(responseBoolean);
-        when(httpClient.get(new URI("http://localhost:8080/openmrs/ws/rest/v1/concept/concept2"))).thenReturn(responseCoded);
-        ConceptDataTypes content = ConceptUtil.getConceptDataType(Arrays.asList("concept1", "concept2"), httpClient, openmrsRootUrl);
-    }
-
     @Test
     public void shouldRetrunOnlyOneConceptDataType() throws ConceptDataTypeException, URISyntaxException {
         initMocks(this);
