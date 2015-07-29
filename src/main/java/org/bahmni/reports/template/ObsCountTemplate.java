@@ -87,11 +87,6 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         return jasperReport;
     }
 
-    private String appendCountOnceForPatient(String formattedSql, ObsCountConfig reportConfig) {
-
-        return formattedSql;
-    }
-
     private String getFormattedSql(String formattedSql, ObsCountConfig reportConfig, String visitType, String startDate, String endDate) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
         if("false".equalsIgnoreCase(reportConfig.getCountOnlyClosedVisits())){

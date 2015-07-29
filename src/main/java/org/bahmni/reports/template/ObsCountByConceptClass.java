@@ -44,7 +44,6 @@ public class ObsCountByConceptClass extends BaseReportTemplate<ObsCountByConcept
                 .setLabelStyle(subtotalStyle);
 
         String sql = getFileContent("sql/obsCountByConceptClass.sql");
-        String conceptClassNames = SqlUtil.toCommaSeparatedSqlString(report.getConfig().getConceptClassNames());
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 

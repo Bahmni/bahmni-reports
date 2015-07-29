@@ -82,7 +82,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
             jasperReport.addColumn(column);
         }
 
-        Statement stmt = null;
+        Statement stmt;
         try {
             stmt = connection.createStatement();
             boolean hasMoreResultSets = stmt.execute(sql);
