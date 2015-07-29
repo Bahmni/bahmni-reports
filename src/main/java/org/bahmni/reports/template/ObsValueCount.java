@@ -6,6 +6,7 @@ import net.sf.dynamicreports.report.builder.group.ColumnGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.*;
 import org.bahmni.reports.model.*;
+import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
@@ -20,7 +21,7 @@ public class ObsValueCount extends BaseReportTemplate<ObsValueCountConfig> {
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsValueCountConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
-        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+        CommonComponents.addTo(jasperReport, report, pageType);
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 

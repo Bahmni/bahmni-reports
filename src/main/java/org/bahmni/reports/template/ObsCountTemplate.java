@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.ObsCountConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
@@ -30,7 +31,7 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
-        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+        CommonComponents.addTo(jasperReport, report, pageType);
 
         CrosstabRowGroupBuilder<String> ageGroup = ctab.rowGroup("age_group", String.class)
                 .setShowTotal(false);

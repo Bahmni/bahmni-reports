@@ -8,6 +8,7 @@ import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.util.CommonComponents;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -20,7 +21,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class IpdOpdVisitCount extends BaseReportTemplate<Config>{
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
-        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+        CommonComponents.addTo(jasperReport, report, pageType);
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 

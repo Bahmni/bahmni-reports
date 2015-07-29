@@ -62,6 +62,7 @@ public class MainReportController {
             jasperReport = new ReportHeader().add(jasperReport, reportName, startDate, endDate);
 
             JasperReportBuilder reportBuilder = reportTemplate.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+
             convertToResponse(responseType, reportBuilder, response, reportName);
 
             resources.add(connection);

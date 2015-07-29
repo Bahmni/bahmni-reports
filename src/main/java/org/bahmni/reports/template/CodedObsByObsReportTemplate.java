@@ -8,12 +8,11 @@ import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.CodedObsByCodedObsReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
-import org.springframework.stereotype.Component;
+import org.bahmni.reports.util.CommonComponents;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -29,7 +28,7 @@ public class CodedObsByObsReportTemplate extends BaseReportTemplate<CodedObsByCo
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<CodedObsByCodedObsReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
-        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+        CommonComponents.addTo(jasperReport, report, pageType);
 
         CodedObsByCodedObsReportConfig reportSpecificConfig = report.getConfig();
 

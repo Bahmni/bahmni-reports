@@ -7,6 +7,7 @@ import net.sf.dynamicreports.report.constant.PageType;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.*;
+import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
 import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
@@ -38,8 +39,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsTemplateConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
-
-        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+        CommonComponents.addTo(jasperReport, report, pageType);
 
         String templateName = report.getConfig().getTemplateName();
 

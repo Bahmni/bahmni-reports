@@ -12,6 +12,7 @@ import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.MultipleCodedObsByCodedObsReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.util.CommonComponents;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -30,7 +31,7 @@ public class MultipleCodedObsByObsReportTemplate extends BaseReportTemplate<Mult
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
                                      Report<MultipleCodedObsByCodedObsReportConfig> report, String startDate, String endDate,
                                      List<AutoCloseable> resources, PageType pageType) {
-        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+        CommonComponents.addTo(jasperReport, report, pageType);
 
         MultipleCodedObsByCodedObsReportConfig reportSpecificConfig = report.getConfig();
 

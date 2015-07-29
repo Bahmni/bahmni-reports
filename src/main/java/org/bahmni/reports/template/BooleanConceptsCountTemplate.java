@@ -13,6 +13,7 @@ import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.ObsCountConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
@@ -28,7 +29,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class BooleanConceptsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
-        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+        CommonComponents.addTo(jasperReport, report, pageType);
         CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup("concept_name", String.class)
                 .setShowTotal(false);
         CrosstabRowGroupBuilder<String> booleanValueRowGroup = ctab.rowGroup("value_boolean", String.class)

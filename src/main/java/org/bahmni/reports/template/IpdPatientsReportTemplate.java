@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.IpdPatientsConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.util.CommonComponents;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -26,8 +27,7 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<IpdPatientsConfig> report,
                                      String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
-
-        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+        CommonComponents.addTo(jasperReport, report, pageType);
 
         String patientAttributes = sqlStringListParameter(report.getConfig().getPatientAttributes());
         String conceptNames = sqlStringListParameter(report.getConfig().getConceptNames());

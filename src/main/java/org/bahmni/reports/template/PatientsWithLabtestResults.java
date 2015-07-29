@@ -9,6 +9,7 @@ import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.model.PatientsWithLabtestResultsConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
@@ -24,8 +25,7 @@ public class PatientsWithLabtestResults extends BaseReportTemplate<PatientsWithL
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<PatientsWithLabtestResultsConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
-
-        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+        CommonComponents.addTo(jasperReport, report, pageType);
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 

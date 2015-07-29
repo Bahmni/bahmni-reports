@@ -1,11 +1,11 @@
 package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.SqlReportConfig;
+import org.bahmni.reports.util.CommonComponents;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -23,7 +23,7 @@ public class SqlReportTemplate extends BaseReportTemplate<SqlReportConfig> {
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<SqlReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
-        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+        CommonComponents.addTo(jasperReport, report, pageType);
 
         String sqlString = getSqlString(report, startDate, endDate);
         ResultSet resultSet = null;

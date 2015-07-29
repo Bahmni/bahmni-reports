@@ -10,6 +10,7 @@ import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.model.ObsCountByConceptClassConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
@@ -23,7 +24,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class ObsCountByConceptClass extends BaseReportTemplate<ObsCountByConceptClassConfig>{
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountByConceptClassConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType){
-        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+        CommonComponents.addTo(jasperReport, report, pageType);
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 

@@ -6,12 +6,11 @@ import net.sf.dynamicreports.report.builder.group.ColumnGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.GroupHeaderLayout;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import net.sf.dynamicreports.report.constant.PageOrientation;
 import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.UsingDatasource;
-import org.springframework.stereotype.Component;
+import org.bahmni.reports.util.CommonComponents;
 
 import java.sql.Connection;
 import java.util.List;
@@ -24,8 +23,7 @@ public class TestCountTemplate extends BaseReportTemplate<Config> {
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
-
-        super.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+        CommonComponents.addTo(jasperReport, report, pageType);
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 
