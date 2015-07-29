@@ -9,9 +9,11 @@ import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.OrderType;
+import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.DiagnosisReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
@@ -22,8 +24,11 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource("openmrs")
-public class DiagnosisCountByAgeGroup extends BaseReportTemplate<DiagnosisReportConfig>{
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources) {
+public class DiagnosisCountByAgeGroup extends BaseReportTemplate<DiagnosisReportConfig> {
+
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+        CommonComponents.addTo(jasperReport, reportConfig, pageType);
+
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
         StyleBuilder cellStyle = Templates.columnStyle.setBorder(Styles.pen());
 
