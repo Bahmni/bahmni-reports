@@ -33,10 +33,10 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
-        CrosstabRowGroupBuilder<String> ageGroup = ctab.rowGroup("age_group", String.class)
+        CrosstabRowGroupBuilder<String> ageGroup = ctab.rowGroup("base_age_group", String.class)
                 .setShowTotal(false);
 
-        CrosstabRowGroupBuilder<Integer> sortOrderGroup = ctab.rowGroup("sort_order", Integer.class)
+        CrosstabRowGroupBuilder<Integer> sortOrderGroup = ctab.rowGroup("base_sort_order", Integer.class)
                 .setShowTotal(false)
                 .setHeaderWidth(0)
                 .setOrderType(OrderType.ASCENDING);
@@ -60,8 +60,8 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         String visitType = SqlUtil.toCommaSeparatedSqlString(report.getConfig().getVisitTypes());
 
         if(StringUtils.isNotBlank(visitType)){
-            crosstab = crosstab.rowGroups(sortOrderGroup,ageGroup, visitAttributeGroup);
-            visitType = String.format(VISIT_TYPE_CRITERIA,visitType,sortOrderGroup);
+            crosstab = crosstab.rowGroups(sortOrderGroup, ageGroup, visitAttributeGroup);
+            visitType = String.format(VISIT_TYPE_CRITERIA, visitType, sortOrderGroup);
         }else{
             crosstab = crosstab.rowGroups(sortOrderGroup,ageGroup);
             visitType = "";
@@ -100,9 +100,9 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         sqlTemplate.add("startDate",  startDate);
         sqlTemplate.add("endDate",  endDate);
         if("true".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))){
-            sqlTemplate.add("countOncePerPatient", " group by concept_id, person_id;");
+            sqlTemplate.add("countOncePerPatient", "");
         }else{
-            sqlTemplate.add("countOncePerPatient", ";");
+            sqlTemplate.add("countOncePerPatient", "SUM");
         }
         return sqlTemplate.render();
     }
