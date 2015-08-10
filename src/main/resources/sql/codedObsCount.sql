@@ -24,7 +24,7 @@ from
     FROM
       obs
       #countOncePerPatientJoin#
-      INNER JOIN concept_view question on obs.concept_id = question.concept_id
+      INNER JOIN concept_view question on obs.concept_id = question.concept_id and question.concept_full_name IN (#conceptNames#)
       INNER JOIN person on obs.person_id = person.person_id
       INNER JOIN encounter on obs.encounter_id = encounter.encounter_id
       INNER  JOIN visit on encounter.visit_id = visit.visit_id
