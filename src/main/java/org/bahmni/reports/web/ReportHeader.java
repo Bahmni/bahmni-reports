@@ -38,7 +38,7 @@ public class ReportHeader {
     }
 
     private void addDatesSubHeader(String startDate, String endDate, HorizontalListBuilder headerList) {
-        if (isEmpty(startDate) && isEmpty(endDate)) return;
+        if (startDate.equalsIgnoreCase("null") || endDate.equalsIgnoreCase("null")) return;
 
         headerList.add(cmp.text("From " + startDate + " to " + endDate)
                 .setStyle(Templates.bold12CenteredStyle)
