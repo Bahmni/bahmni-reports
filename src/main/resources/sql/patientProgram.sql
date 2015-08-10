@@ -1,11 +1,11 @@
 select pi.identifier,
   CONCAT(pn.given_name, " ", pn.family_name) AS PatientName,
   floor(datediff(CURDATE(), p.birthdate) / 365) AS age,
-  pp.date_enrolled,
+  date(pp.date_enrolled) as date_enrolled,
   cn.name as state_name,
   ps.start_date,
   ps.end_date,
-  pp.date_completed,
+  date(pp.date_completed) as date_completed,
   cn2.name as outcome
 from program prog
   join program_workflow pw on prog.program_id = pw.program_id and prog.name='#programName#'
