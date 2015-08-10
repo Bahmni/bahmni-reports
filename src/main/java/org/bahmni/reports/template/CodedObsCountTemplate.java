@@ -48,20 +48,19 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         CrosstabColumnGroupBuilder<String> columnGroupAnswers = ctab.columnGroup("answer_concept_name", String.class)
                 .setShowTotal(false);
 
+        CrosstabColumnGroupBuilder<String> columnGroupGender = ctab.columnGroup("gender", String.class)
+                .setShowTotal(true);
+
         CrosstabBuilder crosstab = ctab.crosstab()
                 .rowGroups(sortOrderGroup, ageRowGroup)
-                .columnGroups(columnGroupQuestions, columnGroupAnswers)
+                .columnGroups(columnGroupQuestions, columnGroupAnswers, columnGroupGender)
                 .measures(
-                        ctab.measure("F", "female", Integer.class, Calculation.SUM),
-                        ctab.measure("M", "male", Integer.class, Calculation.SUM),
-                        ctab.measure("O", "other", Integer.class, Calculation.SUM),
-                        ctab.measure("Total", "total", Integer.class, Calculation.SUM)
+                        ctab.measure("", "total_count", Integer.class, Calculation.SUM)
                 )
                 .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()))
                 .setCellWidth(75);
 
-
-        CrosstabRowGroupBuilder<String> visitRowGroup = ctab.rowGroup("visit_type", String.class)
+        CrosstabRowGroupBuilder<String> visitRowGroup = ctab.rowGroup("visit", String.class)
                 .setShowTotal(false);
         List<String> visitTypes = report.getConfig().getVisitTypes();
         if (CollectionUtils.isNotEmpty(visitTypes)) {
@@ -69,6 +68,7 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         }
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
+
 
         List<String> conceptNames = report.getConfig().getConceptNames();
 
@@ -91,7 +91,7 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         String sql = getFileContent("sql/codedObsCount.sql");
 
         String visitTypes = SqlUtil.toCommaSeparatedSqlString(reportConfig.getVisitTypes());
-        String visitFilterTemplate = "AND va.value_reference IN (%s)";
+        String visitFilterTemplate = "on visit_type.type in (%s)";
 
         if (StringUtils.isNotBlank(visitTypes)) {
             visitFilterTemplate = String.format(visitFilterTemplate, visitTypes);
@@ -106,19 +106,18 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         sqlTemplate.add("conceptNames", SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptNames()));
         sqlTemplate.add("reportGroupName", reportConfig.getAgeGroupName());
         sqlTemplate.add("visitFilter", visitFilterTemplate);
-
         if("false".equalsIgnoreCase(reportConfig.getCountOnlyClosedVisits())){
             sqlTemplate.add("endDateField", "obs.obs_datetime");
         }else{
-            sqlTemplate.add("endDateField", "v.date_stopped");
+            sqlTemplate.add("endDateField", "visit.date_stopped");
         }
-
-        if("false".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))){
-            sqlTemplate.add("countOncePerPatientClause", "SUM");
+        if("true".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))){
+            sqlTemplate.add("countOncePerPatientInitialCond", "GROUP by age_group, gender, concept_name, visit, sort_order, person_id");
+            sqlTemplate.add("countOncePerPatient", " WHERE a.person_id IS NOT NULL GROUP BY a.concept_id, a. person_id;");
         }else{
-            sqlTemplate.add("countOncePerPatientClause", "");
+            sqlTemplate.add("countOncePerPatientInitialCond", "");
+            sqlTemplate.add("countOncePerPatient", "GROUP BY a.age_group, a.gender, a.concept_name, a.answer_concept_name, a.sort_order, a.visit;");
         }
-
         return sqlTemplate.render();
     }
 }

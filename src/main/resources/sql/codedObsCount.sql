@@ -1,70 +1,50 @@
-SELECT *
-FROM (SELECT
-        base.age_group                                                AS age_group,
-        base.sort_order                                               AS sort_order,
-        base.value_reference                                          AS visit_type,
-        base.answer_concept_name                                      AS answer_concept_name,
-        base.concept_name                                             AS concept_name,
-        final.concept_id,
-        final.female                                                  AS female,
-        final.male                                                    AS male,
-        final.other                                                   AS other,
-        final.male + final.other + final.female                       AS total
-      FROM
-        (SELECT
-           rag.name                   AS age_group,
-           rag.sort_order,
-           answer.concept_id          AS answer_concept_id,
-           IF(answer.concept_short_name IS NOT NULL, answer.concept_short_name, answer.concept_full_name) AS answer_concept_name,
-           question.concept_id        AS concept_id,
-           IF(question.concept_short_name IS NOT NULL, question.concept_short_name, question.concept_full_name) AS concept_name,
-           visit_type.visit_type_name AS value_reference
-         FROM reporting_age_group rag
-           JOIN concept_view question ON question.concept_full_name IN (#conceptNames#)
-           JOIN concept_answer ON concept_answer.concept_id = question.concept_id
-           INNER JOIN concept_view answer ON concept_answer.answer_concept = answer.concept_id
-           JOIN (SELECT DISTINCT value_reference AS visit_type_name
-                 FROM visit_attribute va
-                 WHERE va.visit_attribute_id IS NOT NULL #visitFilter#) visit_type
-         WHERE rag.report_group_name = "#reportGroupName#"
-        ) base
-        LEFT OUTER JOIN
-        (SELECT
-           concept_id,
-           answer_concept_id,
-           age_group,
-           visit_type,
-           sum(female) AS female,
-           sum(male)   AS male,
-           sum(other)  AS other,
-           sort_order
-         FROM (SELECT
-                 question.concept_id           AS concept_id,
-                 answer.concept_id             AS answer_concept_id,
-                 rag.name                      AS age_group,
-                 va.value_reference            AS visit_type,
-                 #countOncePerPatientClause#(IF(p.gender = 'F', 1, 0)) AS female,
-                 #countOncePerPatientClause#(IF(p.gender = 'M', 1, 0)) AS male,
-                 #countOncePerPatientClause#(IF(p.gender = 'O', 1, 0)) AS other,
-                 rag.sort_order                AS sort_order
-               FROM obs obs
-                 INNER JOIN concept_view question ON obs.concept_id = question.concept_id
-                 INNER JOIN concept_view answer ON obs.value_coded = answer.concept_id
-                 INNER JOIN encounter e ON obs.encounter_id = e.encounter_id
-                 INNER JOIN visit v ON v.visit_id = e.visit_id
-                 INNER JOIN visit_attribute va ON va.visit_id = v.visit_id
-                 INNER JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.name = 'Visit Status'
-                 INNER JOIN person p ON p.person_id = obs.person_id
-                 INNER JOIN reporting_age_group rag ON DATE(#endDateField#) BETWEEN (DATE_ADD(
-                     DATE_ADD(birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(
-                     DATE_ADD(birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
-                                                       AND rag.report_group_name = "#reportGroupName#"
-               WHERE
-                 question.concept_full_name IN (#conceptNames#)
-                 AND cast(#endDateField# AS DATE) BETWEEN '#startDate#' AND '#endDate#'
-                 AND obs.voided IS FALSE
-               GROUP BY question.concept_id, answer.concept_id, va.value_reference, rag.name, rag.sort_order, p.person_id) interim_result
-         GROUP BY concept_id, age_group, visit_type, answer_concept_id
-         ORDER BY concept_id, interim_result.sort_order
-        ) final ON final.age_group = base.age_group AND final.concept_id = base.concept_id AND final.visit_type = base.value_reference AND final.answer_concept_id = base.answer_concept_id
-      ORDER BY base.sort_order ASC) AS result;
+SELECT
+  a.age_group           age_group,
+  a.gender              gender,
+  a.concept_name        concept_name,
+  a.visit               visit,
+  a.answer_concept_name answer_concept_name,
+  a.sort_order          sort_order,
+  a.concept_id,
+  person_id,
+  sum(CASE WHEN a.visit_id IS NOT NULL AND a.value_reference IS NOT NULL AND a.gender IS NOT NULL THEN 1
+      ELSE 0 END)       total_count
+FROM
+  (SELECT DISTINCT
+     reporting_age_group.name                                                  AS age_group,
+     gender.gender                                                             AS gender,
+     IF(question.concept_short_name IS NULL, question.concept_full_name,
+        question.concept_short_name)                                           AS concept_name,
+     visit_type.type AS visit,
+     IF(answer.concept_short_name IS NULL, answer.concept_full_name,
+        answer.concept_short_name)                                             AS answer_concept_name,
+     reporting_age_group.sort_order                                            AS sort_order,
+     visit.visit_id                                                            AS visit_id,
+     attr.value_reference                                                      AS value_reference,
+     question.concept_id,
+     person.person_id
+   FROM
+     concept_view AS question
+     INNER JOIN concept_answer
+       ON question.concept_id = concept_answer.concept_id AND question.concept_full_name IN (#conceptNames#)
+     INNER JOIN concept_view AS answer
+       ON answer.concept_id = concept_answer.answer_concept
+     INNER JOIN (SELECT DISTINCT value_reference AS type
+                 FROM visit_attribute) visit_type #visitFilter#
+     INNER JOIN reporting_age_group
+       ON reporting_age_group.report_group_name = '#reportGroupName#'
+     INNER JOIN (SELECT 'M' as gender UNION SELECT 'F' AS gender UNION SELECT 'O' AS gender) as gender
+     LEFT JOIN obs ON obs.concept_id = question.concept_id AND obs.value_coded = answer.concept_id AND obs.voided IS FALSE
+     LEFT JOIN person ON obs.person_id = person.person_id AND person.gender = gender.gender
+     LEFT JOIN encounter enc ON enc.encounter_id = obs.encounter_id
+     LEFT JOIN visit visit ON enc.visit_id = visit.visit_id
+                              AND cast(#endDateField# AS DATE) BETWEEN (DATE_ADD(
+       DATE_ADD(person.birthdate, INTERVAL reporting_age_group.min_years YEAR), INTERVAL reporting_age_group.min_days
+       DAY)) AND (DATE_ADD(DATE_ADD(person.birthdate, INTERVAL reporting_age_group.max_years YEAR), INTERVAL
+                           reporting_age_group.max_days DAY)) AND cast(#endDateField# AS DATE) BETWEEN '#startDate#' AND '#endDate#'
+     LEFT JOIN visit_attribute AS attr ON visit.visit_id = attr.visit_id AND attr.value_reference = visit_type.type
+     LEFT JOIN visit_attribute_type AS attr_type
+       ON attr_type.visit_attribute_type_id = attr.attribute_type_id AND attr_type.name = 'Visit Status'
+   #countOncePerPatientInitialCond#
+   ORDER BY age_group, gender, concept_name, visit, answer_concept_name, sort_order, visit_id) a
+   #countOncePerPatient#
