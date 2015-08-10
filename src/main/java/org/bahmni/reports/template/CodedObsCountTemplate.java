@@ -60,7 +60,7 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
                 .setCellStyle(Templates.columnStyle.setBorder(Styles.pen()))
                 .setCellWidth(75);
 
-        CrosstabRowGroupBuilder<String> visitRowGroup = ctab.rowGroup("visit", String.class)
+        CrosstabRowGroupBuilder<String> visitRowGroup = ctab.rowGroup("visit_type", String.class)
                 .setShowTotal(false);
         List<String> visitTypes = report.getConfig().getVisitTypes();
         if (CollectionUtils.isNotEmpty(visitTypes)) {
@@ -100,10 +100,13 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         }
 
 
+        String conceptNames = SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptNames());
+        String countOncePerPatientJoin = String.format("INNER JOIN (SELECT concept_id, person_id, max(obs_datetime) as datetime from obs where obs.concept_id in (Select concept_id from concept_view where concept_full_name in (%s)) group by concept_id, person_id) most_recent on most_recent.concept_id = obs.concept_id and most_recent.person_id = obs.person_id and most_recent.datetime = obs.obs_datetime", conceptNames);
+
         ST sqlTemplate = new ST(sql, '#', '#');
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
-        sqlTemplate.add("conceptNames", SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptNames()));
+        sqlTemplate.add("conceptNames", conceptNames);
         sqlTemplate.add("reportGroupName", reportConfig.getAgeGroupName());
         sqlTemplate.add("visitFilter", visitFilterTemplate);
         if("false".equalsIgnoreCase(reportConfig.getCountOnlyClosedVisits())){
@@ -112,11 +115,9 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
             sqlTemplate.add("endDateField", "visit.date_stopped");
         }
         if("true".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))){
-            sqlTemplate.add("countOncePerPatientInitialCond", "GROUP by age_group, gender, concept_name, visit, sort_order, person_id");
-            sqlTemplate.add("countOncePerPatient", " WHERE a.person_id IS NOT NULL GROUP BY a.concept_id, a. person_id;");
+            sqlTemplate.add("countOncePerPatientJoin", countOncePerPatientJoin);
         }else{
-            sqlTemplate.add("countOncePerPatientInitialCond", "");
-            sqlTemplate.add("countOncePerPatient", "GROUP BY a.age_group, a.gender, a.concept_name, a.answer_concept_name, a.sort_order, a.visit;");
+            sqlTemplate.add("countOncePerPatientJoin", "");
         }
         return sqlTemplate.render();
     }
