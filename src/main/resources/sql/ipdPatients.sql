@@ -25,7 +25,7 @@ SET @sql = CONCAT('SELECT
       @patientAttributePivot,
       ',',
       @conceptObsPivot ,
-      ', GROUP_CONCAT(DISTINCT (diagnoses.concept_full_name) SEPARATOR \' | \') AS "Diagnosis",
+      ', GROUP_CONCAT(DISTINCT (diagnoses.diagnosis_name) SEPARATOR \' | \') AS "Diagnosis",
       pa.*
     FROM visit_attribute
     INNER JOIN visit_attribute_type vat
@@ -46,8 +46,8 @@ SET @sql = CONCAT('SELECT
       ON person_attribute.value = person_attribute_cn.concept_id AND person_attribute_type.format LIKE "%Concept"
       AND person_attribute_cn.concept_name_type = "FULLY_SPECIFIED" AND person_attribute_type.name IN (#patientAttributes#)
     LEFT JOIN (SELECT
-                 coded_diagnosis_concept_name.name       concept_full_name,
-                 coded_diagnosis_obs.encounter_id        encounter_id
+                 COALESCE(coded_diagnosis_concept_name.name, diagnosis_obs.value_text)       diagnosis_name,
+                 diagnosis_obs.encounter_id     encounter_id
                FROM obs revised_obs
                JOIN concept_name revised_concept
                  ON revised_obs.concept_id = revised_concept.concept_id
@@ -55,17 +55,19 @@ SET @sql = CONCAT('SELECT
                     AND revised_concept.name = "Bahmni Diagnosis Revised"
                     AND revised_obs.voided IS FALSE
                     AND revised_concept.voided IS FALSE
-               JOIN obs coded_diagnosis_obs
-                 ON revised_obs.obs_group_id = coded_diagnosis_obs.obs_group_id
+
+               JOIN obs diagnosis_obs
+                 ON revised_obs.obs_group_id = diagnosis_obs.obs_group_id
                JOIN concept_name coded_diagnosis_concept
-                 ON coded_diagnosis_obs.concept_id = coded_diagnosis_concept.concept_id
-                    AND coded_diagnosis_concept.name = "Coded Diagnosis"
+                 ON diagnosis_obs.concept_id = coded_diagnosis_concept.concept_id
+                    AND coded_diagnosis_concept.name in ("Coded Diagnosis", "Non-coded Diagnosis")
                     AND coded_diagnosis_concept.concept_name_type = "FULLY_SPECIFIED"
                     AND coded_diagnosis_concept.voided IS FALSE
-               JOIN concept_name coded_diagnosis_concept_name
-                 ON coded_diagnosis_obs.value_coded = coded_diagnosis_concept_name.concept_id
+               LEFT JOIN concept_name coded_diagnosis_concept_name
+                 ON diagnosis_obs.value_coded = coded_diagnosis_concept_name.concept_id
                     AND coded_diagnosis_concept_name.concept_name_type = "FULLY_SPECIFIED"
                     AND coded_diagnosis_concept_name.voided IS FALSE
+
                JOIN obs diagnosis_status_obs
                  ON revised_obs.obs_group_id = diagnosis_status_obs.obs_group_id
                JOIN concept_name diagnosis_status_concept
