@@ -16,6 +16,7 @@ FROM concept_name where concept_name.name in (#conceptNames#) and concept_name_t
 
 SET @sql = CONCAT('SELECT
       visit_attribute.date_created                                               AS "Date of Admission",
+      vt.name                                                                    AS "Visit Type",
       visit_attribute.date_changed                                               AS "Date of Discharge",
       pi.identifier                                                              AS "Patient ID",
       CONCAT(pn.given_name, " ", pn.family_name)                                 AS "Patient Name",
@@ -24,7 +25,7 @@ SET @sql = CONCAT('SELECT
       @patientAttributePivot,
       ',',
       @conceptObsPivot ,
-      ', GROUP_CONCAT(DISTINCT (diagnoses.concept_full_name)) AS "Diagnosis",
+      ', GROUP_CONCAT(DISTINCT (diagnoses.concept_full_name) SEPARATOR \' | \') AS "Diagnosis",
       pa.*
     FROM visit_attribute
     INNER JOIN visit_attribute_type vat
@@ -33,6 +34,7 @@ SET @sql = CONCAT('SELECT
       AND CAST(#filterColumn# as DATE) BETWEEN "#startDate#" AND "#endDate#"
     INNER JOIN visit v
       ON v.visit_id = visit_attribute.visit_id
+    INNER JOIN visit_type vt on v.visit_type_id = vt.visit_type_id
     INNER JOIN patient_identifier pi ON pi.patient_id = v.patient_id
     INNER JOIN person p ON p.person_id = v.patient_id
     INNER JOIN person_name pn ON pn.person_id = v.patient_id

@@ -41,10 +41,11 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
         TextColumnBuilder<Date> dischargeDateColumn = col.column("Date of Discharge", "Date of Discharge", type.dateType()).setStyle(columnStyle);
         TextColumnBuilder<String> ageColumn = col.column("Age", "Age", type.stringType()).setStyle(columnStyle);
         TextColumnBuilder<String> diagnosisColumn = col.column("Diagnosis", "Diagnosis", type.stringType()).setStyle(columnStyle);
+        TextColumnBuilder<String> visitType = col.column("Visit Type", "Visit Type", type.stringType()).setStyle(columnStyle);
 
         jasperReport.setShowColumnTitle(true)
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL)
-                .columns(admissionDateColumn, patientIDColumn, patientNameColumn, genderColumn, ageColumn);
+                .columns(admissionDateColumn, visitType, patientIDColumn, patientNameColumn, genderColumn, ageColumn);
 
         addColumns(jasperReport, report.getConfig().getPatientAttributes(), columnStyle);
         addColumns(jasperReport, report.getConfig().getAddressAttributes(), columnStyle);
