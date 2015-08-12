@@ -9,7 +9,7 @@ FROM (SELECT
         female,
         male,
         other,
-        result.visit_id,
+        result.encounter_id,
         male+other+female AS total
       FROM
         (SELECT
@@ -30,7 +30,7 @@ FROM (SELECT
            p.person_id,
            obs.concept_id,
            #endDateField# datetime,
-           v.visit_id
+           encounter.encounter_id
          FROM obs obs
            INNER JOIN concept c ON obs.concept_id = c.concept_id AND obs.voided = 0
            INNER JOIN concept_name cn
