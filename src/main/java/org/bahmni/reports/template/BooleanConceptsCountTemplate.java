@@ -89,7 +89,7 @@ public class BooleanConceptsCountTemplate extends BaseReportTemplate<ObsCountCon
         if("true".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))){
             formattedSql = formattedSql + temp + "concept_id, person_id;";
         }else{
-            formattedSql = formattedSql + temp + "visit_id;";
+            formattedSql = formattedSql + temp + "encounter_id;";
         }
         return formattedSql;
     }
