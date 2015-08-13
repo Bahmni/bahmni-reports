@@ -42,7 +42,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         String templateName = report.getConfig().getTemplateName();
-
+        List<String> patientAttributes = report.getConfig().getPatientAttributes();
 
         ConnectionDetails connectionDetails = new ConnectionDetails(bahmniReportsProperties.getOpenmrsRootUrl() + "/session", bahmniReportsProperties.getOpenmrsServiceUser(),
                 bahmniReportsProperties.getOpenmrsServicePassword(), bahmniReportsProperties.getOpenmrsConnectionTimeout(), bahmniReportsProperties.getOpenmrsReplyTimeout());
@@ -66,21 +66,10 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         }
 
         String conceptNameInClause = StringUtils.join(conceptNames, ",");
-        String sql = getFormattedSql(getFileContent("sql/obsTemplate.sql"), report.getConfig(), conceptNameInClause, startDate, endDate);
+        String patientAttributesInClause = constructInClause(patientAttributes);
+        String sql = getFormattedSql(getFileContent("sql/obsTemplate.sql"), report.getConfig(), conceptNameInClause, patientAttributesInClause, startDate, endDate);
 
-        TextColumnBuilder<String> patientColumn = col.column("Patient ID", "identifier", type.stringType());
-        TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "patient_name", type.stringType());
-        TextColumnBuilder<String> patientGenderColumn = col.column("Gender", "gender", type.stringType());
-        TextColumnBuilder<String> patientAgeColumn = col.column("Age", "age", type.stringType());
-        TextColumnBuilder<String> providerColumn = col.column("User", "provider_name", type.stringType());
-        TextColumnBuilder<String> encounterColumn = col.column("Encounter DateTime", "encounter_datetime", type.stringType());
-
-        jasperReport.columns(patientColumn, patientNameColumn, patientGenderColumn, patientAgeColumn, providerColumn, encounterColumn);
-
-        for (ConceptDetails concept : conceptDetails) {
-            TextColumnBuilder<String> column = col.column(concept.getName(), concept.getFullName(), type.stringType());
-            jasperReport.addColumn(column);
-        }
+        buildColumns(jasperReport, patientAttributes, conceptDetails);
 
         Statement stmt;
         try {
@@ -103,13 +92,46 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         return jasperReport;
     }
 
-    private String getFormattedSql(String formattedSql, ObsTemplateConfig reportConfig, String conceptNameInClause, String startDate, String endDate) {
+    private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<ConceptDetails> conceptDetails) {
+        TextColumnBuilder<String> patientColumn = col.column("Patient ID", "identifier", type.stringType());
+        TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "patient_name", type.stringType());
+        TextColumnBuilder<String> patientGenderColumn = col.column("Gender", "gender", type.stringType());
+        TextColumnBuilder<String> patientAgeColumn = col.column("Age", "age", type.stringType());
+        TextColumnBuilder<String> providerColumn = col.column("User", "provider_name", type.stringType());
+        TextColumnBuilder<String> encounterColumn = col.column("Encounter DateTime", "encounter_datetime", type.stringType());
+
+        jasperReport.columns(patientColumn, patientNameColumn, patientGenderColumn, patientAgeColumn);
+        for (String patientAttribute : patientAttributes) {
+            TextColumnBuilder<String> column = col.column(patientAttribute, patientAttribute, type.stringType());
+            jasperReport.addColumn(column);
+        }
+        jasperReport.columns(providerColumn, encounterColumn);
+        for (ConceptDetails concept : conceptDetails) {
+            TextColumnBuilder<String> column = col.column(concept.getName(), concept.getFullName(), type.stringType());
+            jasperReport.addColumn(column);
+        }
+    }
+
+    private String getFormattedSql(String formattedSql, ObsTemplateConfig reportConfig, String conceptNameInClause, String patientAttributeInClause, String startDate, String endDate) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
         sqlTemplate.add("conceptNameInClause", conceptNameInClause);
-        sqlTemplate.add("conceptNameInClauseEscapeQuote", conceptNameInClause.replace("'", "\\'"));
+        sqlTemplate.add("conceptNameInClauseEscapeQuote", getInClauseWithEscapeQuote(conceptNameInClause));
+        sqlTemplate.add("patientAttributesInClause", patientAttributeInClause);
+        sqlTemplate.add("patientAttributesInClauseEscapeQuote", getInClauseWithEscapeQuote(patientAttributeInClause));
         sqlTemplate.add("templateName",  reportConfig.getTemplateName());
         sqlTemplate.add("startDate",  startDate);
         sqlTemplate.add("endDate",  endDate);
         return sqlTemplate.render();
+    }
+
+    private String constructInClause(List<String> parameters){
+        List<String> convertedList = new ArrayList<>();
+        for (String parameter : parameters) {
+            convertedList.add("'"+parameter+"'");
+        }
+        return  StringUtils.join(convertedList, ",");
+    }
+    private String getInClauseWithEscapeQuote(String inclause){
+        return  inclause.replace("'", "\\'");
     }
 }
