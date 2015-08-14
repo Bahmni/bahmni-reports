@@ -10,7 +10,7 @@ FROM person_attribute_type where name in (#patientAttributes#);
 SET @conceptObsPivot = NULL;
 SELECT
   GROUP_CONCAT(
-      CONCAT('GROUP_CONCAT(DISTINCT(IF(obs_value.obs_name = \'', name, '\', obs_value.value, NULL))) as \'', name, '\''))
+      CONCAT('GROUP_CONCAT((IF(obs_value.obs_name = \'', name, '\', obs_value.value, NULL))) as \'', name, '\''))
 into @conceptObsPivot
 FROM concept_name where concept_name.name in (#conceptNames#) and concept_name_type = 'FULLY_SPECIFIED';
 
