@@ -43,6 +43,9 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
         String templateName = report.getConfig().getTemplateName();
         List<String> patientAttributes = report.getConfig().getPatientAttributes();
+        if(patientAttributes == null){
+            patientAttributes = new ArrayList<>();
+        }
 
         ConnectionDetails connectionDetails = new ConnectionDetails(bahmniReportsProperties.getOpenmrsRootUrl() + "/session", bahmniReportsProperties.getOpenmrsServiceUser(),
                 bahmniReportsProperties.getOpenmrsServicePassword(), bahmniReportsProperties.getOpenmrsConnectionTimeout(), bahmniReportsProperties.getOpenmrsReplyTimeout());
@@ -126,6 +129,9 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
     private String constructInClause(List<String> parameters){
         List<String> convertedList = new ArrayList<>();
+        if(parameters.isEmpty()){
+            return "''";
+        }
         for (String parameter : parameters) {
             convertedList.add("'"+parameter+"'");
         }
