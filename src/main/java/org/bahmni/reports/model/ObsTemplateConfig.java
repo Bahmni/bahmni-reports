@@ -8,6 +8,7 @@ import java.util.List;
 public class ObsTemplateConfig implements Config {
     private String templateName;
     private List<String> patientAttributes;
+    private String applyDateRangeFor;
 
     public String getTemplateName() {
         return templateName;
@@ -23,6 +24,14 @@ public class ObsTemplateConfig implements Config {
 
     public void setPatientAttributes(List<String> patientAttributes) {
         this.patientAttributes = patientAttributes;
+    }
+
+    public String getApplyDateRangeFor() {
+        return applyDateRangeFor;
+    }
+
+    public void setApplyDateRangeFor(String applyDateRangeFor) {
+        this.applyDateRangeFor = applyDateRangeFor;
     }
 }
 

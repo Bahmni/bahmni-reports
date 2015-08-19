@@ -5,7 +5,7 @@ SELECT
                CONCAT(
                    'GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = ''',
                    concept_full_name,
-                   ''', coalesce(o.value_numeric, o.value_boolean, o.value_datetime, o.value_text, o.concept_short_name, o.concept_full_name), NULL)) SEPARATOR \',\') AS `',
+                   ''', coalesce(o.value_numeric, o.value_boolean, o.date_created, o.encounter_datetime, o.value_text, o.concept_short_name, o.concept_full_name), NULL)) SEPARATOR \',\') AS `',
                    concept_full_name , '`'
                )
   ) into @sql
@@ -41,6 +41,7 @@ SET @sql = CONCAT('SELECT
                   'o.provider_id,
                   o.encounter_id,
                   GROUP_CONCAT(DISTINCT(o.provider_name) SEPARATOR \',\') as provider_name,
+                  o.date_created,
                   o.encounter_datetime,',
                  @sql,
                   ' FROM concept_view cv
@@ -49,21 +50,22 @@ SET @sql = CONCAT('SELECT
                        pi.identifier,
                        ob.concept_id,
                        concat(pat_name.given_name, '' '', pat_name.family_name) AS patient_name,
-                       floor(DATEDIFF(DATE(ob.obs_datetime), person.birthdate) / 365)   AS age,
+                       floor(DATEDIFF(DATE(ob.date_created), person.birthdate) / 365)   AS age,
                        person.gender,',
                        IF(@patientAttributesSql is null, '',@patientAttributesSelectClause),
                        'ep.provider_id,
                        ep.encounter_id,
                        concat(pn.given_name, '' '', pn.family_name)   AS provider_name,
+                       e.date_created,
                        e.encounter_datetime,
                        ob.value_numeric,
                        ob.value_boolean,
-                       ob.value_datetime,
+                       ob.date_created AS obs_date,
                        ob.value_text,
                        answer.concept_short_name,
                        answer.concept_full_name
                      FROM obs ob
-                       JOIN encounter e ON ob.encounter_id = e.encounter_id AND cast(e.encounter_datetime AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'  AND ob.voided IS FALSE
+                       JOIN encounter e ON ob.encounter_id = e.encounter_id AND cast(#applyDateRangeFor# AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'  AND ob.voided IS FALSE
                        JOIN (select encounter_id from obs
                                             where concept_id = (select concept_id from concept_view where concept_full_name = \'#templateName#\') and voided is false) e1
                        ON e.encounter_id = e1.encounter_id

@@ -31,6 +31,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
+    private static final String ENCOUNTER_CREATE_DATE = "encounterCreateDate";
     private BahmniReportsProperties bahmniReportsProperties;
 
     public ObsTemplate(BahmniReportsProperties bahmniReportsProperties) {
@@ -43,7 +44,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
         String templateName = report.getConfig().getTemplateName();
         List<String> patientAttributes = report.getConfig().getPatientAttributes();
-        if(patientAttributes == null){
+        if (patientAttributes == null) {
             patientAttributes = new ArrayList<>();
         }
 
@@ -72,7 +73,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         String patientAttributesInClause = constructInClause(patientAttributes);
         String sql = getFormattedSql(getFileContent("sql/obsTemplate.sql"), report.getConfig(), conceptNameInClause, patientAttributesInClause, startDate, endDate);
 
-        buildColumns(jasperReport, patientAttributes, conceptDetails);
+        buildColumns(jasperReport, patientAttributes, conceptDetails, report.getConfig().getApplyDateRangeFor());
 
         Statement stmt;
         try {
@@ -95,20 +96,22 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         return jasperReport;
     }
 
-    private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<ConceptDetails> conceptDetails) {
+    private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<ConceptDetails> conceptDetails, String applyDateRangeFor) {
         TextColumnBuilder<String> patientColumn = col.column("Patient ID", "identifier", type.stringType());
         TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "patient_name", type.stringType());
         TextColumnBuilder<String> patientGenderColumn = col.column("Gender", "gender", type.stringType());
         TextColumnBuilder<String> patientAgeColumn = col.column("Age", "age", type.stringType());
         TextColumnBuilder<String> providerColumn = col.column("User", "provider_name", type.stringType());
-        TextColumnBuilder<String> encounterColumn = col.column("Encounter DateTime", "encounter_datetime", type.stringType());
+        TextColumnBuilder<String> encounterCreatedDateColumn = col.column("Encounter Created Date", "date_created", type.stringType());
+        TextColumnBuilder<String> encounterDateTimeColumn = col.column("Encounter Date Time", "encounter_datetime", type.stringType());
+
 
         jasperReport.columns(patientColumn, patientNameColumn, patientGenderColumn, patientAgeColumn);
         for (String patientAttribute : patientAttributes) {
             TextColumnBuilder<String> column = col.column(patientAttribute, patientAttribute, type.stringType());
             jasperReport.addColumn(column);
         }
-        jasperReport.columns(providerColumn, encounterColumn);
+        jasperReport.columns(providerColumn, encounterDateTimeColumn, encounterCreatedDateColumn);
         for (ConceptDetails concept : conceptDetails) {
             TextColumnBuilder<String> column = col.column(concept.getName(), concept.getFullName(), type.stringType());
             jasperReport.addColumn(column);
@@ -121,23 +124,32 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         sqlTemplate.add("conceptNameInClauseEscapeQuote", getInClauseWithEscapeQuote(conceptNameInClause));
         sqlTemplate.add("patientAttributesInClause", patientAttributeInClause);
         sqlTemplate.add("patientAttributesInClauseEscapeQuote", getInClauseWithEscapeQuote(patientAttributeInClause));
-        sqlTemplate.add("templateName",  reportConfig.getTemplateName());
-        sqlTemplate.add("startDate",  startDate);
-        sqlTemplate.add("endDate",  endDate);
+        sqlTemplate.add("templateName", reportConfig.getTemplateName());
+        sqlTemplate.add("applyDateRangeFor", applyDateRangeFor(reportConfig.getApplyDateRangeFor()));
+        sqlTemplate.add("startDate", startDate);
+        sqlTemplate.add("endDate", endDate);
         return sqlTemplate.render();
     }
 
-    private String constructInClause(List<String> parameters){
+    private String constructInClause(List<String> parameters) {
         List<String> convertedList = new ArrayList<>();
-        if(parameters.isEmpty()){
+        if (parameters.isEmpty()) {
             return "''";
         }
         for (String parameter : parameters) {
-            convertedList.add("'"+parameter+"'");
+            convertedList.add("'" + parameter + "'");
         }
-        return  StringUtils.join(convertedList, ",");
+        return StringUtils.join(convertedList, ",");
     }
-    private String getInClauseWithEscapeQuote(String inclause){
-        return  inclause.replace("'", "\\'");
+
+    private String getInClauseWithEscapeQuote(String inclause) {
+        return inclause.replace("'", "\\'");
+    }
+
+    private String applyDateRangeFor(String applyDateRangeFor) {
+        if (applyDateRangeFor != null && applyDateRangeFor.equals(ENCOUNTER_CREATE_DATE)) {
+            return "e.date_created";
+        }
+        return "e.encounter_datetime";
     }
 }
