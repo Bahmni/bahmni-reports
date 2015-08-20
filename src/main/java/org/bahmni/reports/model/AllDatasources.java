@@ -16,7 +16,7 @@ public class AllDatasources {
     @Autowired
     private DataSource openelisDataSource;
 
-    public Connection getConnectionFromDatasource(Object object){
+    public Connection getConnectionFromDatasource(Object object) {
         Connection connection = null;
         try {
             connection = dataSourceFor(object).getConnection();
@@ -24,7 +24,7 @@ public class AllDatasources {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return  connection;
+        return connection;
     }
 
     private DataSource dataSourceFor(Object object) {

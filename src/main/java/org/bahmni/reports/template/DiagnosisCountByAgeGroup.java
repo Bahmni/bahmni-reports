@@ -20,21 +20,25 @@ import org.stringtemplate.v4.ST;
 import java.sql.Connection;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.*;
+import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
+import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource("openmrs")
 public class DiagnosisCountByAgeGroup extends BaseReportTemplate<DiagnosisReportConfig> {
 
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig,
+                                     String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, reportConfig, pageType);
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
         StyleBuilder cellStyle = Templates.columnStyle.setBorder(Styles.pen());
 
-        CrosstabRowGroupBuilder<String> diseaseNameRowGroup = ctab.rowGroup("disease", String.class).setHeaderStyle(textStyle).setHeaderWidth(120)
+        CrosstabRowGroupBuilder<String> diseaseNameRowGroup = ctab.rowGroup("disease", String.class).setHeaderStyle(textStyle)
+                .setHeaderWidth(120)
                 .setShowTotal(false);
-        CrosstabRowGroupBuilder<String> icd10RowGroup = ctab.rowGroup("icd10_code", String.class).setHeaderStyle(textStyle).setHeaderWidth(60)
+        CrosstabRowGroupBuilder<String> icd10RowGroup = ctab.rowGroup("icd10_code", String.class).setHeaderStyle(textStyle)
+                .setHeaderWidth(60)
                 .setShowTotal(false);
 
         CrosstabColumnGroupBuilder<String> ageColumnGroup = ctab.columnGroup("age_group", String.class).setTotalHeaderWidth(95)
@@ -43,7 +47,8 @@ public class DiagnosisCountByAgeGroup extends BaseReportTemplate<DiagnosisReport
                 .setShowTotal(false).setOrderType(OrderType.ASCENDING);
 
         CrosstabBuilder crossTab = ctab.crosstab()
-                .headerCell(DynamicReports.cmp.horizontalList(DynamicReports.cmp.text("Disease Name").setStyle(Templates.columnTitleStyle).setWidth(120),
+                .headerCell(DynamicReports.cmp.horizontalList(DynamicReports.cmp.text("Disease Name").setStyle(Templates
+                                .columnTitleStyle).setWidth(120),
                         DynamicReports.cmp.text("ICD Code").setStyle(Templates.columnTitleStyle).setWidth(60)))
                 .rowGroups(diseaseNameRowGroup, icd10RowGroup)
                 .columnGroups(ageSortOrderColumnGroup, ageColumnGroup)
@@ -67,7 +72,7 @@ public class DiagnosisCountByAgeGroup extends BaseReportTemplate<DiagnosisReport
 
         sqlTemplate.add("ageGroupName", reportConfig.getAgeGroupName(true));
         sqlTemplate.add("visitType", SqlUtil.toCommaSeparatedSqlString(reportConfig.getVisitTypes()));
-        sqlTemplate.add("startDate",  startDate);
+        sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         return sqlTemplate.render();
     }

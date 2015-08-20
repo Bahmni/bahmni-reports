@@ -21,7 +21,8 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class ProgramStateCountTemplate extends BaseReportTemplate<ProgramConfig> {
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramConfig> report, String
+            startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());

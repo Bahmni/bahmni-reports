@@ -1,4 +1,7 @@
 .idea
 *.iml
+*.ids
+*.ipr
+*.iws
 target
 logs

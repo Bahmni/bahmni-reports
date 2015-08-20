@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PatientsWithLabtestResultsConfig implements Config{
+public class PatientsWithLabtestResultsConfig implements Config {
     private List<String> conceptNames;
     private List<String> testOutcome;
 

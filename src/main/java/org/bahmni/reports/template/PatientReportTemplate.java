@@ -20,7 +20,8 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class PatientReportTemplate extends BaseReportTemplate<Config> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> report, String startDate,
+                                     String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         String sql = getFormattedSql(getFileContent("sql/personReport.sql"), startDate, endDate);

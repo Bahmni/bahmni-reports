@@ -6,7 +6,6 @@ import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import org.bahmni.reports.template.Templates;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
-import static org.springframework.util.StringUtils.isEmpty;
 
 public class ReportHeader {
 

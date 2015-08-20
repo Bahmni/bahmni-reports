@@ -18,9 +18,10 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource(value = "openmrs")
-public class IpdOpdVisitCount extends BaseReportTemplate<Config>{
+public class IpdOpdVisitCount extends BaseReportTemplate<Config> {
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> report, String startDate,
+                                     String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
@@ -55,7 +56,7 @@ public class IpdOpdVisitCount extends BaseReportTemplate<Config>{
 
     private String getFormattedSql(String formattedSql, String startDate, String endDate) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
-        sqlTemplate.add("startDate",  startDate);
+        sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         return sqlTemplate.render();
     }

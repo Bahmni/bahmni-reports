@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DateConceptValuesConfig implements Config{
+public class DateConceptValuesConfig implements Config {
 
     private List<String> conceptNames;
     private String templateName;

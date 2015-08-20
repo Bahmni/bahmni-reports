@@ -40,7 +40,7 @@ public class MultipleCodedObsByObsReportTemplate extends BaseReportTemplate<Mult
         int concept_index = 1;
         for (int i = 0; i < rowsGroupBy.size(); i++) {
             if (FIXED_ROW_COLUMN_NAMES.contains(rowsGroupBy.get(i))) {
-                rowGroups[i] =  ctab.rowGroup(rowsGroupBy.get(i), String.class).setShowTotal(false);
+                rowGroups[i] = ctab.rowGroup(rowsGroupBy.get(i), String.class).setShowTotal(false);
             } else {
                 rowGroups[i] = ctab.rowGroup("concept" + concept_index + "_name", String.class).setShowTotal(false);
                 concept_index++;
@@ -51,7 +51,7 @@ public class MultipleCodedObsByObsReportTemplate extends BaseReportTemplate<Mult
         CrosstabColumnGroupBuilder<String>[] columnGroups = new CrosstabColumnGroupBuilder[columnsGroupBy.size()];
         for (int i = 0; i < columnsGroupBy.size(); i++) {
             if (FIXED_ROW_COLUMN_NAMES.contains(columnsGroupBy.get(i))) {
-                columnGroups[i] =  ctab.columnGroup(columnsGroupBy.get(i), String.class).setShowTotal(false);
+                columnGroups[i] = ctab.columnGroup(columnsGroupBy.get(i), String.class).setShowTotal(false);
             } else {
                 columnGroups[i] = ctab.columnGroup("concept" + concept_index + "_name", String.class).setShowTotal(false);
                 concept_index++;

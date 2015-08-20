@@ -19,6 +19,7 @@ public class DiagnosisReportConfig implements Config {
         closed,
         all
     }
+
     private String ageGroupName;
 
     private List<String> visitTypes;

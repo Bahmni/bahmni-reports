@@ -10,7 +10,8 @@ public class ObsCountConfig implements Config {
     private List<String> conceptNames;
     private String ageGroupName;
     private List<String> visitTypes;
-    //Dont give boolean here... Default value of boolean is false, and which contradicts with requirement (Default true, if no config element found),
+    //Dont give boolean here... Default value of boolean is false, and which contradicts with requirement (Default true, if no config
+    // element found),
     private String countOnlyClosedVisits;
     private String countOncePerPatient;
 

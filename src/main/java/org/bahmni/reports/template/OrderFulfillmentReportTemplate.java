@@ -2,7 +2,6 @@ package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
@@ -18,8 +17,8 @@ import java.util.Date;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
-import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource("openmrs")
@@ -27,47 +26,46 @@ public class OrderFulfillmentReportTemplate extends BaseReportTemplate<OrderFulf
 
     private String getFormattedSql(String formattedSql, OrderFulfillmentConfig reportConfig, String startDate, String endDate) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
-        sqlTemplate.add("orderTypes",  SqlUtil.toCommaSeparatedSqlString(reportConfig.getOrderTypes()));
+        sqlTemplate.add("orderTypes", SqlUtil.toCommaSeparatedSqlString(reportConfig.getOrderTypes()));
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         return sqlTemplate.render();
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<OrderFulfillmentConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<OrderFulfillmentConfig> report,
+                                     String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
-        StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
-
         TextColumnBuilder<String> orderType = col.column("Order Type", "OrderType", type.stringType())
-                .setStyle(columnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
         TextColumnBuilder<String> concept = col.column("Name", "Concept", type.stringType())
-                .setStyle(columnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
         TextColumnBuilder<Date> orderDate = col.column("Order Date", "OrderDate", type.dateType())
-                .setStyle(columnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> patientId = col.column("Patient ID", "PatientID", type.stringType())
-                .setStyle(columnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
         TextColumnBuilder<String> patientName = col.column("Patient Name", "PatientName", type.stringType())
-                .setStyle(columnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
         TextColumnBuilder<String> patientGender = col.column("Gender", "Gender", type.stringType())
-                .setStyle(columnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
         TextColumnBuilder<String> fulfillmentStatus = col.column("Fulfillment Status", "FulfillmentStatus", type.stringType())
-                .setStyle(columnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
         TextColumnBuilder<Date> fulfillmentDate = col.column("Fulfilment Date", "FulfilmentDate", type.dateType())
-                .setStyle(columnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
 
@@ -76,7 +74,7 @@ public class OrderFulfillmentReportTemplate extends BaseReportTemplate<OrderFulf
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
         jasperReport.setShowColumnTitle(true)
-                .columns(orderType,concept, orderDate, patientId, patientName, patientGender, fulfillmentStatus, fulfillmentDate)
+                .columns(orderType, concept, orderDate, patientId, patientName, patientGender, fulfillmentStatus, fulfillmentDate)
                 .setDataSource(getFormattedSql(sql, report.getConfig(), startDate, endDate),
                         connection);
         return jasperReport;

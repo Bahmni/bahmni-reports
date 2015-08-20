@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Import;
 public class BahmniReports extends SpringBootServletInitializer {
 
     @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application){
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(BahmniReports.class);
     }
 

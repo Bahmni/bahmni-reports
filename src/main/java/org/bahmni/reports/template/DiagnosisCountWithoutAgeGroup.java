@@ -14,14 +14,14 @@ import org.stringtemplate.v4.ST;
 import java.sql.Connection;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.col;
-import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
-import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
-@UsingDatasource("openmrs")
-public class DiagnosisCountWithoutAgeGroup extends BaseReportTemplate<DiagnosisReportConfig>{
 
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+@UsingDatasource("openmrs")
+public class DiagnosisCountWithoutAgeGroup extends BaseReportTemplate<DiagnosisReportConfig> {
+
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig,
+                                     String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, reportConfig, pageType);
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
@@ -43,8 +43,8 @@ public class DiagnosisCountWithoutAgeGroup extends BaseReportTemplate<DiagnosisR
 
     private String getFormattedSql(String formattedSql, DiagnosisReportConfig reportConfig, String startDate, String endDate) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
-        sqlTemplate.add("visitTypes",  SqlUtil.toCommaSeparatedSqlString(reportConfig.getVisitTypes()));
-        sqlTemplate.add("startDate",  startDate);
+        sqlTemplate.add("visitTypes", SqlUtil.toCommaSeparatedSqlString(reportConfig.getVisitTypes()));
+        sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         return sqlTemplate.render();
     }

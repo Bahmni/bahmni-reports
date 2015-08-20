@@ -12,8 +12,9 @@ import java.sql.SQLException;
 
 @Component
 public class JasperResponseConverter {
-    
-    public void convert(String responseType, JasperReportBuilder report, HttpServletResponse response, final String fileName) throws IOException, DRException, SQLException {
+
+    public void convert(String responseType, JasperReportBuilder report, HttpServletResponse response, final String fileName) throws
+            IOException, DRException, SQLException {
 
         response.setContentType("application/vnd.ms-excel");
         ServletOutputStream outputStream = response.getOutputStream();

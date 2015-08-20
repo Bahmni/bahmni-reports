@@ -28,7 +28,8 @@ public class DiagnosisSummaryTemplate extends BaseReportTemplate<DiagnosisReport
     private WhereClause observationsWhereClause = new WhereClause();
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> report,
+                                     String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         DiagnosisReportConfig reportSpecificConfig = report.getConfig();

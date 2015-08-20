@@ -31,14 +31,15 @@ import org.bahmni.reports.template.BaseReportTemplate;
         @JsonSubTypes.Type(value = MultipleCodedObsByCodedObsReport.class, name = "MultipleCodedObsByCodedObs"),
         @JsonSubTypes.Type(value = CodedObsByCodedObsReport.class, name = "CodedObsByCodedObs"),
         @JsonSubTypes.Type(value = VisitAggregateCountReport.class, name = "VisitAggregateCount"),
-        @JsonSubTypes.Type(value = OrderFulfillmentReport.class, name="OrderFulfillmentReport"),
+        @JsonSubTypes.Type(value = OrderFulfillmentReport.class, name = "OrderFulfillmentReport"),
         @JsonSubTypes.Type(value = ProgramStateCountReport.class, name = "programStateCount"),
         @JsonSubTypes.Type(value = PatientReport.class, name = "PatientReport"),
         @JsonSubTypes.Type(value = PatientProgramReport.class, name = "PatientProgramReport")
-        ,@JsonSubTypes.Type(value = ProgramStateTransitionReport.class, name = "programStateTransitionReport")
+        , @JsonSubTypes.Type(value = ProgramStateTransitionReport.class, name = "programStateTransitionReport")
+        , @JsonSubTypes.Type(value = VisitReport.class, name = "visitReport")
 })
 
-public abstract class Report <T extends Config> {
+public abstract class Report<T extends Config> {
 
     private String name;
     private String type;

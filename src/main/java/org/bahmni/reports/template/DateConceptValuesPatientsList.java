@@ -2,7 +2,6 @@ package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
@@ -17,39 +16,40 @@ import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.*;
+import static net.sf.dynamicreports.report.builder.DynamicReports.col;
+import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource(value = "openmrs")
 public class DateConceptValuesPatientsList extends BaseReportTemplate<DateConceptValuesConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DateConceptValuesConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DateConceptValuesConfig> report,
+                                     String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
-        StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
-
         TextColumnBuilder<String> patientIdentifier = col.column("Patient ID", "identifier", type.stringType())
-                .setStyle(columnStyle);
+                .setStyle(minimalColumnStyle);
         TextColumnBuilder<String> givenName = col.column("First Name", "given_name", type.stringType())
-                .setStyle(columnStyle);
+                .setStyle(minimalColumnStyle);
         TextColumnBuilder<String> familyName = col.column("Last Name", "family_name", type.stringType())
-                .setStyle(columnStyle);
+                .setStyle(minimalColumnStyle);
         TextColumnBuilder<String> gender = col.column("Gender", "gender", type.stringType())
-                .setStyle(columnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Integer> age = col.column("Age (in years)", "age", type.integerType())
-                .setStyle(columnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Date> dateValue = col.column("Date Value", "date_value", type.dateType())
-                .setStyle(columnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
 
         String sql = getFileContent("sql/dateConceptValuesPatientsList.sql");
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
-        
+
         jasperReport.setShowColumnTitle(true)
                 .columns(patientIdentifier, givenName, familyName, gender, age, dateValue)
                 .setDataSource(getFormattedSql(sql, report.getConfig(), startDate, endDate),

@@ -24,7 +24,8 @@ public class ProgramStateTransitionTemplate extends BaseReportTemplate<ProgramSt
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
-        Report<ProgramStateTransitionConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+                                     Report<ProgramStateTransitionConfig> report, String startDate, String endDate, List<AutoCloseable>
+                                                 resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
@@ -50,7 +51,7 @@ public class ProgramStateTransitionTemplate extends BaseReportTemplate<ProgramSt
         jasperReport.setShowColumnTitle(true)
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL)
                 .setColumnStyle(textStyle)
-                .columns(stateFromName,stateToName,countTotal)
+                .columns(stateFromName, stateToName, countTotal)
                 .subtotalsAtSummary(totalCount)
                 .setDataSource(getFormattedSql(sql, report.getConfig().getProgramName(), startDate, endDate), connection);
         return jasperReport;

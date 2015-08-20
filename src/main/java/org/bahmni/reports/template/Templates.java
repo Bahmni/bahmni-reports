@@ -2,22 +2,22 @@ package org.bahmni.reports.template;
 
 /**
  * DynamicReports - Free Java reporting library for creating template dynamically
- *
+ * <p/>
  * Copyright (C) 2010 - 2015 Ricardo Mariaca
  * http://www.dynamicreports.org
- *
+ * <p/>
  * This file is part of DynamicReports.
- *
+ * <p/>
  * DynamicReports is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
+ * <p/>
  * DynamicReports is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
- *
+ * <p/>
  * You should have received a copy of the GNU Lesser General Public License
  * along with DynamicReports. If not, see <http://www.gnu.org/licenses/>.
  */
@@ -50,6 +50,7 @@ public class Templates {
     public static final StyleBuilder bold18CenteredStyle;
     public static final StyleBuilder bold22CenteredStyle;
     public static final StyleBuilder columnStyle;
+    public static final StyleBuilder minimalColumnStyle;
     public static final StyleBuilder columnTitleStyle;
     public static final StyleBuilder groupStyle;
     public static final StyleBuilder subtotalStyle;
@@ -62,10 +63,10 @@ public class Templates {
     public static final ReportTemplateBuilder excelReportTemplate;
 
     static {
-        rootStyle           = stl.style().setPadding(2);
-        boldStyle           = stl.style(rootStyle).bold();
-        italicStyle         = stl.style(rootStyle).italic();
-        boldCenteredStyle   = stl.style(boldStyle)
+        rootStyle = stl.style().setPadding(2);
+        boldStyle = stl.style(rootStyle).bold();
+        italicStyle = stl.style(rootStyle).italic();
+        boldCenteredStyle = stl.style(boldStyle)
                 .setAlignment(HorizontalAlignment.CENTER, VerticalAlignment.MIDDLE);
         bold12CenteredStyle = stl.style(boldCenteredStyle)
                 .setFontSize(12);
@@ -73,23 +74,26 @@ public class Templates {
                 .setFontSize(18);
         bold22CenteredStyle = stl.style(boldCenteredStyle)
                 .setFontSize(22);
-        columnStyle         = stl.style(rootStyle).setVerticalAlignment(VerticalAlignment.MIDDLE).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        columnTitleStyle    = stl.style(columnStyle)
+        columnStyle = stl.style(rootStyle).setVerticalAlignment(VerticalAlignment.MIDDLE).setHorizontalAlignment(HorizontalAlignment
+                .CENTER);
+        columnTitleStyle = stl.style(columnStyle)
                 .setBorder(stl.pen1Point())
                 .setHorizontalAlignment(HorizontalAlignment.CENTER)
                 .setBackgroundColor(Color.LIGHT_GRAY)
                 .bold();
-        groupStyle          = stl.style(boldStyle)
+        groupStyle = stl.style(boldStyle)
                 .setHorizontalAlignment(HorizontalAlignment.LEFT);
-        subtotalStyle       = stl.style(boldStyle)
+        subtotalStyle = stl.style(boldStyle)
                 .setTopBorder(stl.pen1Point());
 
-        StyleBuilder crosstabGroupStyle      = stl.style(columnTitleStyle);
+        minimalColumnStyle = stl.style().setRightBorder(stl.pen1Point());
+
+        StyleBuilder crosstabGroupStyle = stl.style(columnTitleStyle);
         StyleBuilder crosstabGroupTotalStyle = stl.style(columnTitleStyle)
                 .setBackgroundColor(new Color(170, 170, 170));
         StyleBuilder crosstabGrandTotalStyle = stl.style(columnTitleStyle)
                 .setBackgroundColor(new Color(140, 140, 140));
-        StyleBuilder crosstabCellStyle       = stl.style(columnStyle)
+        StyleBuilder crosstabCellStyle = stl.style(columnStyle)
                 .setBorder(stl.pen1Point());
 
         TableOfContentsCustomizerBuilder tableOfContentsCustomizer = tableOfContentsCustomizer()

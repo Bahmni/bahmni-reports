@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class NumericConceptValuesConfig implements Config{
+public class NumericConceptValuesConfig implements Config {
     private List<String> conceptNames;
     private String ageGroupName;
     private String rangeGroupName;

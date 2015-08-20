@@ -6,7 +6,7 @@ import org.bahmni.reports.model.Report;
 import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.reports.template.ProgramStateTransitionTemplate;
 
-public class ProgramStateTransitionReport extends Report<ProgramStateTransitionConfig>{
+public class ProgramStateTransitionReport extends Report<ProgramStateTransitionConfig> {
     @Override
     public BaseReportTemplate getTemplate(BahmniReportsProperties bahmniReportsProperties) {
         return new ProgramStateTransitionTemplate();

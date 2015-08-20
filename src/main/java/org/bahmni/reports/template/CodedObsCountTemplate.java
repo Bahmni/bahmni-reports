@@ -22,16 +22,15 @@ import org.stringtemplate.v4.ST;
 import java.sql.Connection;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
-import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
-import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
+import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource("openmrs")
 public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String
+            startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         CrosstabRowGroupBuilder<String> ageRowGroup = ctab.rowGroup("age_group", String.class)
@@ -73,7 +72,7 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         List<String> conceptNames = report.getConfig().getConceptNames();
 
         jasperReport.addTitle(cmp.horizontalList()
-                        .add(cmp.text("Count of " + conceptNames.toString() )
+                        .add(cmp.text("Count of " + conceptNames.toString())
                                 .setStyle(Templates.boldStyle)
                                 .setHorizontalAlignment(HorizontalAlignment.LEFT))
                         .newRow()
@@ -101,7 +100,10 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
 
         String conceptNames = SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptNames());
-        String countOncePerPatientJoin = String.format("INNER JOIN (SELECT concept_id, person_id, max(obs_datetime) as datetime from obs where obs.concept_id in (Select concept_id from concept_view where concept_full_name in (%s)) group by concept_id, person_id) most_recent on most_recent.concept_id = obs.concept_id and most_recent.person_id = obs.person_id and most_recent.datetime = obs.obs_datetime", conceptNames);
+        String countOncePerPatientJoin = String.format("INNER JOIN (SELECT concept_id, person_id, max(obs_datetime) as datetime from obs " +
+                "where obs.concept_id in (Select concept_id from concept_view where concept_full_name in (%s)) group by concept_id, " +
+                "person_id) most_recent on most_recent.concept_id = obs.concept_id and most_recent.person_id = obs.person_id and " +
+                "most_recent.datetime = obs.obs_datetime", conceptNames);
 
         ST sqlTemplate = new ST(sql, '#', '#');
         sqlTemplate.add("startDate", startDate);
@@ -109,14 +111,14 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         sqlTemplate.add("conceptNames", conceptNames);
         sqlTemplate.add("reportGroupName", reportConfig.getAgeGroupName());
         sqlTemplate.add("visitFilter", visitFilterTemplate);
-        if("false".equalsIgnoreCase(reportConfig.getCountOnlyClosedVisits())){
+        if ("false".equalsIgnoreCase(reportConfig.getCountOnlyClosedVisits())) {
             sqlTemplate.add("endDateField", "obs.obs_datetime");
-        }else{
+        } else {
             sqlTemplate.add("endDateField", "visit.date_stopped");
         }
-        if("true".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))){
+        if ("true".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))) {
             sqlTemplate.add("countOncePerPatientJoin", countOncePerPatientJoin);
-        }else{
+        } else {
             sqlTemplate.add("countOncePerPatientJoin", "");
         }
         return sqlTemplate.render();

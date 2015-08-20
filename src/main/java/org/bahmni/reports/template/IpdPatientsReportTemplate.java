@@ -19,7 +19,9 @@ import java.sql.Statement;
 import java.util.Date;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.*;
+import static net.sf.dynamicreports.report.builder.DynamicReports.col;
+import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource("openmrs")
@@ -32,28 +34,29 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
         String patientAttributes = sqlStringListParameter(report.getConfig().getPatientAttributes());
         String conceptNames = sqlStringListParameter(report.getConfig().getConceptNames());
 
-        StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
-
-        TextColumnBuilder<String> patientIDColumn = col.column("Patient ID", "Patient ID", type.stringType()).setStyle(columnStyle);
-        TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "Patient Name", type.stringType()).setStyle(columnStyle);
-        TextColumnBuilder<String> genderColumn = col.column("Gender", "Gender", type.stringType()).setStyle(columnStyle);
-        TextColumnBuilder<Date> admissionDateColumn = col.column("Date of Admission", "Date of Admission", type.dateType()).setStyle(columnStyle);
-        TextColumnBuilder<Date> dischargeDateColumn = col.column("Date of Discharge", "Date of Discharge", type.dateType()).setStyle(columnStyle);
-        TextColumnBuilder<String> ageColumn = col.column("Age", "Age", type.stringType()).setStyle(columnStyle);
-        TextColumnBuilder<String> diagnosisColumn = col.column("Diagnosis", "Diagnosis", type.stringType()).setStyle(columnStyle);
-        TextColumnBuilder<String> visitType = col.column("Visit Type", "Visit Type", type.stringType()).setStyle(columnStyle);
+        TextColumnBuilder<String> patientIDColumn = col.column("Patient ID", "Patient ID", type.stringType()).setStyle(minimalColumnStyle);
+        TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "Patient Name", type.stringType()).setStyle
+                (minimalColumnStyle);
+        TextColumnBuilder<String> genderColumn = col.column("Gender", "Gender", type.stringType()).setStyle(minimalColumnStyle);
+        TextColumnBuilder<Date> admissionDateColumn = col.column("Date of Admission", "Date of Admission", type.dateType()).setStyle
+                (minimalColumnStyle);
+        TextColumnBuilder<Date> dischargeDateColumn = col.column("Date of Discharge", "Date of Discharge", type.dateType()).setStyle
+                (minimalColumnStyle);
+        TextColumnBuilder<String> ageColumn = col.column("Age", "Age", type.stringType()).setStyle(minimalColumnStyle);
+        TextColumnBuilder<String> diagnosisColumn = col.column("Diagnosis", "Diagnosis", type.stringType()).setStyle(minimalColumnStyle);
+        TextColumnBuilder<String> visitType = col.column("Visit Type", "Visit Type", type.stringType()).setStyle(minimalColumnStyle);
 
         jasperReport.setShowColumnTitle(true)
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL)
                 .columns(admissionDateColumn, visitType, patientIDColumn, patientNameColumn, genderColumn, ageColumn);
 
-        addColumns(jasperReport, report.getConfig().getPatientAttributes(), columnStyle);
-        addColumns(jasperReport, report.getConfig().getAddressAttributes(), columnStyle);
+        addColumns(jasperReport, report.getConfig().getPatientAttributes(), minimalColumnStyle);
+        addColumns(jasperReport, report.getConfig().getAddressAttributes(), minimalColumnStyle);
 
         jasperReport.columns(diagnosisColumn);
         jasperReport.columns(dischargeDateColumn);
 
-        addColumns(jasperReport, report.getConfig().getConceptNames(), columnStyle);
+        addColumns(jasperReport, report.getConfig().getConceptNames(), minimalColumnStyle);
 
         String sqlString = getSqlString(patientAttributes, conceptNames, startDate, endDate, getFilterColumn(report));
         Statement stmt = null;

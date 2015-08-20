@@ -21,9 +21,10 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource(value = "openmrs")
-public class ObsCountByConceptClass extends BaseReportTemplate<ObsCountByConceptClassConfig>{
+public class ObsCountByConceptClass extends BaseReportTemplate<ObsCountByConceptClassConfig> {
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountByConceptClassConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType){
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountByConceptClassConfig>
+            report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());

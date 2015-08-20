@@ -61,7 +61,8 @@ public class MainReportController {
             JasperReportBuilder jasperReport = report();
             jasperReport = new ReportHeader().add(jasperReport, reportName, startDate, endDate);
 
-            JasperReportBuilder reportBuilder = reportTemplate.build(connection, jasperReport, report, startDate, endDate, resources, pageType);
+            JasperReportBuilder reportBuilder = reportTemplate.build(connection, jasperReport, report, startDate, endDate, resources,
+                    pageType);
 
             convertToResponse(responseType, reportBuilder, response, reportName);
 
@@ -93,7 +94,8 @@ public class MainReportController {
     }
 
 
-    private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response, String fileName) throws SQLException {
+    private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response, String fileName)
+            throws SQLException {
         try {
             converter.convert(responseType, reportBuilder, response, fileName);
         } catch (DRException | IOException e) {

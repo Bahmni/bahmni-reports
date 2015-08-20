@@ -7,7 +7,10 @@ import net.sf.dynamicreports.report.builder.crosstab.CrosstabColumnGroupBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.builder.style.Styles;
-import net.sf.dynamicreports.report.constant.*;
+import net.sf.dynamicreports.report.constant.Calculation;
+import net.sf.dynamicreports.report.constant.HorizontalAlignment;
+import net.sf.dynamicreports.report.constant.OrderType;
+import net.sf.dynamicreports.report.constant.PageType;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.ObsCountConfig;
 import org.bahmni.reports.model.Report;
@@ -19,9 +22,7 @@ import org.stringtemplate.v4.ST;
 import java.sql.Connection;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
-import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
-import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
+import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource("openmrs")
@@ -30,7 +31,8 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
     private final String VISIT_TYPE_CRITERIA = "and va.value_reference in (%s)";
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String
+            startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         CrosstabRowGroupBuilder<String> ageGroup = ctab.rowGroup("base_age_group", String.class)
@@ -59,11 +61,11 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
         String visitType = SqlUtil.toCommaSeparatedSqlString(report.getConfig().getVisitTypes());
 
-        if(StringUtils.isNotBlank(visitType)){
+        if (StringUtils.isNotBlank(visitType)) {
             crosstab = crosstab.rowGroups(sortOrderGroup, ageGroup, visitAttributeGroup);
             visitType = String.format(VISIT_TYPE_CRITERIA, visitType, sortOrderGroup);
-        }else{
-            crosstab = crosstab.rowGroups(sortOrderGroup,ageGroup);
+        } else {
+            crosstab = crosstab.rowGroups(sortOrderGroup, ageGroup);
             visitType = "";
         }
 
@@ -71,7 +73,7 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
         String sql = getFileContent("sql/obsCount.sql");
 
-        String initialformattedSql  = getFormattedSql(sql, report.getConfig(), visitType, startDate, endDate);
+        String initialformattedSql = getFormattedSql(sql, report.getConfig(), visitType, startDate, endDate);
         jasperReport.addTitle(cmp.horizontalList()
                         .add(cmp.text("Count of " + report.getConfig().getConceptNames().toString())
                                 .setStyle(Templates.boldStyle)
@@ -89,19 +91,19 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
     private String getFormattedSql(String formattedSql, ObsCountConfig reportConfig, String visitType, String startDate, String endDate) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
-        if("false".equalsIgnoreCase(reportConfig.getCountOnlyClosedVisits())){
+        if ("false".equalsIgnoreCase(reportConfig.getCountOnlyClosedVisits())) {
             sqlTemplate.add("endDateField", "obs.obs_datetime");
-        }else{
+        } else {
             sqlTemplate.add("endDateField", "v.date_stopped");
         }
         sqlTemplate.add("visitType", visitType);
         sqlTemplate.add("ageGroupName", reportConfig.getAgeGroupName());
         sqlTemplate.add("conceptNames", SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptNames()));
-        sqlTemplate.add("startDate",  startDate);
-        sqlTemplate.add("endDate",  endDate);
-        if("true".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))){
+        sqlTemplate.add("startDate", startDate);
+        sqlTemplate.add("endDate", endDate);
+        if ("true".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))) {
             sqlTemplate.add("countOncePerPatient", "");
-        }else{
+        } else {
             sqlTemplate.add("countOncePerPatient", "SUM");
         }
         return sqlTemplate.render();

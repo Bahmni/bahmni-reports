@@ -4,9 +4,6 @@ import org.apache.log4j.Logger;
 import org.bahmni.reports.template.Templates;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
@@ -44,7 +41,7 @@ public class FileReaderUtil {
     }
 
     public static String getFileContent(String filePath, boolean isAbsolutePath) {
-        if(!isAbsolutePath) {
+        if (!isAbsolutePath) {
             return getFileContent(filePath);
         }
         try {

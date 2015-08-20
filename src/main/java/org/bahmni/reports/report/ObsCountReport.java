@@ -16,17 +16,20 @@ import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
 
 import java.util.List;
 
-public class ObsCountReport extends Report<ObsCountConfig>{
+public class ObsCountReport extends Report<ObsCountConfig> {
 
     @Override
     public BaseReportTemplate getTemplate(BahmniReportsProperties bahmniReportsProperties) {
         List<String> conceptNames = this.getConfig().getConceptNames();
-        ConnectionDetails connectionDetails = new ConnectionDetails(bahmniReportsProperties.getOpenmrsRootUrl() + "/session", bahmniReportsProperties.getOpenmrsServiceUser(),
-                bahmniReportsProperties.getOpenmrsServicePassword(), bahmniReportsProperties.getOpenmrsConnectionTimeout(), bahmniReportsProperties.getOpenmrsReplyTimeout());
+        ConnectionDetails connectionDetails = new ConnectionDetails(bahmniReportsProperties.getOpenmrsRootUrl() + "/session",
+                bahmniReportsProperties.getOpenmrsServiceUser(),
+                bahmniReportsProperties.getOpenmrsServicePassword(), bahmniReportsProperties.getOpenmrsConnectionTimeout(),
+                bahmniReportsProperties.getOpenmrsReplyTimeout());
         HttpClient httpClient = new HttpClient(connectionDetails, new OpenMRSLoginAuthenticator(connectionDetails));
         try {
-            ConceptDataTypes conceptDataType = ConceptUtil.getConceptDataType(conceptNames, httpClient, bahmniReportsProperties.getOpenmrsRootUrl());
-            switch (conceptDataType){
+            ConceptDataTypes conceptDataType = ConceptUtil.getConceptDataType(conceptNames, httpClient, bahmniReportsProperties
+                    .getOpenmrsRootUrl());
+            switch (conceptDataType) {
                 case Boolean:
                     return new BooleanConceptsCountTemplate();
                 case Coded:

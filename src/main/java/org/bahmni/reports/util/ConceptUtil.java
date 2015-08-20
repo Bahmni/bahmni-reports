@@ -16,7 +16,8 @@ public class ConceptUtil {
 
     private static final Logger logger = Logger.getLogger(ConceptUtil.class);
 
-    public static ConceptDataTypes getConceptDataType(String concept, HttpClient httpClient, String openmrsRootUrl) throws ConceptDataTypeException {
+    public static ConceptDataTypes getConceptDataType(String concept, HttpClient httpClient, String openmrsRootUrl) throws
+            ConceptDataTypeException {
         try {
             String url = getEncodedUrl(openmrsRootUrl + "/concept/", concept);
             String response = httpClient.get(new URI(url));
@@ -38,7 +39,8 @@ public class ConceptUtil {
     }
 
 
-    public static ConceptDataTypes getConceptDataType(List<String> concepts, HttpClient httpClient, String openmrsRootUrl) throws ConceptDataTypeException {
+    public static ConceptDataTypes getConceptDataType(List<String> concepts, HttpClient httpClient, String openmrsRootUrl) throws
+            ConceptDataTypeException {
         Set<ConceptDataTypes> dataTypes = new HashSet<>();
         for (String concept : concepts) {
             dataTypes.add(getConceptDataType(concept, httpClient, openmrsRootUrl));

@@ -2,7 +2,6 @@ package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
@@ -18,7 +17,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.*;
+import static net.sf.dynamicreports.report.builder.DynamicReports.col;
+import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource("openmrs")
@@ -29,16 +30,14 @@ public class VisitAggregateCountReportTemplate extends BaseReportTemplate<VisitA
 
         CommonComponents.addTo(jasperReport, report, pageType);
 
-        StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
-
-        TextColumnBuilder<String> visitTypeColumn = col.column("Visit Type", "visit_type", type.stringType()).setStyle(columnStyle)
-                .setStyle(columnStyle)
+        TextColumnBuilder<String> visitTypeColumn = col.column("Visit Type", "visit_type", type.stringType()).setStyle(minimalColumnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<String> admittedColumn = col.column("Admitted", "admitted", type.stringType()).setStyle(columnStyle)
-                .setStyle(columnStyle)
+        TextColumnBuilder<String> admittedColumn = col.column("Admitted", "admitted", type.stringType()).setStyle(minimalColumnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<String> dischargedColumn = col.column("Discharged", "discharged", type.stringType()).setStyle(columnStyle)
-                .setStyle(columnStyle)
+        TextColumnBuilder<String> dischargedColumn = col.column("Discharged", "discharged", type.stringType()).setStyle(minimalColumnStyle)
+                .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
         jasperReport.setShowColumnTitle(true)
