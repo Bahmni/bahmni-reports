@@ -58,7 +58,7 @@ public class VisitReportTemplate extends BaseReportTemplate<VisitReportConfig> {
         TextColumnBuilder<String> patientIdColumn = col.column("Patient Id", "identifier", type.stringType()).setStyle(minimalColumnStyle);
         TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "Patient Name", type.stringType()).setStyle
                 (minimalColumnStyle);
-        TextColumnBuilder<String> genderColumn = col.column("Gender", "gender", type.stringType()).setStyle(minimalColumnStyle);
+        TextColumnBuilder<String> genderColumn = col.column("Gender", "Gender", type.stringType()).setStyle(minimalColumnStyle);
 
         jasperReport.setShowColumnTitle(true)
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL)
