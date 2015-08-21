@@ -1,19 +1,25 @@
-select o.order_action,cn.name as Concept,ot.name as OrderType,o.date_activated OrderDate, pt.identifier as PatientID,
-       CONCAT(pn.given_name, " ", pn.family_name) AS PatientName,
-       p.gender as Gender,
-       IF(orderobs.obs_datetime is null, "No","Yes") as FulfillmentStatus,
-       orderobs.obs_datetime as FulfilmentDate
-from orders o
-  INNER JOIN concept_name cn on o.concept_id=cn.concept_id and cn.concept_name_type = 'FULLY_SPECIFIED'
-  INNER join order_type ot on ot.order_type_id = o.order_type_id
-  INNER JOIN patient_identifier pt on pt.patient_id=o.patient_id
-  INNER JOIN person_name pn on pn.person_id=pt.patient_id
-  INNER JOIN person p on p.person_id = pn.person_id
+SELECT
+  o.order_action,
+  o.order_id,
+  cn.name                                        AS Concept,
+  ot.name                                        AS OrderType,
+  o.date_activated                                  OrderDate,
+  pt.identifier                                  AS PatientID,
+  CONCAT(pn.given_name, " ", pn.family_name)     AS PatientName,
+  p.gender                                       AS Gender,
+  min(associatedObs.obs_datetime)                 AS FulfilmentDate,
+  IF(associatedObs.obs_datetime IS NULL, "No", "Yes") AS FulfillmentStatus
+FROM orders o
+  INNER JOIN concept_name cn ON o.concept_id = cn.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED'
+  INNER JOIN order_type ot ON ot.order_type_id = o.order_type_id
+  INNER JOIN patient_identifier pt ON pt.patient_id = o.patient_id
+  INNER JOIN person_name pn ON pn.person_id = pt.patient_id
+  INNER JOIN person p ON p.person_id = pn.person_id
   LEFT JOIN (select o2.order_id
-             from orders o1
-               inner join orders o2 on o1.previous_order_id = o2.order_id) previousOrdersToIgnore on o.order_id = previousOrdersToIgnore.order_id
-  LEFT JOIN (select order_id,min(obs_datetime) as obs_datetime
-             from obs where order_id is not null
-             group by order_id) orderobs on o.order_id = orderobs.order_id
-where o.date_activated BETWEEN '#startDate#' and '#endDate#' and ot.name in (#orderTypes#) and o.voided=0 and previousOrdersToIgnore.order_id is null and o.order_action not in ('DISCONTINUE')
-order by o.date_activated desc;
+              from orders o1
+                inner join orders o2 on o1.previous_order_id = o2.order_id) previousOrdersToIgnore on o.order_id = previousOrdersToIgnore.order_id
+  LEFT JOIN obs associatedObs on o.order_id = associatedObs.order_id
+WHERE DATE(o.date_activated) BETWEEN '#startDate#' AND '#endDate#' AND ot.name IN (#orderTypes#) AND o.voided = 0 AND
+      o.order_action NOT IN ('DISCONTINUE') and previousOrdersToIgnore.order_id is null
+GROUP BY o.order_id
+ORDER BY OrderType,FulfillmentStatus;
