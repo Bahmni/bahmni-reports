@@ -55,7 +55,9 @@ SET @sql = CONCAT('SELECT
                     AND revised_concept.name = "Bahmni Diagnosis Revised"
                     AND revised_obs.voided IS FALSE
                     AND revised_concept.voided IS FALSE
-
+               LEFT JOIN concept_name revised_concept_short_name ON revised_obs.concept_id = revised_concept_short_name.concept_id
+                                                         AND revised_concept_short_name.concept_name_type = "SHORT" AND
+                                                         revised_concept_short_name.voided IS FALSE
                JOIN obs diagnosis_obs
                  ON revised_obs.obs_group_id = diagnosis_obs.obs_group_id
                JOIN concept_name coded_diagnosis_concept
@@ -93,10 +95,13 @@ SET @sql = CONCAT('SELECT
               ) diagnoses
         ON e.encounter_id = diagnoses.encounter_id
       LEFT JOIN (
-          Select encounter_id, concept_name.name as obs_name, coalesce(obs.value_numeric, obs.value_boolean, obs.value_datetime, obs.value_text, coded_value.name) as value
+          Select encounter_id, concept_name.name as obs_name, coalesce(obs.value_numeric, obs.value_boolean, obs.value_datetime, obs.value_text, ifnull(coded_value_short_name.name, coded_value.name)) as value
             FROM obs
           INNER JOIN concept_name on obs.concept_id = concept_name.concept_id and concept_name_type = "FULLY_SPECIFIED"
           LEFT JOIN concept_name as coded_value on obs.value_coded is not null and obs.value_coded = coded_value.concept_id and coded_value.concept_name_type = "FULLY_SPECIFIED"
+          LEFT JOIN concept_name coded_value_short_name ON obs.value_coded = coded_value_short_name.concept_id
+                                                         AND coded_value_short_name.concept_name_type = "SHORT" AND
+                                                         coded_value_short_name.voided IS FALSE
             WHERE concept_name.name in (#conceptNames#)) obs_value
         ON obs_value.encounter_id = e.encounter_id
   GROUP BY visit_attribute.date_created, pi.identifier, pn.given_name, pn.family_name, p.birthdate');

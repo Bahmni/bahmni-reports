@@ -1,5 +1,5 @@
 select cv1.concept_full_name as "Name",
-	concat(coalesce(o.value_text,''),coalesce(o.value_numeric,''),coalesce(cv2.concept_full_name,''),coalesce(date(o.value_datetime),'')) as "Value",
+	concat(coalesce(o.value_text,''),coalesce(o.value_numeric,''),coalesce(cv2.concept_short_name,cv2.concept_full_name,''),coalesce(date(o.value_datetime),'')) as "Value",
 	count(*) as "Count"
 	from obs o
     inner join concept_view cv1 on o.concept_id = cv1.concept_id
