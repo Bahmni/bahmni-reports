@@ -10,6 +10,7 @@ import org.bahmni.reports.model.IpdPatientsConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.util.CommonComponents;
+import org.bahmni.reports.util.PatientAttributesHelper;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -29,9 +30,9 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
                                      String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
-        String patientAttributes = prepareForSqlClause(report.getConfig().getPatientAttributes(), false);
-        String conceptNames = prepareForSqlClause(report.getConfig().getConceptNames(), false);
-        String patientAttributesFromClause = prepareForSqlClause(report.getConfig().getPatientAttributes(),true);
+        PatientAttributesHelper patientAttributesHelper = new PatientAttributesHelper(report.getConfig().getPatientAttributes());
+
+        String conceptNames = prepareForSqlClause(report.getConfig().getConceptNames());
 
         StyleBuilder columnStyle = stl.style().setRightBorder(stl.pen1Point());
 
@@ -56,7 +57,7 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
 
         addColumns(jasperReport, report.getConfig().getConceptNames(), columnStyle);
 
-        String sqlString = getSqlString(patientAttributes, patientAttributesFromClause,conceptNames, startDate, endDate, getFilterColumn(report));
+        String sqlString = getSqlString(patientAttributesHelper, conceptNames, startDate, endDate, getFilterColumn(report));
         Statement stmt = null;
         try {
             stmt = connection.createStatement();
@@ -86,23 +87,20 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
         }
     }
 
-    private String getSqlString(String patientAttributes, String patientAttributesFromClause, String conceptNames, String startDate, String endDate, String filterColumn) {
+    private String getSqlString(PatientAttributesHelper patientAttributesHelper,String conceptNames, String startDate, String endDate, String filterColumn) {
         String sql = getFileContent("sql/ipdPatients.sql");
         ST sqlTemplate = new ST(sql, '#', '#');
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
-        sqlTemplate.add("patientAttributes", patientAttributes);
-        sqlTemplate.add("patientAttributesFromClause",patientAttributesFromClause);
         sqlTemplate.add("conceptNames", conceptNames);
         sqlTemplate.add("filterColumn", filterColumn);
+        sqlTemplate.add("patientAttributesFromClause",patientAttributesHelper.getFromClause());
+        sqlTemplate.add("patientAttributeSql",patientAttributesHelper.getSql());
         return sqlTemplate.render();
     }
 
-    private String prepareForSqlClause(List<String> params, boolean fromClause) {
-        if(fromClause){
-            return StringUtils.join(params,',');
-        }
-        return "\"" + StringUtils.join(params, "\", \"") + "\""; //else where clause
+    private String prepareForSqlClause(List<String> params) {
+        return "\"" + StringUtils.join(params, "\", \"") + "\"";
     }
 
     private String getFilterColumn(Report<IpdPatientsConfig> reportConfig) {
