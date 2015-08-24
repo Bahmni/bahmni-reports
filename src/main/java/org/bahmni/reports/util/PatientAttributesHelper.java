@@ -10,7 +10,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 public class PatientAttributesHelper {
 
-    private static final String PERSON_ATTRIBUTE_COLUMN = "GROUP_CONCAT(DISTINCT (IF(person_attribute_type.name = '%s', IFNULL(person_attribute_cn.name, person_attribute.value), NULL))) as '%s'";
+    private static final String PERSON_ATTRIBUTE_COLUMN = "GROUP_CONCAT(DISTINCT (IF(person_attribute_type.name = \"%s\", IFNULL(person_attribute_cn.name, person_attribute.value), NULL))) as \"%s\"";
 
     private String fromClause;
 

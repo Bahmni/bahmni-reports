@@ -1,12 +1,5 @@
 set session group_concat_max_len = 20000;
 SET @sql = NULL;
-SET @patientAttributePivot = NULL;
-SELECT
-  GROUP_CONCAT(
-      CONCAT('GROUP_CONCAT(DISTINCT (IF(person_attribute_type.name = \'', name, '\', IFNULL(person_attribute_cn.name, person_attribute.value), NULL))) as \'', name, '\''))
-into @patientAttributePivot
-FROM person_attribute_type where name in (#patientAttributes#);
-
 SET @conceptObsPivot = NULL;
 SELECT
   GROUP_CONCAT(
@@ -39,12 +32,7 @@ SET @sql = CONCAT('SELECT
     INNER JOIN person_address pa ON pa.person_id = v.patient_id
     INNER JOIN encounter e ON e.visit_id = v.visit_id
     INNER JOIN (
-      select person_attribute.person_id,', @patientAttributePivot,'
-        from person_attribute
-        INNER JOIN person_attribute_type ON person_attribute_type.person_attribute_type_id = person_attribute.person_attribute_type_id
-        LEFT JOIN concept_name person_attribute_cn ON person_attribute.value = person_attribute_cn.concept_id AND person_attribute_cn.concept_name_type = "FULLY_SPECIFIED"
-        WHERE person_attribute_type.name IN (#patientAttributes#)
-        GROUP BY person_id
+      #patientAttributeSql#
     ) personattribute on personattribute.person_id = p.person_id
     LEFT JOIN (SELECT
                  COALESCE(coded_diagnosis_concept_name.name, diagnosis_obs.value_text)       diagnosis_name,
