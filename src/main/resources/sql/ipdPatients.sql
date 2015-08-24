@@ -10,7 +10,7 @@ FROM person_attribute_type where name in (#patientAttributes#);
 SET @conceptObsPivot = NULL;
 SELECT
   GROUP_CONCAT(
-      CONCAT('GROUP_CONCAT((IF(obs_value.obs_name = \'', name, '\', obs_value.value, NULL))) as \'', name, '\''))
+      CONCAT('GROUP_CONCAT(IF(obsConcept.name = \'', name, '\', coalesce(obs.value_numeric, obs.value_boolean, obs.value_datetime, obs.value_text, coded_value.name), NULL)) as \'', name, '\''))
 into @conceptObsPivot
 FROM concept_name where concept_name.name in (#conceptNames#) and concept_name_type = 'FULLY_SPECIFIED';
 
@@ -21,10 +21,8 @@ SET @sql = CONCAT('SELECT
       pi.identifier                                                              AS "Patient ID",
       CONCAT(pn.given_name, " ", pn.family_name)                                 AS "Patient Name",
       p.gender                                                                   AS "Gender",
-      floor(datediff(#filterColumn#, p.birthdate) / 365)                         AS "Age",',
-      @patientAttributePivot,
-      ',',
-      @conceptObsPivot ,
+      floor(datediff(#filterColumn#, p.birthdate) / 365)                         AS "Age",#patientAttributesFromClause#,',
+      @conceptObsPivot,
       ', GROUP_CONCAT(DISTINCT (diagnoses.diagnosis_name) SEPARATOR \' | \') AS "Diagnosis",
       pa.*
     FROM visit_attribute
@@ -40,11 +38,14 @@ SET @sql = CONCAT('SELECT
     INNER JOIN person_name pn ON pn.person_id = v.patient_id
     INNER JOIN person_address pa ON pa.person_id = v.patient_id
     INNER JOIN encounter e ON e.visit_id = v.visit_id
-    LEFT JOIN person_attribute ON person_attribute.person_id = p.person_id
-    LEFT JOIN person_attribute_type ON person_attribute_type.person_attribute_type_id = person_attribute.person_attribute_type_id
-    LEFT JOIN concept_name person_attribute_cn
-      ON person_attribute.value = person_attribute_cn.concept_id AND person_attribute_type.format LIKE "%Concept"
-      AND person_attribute_cn.concept_name_type = "FULLY_SPECIFIED" AND person_attribute_type.name IN (#patientAttributes#)
+    INNER JOIN (
+      select person_attribute.person_id,', @patientAttributePivot,'
+        from person_attribute
+        INNER JOIN person_attribute_type ON person_attribute_type.person_attribute_type_id = person_attribute.person_attribute_type_id
+        LEFT JOIN concept_name person_attribute_cn ON person_attribute.value = person_attribute_cn.concept_id AND person_attribute_cn.concept_name_type = "FULLY_SPECIFIED"
+        WHERE person_attribute_type.name IN (#patientAttributes#)
+        GROUP BY person_id
+    ) personattribute on personattribute.person_id = p.person_id
     LEFT JOIN (SELECT
                  COALESCE(coded_diagnosis_concept_name.name, diagnosis_obs.value_text)       diagnosis_name,
                  diagnosis_obs.encounter_id     encounter_id
@@ -94,17 +95,11 @@ SET @sql = CONCAT('SELECT
                     AND confirmed_concept.voided IS FALSE
               ) diagnoses
         ON e.encounter_id = diagnoses.encounter_id
-      LEFT JOIN (
-          Select encounter_id, concept_name.name as obs_name, coalesce(obs.value_numeric, obs.value_boolean, obs.value_datetime, obs.value_text, ifnull(coded_value_short_name.name, coded_value.name)) as value
-            FROM obs
-          INNER JOIN concept_name on obs.concept_id = concept_name.concept_id and concept_name_type = "FULLY_SPECIFIED"
-          LEFT JOIN concept_name as coded_value on obs.value_coded is not null and obs.value_coded = coded_value.concept_id and coded_value.concept_name_type = "FULLY_SPECIFIED"
-          LEFT JOIN concept_name coded_value_short_name ON obs.value_coded = coded_value_short_name.concept_id
-                                                         AND coded_value_short_name.concept_name_type = "SHORT" AND
-                                                         coded_value_short_name.voided IS FALSE
-            WHERE concept_name.name in (#conceptNames#)) obs_value
-        ON obs_value.encounter_id = e.encounter_id
-  GROUP BY visit_attribute.date_created, pi.identifier, pn.given_name, pn.family_name, p.birthdate');
+        LEFT JOIN obs on e.encounter_id = obs.encounter_id
+        LEFT JOIN concept_name as obsConcept on obs.concept_id = obsConcept.concept_id and obsConcept.concept_name_type = "FULLY_SPECIFIED"
+        LEFT JOIN concept_name as coded_value on obs.value_coded = coded_value.concept_id and coded_value.concept_name_type = "FULLY_SPECIFIED"
+  WHERE obsConcept.name in (#conceptNames#)
+  GROUP BY pi.identifier');
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
