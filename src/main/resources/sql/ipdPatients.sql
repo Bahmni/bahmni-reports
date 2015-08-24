@@ -82,7 +82,7 @@ SET @sql = CONCAT('SELECT
               ) diagnoses
         ON e.encounter_id = diagnoses.encounter_id
         LEFT JOIN obs on e.encounter_id = obs.encounter_id
-        LEFT JOIN concept_name as obsConcept on obs.concept_id = obsConcept.concept_id and obsConcept.concept_name_type = "FULLY_SPECIFIED"
+        LEFT JOIN concept_name as obsConcept on obs.concept_id = obsConcept.concept_id and obsConcept.concept_name_type = "FULLY_SPECIFIED" and obs.voided=0
         LEFT JOIN concept_name as coded_value on obs.value_coded = coded_value.concept_id and coded_value.concept_name_type = "FULLY_SPECIFIED"
   WHERE obsConcept.name in (#conceptNames#)
   GROUP BY pi.identifier');
