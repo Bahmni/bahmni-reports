@@ -5,7 +5,7 @@ SELECT
                CONCAT(
                    'GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = ''',
                    concept_full_name,
-                   ''', coalesce(o.value_numeric, o.value_boolean, o.date_created, o.encounter_datetime, o.value_text, o.concept_short_name, o.concept_full_name), NULL)) SEPARATOR \',\') AS `',
+                   ''', coalesce(o.value_numeric, o.value_boolean, o.value_text, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), NULL)) SEPARATOR \',\') AS `',
                    concept_full_name , '`'
                )
   ) into @sql
