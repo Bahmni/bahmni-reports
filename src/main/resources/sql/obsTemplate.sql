@@ -25,7 +25,7 @@ FROM person_attribute_type  where name in (#patientAttributesInClause#);
 
 SET @patientAttributesJoin = 'JOIN person_attribute_type pat ON pat.name in(#patientAttributesInClauseEscapeQuote#)
                        LEFT JOIN person_attribute pattr ON pattr.person_attribute_type_id = pat. person_attribute_type_id
-                                                         AND pattr.person_id = person.person_id
+                                                         AND pattr.person_id = person.person_id AND pattr.voided = false
                        LEFT JOIN concept_view person_attribute_cn ON pattr.value = person_attribute_cn.concept_id AND pat.format LIKE "%Concept"';
 
 SET @patientAttributesSelectClause = 'pat.name  as patient_attr_name,
