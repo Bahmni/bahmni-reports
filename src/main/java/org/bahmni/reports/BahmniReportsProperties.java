@@ -44,6 +44,9 @@ public class BahmniReportsProperties {
     @Value("${openmrs.replyTimeoutInMilliseconds}")
     private Integer openmrsReplyTimeout;
 
+    @Value("${macrotemplates.temp.directory}")
+    private String macroTemplatesTempDirectory;
+
     public String getConfigFilePath() {
         return configFilePath;
     }
@@ -90,5 +93,9 @@ public class BahmniReportsProperties {
 
     public Integer getOpenmrsReplyTimeout() {
         return openmrsReplyTimeout;
+    }
+
+    public String getMacroTemplatesTempDirectory() {
+        return macroTemplatesTempDirectory;
     }
 }

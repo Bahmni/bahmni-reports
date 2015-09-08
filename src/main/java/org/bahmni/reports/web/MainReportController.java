@@ -52,6 +52,7 @@ public class MainReportController {
             String endDate = request.getParameter("endDate");
             String reportName = request.getParameter("name");
             String responseType = request.getParameter("responseType");
+            String macroTemplateLocation = request.getParameter("macroTemplateLocation");
             PageType pageType = "A3".equals(request.getParameter("paperSize")) ? PageType.A3 : PageType.A4;
 
             Report report = Reports.find(reportName, bahmniReportsProperties.getConfigFilePath());
@@ -64,7 +65,7 @@ public class MainReportController {
             JasperReportBuilder reportBuilder = reportTemplate.build(connection, jasperReport, report, startDate, endDate, resources,
                     pageType);
 
-            convertToResponse(responseType, reportBuilder, response, reportName);
+            convertToResponse(responseType, reportBuilder, response, reportName, macroTemplateLocation);
 
             resources.add(connection);
         } catch (Throwable e) {
@@ -96,10 +97,10 @@ public class MainReportController {
     }
 
 
-    private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response, String fileName)
-            throws SQLException {
+    private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response, String fileName, String macroTemplateLocation)
+            throws Exception {
         try {
-            converter.convert(responseType, reportBuilder, response, fileName);
+            converter.convert(responseType, reportBuilder, response, fileName, macroTemplateLocation);
         } catch (DRException | IOException e) {
             logger.error("Could not convert response", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
