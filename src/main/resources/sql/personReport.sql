@@ -27,8 +27,7 @@ SET @sql = CONCAT('SELECT
   o.county_district as `County/District`,
   o.date_created as \'Registration Date\',',
   @sql,
-  'FROM person_attribute_type pat
-     LEFT JOIN
+  'FROM
      (SELECT
         pi.identifier,
         pn.given_name,
@@ -51,8 +50,9 @@ SET @sql = CONCAT('SELECT
        JOIN person_name pn ON p.person_id = pn.person_id
        JOIN patient_identifier pi ON pa.patient_id = pi.patient_id
        JOIN person_address addr ON p.person_id = addr.person_id
-       JOIN person_attribute attr ON p.person_id = attr.person_id
-       JOIN person_attribute_type attr_type ON attr.person_attribute_type_id = attr_type.person_attribute_type_id) o ON o.person_attribute_type_id = pat.person_attribute_type_id
+       LEFT OUTER JOIN person_attribute attr ON p.person_id = attr.person_id
+       LEFT OUTER JOIN person_attribute_type attr_type ON attr.person_attribute_type_id = attr_type.person_attribute_type_id) o
+     LEFT OUTER JOIN person_attribute_type pat ON o.person_attribute_type_id = pat.person_attribute_type_id
        group by person_id');
 
 
