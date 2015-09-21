@@ -20,7 +20,9 @@ public class AllDatasources {
         Connection connection = null;
         try {
             connection = dataSourceFor(object).getConnection();
-            connection.setAutoCommit(false);
+            if(connection.getAutoCommit()){
+                connection.setAutoCommit(false);
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
