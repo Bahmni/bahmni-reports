@@ -1,18 +1,7 @@
 SET SESSION group_concat_max_len = 20000;
 SET @sql = NULL;
 
-SELECT GROUP_CONCAT(DISTINCT
-                    CONCAT(
-                        'GROUP_CONCAT(DISTINCT(IF(pat.person_attribute_type_id = ''',
-                        person_attribute_type_id,
-                        ''', o.value, NULL)) SEPARATOR \',\') AS `',
-                        description, '`'
-                    )
-)
-INTO @sql
-FROM person_attribute_type pat;
-
-SET @sql = CONCAT('SELECT
+SET @sql = 'SELECT
   o.identifier as \'Patient ID\',
   o.given_name as \'First Name\',
   o.family_name as \'Family Name\',
@@ -25,9 +14,8 @@ SET @sql = CONCAT('SELECT
   o.city_village as `City/Village`,
   o.state_province as `State/Province`,
   o.county_district as `County/District`,
-  o.date_created as \'Registration Date\',',
-  @sql,
-  'FROM
+  o.date_created as \'Registration Date\'
+  FROM
      (SELECT
         pi.identifier,
         pn.given_name,
@@ -53,7 +41,7 @@ SET @sql = CONCAT('SELECT
        LEFT OUTER JOIN person_attribute attr ON p.person_id = attr.person_id
        LEFT OUTER JOIN person_attribute_type attr_type ON attr.person_attribute_type_id = attr_type.person_attribute_type_id) o
      LEFT OUTER JOIN person_attribute_type pat ON o.person_attribute_type_id = pat.person_attribute_type_id
-       group by person_id');
+       group by person_id';
 
 
 PREPARE stmt FROM @sql;
