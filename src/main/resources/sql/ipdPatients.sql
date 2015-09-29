@@ -31,7 +31,7 @@ SET @sql = CONCAT('SELECT
     INNER JOIN person_name pn ON pn.person_id = v.patient_id
     INNER JOIN person_address pa ON pa.person_id = v.patient_id
     INNER JOIN encounter e ON e.visit_id = v.visit_id
-    INNER JOIN (
+    LEFT JOIN (
       #patientAttributeSql#
     ) personattribute on personattribute.person_id = p.person_id
     LEFT JOIN (SELECT
@@ -84,9 +84,9 @@ SET @sql = CONCAT('SELECT
               ) diagnoses
         ON e.encounter_id = diagnoses.encounter_id
         LEFT JOIN obs on e.encounter_id = obs.encounter_id
-        LEFT JOIN concept_name as obsConcept on obs.concept_id = obsConcept.concept_id and obsConcept.concept_name_type = "FULLY_SPECIFIED" and obs.voided=0
-        LEFT JOIN concept_name as coded_value on obs.value_coded = coded_value.concept_id and coded_value.concept_name_type = "FULLY_SPECIFIED"
-  WHERE obsConcept.name in (#conceptNames#)
+        LEFT JOIN concept_name as obsConcept on obs.concept_id = obsConcept.concept_id and obsConcept.concept_name_type = "FULLY_SPECIFIED" and obs.voided=0 and obsConcept.name in (#conceptNames#)
+        LEFT JOIN concept_name as coded_value on obs.value_coded = coded_value.concept_id and coded_value.concept_name_type = "SHORT"
+
   GROUP BY pi.identifier');
 
 PREPARE stmt FROM @sql;
