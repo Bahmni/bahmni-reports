@@ -58,11 +58,8 @@ public class PatientReportTemplate extends BaseReportTemplate<Config> {
 
     private String getFormattedSql(String formattedSql, String startDate, String endDate) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
-        String dateIntervalString = null;
-        if (!startDate.equalsIgnoreCase("null") && !endDate.equalsIgnoreCase("null")) {
-            dateIntervalString = " and cast(pa.date_created AS DATE) BETWEEN \\'" + startDate + "\\' AND \\'" + endDate + "\\'";
-        }
-        sqlTemplate.add("dateInterval", dateIntervalString);
+        sqlTemplate.add("startDate", startDate);
+        sqlTemplate.add("endDate", endDate);
         return sqlTemplate.render();
     }
 
