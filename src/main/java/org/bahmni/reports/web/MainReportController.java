@@ -10,6 +10,9 @@ import org.bahmni.reports.model.AllDatasources;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.Reports;
 import org.bahmni.reports.template.BaseReportTemplate;
+import org.bahmni.webclients.ConnectionDetails;
+import org.bahmni.webclients.HttpClient;
+import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,14 +35,16 @@ public class MainReportController {
     private JasperResponseConverter converter;
     private BahmniReportsProperties bahmniReportsProperties;
     private AllDatasources allDatasources;
+    private HttpClient httpClient;
 
     @Autowired
     public MainReportController(JasperResponseConverter converter,
                                 BahmniReportsProperties bahmniReportsProperties,
-                                AllDatasources allDatasources) {
+                                AllDatasources allDatasources, HttpClient httpClient) {
         this.converter = converter;
         this.bahmniReportsProperties = bahmniReportsProperties;
         this.allDatasources = allDatasources;
+        this.httpClient = httpClient;
     }
 
     //TODO: Better way to handle the response.
@@ -54,8 +59,8 @@ public class MainReportController {
             String responseType = request.getParameter("responseType");
             String macroTemplateLocation = request.getParameter("macroTemplateLocation");
             PageType pageType = "A3".equals(request.getParameter("paperSize")) ? PageType.A3 : PageType.A4;
-
             Report report = Reports.find(reportName, bahmniReportsProperties.getConfigFilePath());
+            report.setHttpClient(httpClient);
             BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
             connection = allDatasources.getConnectionFromDatasource(reportTemplate);
 
@@ -75,7 +80,7 @@ public class MainReportController {
             try {
                 response.flushBuffer();
                 response.getOutputStream().close();
-                if(null != connection) {
+                if (null != connection) {
                     connection.rollback();
                 }
             } catch (IOException e) {

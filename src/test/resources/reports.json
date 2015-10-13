@@ -1,0 +1,26 @@
+{
+  "vitalsReport": {
+    "name": "Vitals Report",
+    "type": "obsCount",
+    "config": {
+      "conceptNames": [
+        "Vitals"
+      ]
+    }
+  },
+  "patientReport": {
+    "name": "Patient Information",
+    "type": "PatientReport"
+  },
+  "OrderFulfillmentReport": {
+    "name": "Order Fulfillment Report",
+    "type": "OrderFulfillmentReport",
+    "config": {
+      "type": "OrderFulfillmentReport",
+      "orderTypes": [
+        "Order",
+        "Drug Order"
+      ]
+    }
+  }
+}

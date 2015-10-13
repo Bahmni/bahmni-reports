@@ -56,6 +56,15 @@ public class JasperResponseConverter {
                 response.setContentType("application/pdf");
                 response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
                 report.toPdf(outputStream);
+                break;
+            case "text/csv":
+                response.setContentType("text/csv");
+                report.toCsv(outputStream);
+                break;
+            case "text/xml":
+                response.setContentType("text/xml");
+                report.toXml(outputStream);
+                break;
         }
     }
 }

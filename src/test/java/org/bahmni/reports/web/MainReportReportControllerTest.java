@@ -1,13 +1,11 @@
 package org.bahmni.reports.web;
 
-import org.bahmni.reports.BahmniReports;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -18,10 +16,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = BahmniReports.class)
-@WebIntegrationTest
 @Ignore
 public class MainReportReportControllerTest {
 
@@ -40,9 +35,9 @@ public class MainReportReportControllerTest {
     @Test
     public void shouldRetrieveHtmlReports() throws Exception {
         ResultActions perform = mockMvc
-                .perform(get("/report")
-                        .contentType("application/json")
-                        .accept("text/html"));
+                .perform(get("/report?name=Order Fulfillment Report&startDate=2000-10-01&endDate=2017-10-01")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.parseMediaType("text/html")));
 
         perform.andExpect(status().isOk()).andExpect(content().contentType("text/html"));
     }

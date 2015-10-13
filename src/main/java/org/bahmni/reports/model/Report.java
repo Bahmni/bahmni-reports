@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.report.*;
 import org.bahmni.reports.template.BaseReportTemplate;
+import org.bahmni.webclients.HttpClient;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(
@@ -44,6 +45,7 @@ public abstract class Report<T extends Config> {
     private String name;
     private String type;
     private T config;
+    private HttpClient httpClient;
 
     public String getName() {
         return name;
@@ -70,4 +72,12 @@ public abstract class Report<T extends Config> {
     }
 
     public abstract BaseReportTemplate getTemplate(BahmniReportsProperties bahmniReportsProperties);
+
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
 }

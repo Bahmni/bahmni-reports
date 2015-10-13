@@ -1,101 +1,76 @@
 package org.bahmni.reports;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.PropertySource;
+import java.io.IOException;
+import java.util.Properties;
+
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Component;
 
-@PropertySource("classpath:application.properties")
 @Component
 public class BahmniReportsProperties {
 
-    @Value("${openelis.url}")
-    private String openelisUrl;
+    Resource resource = new ClassPathResource("/application.properties");
+    Properties props;
 
-    @Value("${openelis.username}")
-    private String openelisUser;
-
-    @Value("${openelis.password}")
-    private String openelisPassword;
-
-    @Value("${openmrs.url}")
-    private String openmrsUrl;
-
-    @Value("${openmrs.username}")
-    private String openmrsUser;
-
-    @Value("${openmrs.password}")
-    private String openmrsPassword;
-
-    @Value("${config.file.path}")
-    private String configFilePath;
-
-    @Value("${openmrs.service.rootUrl}")
-    private String openmrsRootUrl;
-
-    @Value("${openmrs.service.user}")
-    private String openmrsServiceUser;
-
-    @Value("${openmrs.service.password}")
-    private String openmrsServicePassword;
-
-    @Value("${openmrs.connectionTimeoutInMilliseconds}")
-    private Integer openmrsConnectionTimeout;
-
-    @Value("${openmrs.replyTimeoutInMilliseconds}")
-    private Integer openmrsReplyTimeout;
-
-    @Value("${macrotemplates.temp.directory}")
-    private String macroTemplatesTempDirectory;
+    public BahmniReportsProperties() {
+        try {
+            props = PropertiesLoaderUtils.loadProperties(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public String getConfigFilePath() {
-        return configFilePath;
+        return props.getProperty("config.file.path");
     }
 
     public String getOpenelisUrl() {
-        return openelisUrl;
+        return props.getProperty("openelis.url");
     }
 
     public String getOpenelisUser() {
-        return openelisUser;
+        return props.getProperty("openelis.username");
     }
 
     public String getOpenelisPassword() {
-        return openelisPassword;
+        return props.getProperty("openelis.password");
     }
 
     public String getOpenmrsUrl() {
-        return openmrsUrl;
+        return props.getProperty("openmrs.url");
     }
 
     public String getOpenmrsUser() {
-        return openmrsUser;
+        return props.getProperty("openmrs.username");
     }
 
     public String getOpenmrsPassword() {
-        return openmrsPassword;
+        return props.getProperty("openmrs.password");
     }
 
     public String getOpenmrsRootUrl() {
-        return openmrsRootUrl;
+        return props.getProperty("openmrs.service.rootUrl");
     }
 
     public String getOpenmrsServiceUser() {
-        return openmrsServiceUser;
+        return props.getProperty("openmrs.service.user");
     }
 
     public String getOpenmrsServicePassword() {
-        return openmrsServicePassword;
+        return props.getProperty("openmrs.service.password");
     }
 
     public Integer getOpenmrsConnectionTimeout() {
-        return openmrsConnectionTimeout;
+        return Integer.valueOf(props.getProperty("openmrs.connectionTimeoutInMilliseconds"));
     }
 
     public Integer getOpenmrsReplyTimeout() {
-        return openmrsReplyTimeout;
+        return Integer.valueOf(props.getProperty("openmrs.replyTimeoutInMilliseconds"));
     }
 
     public String getMacroTemplatesTempDirectory() {
-        return macroTemplatesTempDirectory;
+        return props.getProperty("macrotemplates.temp.directory");
     }
 }
