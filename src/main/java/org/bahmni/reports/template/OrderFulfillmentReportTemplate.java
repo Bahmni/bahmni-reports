@@ -48,6 +48,7 @@ public class OrderFulfillmentReportTemplate extends BaseReportTemplate<OrderFulf
         TextColumnBuilder<Date> orderDate = col.column("Order Date", "OrderDate", type.dateType())
                 .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
+
         TextColumnBuilder<String> patientId = col.column("Patient ID", "PatientID", type.stringType())
                 .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
@@ -67,7 +68,6 @@ public class OrderFulfillmentReportTemplate extends BaseReportTemplate<OrderFulf
         TextColumnBuilder<Date> fulfillmentDate = col.column("Fulfilment Date", "FulfilmentDate", type.dateType())
                 .setStyle(minimalColumnStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
-
 
         String sql = getFileContent("sql/orderFulfillmentReport.sql");
 

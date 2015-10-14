@@ -1,6 +1,10 @@
 package org.bahmni.reports.builder;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.openmrs.Concept;
@@ -34,6 +38,16 @@ public class OrderBuilder {
 
     public OrderBuilder withOrderType(OrderType orderType) {
         order.setOrderType(orderType);
+        return this;
+    }
+
+    public OrderBuilder withDateActivated(String dateActivated) {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        try {
+            order.setDateActivated(df.parse(dateActivated));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         return this;
     }
 

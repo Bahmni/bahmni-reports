@@ -7,11 +7,11 @@
     <groupId>org.bahmni</groupId>
     <artifactId>reports</artifactId>
     <packaging>war</packaging>
-    <version>0.76-SNAPSHOT</version>
+    <version>0.77-SNAPSHOT</version>
 
     <properties>
         <spring.version>4.1.5.RELEASE</spring.version>
-        <dynamicreports.version>4.0.1</dynamicreports.version>
+        <dynamicreports.version>4.0.0</dynamicreports.version>
         <jackson.version>2.5.1</jackson.version>
     </properties>
 
@@ -283,11 +283,6 @@
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>3.4</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.6</version>
         </dependency>
     </dependencies>
 

@@ -51,7 +51,6 @@ public class JasperResponseConverter {
                     logger.warn("Template file not deleted");
                 }
                 break;
-
             case "application/pdf":
                 response.setContentType("application/pdf");
                 response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
@@ -60,10 +59,6 @@ public class JasperResponseConverter {
             case "text/csv":
                 response.setContentType("text/csv");
                 report.toCsv(outputStream);
-                break;
-            case "text/xml":
-                response.setContentType("text/xml");
-                report.toXml(outputStream);
                 break;
         }
     }

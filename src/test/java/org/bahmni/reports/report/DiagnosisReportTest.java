@@ -1,4 +1,4 @@
-package org.bahmni.reports.org.bahmni.reports.report;
+package org.bahmni.reports.report;
 
 import org.bahmni.reports.model.DiagnosisReportConfig;
 import org.bahmni.reports.report.DiagnosisReport;

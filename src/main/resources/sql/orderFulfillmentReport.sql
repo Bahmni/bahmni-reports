@@ -22,4 +22,4 @@ FROM orders o
 WHERE DATE(o.date_activated) BETWEEN '#startDate#' AND '#endDate#' AND ot.name IN (#orderTypes#) AND o.voided = 0 AND
       o.order_action NOT IN ('DISCONTINUE') and previousOrdersToIgnore.order_id is null
 GROUP BY o.order_id
-ORDER BY OrderType,FulfillmentStatus;
+ORDER BY OrderType,FulfillmentStatus,OrderDate,Concept;
