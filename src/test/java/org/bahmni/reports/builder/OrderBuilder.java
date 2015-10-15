@@ -1,24 +1,20 @@
 package org.bahmni.reports.builder;
 
+import org.openmrs.*;
+import org.openmrs.api.context.Context;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
-import java.util.UUID;
-
-import org.openmrs.Concept;
-import org.openmrs.Order;
-import org.openmrs.OrderType;
 
 public class OrderBuilder {
     private Order order;
+    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
     public OrderBuilder() {
         this.order = new Order();
-        this.order.setDateCreated(new Date());
-        this.order.setUuid(UUID.randomUUID().toString());
-        this.order.setDateCreated(new Date());
+        this.order.setCareSetting(Context.getOrderService().getCareSetting(3));
     }
 
     public OrderBuilder withUuid(String uuid) {
@@ -42,9 +38,8 @@ public class OrderBuilder {
     }
 
     public OrderBuilder withDateActivated(String dateActivated) {
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         try {
-            order.setDateActivated(df.parse(dateActivated));
+            order.setDateActivated(dateFormat.parse(dateActivated));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -53,5 +48,20 @@ public class OrderBuilder {
 
     public Order build() {
         return order;
+    }
+
+    public OrderBuilder withEncounter(Encounter encounter) {
+        order.setEncounter(encounter);
+        return this;
+    }
+
+    public OrderBuilder withOrderer(Provider orderer) {
+        order.setOrderer(orderer);
+        return this;
+    }
+
+    public OrderBuilder withPatient(Patient patient) {
+        order.setPatient(patient);
+        return this;
     }
 }

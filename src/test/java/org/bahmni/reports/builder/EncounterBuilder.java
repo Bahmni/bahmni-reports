@@ -75,8 +75,8 @@ public class EncounterBuilder {
         return this;
     }
 
-    public EncounterBuilder withPerson(Person person) {
-        encounter.setPatient(new Patient(person));
+    public EncounterBuilder withPatient(Patient patient) {
+        encounter.setPatient(patient);
         return this;
     }
 

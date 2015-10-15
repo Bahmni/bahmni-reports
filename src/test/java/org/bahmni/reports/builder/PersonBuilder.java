@@ -27,4 +27,8 @@ public class PersonBuilder {
         return person;
     }
 
+    public PersonBuilder withGender(String gender) {
+        person.setGender(gender);
+        return this;
+    }
 }

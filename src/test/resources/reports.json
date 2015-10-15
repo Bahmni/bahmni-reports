@@ -18,8 +18,7 @@
     "config": {
       "type": "OrderFulfillmentReport",
       "orderTypes": [
-        "Order",
-        "Drug Order"
+        "Plain Order"
       ]
     }
   }
