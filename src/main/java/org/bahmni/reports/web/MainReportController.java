@@ -10,9 +10,7 @@ import org.bahmni.reports.model.AllDatasources;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.Reports;
 import org.bahmni.reports.template.BaseReportTemplate;
-import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
-import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,7 +61,6 @@ public class MainReportController {
             report.setHttpClient(httpClient);
             BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
             connection = allDatasources.getConnectionFromDatasource(reportTemplate);
-
             JasperReportBuilder jasperReport = report();
             jasperReport = new ReportHeader().add(jasperReport, reportName, startDate, endDate);
 
@@ -100,7 +97,6 @@ public class MainReportController {
             }
         }
     }
-
 
     private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response, String fileName, String macroTemplateLocation)
             throws Exception {

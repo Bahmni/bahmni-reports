@@ -1,8 +1,6 @@
 package org.bahmni.reports.report.integrationtests;
 
 import org.bahmni.reports.builder.OrderBuilder;
-import org.bahmni.reports.builder.PersonBuilder;
-import org.bahmni.reports.builder.PersonNameBuilder;
 import org.bahmni.reports.wrapper.Report;
 import org.junit.Before;
 import org.junit.Test;
@@ -10,8 +8,6 @@ import org.openmrs.*;
 import org.openmrs.api.context.Context;
 
 import java.sql.SQLException;
-import java.util.Set;
-import java.util.TreeSet;
 
 import static org.junit.Assert.assertEquals;
 
@@ -19,7 +15,6 @@ public class OrderFulfillmentReportTest extends BaseIntegrationTest {
 
     @Before
     public void beforeOrderFulfillmentReportTest() throws SQLException {
-        Context.authenticate("admin", "test");
         OrderType orderType = Context.getOrderService().getOrderType(17);
         Patient patient = Context.getPatientService().getPatient(2);
         Provider provider = Context.getProviderService().getProvider(1);
@@ -41,7 +36,7 @@ public class OrderFulfillmentReportTest extends BaseIntegrationTest {
 
     @Test
     public void shouldRetrieveOrderFulfillmentReport() throws Exception {
-        Report report = fetchReport("Order Fulfillment Report", "2015-10-13", "2015-10-21", "text/csv", "A3");
+        Report report = fetchReport("Order Fulfillment Report", "2015-10-13", "2015-10-21");
         assertEquals(9, report.getNumberOfColumns());
         assertEquals("Order Fulfillment Report", report.getReportName());
         assertEquals("Plain Order ASPIRIN 16-Oct-2015 101 Horatio Hornblower  M No", report.getRowAsString(1, " "));

@@ -42,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:TestApplicationContext.xml"}, inheritLocations = true)
+@ContextConfiguration(locations = {"classpath:TestingApplicationContext.xml"}, inheritLocations = true)
 @Transactional
 @TransactionConfiguration(defaultRollback = false)
 public class BaseIntegrationTest extends BaseContextSensitiveTest {
@@ -65,9 +65,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     private BahmniReportsProperties dbProperties;
 
     @InjectMocks
-    MainReportController controller;
-
-    private Connection connection;
+    private MainReportController controller;
 
     @Before
     public void beforeBaseIntegrationTest() throws Exception {
@@ -78,6 +76,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         when(bahmniReportsProperties.getConfigFilePath()).thenReturn("src/test/resources/reports.json");
         when(allDatasources.getConnectionFromDatasource(any(BaseReportTemplate.class))).thenReturn(getDatabaseConnection());
         setUpTestData();
+        Context.authenticate("admin", "test");
     }
 
     private void setUpTestData() throws Exception {
@@ -85,22 +84,22 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         if (!Context.isSessionOpen()) {
             Context.openSession();
         }
-        executeDataSet("initialTestDataSet.xml");
-        executeDataSet("testDataSet.xml");
+        executeDataSet("datasets/initialTestDataSet.xml");
+        executeDataSet("datasets/testDataSet.xml");
         getConnection().commit();
         Context.clearSession();
     }
 
     @Override
     public Boolean useInMemoryDatabase() {
-        return Boolean.valueOf(false);
+        return false;
     }
 
     @Override
     public Properties getRuntimeProperties() {
         BahmniReportsProperties dbProperties = new BahmniReportsProperties();
         Properties properties = new Properties();
-        properties.put("connection.url", dbProperties.getOpenmrsUrl());
+        properties.put("connection.url", dbProperties.getOpenmrsTestUrl());
         properties.put("connection.username", dbProperties.getOpenmrsUser());
         properties.put("connection.password", dbProperties.getOpenmrsPassword());
         return properties;
@@ -108,11 +107,8 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     protected Connection getDatabaseConnection() {
         try {
-            if (connection == null || connection.isClosed()) {
-                connection = DriverManager.getConnection(dbProperties.getOpenmrsUrl(),
-                        dbProperties.getOpenmrsUser(), dbProperties.getOpenmrsPassword());
-                connection.setAutoCommit(true);
-            }
+            Connection connection = DriverManager.getConnection(dbProperties.getOpenmrsTestUrl(),
+                    dbProperties.getOpenmrsUser(), dbProperties.getOpenmrsPassword());
             return connection;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -120,11 +116,11 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         }
     }
 
-    protected Report fetchReport(String reportName, String startDate, String endDate, String responseType, String paperSize) throws Exception {
+    protected Report fetchReport(String reportName, String startDate, String endDate) throws Exception {
         ArgumentCaptor<JasperReportBuilder> reportBuilderArgumentCaptor = ArgumentCaptor.forClass(JasperReportBuilder.class);
         doCallRealMethod().when(jasperResponseConverter).convert(any(String.class), reportBuilderArgumentCaptor.capture(),
                 any(HttpServletResponse.class), any(String.class), any(String.class));
-        String url = "/report?name=" + reportName + "&startDate=" + startDate + "&endDate=" + endDate + "&responseType=" + responseType + "&paperSize=" + paperSize;
+        String url = "/report?name=" + reportName + "&startDate=" + startDate + "&endDate=" + endDate + "&responseType=text/csv&paperSize=A3";
         ResultActions perform = mockMvc.perform(get(url));
         MvcResult mvcResult = perform.andReturn();
         String result = mvcResult.getResponse().getContentAsString();

@@ -1,22 +1,27 @@
 package org.bahmni.reports;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.stereotype.Component;
+
+import java.io.*;
+import java.util.Properties;
 
 @Component
 public class BahmniReportsProperties {
 
-    Resource resource = new ClassPathResource("/application.properties");
-    Properties props;
+    protected Properties props;
 
     public BahmniReportsProperties() {
+        this(System.getProperty("user.home") + File.separator + ".bahmni-reports" + File.separator
+                + "bahmni-reports.properties");
+    }
+
+    public BahmniReportsProperties(String filePath) {
+        InputStream inputStream = null;
         try {
-            props = PropertiesLoaderUtils.loadProperties(resource);
+            inputStream = new FileInputStream(filePath);
+            props = new Properties();
+            props.load(new InputStreamReader(inputStream));
+            inputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -36,6 +41,10 @@ public class BahmniReportsProperties {
 
     public String getOpenelisPassword() {
         return props.getProperty("openelis.password");
+    }
+
+    public String getOpenmrsTestUrl() {
+        return props.getProperty("openmrs.test.url");
     }
 
     public String getOpenmrsUrl() {

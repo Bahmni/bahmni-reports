@@ -8,6 +8,7 @@ import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.report.*;
 import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.webclients.HttpClient;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(
