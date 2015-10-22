@@ -88,6 +88,22 @@ public class MultipleCodedObsByObsReportTemplate extends BaseReportTemplate<Mult
         return jasperReport;
     }
 
+    private CrosstabColumnGroupBuilder<String> getColumn(int concept_index, String column) {
+        if (FIXED_ROW_COLUMN_NAMES.contains(column)) {
+            return ctab.columnGroup(column, String.class).setShowTotal(false);
+        }
+        concept_index++;
+        return ctab.columnGroup("concept" + concept_index + "_name", String.class).setShowTotal(false);
+    }
+
+    private CrosstabRowGroupBuilder<String> getRow(int concept_index, String row) {
+        if (FIXED_ROW_COLUMN_NAMES.contains(row)) {
+            return ctab.rowGroup(row, String.class).setShowTotal(false);
+        }
+        concept_index++;
+        return ctab.rowGroup("concept" + concept_index + "_name", String.class).setShowTotal(false);
+    }
+
     private String getSqlString(MultipleCodedObsByCodedObsReportConfig reportConfig, String startDate, String endDate) {
         String sql = getFileContent("sql/multipleCodedObsByCodedObs.sql");
         ST sqlTemplate = new ST(sql, '#', '#');

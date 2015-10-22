@@ -134,7 +134,7 @@ FROM
                     FROM obs o1
                       INNER JOIN concept_name cn1
                         ON o1.concept_id = cn1.concept_id AND
-                           cn1.concept_name_type = 'FULLY_SPECIFIED' AND cn1.name = '#concept1#'
+                           cn1.concept_name_type = 'FULLY_SPECIFIED' AND cn1.name = '#firstConcept#'
                            AND o1.voided = 0 AND cn1.voided = 0
                       INNER JOIN concept_name cn2
                         ON o1.value_coded = cn2.concept_id
@@ -164,7 +164,7 @@ FROM
                     FROM obs o1
                       INNER JOIN concept_name cn1
                         ON o1.concept_id = cn1.concept_id AND
-                           cn1.concept_name_type = 'FULLY_SPECIFIED' AND cn1.name = '#concept2#'
+                           cn1.concept_name_type = 'FULLY_SPECIFIED' AND cn1.name = '#firstConcept#'
                            AND o1.voided = 0 AND cn1.voided = 0
                       INNER JOIN concept_name cn2
                         ON o1.value_coded = cn2.concept_id
@@ -196,7 +196,7 @@ FROM
                     FROM obs o1
                       INNER JOIN concept_name cn1
                         ON o1.concept_id = cn1.concept_id AND
-                           cn1.concept_name_type = 'FULLY_SPECIFIED' AND cn1.name = '#concept3#'
+                           cn1.concept_name_type = 'FULLY_SPECIFIED' AND cn1.name = '#firstConcept#'
                            AND o1.voided = 0 AND cn1.voided = 0
                       INNER JOIN concept_name cn2
                         ON o1.value_coded = cn2.concept_id
