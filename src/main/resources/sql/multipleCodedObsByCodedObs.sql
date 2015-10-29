@@ -146,12 +146,6 @@ FROM
                         ON v1.visit_id = e1.visit_id
                            AND v1.date_stopped IS NOT NULL
                     WHERE cast(v1.date_stopped AS DATE) BETWEEN '#startDate#' AND '#endDate#'
-                          AND o1.obs_id = (SELECT max(obs_id)
-                                           FROM obs obs2
-                                             INNER JOIN encounter e2 ON obs2.encounter_id = e2.encounter_id
-                                           WHERE obs2.concept_id = o1.concept_id
-                                                 AND e2.visit_id = v1.visit_id
-                                                 AND obs2.voided IS FALSE)
                   ) first_concept
     ON first_concept.answer = first_answers.answer
   LEFT OUTER JOIN (
@@ -176,12 +170,6 @@ FROM
                         ON v1.visit_id = e1.visit_id
                            AND v1.date_stopped IS NOT NULL
                     WHERE cast(v1.date_stopped AS DATE) BETWEEN '#startDate#' AND '#endDate#'
-                          AND o1.obs_id = (SELECT max(obs_id)
-                                           FROM obs obs2
-                                             INNER JOIN encounter e2 ON obs2.encounter_id = e2.encounter_id
-                                           WHERE obs2.concept_id = o1.concept_id
-                                                 AND e2.visit_id = v1.visit_id
-                                                 AND obs2.voided IS FALSE)
                   ) second_concept
     ON second_concept.answer = second_answers.answer
        AND first_concept.visit_id = second_concept.visit_id
@@ -208,12 +196,6 @@ FROM
                         ON v1.visit_id = e1.visit_id
                            AND v1.date_stopped IS NOT NULL
                     WHERE cast(v1.date_stopped AS DATE) BETWEEN '#startDate#' AND '#endDate#'
-                          AND o1.obs_id = (SELECT max(obs_id)
-                                           FROM obs obs2
-                                             INNER JOIN encounter e2 ON obs2.encounter_id = e2.encounter_id
-                                           WHERE obs2.concept_id = o1.concept_id
-                                                 AND e2.visit_id = v1.visit_id
-                                                 AND obs2.voided IS FALSE)
                   ) third_concept
     ON third_concept.answer = third_answers.answer
        AND first_concept.person_id = third_concept.person_id
