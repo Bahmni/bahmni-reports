@@ -10,6 +10,10 @@ public class PersonNameBuilder {
         personName = new PersonName();
     }
 
+    public PersonName build() {
+        return personName;
+    }
+
     public PersonNameBuilder withGivenName(String givenName) {
         personName.setGivenName(givenName);
         return this;
@@ -25,8 +29,8 @@ public class PersonNameBuilder {
         return this;
     }
 
-    public PersonName build() {
-        return personName;
+    public PersonNameBuilder setPreferred() {
+        personName.setPreferred(true);
+        return this;
     }
-
 }

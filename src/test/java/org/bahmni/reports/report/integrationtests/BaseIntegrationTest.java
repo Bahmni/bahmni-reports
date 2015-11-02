@@ -117,6 +117,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     }
 
     protected Report fetchReport(String reportName, String startDate, String endDate) throws Exception {
+        getConnection().commit();
         ArgumentCaptor<JasperReportBuilder> reportBuilderArgumentCaptor = ArgumentCaptor.forClass(JasperReportBuilder.class);
         doCallRealMethod().when(jasperResponseConverter).convert(any(String.class), reportBuilderArgumentCaptor.capture(),
                 any(HttpServletResponse.class), any(String.class), any(String.class));

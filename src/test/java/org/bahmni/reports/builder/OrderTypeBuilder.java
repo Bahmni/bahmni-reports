@@ -15,15 +15,15 @@ public class OrderTypeBuilder {
         this.orderType.setDateCreated(new Date());
     }
 
-    public OrderTypeBuilder withUuid(String uuid) {
-        orderType.setUuid(uuid);
-        return this;
+    public OrderType build() {
+        return orderType;
     }
 
     public OrderTypeBuilder withJavaClassName(String className) {
         orderType.setJavaClassName(className);
         return this;
     }
+
     public OrderTypeBuilder withOrderType(String orderTypeName) {
         this.orderType.setName(orderTypeName);
         return this;
@@ -33,9 +33,4 @@ public class OrderTypeBuilder {
         orderType.setId(id);
         return this;
     }
-
-    public OrderType build() {
-        return orderType;
-    }
-
 }
