@@ -7,7 +7,7 @@
     <groupId>org.bahmni</groupId>
     <artifactId>reports</artifactId>
     <packaging>war</packaging>
-    <version>0.78-SNAPSHOT</version>
+    <version>0.77-SNAPSHOT</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
