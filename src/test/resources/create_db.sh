@@ -1,7 +1,7 @@
 #!/bin/sh
 
 HOST=$(grep openmrs.url $HOME/.bahmni-reports/bahmni-reports-test.properties | cut -d '/' -f 3 | cut -d ':' -f 1)
-TARGET_DB=$(grep openmrs.url $HOME/.bahmni-reports/bahmni-reports-test.properties | cut -d '/' -f 4)
+TARGET_DB=$(grep openmrs.url $HOME/.bahmni-reports/bahmni-reports-test.properties | cut -d '/' -f 4 | cut -d '?' -f 1)
 DUMP_FILE=src/test/resources/sql/openmrs_schema.sql
 USER_NAME=$(grep openmrs.username $HOME/.bahmni-reports/bahmni-reports-test.properties | cut -d '=' -f 2)
 PASSWORD=$(grep openmrs.password $HOME/.bahmni-reports/bahmni-reports-test.properties | cut -d '=' -f 2)
