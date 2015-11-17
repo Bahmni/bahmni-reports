@@ -97,17 +97,17 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     @Override
     public Properties getRuntimeProperties() {
-        BahmniReportsProperties dbProperties = new BahmniReportsProperties();
+        BahmniReportsProperties dbProperties = new BahmniReportsProperties("bahmni-reports-test.properties");
         Properties properties = new Properties();
-        properties.put("connection.url", dbProperties.getOpenmrsTestUrl());
-        properties.put("connection.username", dbProperties.getOpenmrsUser());
+        properties.put("connection.url", dbProperties.getOpenmrsUrl());
+        properties.put("connection.test.username", dbProperties.getOpenmrsUser());
         properties.put("connection.password", dbProperties.getOpenmrsPassword());
         return properties;
     }
 
     protected Connection getDatabaseConnection() {
         try {
-            Connection connection = DriverManager.getConnection(dbProperties.getOpenmrsTestUrl(),
+            Connection connection = DriverManager.getConnection(dbProperties.getOpenmrsUrl(),
                     dbProperties.getOpenmrsUser(), dbProperties.getOpenmrsPassword());
             return connection;
         } catch (SQLException e) {

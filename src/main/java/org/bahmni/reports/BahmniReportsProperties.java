@@ -10,15 +10,19 @@ public class BahmniReportsProperties {
 
     protected Properties props;
 
-    public BahmniReportsProperties() {
-        this(System.getProperty("user.home") + File.separator + ".bahmni-reports" + File.separator
-                + "bahmni-reports.properties");
+    public BahmniReportsProperties(String fileName) {
+        this(System.getProperty("user.home") + File.separator + ".bahmni-reports" + File.separator, fileName);
     }
 
-    public BahmniReportsProperties(String filePath) {
+    public BahmniReportsProperties() {
+        this(System.getProperty("user.home") + File.separator + ".bahmni-reports" + File.separator
+                , "bahmni-reports.properties");
+    }
+
+    private BahmniReportsProperties(String directory, String file) {
         InputStream inputStream = null;
         try {
-            inputStream = new FileInputStream(filePath);
+            inputStream = new FileInputStream(directory + file);
             props = new Properties();
             props.load(new InputStreamReader(inputStream));
             inputStream.close();
@@ -41,10 +45,6 @@ public class BahmniReportsProperties {
 
     public String getOpenelisPassword() {
         return props.getProperty("openelis.password");
-    }
-
-    public String getOpenmrsTestUrl() {
-        return props.getProperty("openmrs.test.url");
     }
 
     public String getOpenmrsUrl() {
