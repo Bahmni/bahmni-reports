@@ -1,6 +1,6 @@
 #!/bin/sh
 
-HOST=localhost
+HOST=$(grep openmrs.test.url $HOME/.bahmni-reports/bahmni-reports.properties | cut -d '/' -f 3 | cut -d ':' -f 1)
 TARGET_DB=reports_integration_tests
 DUMP_FILE=src/test/resources/sql/openmrs_schema.sql
 USER_NAME=root
