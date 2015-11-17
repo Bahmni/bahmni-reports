@@ -100,7 +100,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         BahmniReportsProperties dbProperties = new BahmniReportsProperties("bahmni-reports-test.properties");
         Properties properties = new Properties();
         properties.put("connection.url", dbProperties.getOpenmrsUrl());
-        properties.put("connection.test.username", dbProperties.getOpenmrsUser());
+        properties.put("connection.username", dbProperties.getOpenmrsUser());
         properties.put("connection.password", dbProperties.getOpenmrsPassword());
         return properties;
     }
