@@ -47,6 +47,9 @@ public class BahmniReportsProperties {
     @Value("${macrotemplates.temp.directory}")
     private String macroTemplatesTempDirectory;
 
+    @Value("${bahmni.login.url}")
+    public String bahmniLoginUrl;
+
     public String getConfigFilePath() {
         return configFilePath;
     }
@@ -97,5 +100,9 @@ public class BahmniReportsProperties {
 
     public String getMacroTemplatesTempDirectory() {
         return macroTemplatesTempDirectory;
+    }
+
+    public String getBahmniLoginUrl() {
+        return bahmniLoginUrl;
     }
 }

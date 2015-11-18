@@ -144,7 +144,6 @@
             <artifactId>jackson-mapper-asl</artifactId>
             <version>1.9.8</version>
         </dependency>
-
     </dependencies>
 
     <repositories>
