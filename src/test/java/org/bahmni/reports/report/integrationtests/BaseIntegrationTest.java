@@ -61,7 +61,6 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     @Mock
     private AllDatasources allDatasources;
 
-    @Autowired
     private BahmniReportsProperties dbProperties;
 
     @InjectMocks
@@ -97,7 +96,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     @Override
     public Properties getRuntimeProperties() {
-        BahmniReportsProperties dbProperties = new BahmniReportsProperties("bahmni-reports-test.properties");
+        dbProperties = new BahmniReportsProperties("bahmni-reports-test.properties");
         Properties properties = new Properties();
         properties.put("connection.url", dbProperties.getOpenmrsUrl());
         properties.put("connection.username", dbProperties.getOpenmrsUser());
