@@ -82,4 +82,8 @@ public class BahmniReportsProperties {
     public String getMacroTemplatesTempDirectory() {
         return props.getProperty("macrotemplates.temp.directory");
     }
+
+    public String getBahmniLoginUrl() {
+        return props.getProperty("bahmni.login.url");
+    }
 }
