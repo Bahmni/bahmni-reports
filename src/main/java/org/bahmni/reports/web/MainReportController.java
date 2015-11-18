@@ -77,7 +77,7 @@ public class MainReportController {
             try {
                 response.flushBuffer();
                 response.getOutputStream().close();
-                if (null != connection) {
+                if (null != connection && !connection.getAutoCommit()) {
                     connection.rollback();
                 }
             } catch (IOException e) {
