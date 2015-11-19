@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
 
 @Component
 public class AuthenticationFilter implements Filter {
@@ -91,19 +92,17 @@ public class AuthenticationFilter implements Filter {
     private void redirectToLogin(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
         httpServletResponse.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
         httpServletResponse.getWriter().write("Please login to continue");
-        URI redirectUri;
-        try {
-            redirectUri = new URIBuilder(properties.getBahmniLoginUrl())
-                    .addParameter("from", httpServletRequest.getRequestURL() +
-                            "?" +
-                            httpServletRequest.getQueryString())
-                    .build();
-        } catch (URISyntaxException e) {
-            logger.error("Bad url specified");
-            throw new RuntimeException(e);
-        }
 
-        httpServletResponse.sendRedirect(redirectUri.toString());
+        StringBuffer redirectUrl = new StringBuffer();
+        redirectUrl.append(properties.getBahmniLoginUrl());
+        char paramChar = '?';
+        if(redirectUrl.toString().contains("?")) {
+            paramChar = '&';
+        }
+        redirectUrl.append(paramChar)
+                .append("from=")
+                .append(URLEncoder.encode(httpServletRequest.getRequestURL() + "?" + httpServletRequest.getQueryString(), "ISO-8859-1"));
+        httpServletResponse.sendRedirect(redirectUrl.toString());
     }
 
     @Override
