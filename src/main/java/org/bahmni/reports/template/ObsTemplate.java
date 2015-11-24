@@ -78,9 +78,10 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
         String conceptNameInClause = StringUtils.join(conceptNames, ",");
         String patientAttributesInClause = constructInClause(patientAttributes);
+        String patientAttributesSql = constructPatientAttributeNamesString(patientAttributes);
+        String conceptNamesAndValue = constructConceptNamesString(conceptNames);
         String sql = getFormattedSql(getFileContent("sql/obsTemplate.sql"), report.getConfig(), conceptNameInClause,
-                patientAttributesInClause, startDate, endDate);
-
+                patientAttributesInClause, startDate, endDate, patientAttributesSql, conceptNamesAndValue);
         buildColumns(jasperReport, patientAttributes, conceptDetails, report.getConfig().getApplyDateRangeFor());
 
         Statement stmt;
@@ -128,9 +129,8 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
     }
 
     private String getFormattedSql(String formattedSql, ObsTemplateConfig reportConfig, String conceptNameInClause, String
-            patientAttributeInClause, String startDate, String endDate) {
+            patientAttributeInClause, String startDate, String endDate, String patientAttributesSql, String conceptNamesAndValue) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
-        sqlTemplate.add("conceptNameInClause", conceptNameInClause);
         sqlTemplate.add("conceptNameInClauseEscapeQuote", getInClauseWithEscapeQuote(conceptNameInClause));
         sqlTemplate.add("patientAttributesInClause", patientAttributeInClause);
         sqlTemplate.add("patientAttributesInClauseEscapeQuote", getInClauseWithEscapeQuote(patientAttributeInClause));
@@ -138,6 +138,8 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         sqlTemplate.add("applyDateRangeFor", applyDateRangeFor(reportConfig.getApplyDateRangeFor()));
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
+        sqlTemplate.add("patientAttributes", patientAttributesSql);
+        sqlTemplate.add("conceptNamesAndValue", conceptNamesAndValue);
         return sqlTemplate.render();
     }
 
@@ -161,5 +163,27 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
             return "e.date_created";
         }
         return "e.encounter_datetime";
+    }
+
+    public String constructConceptNamesString(List<String> conceptNames) {
+        String concatenatedString = "";
+        String helperString = "coalesce(o.value_numeric, o.value_boolean, o.value_text, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime) ";
+
+        for (String conceptName : conceptNames) {
+            concatenatedString += ", " + helperString + "As " + getInClauseWithEscapeQuote(conceptName);
+        }
+
+        return concatenatedString;
+    }
+
+    public String constructPatientAttributeNamesString(List<String> patientAttributes) {
+        String helperString = "o.patient_attr_value ";
+        String concatenatedString = "";
+
+        for (String patientAttribute : patientAttributes) {
+            concatenatedString += helperString + "As " + patientAttribute + ", ";
+        }
+
+        return concatenatedString;
     }
 }

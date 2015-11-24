@@ -1,27 +1,7 @@
 set session group_concat_max_len = 20000;
 SET @sql = NULL;
-SELECT
-  GROUP_CONCAT(DISTINCT
-               CONCAT(
-                   'GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = ''',
-                   concept_full_name,
-                   ''', coalesce(o.value_numeric, o.value_boolean, o.value_text, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), NULL)) SEPARATOR \',\') AS `',
-                   concept_full_name , '`'
-               )
-  ) into @sql
-FROM concept_view cv where cv.concept_full_name in (#conceptNameInClause#);
 
-SET @patientAttributesSql = NULL;
-SELECT
-  GROUP_CONCAT(DISTINCT
-               CONCAT(
-                   'GROUP_CONCAT(DISTINCT(IF(o.patient_attr_name = ''',
-                   name,
-                   ''', o.patient_attr_value, NULL))) AS `',
-                   name , '`'
-               )
-  ) into @patientAttributesSql
-FROM person_attribute_type  where name in (#patientAttributesInClause#);
+SET @patientAttributesSql = '#patientAttributes#';
 
 SET @patientAttributesJoin = 'JOIN person_attribute_type pat ON pat.name in(#patientAttributesInClauseEscapeQuote#)
                        LEFT JOIN person_attribute pattr ON pattr.person_attribute_type_id = pat. person_attribute_type_id
@@ -31,20 +11,19 @@ SET @patientAttributesJoin = 'JOIN person_attribute_type pat ON pat.name in(#pat
 SET @patientAttributesSelectClause = 'pat.name  as patient_attr_name,
                        coalesce(person_attribute_cn.concept_short_name, person_attribute_cn.concept_full_name, pattr.value) as patient_attr_value,';
 
-
 SET @sql = CONCAT('SELECT
                   o.identifier,
                   o.patient_name,
                   o.age,
                   o.gender,',
-                  IFNULL(concat(@patientAttributesSql,','), ''),
+                  IF(@patientAttributesSql is null, '', @patientAttributesSql),
                   'o.provider_id,
                   o.encounter_id,
                   GROUP_CONCAT(DISTINCT(o.provider_name) SEPARATOR \',\') as provider_name,
                   o.date_created,
-                  o.encounter_datetime,',
-                 @sql,
-                  ' FROM concept_view cv
+                  o.encounter_datetime
+                  #conceptNamesAndValue#
+                   FROM concept_view cv
                     LEFT JOIN
                     (SELECT
                        pi.identifier,
@@ -52,7 +31,7 @@ SET @sql = CONCAT('SELECT
                        concat(pat_name.given_name, '' '', pat_name.family_name) AS patient_name,
                        floor(DATEDIFF(DATE(ob.date_created), person.birthdate) / 365)   AS age,
                        person.gender,',
-                       IF(@patientAttributesSql is null, '',@patientAttributesSelectClause),
+                       IF(@patientAttributesSql is null, '', @patientAttributesSelectClause),
                        'ep.provider_id,
                        ep.encounter_id,
                        concat(pn.given_name, '' '', pn.family_name)   AS provider_name,
@@ -65,7 +44,7 @@ SET @sql = CONCAT('SELECT
                        answer.concept_short_name,
                        answer.concept_full_name
                      FROM obs ob
-                       JOIN encounter e ON ob.encounter_id = e.encounter_id AND cast(#applyDateRangeFor# AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'  AND ob.voided IS FALSE
+                       JOIN encounter e ON ob.encounter_id = e.encounter_id AND cast(#applyDateRangeFor# AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\' AND ob.voided IS FALSE
                        JOIN (select encounter_id from obs
                                             where concept_id = (select concept_id from concept_view where concept_full_name = \'#templateName#\') and voided is false) e1
                        ON e.encounter_id = e1.encounter_id
