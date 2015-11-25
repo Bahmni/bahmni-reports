@@ -17,7 +17,7 @@ SET @sql = CONCAT('SELECT
                   o.age,
                   o.gender,',
                   IF(@patientAttributesSql is null, '', @patientAttributesSql),
-                  'o.provider_id,
+                  ', o.provider_id,
                   o.encounter_id,
                   GROUP_CONCAT(DISTINCT(o.provider_name) SEPARATOR \',\') as provider_name,
                   o.date_created,

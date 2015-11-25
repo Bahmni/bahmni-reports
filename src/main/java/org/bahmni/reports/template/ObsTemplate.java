@@ -166,24 +166,25 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
     }
 
     public String constructConceptNamesString(List<String> conceptNames) {
-        String concatenatedString = "";
-        String helperString = "coalesce(o.value_numeric, o.value_boolean, o.value_text, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime) ";
+        ArrayList<String> parts = new ArrayList<>();
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.value_numeric, o.value_boolean, o.value_text, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), NULL)) SEPARATOR \\',\\') AS %s";
 
         for (String conceptName : conceptNames) {
-            concatenatedString += ", " + helperString + "As " + getInClauseWithEscapeQuote(conceptName);
+            conceptName = getInClauseWithEscapeQuote(conceptName);
+            parts.add(String.format(helperString, conceptName, conceptName));
         }
 
-        return concatenatedString;
+        return ", " + StringUtils.join(parts, ", ");
     }
 
     public String constructPatientAttributeNamesString(List<String> patientAttributes) {
-        String helperString = "o.patient_attr_value ";
-        String concatenatedString = "";
+        ArrayList<String> parts = new ArrayList<>();
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(o.patient_attr_name = \\'%s\\', o.patient_attr_value, NULL))) AS \\'%s\\'";
 
         for (String patientAttribute : patientAttributes) {
-            concatenatedString += helperString + "As " + patientAttribute + ", ";
+            parts.add(String.format(helperString, patientAttribute, patientAttribute));
         }
 
-        return concatenatedString;
+        return StringUtils.join(parts, ", ");
     }
 }
