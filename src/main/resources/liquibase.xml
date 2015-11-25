@@ -196,4 +196,35 @@
             WHERE revised.obs_id IS NULL AND ruled_out.obs_id IS NULL AND diagnosis_obs.voided IS FALSE;
         </createView>
     </changeSet>
+
+    <changeSet id="Reports-201511251755" author="Mahesh">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="reporting_concept_range"/>
+            </not>
+        </preConditions>
+        <comment>Creating table for reporting concept range group</comment>
+        <createTable tableName="reporting_concept_range">
+            <column name="id" type="int" autoIncrement="true">
+                <constraints primaryKey="true" primaryKeyName="reporting_concept_range_pk" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="concept_name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="low_value" type="double" defaultValue="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="high_value" type="double" defaultValue="0.0">
+                <constraints nullable="false"/>
+            </column>
+            <column name="sort_order" type="int" defaultValue="0">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
 </databaseChangeLog>

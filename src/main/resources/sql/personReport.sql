@@ -20,7 +20,7 @@ SET @sql = CONCAT('SELECT
   o.gender as \'Gender\',
   o.birthdate as \'Birth Date\',
   DATE(o.death_date) as \'Death Date\',
-  o.cause_of_death as \'Cause Of Death\',
+  o.deathCause as \'Cause Of Death\',
   o.address1 as Address1,
   o.address2 as Address2,
   o.address3 as Address3,
@@ -38,6 +38,7 @@ SET @sql = CONCAT('SELECT
         p.gender,
         p.birthdate,
         p.death_date,
+        IF(p.cause_of_death, coalesce(cause_of_death_cv.concept_short_name, cause_of_death_cv.concept_full_name), \'\') as deathCause,
         p.cause_of_death,
         addr.address1,
         addr.address2,
@@ -57,6 +58,7 @@ SET @sql = CONCAT('SELECT
        JOIN person_address addr ON p.person_id = addr.person_id
        LEFT OUTER JOIN person_attribute attr ON p.person_id = attr.person_id and attr.voided = false
        LEFT OUTER JOIN person_attribute_type attr_type ON attr.person_attribute_type_id = attr_type.person_attribute_type_id
+       LEFT OUTER JOIN concept_view cause_of_death_cv ON p.cause_of_death = cause_of_death_cv.concept_id
        LEFT JOIN concept_view person_attribute_cn ON attr.value = person_attribute_cn.concept_id AND attr_type.format LIKE "%Concept") o
      LEFT OUTER JOIN person_attribute_type pat ON o.person_attribute_type_id = pat.person_attribute_type_id
        group by person_id');
