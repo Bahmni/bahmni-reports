@@ -1,63 +1,42 @@
 package org.bahmni.reports.web.security;
 
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLEncoder;
 
-@Component
-public class AuthenticationFilter implements Filter {
+@Component(value = "authenticationFilter")
+public class AuthenticationFilter extends HandlerInterceptorAdapter {
 
-    private static final Logger logger = Logger.getLogger(AuthenticationFilter.class);
     public static final String REPORTING_COOKIE_NAME = "reporting_session";
     private OpenMRSAuthenticator authenticator;
     private BahmniReportsProperties properties;
-    private final RequestMappingHandlerMapping handlerMapping;
 
     @Autowired
     public AuthenticationFilter(OpenMRSAuthenticator authenticator,
-                                BahmniReportsProperties properties,
-                                RequestMappingHandlerMapping handlerMapping) {
+                                BahmniReportsProperties properties) {
         this.authenticator = authenticator;
         this.properties = properties;
-        this.handlerMapping = handlerMapping;
     }
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {}
 
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        doHttpFilter((HttpServletRequest) servletRequest, (HttpServletResponse) servletResponse, filterChain);
-    }
-
-    private void doHttpFilter(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        if (!handledByThisApplication(httpServletRequest)) {
-            httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND,
-                    "Reports application cannot handle url " + httpServletRequest.getRequestURI());
-            return;
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (handler == null) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND,
+                    "Reports application cannot handle url " + request.getRequestURI());
+            return false;
         }
 
-        Cookie[] cookies = httpServletRequest.getCookies();
+        Cookie[] cookies = request.getCookies();
         if (cookies == null) {
-            redirectToLogin(httpServletRequest, httpServletResponse);
-            return;
+            return redirectToLogin(request, response);
         }
         AuthenticationResponse authenticationResponse = AuthenticationResponse.NOT_AUTHENTICATED;
 
@@ -69,27 +48,17 @@ public class AuthenticationFilter implements Filter {
 
         switch (authenticationResponse) {
             case AUTHORIZED:
-                filterChain.doFilter(httpServletRequest, httpServletResponse);
-                break;
+                return true;
             case UNAUTHORIZED:
-                httpServletResponse.sendError(HttpServletResponse.SC_FORBIDDEN,
+                response.sendError(HttpServletResponse.SC_FORBIDDEN,
                         "Privileges is required to access reports");
-                break;
+                return false;
             default:
-                redirectToLogin(httpServletRequest, httpServletResponse);
-                break;
+                return redirectToLogin(request, response);
         }
     }
 
-    private boolean handledByThisApplication(HttpServletRequest httpServletRequest) {
-        try {
-            return handlerMapping.getHandler(httpServletRequest) != null;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private void redirectToLogin(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
+    private boolean redirectToLogin(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
         httpServletResponse.setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
         httpServletResponse.getWriter().write("Please login to continue");
 
@@ -101,10 +70,8 @@ public class AuthenticationFilter implements Filter {
         }
         redirectUrl.append(paramChar)
                 .append("from=")
-                .append(URLEncoder.encode(httpServletRequest.getRequestURL() + "?" + httpServletRequest.getQueryString(), "ISO-8859-1"));
+                .append(URLEncoder.encode(httpServletRequest.getRequestURL() + "?" + httpServletRequest.getQueryString(), "UTF-8"));
         httpServletResponse.sendRedirect(redirectUrl.toString());
+        return false;
     }
-
-    @Override
-    public void destroy() {}
 }

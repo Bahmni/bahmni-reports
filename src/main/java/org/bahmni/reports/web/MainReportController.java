@@ -19,12 +19,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.report;
-
 
 @Controller
 public class MainReportController {
@@ -53,7 +53,7 @@ public class MainReportController {
         try {
             String startDate = request.getParameter("startDate");
             String endDate = request.getParameter("endDate");
-            String reportName = request.getParameter("name");
+            String reportName = URLDecoder.decode(request.getParameter("name"), "UTF-8");
             String responseType = request.getParameter("responseType");
             String macroTemplateLocation = request.getParameter("macroTemplateLocation");
             PageType pageType = "A3".equals(request.getParameter("paperSize")) ? PageType.A3 : PageType.A4;
