@@ -21,7 +21,6 @@ public class OpenMRSAuthenticator {
     private static final String WHOAMI_URL = "/bahmnicore/whoami";
     public static final String OPENMRS_SESSION_ID_COOKIE_NAME = "JSESSIONID";
 
-
     @Autowired
     private BahmniReportsProperties properties;
 
