@@ -7,7 +7,7 @@
     <groupId>org.bahmni</groupId>
     <artifactId>reports</artifactId>
     <packaging>war</packaging>
-    <version>0.78-SNAPSHOT</version>
+    <version>0.79-SNAPSHOT</version>
 
     <properties>
         <spring.version>4.1.5.RELEASE</spring.version>
@@ -142,7 +142,7 @@
         <dependency>
             <groupId>org.bahmni.module</groupId>
             <artifactId>web-clients</artifactId>
-            <version>0.78-SNAPSHOT</version>
+            <version>0.79-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
