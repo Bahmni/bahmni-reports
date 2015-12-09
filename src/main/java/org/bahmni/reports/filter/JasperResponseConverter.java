@@ -58,6 +58,8 @@ public class JasperResponseConverter {
                 break;
             case "text/csv":
                 response.setContentType("text/csv");
+                response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".csv");
+                report.setTemplate(Templates.excelReportTemplate);
                 report.toCsv(outputStream);
                 break;
         }
