@@ -5,7 +5,7 @@ SELECT
                CONCAT(
                    'GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = ''',
                    concept_full_name,
-                   ''', coalesce(o.value_numeric, o.value_boolean, o.value_text, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), NULL)) SEPARATOR \',\') AS `',
+                   ''', coalesce(o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), NULL)) SEPARATOR \',\') AS `',
                    concept_full_name , '`'
                )
   ) into @sql
@@ -41,6 +41,7 @@ SET @sql = CONCAT('SELECT
                   'o.provider_id,
                   o.encounter_id,
                   GROUP_CONCAT(DISTINCT(o.provider_name) SEPARATOR \',\') as provider_name,
+                  o.value_datetime,
                   o.date_created,
                   o.encounter_datetime,',
                  @sql,
@@ -60,6 +61,7 @@ SET @sql = CONCAT('SELECT
                        e.encounter_datetime,
                        ob.value_numeric,
                        ob.value_boolean,
+                       ob.value_datetime,
                        ob.date_created AS obs_date,
                        ob.value_text,
                        answer.concept_short_name,
