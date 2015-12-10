@@ -167,7 +167,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
     public String constructConceptNamesString(List<String> conceptNames) {
         ArrayList<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.value_numeric, o.value_boolean, o.value_text, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), NULL)) SEPARATOR \\',\\') AS %s";
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), NULL)) SEPARATOR \\',\\') AS %s";
 
         for (String conceptName : conceptNames) {
             conceptName = getInClauseWithEscapeQuote(conceptName);
