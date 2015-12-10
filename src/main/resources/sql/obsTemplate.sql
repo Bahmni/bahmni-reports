@@ -16,8 +16,8 @@ SET @sql = CONCAT('SELECT
                   o.patient_name,
                   o.age,
                   o.gender,',
-                  IF(@patientAttributesSql is null, '', @patientAttributesSql),
-                  ', o.provider_id,
+                  IF(@patientAttributesSql = '', '', @patientAttributesSql),
+                  'o.provider_id,
                   o.encounter_id,
                   GROUP_CONCAT(DISTINCT(o.provider_name) SEPARATOR \',\') as provider_name,
                   o.date_created,
@@ -31,7 +31,7 @@ SET @sql = CONCAT('SELECT
                        concat(pat_name.given_name, '' '', pat_name.family_name) AS patient_name,
                        floor(DATEDIFF(DATE(ob.date_created), person.birthdate) / 365)   AS age,
                        person.gender,',
-                       IF(@patientAttributesSql is null, '', @patientAttributesSelectClause),
+                       IF(@patientAttributesSql = '', '', @patientAttributesSelectClause),
                        'ep.provider_id,
                        ep.encounter_id,
                        concat(pn.given_name, '' '', pn.family_name)   AS provider_name,
@@ -39,6 +39,7 @@ SET @sql = CONCAT('SELECT
                        e.encounter_datetime,
                        ob.value_numeric,
                        ob.value_boolean,
+                       ob.value_datetime,
                        ob.date_created AS obs_date,
                        ob.value_text,
                        answer.concept_short_name,
@@ -50,7 +51,7 @@ SET @sql = CONCAT('SELECT
                        ON e.encounter_id = e1.encounter_id
                        JOIN patient_identifier pi ON pi.patient_id = ob.person_id
                        JOIN person ON person.person_id = pi.patient_id ',
-                       IF(@patientAttributesSql is null, '', @patientAttributesJoin),
+                       IF(@patientAttributesSql = '', '', @patientAttributesJoin),
                        ' JOIN person_name pat_name ON pat_name.person_id = person.person_id
                        JOIN encounter_provider ep ON e.encounter_id = ep.encounter_id
                        JOIN provider p ON ep.provider_id = p.provider_id
