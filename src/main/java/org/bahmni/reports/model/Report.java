@@ -36,9 +36,10 @@ import org.springframework.beans.factory.annotation.Autowired;
         @JsonSubTypes.Type(value = OrderFulfillmentReport.class, name = "OrderFulfillmentReport"),
         @JsonSubTypes.Type(value = ProgramStateCountReport.class, name = "programStateCount"),
         @JsonSubTypes.Type(value = PatientReport.class, name = "PatientReport"),
-        @JsonSubTypes.Type(value = PatientProgramReport.class, name = "PatientProgramReport")
-        , @JsonSubTypes.Type(value = ProgramStateTransitionReport.class, name = "programStateTransitionReport")
-        , @JsonSubTypes.Type(value = VisitReport.class, name = "visitReport")
+        @JsonSubTypes.Type(value = PatientProgramReport.class, name = "PatientProgramReport"),
+        @JsonSubTypes.Type(value = ProgramStateTransitionReport.class, name = "programStateTransitionReport"),
+        @JsonSubTypes.Type(value = VisitReport.class, name = "visitReport"),
+        @JsonSubTypes.Type(value = ObsCannedReport.class, name = "obsCannedReport")
 })
 
 public abstract class Report<T extends Config> {
