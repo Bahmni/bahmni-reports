@@ -27,6 +27,7 @@ from
       INNER JOIN concept_view question on obs.concept_id = question.concept_id and question.concept_full_name IN (#conceptNames#)
       INNER JOIN person on obs.person_id = person.person_id
       INNER JOIN encounter on obs.encounter_id = encounter.encounter_id
+      #countOnlyTaggedLocationsJoin#
       INNER  JOIN visit on encounter.visit_id = visit.visit_id
       INNER JOIN visit_attribute on visit.visit_id = visit_attribute.visit_id
       INNER JOIN visit_attribute_type on visit_attribute_type.visit_attribute_type_id = visit_attribute.attribute_type_id and visit_attribute_type.name = "Visit Status"

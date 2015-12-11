@@ -105,6 +105,12 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
                 "person_id) most_recent on most_recent.concept_id = obs.concept_id and most_recent.person_id = obs.person_id and " +
                 "most_recent.datetime = obs.obs_datetime", conceptNames);
 
+        String locationTagNames = SqlUtil.toCommaSeparatedSqlString(reportConfig.getLocationTagNames());
+        String countOnlyTaggedLocationsJoin = String.format("INNER JOIN " +
+                "(SELECT DISTINCT location_id " +
+                "FROM location_tag_map INNER JOIN location_tag ON location_tag_map.location_tag_id = location_tag.location_tag_id " +
+                " AND location_tag.name IN (%s)) locations ON locations.location_id = encounter.location_id", locationTagNames);
+
         ST sqlTemplate = new ST(sql, '#', '#');
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
@@ -120,6 +126,11 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
             sqlTemplate.add("countOncePerPatientJoin", countOncePerPatientJoin);
         } else {
             sqlTemplate.add("countOncePerPatientJoin", "");
+        }
+        if (StringUtils.isNotBlank(locationTagNames)) {
+            sqlTemplate.add("countOnlyTaggedLocationsJoin", countOnlyTaggedLocationsJoin);
+        } else {
+            sqlTemplate.add("countOnlyTaggedLocationsJoin", "");
         }
         return sqlTemplate.render();
     }

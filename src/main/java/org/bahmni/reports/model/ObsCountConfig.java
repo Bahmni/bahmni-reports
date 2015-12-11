@@ -8,6 +8,7 @@ import java.util.List;
 public class ObsCountConfig implements Config {
 
     private List<String> conceptNames;
+    private List<String> locationTagNames;
     private String ageGroupName;
     private List<String> visitTypes;
     //Dont give boolean here... Default value of boolean is false, and which contradicts with requirement (Default true, if no config
@@ -19,8 +20,14 @@ public class ObsCountConfig implements Config {
         return conceptNames;
     }
 
+    public List<String> getLocationTagNames() { return locationTagNames; }
+
     public void setConceptNames(List<String> conceptNames) {
         this.conceptNames = conceptNames;
+    }
+
+    public void setLocationTagNames(List<String> locationTagNames) {
+        this.locationTagNames = locationTagNames;
     }
 
     public String getAgeGroupName() {
