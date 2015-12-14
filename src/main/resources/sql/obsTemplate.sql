@@ -16,7 +16,7 @@ SET @sql = CONCAT('SELECT
                   o.patient_name,
                   o.age,
                   o.gender,',
-                  IF(@patientAttributesSql = '', '', @patientAttributesSql),
+                  IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')),
                   'o.provider_id,
                   o.encounter_id,
                   GROUP_CONCAT(DISTINCT(o.provider_name) SEPARATOR \',\') as provider_name,
