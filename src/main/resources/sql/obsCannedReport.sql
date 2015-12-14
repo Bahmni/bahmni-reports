@@ -14,9 +14,9 @@ WHERE cn.name IN (#conceptNameInClause#);
 SET @viConceptSelector = NULL;
 SELECT GROUP_CONCAT(DISTINCT
                     CONCAT(
-                        'IF(vi_obs_name = ''',
+                        'IF(cn.name = ''',
                         name,
-                        ''', vi_obs_value, NULL) AS `',
+                        ''', coalesce(o.value_numeric, o.value_boolean, o.value_text, o.date_created, e.encounter_datetime), NULL) AS `vi_tr_',
                         name, '`'
                     )
 )
@@ -38,6 +38,20 @@ FROM concept_name cn
 WHERE cn.name IN (#conceptNameInClause#);
 
 
+
+SET  @viConceptMaxSelector = NULL;
+SELECT GROUP_CONCAT(DISTINCT
+                    CONCAT(
+                        'MAX(`', 'vi_tr_',
+                        name,
+                        '`) AS ' , '`latest_',name,
+                        '` '
+                    )
+)
+INTO @viConceptMaxSelector
+FROM concept_name cn
+WHERE cn.name IN (#visitIndependentConceptInClause#);
+
 SELECT GROUP_CONCAT(DISTINCT CONCAT(
     'IF (patient_attribute_name = \'',name,'\',patient_attribute_value, NULL) AS ' , name
 ))
@@ -57,6 +71,7 @@ SET @dateFilterQuery = IF( "#enrolledProgram#" ="" , ' o.obs_datetime'  ,@dateFi
 
 SET @sqlCore = CONCAT('SELECT
   pi.identifier,
+  p.person_id,
   CONCAT(pname.given_name, \' \', pname.family_name) as patient_name,
   p.gender,
   Floor(Datediff(Date(o.date_created), p.birthdate) / 365) as age,
@@ -69,9 +84,7 @@ SET @sqlCore = CONCAT('SELECT
   coalesce(o.value_numeric, o.value_boolean, o.value_text, o.date_created, e.encounter_datetime, NULL)  as obs_value,
 
   o.obs_datetime,
-  e.visit_id,
-  vi.vi_obs_name,
-  vi.vi_obs_value
+  e.visit_id
 FROM obs as o
 JOIN encounter e
   ON o.encounter_id = e.encounter_id
@@ -96,22 +109,7 @@ LEFT JOIN concept_name pacn
   ON pa.value = pacn.concept_id
   AND pat.format like (\'%concept\')
   AND pacn.concept_name_type like (\'FULLY_SPECIFIED\')
-JOIN (
-  SELECT
-  vi_o.person_id,
-  vi_cn.name vi_obs_name,
-  coalesce(vi_o.value_numeric, vi_o.value_boolean, vi_o.value_text, vi_o.date_created, vi_e.encounter_datetime, NULL)  as vi_obs_value
-  FROM  obs as vi_o
-  JOIN encounter vi_e
-    ON vi_o.encounter_id = vi_e.encounter_id
-  JOIN concept_name vi_cn
-    ON vi_o.concept_id = vi_cn.concept_id
-    AND vi_cn.name IN (#visitIndependentConceptInClauseEscaped#)
-    AND vi_cn.concept_name_type = "FULLY_SPECIFIED"
-  GROUP BY vi_o.person_id, vi_cn.name
-  ORDER BY vi_o.obs_datetime DESC
-) vi
-  ON vi.person_id = p.person_id ',
+ ',
 IF( "#enrolledProgram#" ="" ,'' ,
 'JOIN patient_program pp
   ON pp.patient_id = p.person_id
@@ -123,15 +121,48 @@ WHERE ',@dateFilterQuery,' BETWEEN \'#startDate#\' AND \'#endDate#\'
 GROUP BY o.person_id, e.visit_id, cn.name
 ORDER BY o.person_id, o.obs_datetime DESC');
 
+
+SET @sqlCoreVi = CONCAT('SELECT
+  o.person_id patient_id,
+  ',@viConceptSelector,'
+FROM obs as o
+JOIN encounter e
+  ON o.encounter_id = e.encounter_id
+JOIN concept_name cn
+  ON o.concept_id = cn.concept_id
+  AND cn.name IN (#visitIndependentConceptInClauseEscaped#)
+  AND cn.concept_name_type = "FULLY_SPECIFIED"
+ ',
+                        IF( "#enrolledProgram#" ="" ,'' ,
+                            'JOIN patient_program pp
+                              ON pp.patient_id = o.person_id
+                            JOIN program
+                              ON program.program_id = pp.program_id
+                              AND program.name like \'#enrolledProgram#\'' ),'
+WHERE ',@dateFilterQuery,' BETWEEN \'#startDate#\' AND \'#endDate#\'
+  ',@obsForProgramDuration,'
+GROUP BY o.person_id,  cn.name
+ORDER BY o.person_id, o.obs_datetime DESC');
+
+
+
+
+
+
 SET @sql = CONCAT('SELECT
   core.*,
+  vi_core.*,
   ', @conceptSelector,
 
                   ' FROM
                   (
                     ',@sqlCore,
                   '
-                ) core');
+                ) core
+          LEFT JOIN (
+          ',@sqlCoreVi,'
+          ) vi_core  ON  core.person_id = vi_core.patient_id
+                ');
 
 
 SET @sqlWrapper = CONCAT(
@@ -141,14 +172,14 @@ SET @sqlWrapper = CONCAT(
     gender,
     age,
     visit_id,
-    ',@addressAttributesSql,',
-    ',@viConceptSelector,
+    ',@addressAttributesSql,
     ',', @conceptMaxSelector,
+    ',', @viConceptMaxSelector,
     ',', @patientAttributesSelectClause,
     ' FROM (
        ',@sql,'
    ) wrapper
-   GROUP BY identifier,visit_id'
+   GROUP BY person_id,visit_id'
 );
 
 PREPARE stmt FROM @sqlWrapper;

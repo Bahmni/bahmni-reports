@@ -61,14 +61,16 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
         if (conceptDetails == null) {
             conceptDetails = new ArrayList<>();
         }
-
+        List<String> viConceptDetails = report.getConfig().getVisitIndependentConcept();
+        if (viConceptDetails == null) {
+            viConceptDetails = new ArrayList<>();
+        }
         String conceptNameInClause =  constructInClause(conceptDetails);
         String patientAttributesInClause = constructInClause(patientAttributes);
         String addressAttributesInClause = constructInClause(addressAttributes);
         String sql = getFormattedSql(getFileContent("sql/obsCannedReport.sql"), report.getConfig(), conceptNameInClause,
                 patientAttributesInClause, startDate, endDate,addressAttributesInClause );
-        conceptDetails.addAll(report.getConfig().getVisitIndependentConcept());
-        buildColumns(jasperReport, patientAttributes, conceptDetails, addressAttributes);
+        buildColumns(jasperReport, patientAttributes, conceptDetails,viConceptDetails, addressAttributes);
 
         Statement stmt;
         try {
@@ -91,7 +93,7 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
         return jasperReport;
     }
 
-    private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<String> conceptNames, List<String> addressAttributes) {
+    private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<String> conceptNames,List<String> viConceptNames, List<String> addressAttributes) {
         TextColumnBuilder<String> patientColumn = col.column("Patient ID", "identifier", type.stringType());
         TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "patient_name", type.stringType());
         TextColumnBuilder<String> patientGenderColumn = col.column("Gender", "gender", type.stringType());
@@ -111,6 +113,10 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
         }
         for (String conceptName : conceptNames) {
             TextColumnBuilder<String> column1 = col.column(conceptName, conceptName, type.stringType());
+            jasperReport.addColumn(column1);
+        }
+        for (String viConceptName : viConceptNames) {
+            TextColumnBuilder<String> column1 = col.column(viConceptName, "latest_"+viConceptName, type.stringType());
             jasperReport.addColumn(column1);
         }
     }
