@@ -70,10 +70,7 @@ SELECT IF(@ShowObsOnlyForProgramDuration AND "#enrolledProgram#" != "",'AND o.ob
 SET @dateFilterQuery = IF( "#enrolledProgram#" ="" , ' o.obs_datetime'  ,@dateFilterQuery);
 
 SET @sqlCore = CONCAT('SELECT
-<<<<<<< HEAD
-=======
   pi.identifier,
->>>>>>> fdf167e... 3223 | Fix - multiple visit independent concept & overlap of visit concept and visit independent concepts
   p.person_id,
   CONCAT(pname.given_name, \' \', pname.family_name) as patient_name,
   p.gender,
@@ -97,6 +94,8 @@ JOIN concept_name cn
   AND cn.concept_name_type = "FULLY_SPECIFIED"
 JOIN person p
   ON p.person_id = o.person_id
+JOIN patient_identifier pi
+  ON pi.patient_id = p.person_id
 JOIN person_address address
   ON p.person_id = address.person_id
 JOIN person_name pname
@@ -168,7 +167,7 @@ SET @sql = CONCAT('SELECT
 
 SET @sqlWrapper = CONCAT(
     'SELECT
-    person_id,
+    identifier,
     patient_name,
     gender,
     age,
