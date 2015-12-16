@@ -116,7 +116,7 @@ IF( "#enrolledProgram#" ="" ,'' ,
 JOIN program
   ON program.program_id = pp.program_id
   AND program.name like \'#enrolledProgram#\'' ),'
-WHERE ',@dateFilterQuery,' BETWEEN \'#startDate#\' AND \'#endDate#\'
+WHERE date(',@dateFilterQuery,') BETWEEN \'#startDate#\' AND \'#endDate#\'
   ',@obsForProgramDuration,'
 GROUP BY o.person_id, e.visit_id, cn.name
 ORDER BY o.person_id, o.obs_datetime DESC');
@@ -139,7 +139,7 @@ JOIN concept_name cn
                             JOIN program
                               ON program.program_id = pp.program_id
                               AND program.name like \'#enrolledProgram#\'' ),'
-WHERE ',@dateFilterQuery,' BETWEEN \'#startDate#\' AND \'#endDate#\'
+WHERE date(',@dateFilterQuery,') BETWEEN \'#startDate#\' AND \'#endDate#\'
   ',@obsForProgramDuration,'
 GROUP BY o.person_id,  cn.name
 ORDER BY o.person_id, o.obs_datetime DESC');
@@ -150,6 +150,7 @@ ORDER BY o.person_id, o.obs_datetime DESC');
 
 
 SET @sql = CONCAT('SELECT
+  count(*),
   core.*,
   vi_core.*,
   ', @conceptSelector,
