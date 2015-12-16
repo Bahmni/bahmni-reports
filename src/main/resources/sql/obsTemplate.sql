@@ -11,6 +11,13 @@ SET @patientAttributesJoin = 'JOIN person_attribute_type pat ON pat.name in(#pat
 SET @patientAttributesSelectClause = 'pat.name  as patient_attr_name,
                        coalesce(person_attribute_cn.concept_short_name, person_attribute_cn.concept_full_name, pattr.value) as patient_attr_value,';
 
+
+SET @conceptSourceId = NULL;
+
+SELECT concept_source_id from concept_reference_source WHERE name = "#conceptSourceName#" into @conceptSourceId;
+
+SET @conceptRefMapSql = "LEFT JOIN (SELECT CRM.concept_id,  CRT.code FROM (SELECT * from concept_reference_term  WHERE concept_source_id = @conceptSourceId) as CRT INNER JOIN concept_reference_map as CRM ON CRT.concept_reference_term_id = CRM.concept_reference_term_id) CRT ON answer.concept_id = CRT.concept_id";
+
 SET @sql = CONCAT('SELECT
                   o.identifier,
                   o.patient_name,
@@ -43,8 +50,9 @@ SET @sql = CONCAT('SELECT
                        ob.date_created AS obs_date,
                        ob.value_text,
                        answer.concept_short_name,
-                       answer.concept_full_name
-                     FROM obs ob
+                       answer.concept_full_name ',
+                      IF(@conceptSourceId IS NULL, '', ', CRT.code'),
+                     ' FROM obs ob
                        JOIN encounter e ON ob.encounter_id = e.encounter_id AND cast(#applyDateRangeFor# AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\' AND ob.voided IS FALSE
                        JOIN (select encounter_id from obs
                                             where concept_id = (select concept_id from concept_view where concept_full_name = \'#templateName#\') and voided is false) e1
@@ -56,8 +64,9 @@ SET @sql = CONCAT('SELECT
                        JOIN encounter_provider ep ON e.encounter_id = ep.encounter_id
                        JOIN provider p ON ep.provider_id = p.provider_id
                        JOIN person_name pn ON p.person_id = pn.person_id
-                       LEFT JOIN concept_view answer ON ob.value_coded = answer.concept_id
-                       ) o ON o.concept_id = cv.concept_id
+                       LEFT JOIN concept_view answer ON ob.value_coded = answer.concept_id ',
+                       IF(@conceptSourceId IS NULL, '', @conceptRefMapSql),
+                  ' ) o ON o.concept_id = cv.concept_id
                   where cv.concept_full_name IN ( #conceptNameInClauseEscapeQuote# )
                   group by identifier, encounter_id
                   order by identifier, encounter_id');

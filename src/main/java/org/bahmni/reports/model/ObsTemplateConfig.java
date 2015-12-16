@@ -9,6 +9,7 @@ public class ObsTemplateConfig implements Config {
     private String templateName;
     private List<String> patientAttributes;
     private String applyDateRangeFor;
+    private String conceptSource;
 
     public String getTemplateName() {
         return templateName;
@@ -32,6 +33,14 @@ public class ObsTemplateConfig implements Config {
 
     public void setApplyDateRangeFor(String applyDateRangeFor) {
         this.applyDateRangeFor = applyDateRangeFor;
+    }
+
+    public String getConceptSource() {
+        return conceptSource;
+    }
+
+    public void setConceptSource(String conceptSource) {
+        this.conceptSource = conceptSource;
     }
 }
 

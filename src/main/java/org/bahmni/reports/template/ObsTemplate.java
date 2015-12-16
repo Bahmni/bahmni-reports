@@ -36,6 +36,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
     private static final String ENCOUNTER_CREATE_DATE = "encounterCreateDate";
     private BahmniReportsProperties bahmniReportsProperties;
+    private ObsTemplateConfig reportConfig;
 
     public ObsTemplate(BahmniReportsProperties bahmniReportsProperties) {
         this.bahmniReportsProperties = bahmniReportsProperties;
@@ -44,10 +45,11 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsTemplateConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+        this.reportConfig = report.getConfig();
         CommonComponents.addTo(jasperReport, report, pageType);
 
-        String templateName = report.getConfig().getTemplateName();
-        List<String> patientAttributes = report.getConfig().getPatientAttributes();
+        String templateName = reportConfig.getTemplateName();
+        List<String> patientAttributes = reportConfig.getPatientAttributes();
         if (patientAttributes == null) {
             patientAttributes = new ArrayList<>();
         }
@@ -80,9 +82,9 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         String patientAttributesInClause = constructInClause(patientAttributes);
         String patientAttributesSql = constructPatientAttributeNamesString(patientAttributes);
         String conceptNamesAndValue = constructConceptNamesString(conceptNames);
-        String sql = getFormattedSql(getFileContent("sql/obsTemplate.sql"), report.getConfig(), conceptNameInClause,
+        String sql = getFormattedSql(getFileContent("sql/obsTemplate.sql"), conceptNameInClause,
                 patientAttributesInClause, startDate, endDate, patientAttributesSql, conceptNamesAndValue);
-        buildColumns(jasperReport, patientAttributes, conceptDetails, report.getConfig().getApplyDateRangeFor());
+        buildColumns(jasperReport, patientAttributes, conceptDetails, reportConfig.getApplyDateRangeFor());
 
         Statement stmt;
         try {
@@ -128,7 +130,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         }
     }
 
-    private String getFormattedSql(String formattedSql, ObsTemplateConfig reportConfig, String conceptNameInClause, String
+    private String getFormattedSql(String formattedSql, String conceptNameInClause, String
             patientAttributeInClause, String startDate, String endDate, String patientAttributesSql, String conceptNamesAndValue) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
         sqlTemplate.add("conceptNameInClauseEscapeQuote", getInClauseWithEscapeQuote(conceptNameInClause));
@@ -140,6 +142,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         sqlTemplate.add("endDate", endDate);
         sqlTemplate.add("patientAttributes", patientAttributesSql);
         sqlTemplate.add("conceptNamesAndValue", conceptNamesAndValue);
+        sqlTemplate.add("conceptSourceName",reportConfig.getConceptSource());
         return sqlTemplate.render();
     }
 
@@ -167,7 +170,11 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
     public String constructConceptNamesString(List<String> conceptNames) {
         ArrayList<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), NULL)) SEPARATOR \\',\\') AS %s";
+        String helperString;
+        if (reportConfig.getConceptSource() == null)
+            helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), NULL)) SEPARATOR \\',\\') AS %s";
+        else
+            helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.code, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), NULL)) SEPARATOR \\',\\') AS %s";
 
         for (String conceptName : conceptNames) {
             conceptName = getInClauseWithEscapeQuote(conceptName);
