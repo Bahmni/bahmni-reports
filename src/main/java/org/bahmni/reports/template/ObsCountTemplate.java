@@ -33,6 +33,7 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+
         CommonComponents.addTo(jasperReport, report, pageType);
 
         CrosstabRowGroupBuilder<String> ageGroup = ctab.rowGroup("base_age_group", String.class)
@@ -90,6 +91,8 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
     }
 
     private String getFormattedSql(String formattedSql, ObsCountConfig reportConfig, String visitType, String startDate, String endDate) {
+        String locationTagNames = SqlUtil.toCommaSeparatedSqlString(reportConfig.getLocationTagNames());
+
         ST sqlTemplate = new ST(formattedSql, '#', '#');
         if ("false".equalsIgnoreCase(reportConfig.getCountOnlyClosedVisits())) {
             sqlTemplate.add("endDateField", "obs.obs_datetime");
@@ -105,6 +108,15 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
             sqlTemplate.add("countOncePerPatient", "");
         } else {
             sqlTemplate.add("countOncePerPatient", "SUM");
+        }
+        if (StringUtils.isNotBlank(locationTagNames)) {
+            String countOnlyTaggedLocationsJoin = String.format("INNER JOIN " +
+                    "(SELECT DISTINCT location_id " +
+                    "FROM location_tag_map INNER JOIN location_tag ON location_tag_map.location_tag_id = location_tag.location_tag_id " +
+                    " AND location_tag.name IN (%s)) locations ON locations.location_id = e.location_id", locationTagNames);
+            sqlTemplate.add("countOnlyTaggedLocationsJoin", countOnlyTaggedLocationsJoin);
+        } else {
+            sqlTemplate.add("countOnlyTaggedLocationsJoin", "");
         }
         return sqlTemplate.render();
     }

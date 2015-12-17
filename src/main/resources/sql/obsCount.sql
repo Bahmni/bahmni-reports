@@ -48,6 +48,7 @@ FROM (SELECT
                    ON obs.concept_id = cn.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED' AND obs.voided = 0 AND
                       cn.voided = 0
                  INNER JOIN encounter e ON obs.encounter_id = e.encounter_id
+                 #countOnlyTaggedLocationsJoin#
                  INNER JOIN visit v ON v.visit_id = e.visit_id
                  INNER JOIN visit_attribute va ON va.visit_id = v.visit_id
                  INNER JOIN visit_attribute_type vat
