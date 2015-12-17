@@ -82,6 +82,10 @@ public class ObsBuilder {
         return this;
     }
 
+    public ObsBuilder withId(int id){
+        obs.setId(id);
+        return this;
+    }
     public Obs build() {
         return obs;
     }
