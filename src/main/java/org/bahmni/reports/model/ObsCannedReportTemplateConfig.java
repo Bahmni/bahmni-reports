@@ -14,6 +14,7 @@ public class ObsCannedReportTemplateConfig implements Config {
     private List<String> visitIndependentConcept;
     private String enrolledProgram;
     private Boolean showObsOnlyForProgramDuration;
+    private String conceptSource;
 
     public String getTemplateName() {
         return templateName;
@@ -77,6 +78,14 @@ public class ObsCannedReportTemplateConfig implements Config {
 
     public void setVisitIndependentConcept(List<String> visitIndependentConcept) {
         this.visitIndependentConcept = visitIndependentConcept;
+    }
+
+    public String getConceptSource() {
+        return conceptSource;
+    }
+
+    public void setConceptSource(String conceptSource) {
+        this.conceptSource = conceptSource;
     }
 }
 

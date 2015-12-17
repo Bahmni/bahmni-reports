@@ -30,6 +30,7 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
 
     private static final String ENCOUNTER_CREATE_DATE = "encounterCreateDate";
     private BahmniReportsProperties bahmniReportsProperties;
+    private ObsCannedReportTemplateConfig obsCannedReportTemplateConfig;
 
     public ObsCannedReportTemplate(BahmniReportsProperties bahmniReportsProperties) {
         this.bahmniReportsProperties = bahmniReportsProperties;
@@ -39,6 +40,7 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCannedReportTemplateConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
+        this.obsCannedReportTemplateConfig = report.getConfig();
 
         String templateName = report.getConfig().getTemplateName();
         List<String> patientAttributes = report.getConfig().getPatientAttributes();
@@ -137,8 +139,18 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
         sqlTemplate.add("showObsOnlyForProgramDuration", reportConfig.getShowObsOnlyForProgramDuration());
         sqlTemplate.add("visitIndependentConceptInClause", constructInClause(reportConfig.getVisitIndependentConcept()));
         sqlTemplate.add("visitIndependentConceptInClauseEscaped", getInClauseWithEscapeQuote(constructInClause(reportConfig.getVisitIndependentConcept())));
+        sqlTemplate.add("conceptSourceName", reportConfig.getConceptSource());
+        sqlTemplate.add("listOfObservationTypes", getListOfObservationTypes());
 
         return sqlTemplate.render();
+    }
+
+    private String getListOfObservationTypes() {
+        String conceptSource = obsCannedReportTemplateConfig.getConceptSource();
+        if (conceptSource == null)
+            return "cans.name, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.date_created, e.encounter_datetime";
+        else
+            return "CRT.code, cans.name, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.date_created, e.encounter_datetime";
     }
 
     private String constructInClause(List<String> parameters) {
