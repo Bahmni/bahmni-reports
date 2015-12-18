@@ -52,10 +52,19 @@ INTO @viConceptMaxSelector
 FROM concept_name cn
 WHERE cn.name IN (#visitIndependentConceptInClause#);
 
+
 SELECT GROUP_CONCAT(DISTINCT CONCAT(
-    'IF (patient_attribute_name = \'',name,'\',patient_attribute_value, NULL) AS ' , name
+    'IF (pat.name = \'',name,'\',COALESCE(pacn.name,pa.value,NULL), NULL) AS pat_tr_' , name
 ))
 INTO @patientAttributesSelectClause
+FROM person_attribute_type
+WHERE name IN (#patientAttributesInClause#);
+
+
+SELECT GROUP_CONCAT(DISTINCT CONCAT(
+   'MAX(pat_tr_',name,') AS ' , name
+))
+INTO @patientAttributesMaxSelectClause
 FROM person_attribute_type
 WHERE name IN (#patientAttributesInClause#);
 
@@ -77,8 +86,6 @@ SET @sqlCore = CONCAT('SELECT
   Floor(Datediff(Date(o.date_created), p.birthdate) / 365) as age,
   ',@addressAttributesSql,',
 
-  pat.name as patient_attribute_name,
-  COALESCE(pacn.name,pa.value,NULL) as patient_attribute_value,
 
   cn.name obs_name,
   coalesce(o.value_numeric, o.value_boolean, o.value_text, o.date_created, e.encounter_datetime, NULL)  as obs_value,
@@ -100,15 +107,6 @@ JOIN person_address address
   ON p.person_id = address.person_id
 JOIN person_name pname
   ON p.person_id = pname.person_id
-JOIN person_attribute  pa
-  ON p.person_id = pa.person_id
-JOIN person_attribute_type  pat
-  ON pat.person_attribute_type_id = pa.person_attribute_type_id
-  AND pat.name IN (#patientAttributesInClauseEscapeQuote#)
-LEFT JOIN concept_name pacn
-  ON pa.value = pacn.concept_id
-  AND pat.format like (\'%concept\')
-  AND pacn.concept_name_type like (\'FULLY_SPECIFIED\')
  ',
 IF( "#enrolledProgram#" ="" ,'' ,
 'JOIN patient_program pp
@@ -116,7 +114,7 @@ IF( "#enrolledProgram#" ="" ,'' ,
 JOIN program
   ON program.program_id = pp.program_id
   AND program.name like \'#enrolledProgram#\'' ),'
-WHERE ',@dateFilterQuery,' BETWEEN \'#startDate#\' AND \'#endDate#\'
+WHERE date(',@dateFilterQuery,') BETWEEN \'#startDate#\' AND \'#endDate#\'
   ',@obsForProgramDuration,'
 GROUP BY o.person_id, e.visit_id, cn.name
 ORDER BY o.person_id, o.obs_datetime DESC');
@@ -139,7 +137,7 @@ JOIN concept_name cn
                             JOIN program
                               ON program.program_id = pp.program_id
                               AND program.name like \'#enrolledProgram#\'' ),'
-WHERE ',@dateFilterQuery,' BETWEEN \'#startDate#\' AND \'#endDate#\'
+WHERE date(',@dateFilterQuery,') BETWEEN \'#startDate#\' AND \'#endDate#\'
   ',@obsForProgramDuration,'
 GROUP BY o.person_id,  cn.name
 ORDER BY o.person_id, o.obs_datetime DESC');
@@ -151,6 +149,7 @@ ORDER BY o.person_id, o.obs_datetime DESC');
 
 SET @sql = CONCAT('SELECT
   core.*,
+  ',@patientAttributesSelectClause,',
   vi_core.*,
   ', @conceptSelector,
 
@@ -162,7 +161,17 @@ SET @sql = CONCAT('SELECT
           LEFT JOIN (
           ',@sqlCoreVi,'
           ) vi_core  ON  core.person_id = vi_core.patient_id
-                ');
+
+  LEFT JOIN person_attribute  pa
+    ON core.person_id = pa.person_id
+  LEFT JOIN person_attribute_type  pat
+    ON pat.person_attribute_type_id = pa.person_attribute_type_id
+    AND pat.name IN (#patientAttributesInClauseEscapeQuote#)
+  LEFT JOIN concept_name pacn
+    ON pa.value = pacn.concept_id
+    AND pat.format like (\'%concept\')
+    AND pacn.concept_name_type like (\'FULLY_SPECIFIED\')
+    ');
 
 
 SET @sqlWrapper = CONCAT(
@@ -175,7 +184,7 @@ SET @sqlWrapper = CONCAT(
     ',@addressAttributesSql,
     ',', @conceptMaxSelector,
     ',', @viConceptMaxSelector,
-    ',', @patientAttributesSelectClause,
+    ',', @patientAttributesMaxSelectClause,
     ' FROM (
        ',@sql,'
    ) wrapper
