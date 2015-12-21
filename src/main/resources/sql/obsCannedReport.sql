@@ -88,7 +88,7 @@ SET @sqlCore = CONCAT('SELECT
 
 
   cn.name obs_name,
-  coalesce(o.value_numeric, o.value_boolean, o.value_text, o.date_created, e.encounter_datetime, NULL)  as obs_value,
+  coalesce( cans.name,o.value_numeric, o.value_boolean, o.value_text, o.date_created, e.encounter_datetime, NULL)  as obs_value,
 
   o.obs_datetime,
   e.visit_id
@@ -107,6 +107,9 @@ JOIN person_address address
   ON p.person_id = address.person_id
 JOIN person_name pname
   ON p.person_id = pname.person_id
+LEFT JOIN concept_name as cans
+  ON cans.concept_id = o.value_coded
+  AND cans.concept_name_type = "FULLY_SPECIFIED"
  ',
 IF( "#enrolledProgram#" ="" ,'' ,
 'JOIN patient_program pp
