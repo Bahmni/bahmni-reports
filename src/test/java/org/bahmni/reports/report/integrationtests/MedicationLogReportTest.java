@@ -66,18 +66,18 @@ public class MedicationLogReportTest extends BaseIntegrationTest {
 
         Provider provider = Context.getProviderService().getProvider(1);
 
-        Obs typeOfRegimenObs = new ObsBuilder().withConcept(typeOfTreatmentRegimen).withEncounter(encounter).withDatetime(Date.from(Instant.now())).withValue(onlyFirstLineDrugsConcept).withPerson(person).withId(1).build();
-        Context.getObsService().saveObs(typeOfRegimenObs,"");
+        Obs typeOfRegimenObs = new ObsBuilder().withConcept(typeOfTreatmentRegimen).withEncounter(encounter).withDatetime(Date.from(Instant.now())).withValue(onlyFirstLineDrugsConcept).withPerson(person).build();
+        Context.getObsService().saveObs(typeOfRegimenObs, "");
 
-        Obs tbTreatmentStartObs = new ObsBuilder().withConcept(tbTreatmentStartConcept).withEncounter(encounter).withDatetime(Date.from(Instant.now())).withGroupMembers(typeOfRegimenObs).withPerson(person).withId(2).build();
-        Context.getObsService().saveObs(tbTreatmentStartObs,"");
+        Obs tbTreatmentStartObs = new ObsBuilder().withConcept(tbTreatmentStartConcept).withEncounter(encounter).withDatetime(Date.from(Instant.now())).withGroupMembers(typeOfRegimenObs).withPerson(person).withPreviousVersion(typeOfRegimenObs).build();
+        Context.getObsService().saveObs(tbTreatmentStartObs, "");
 
-        Obs medicationLogTemplateObs = new ObsBuilder().withConcept(medicationLogConcept).withEncounter(encounter).withDatetime(Date.from(Instant.now())).withGroupMembers(tbTreatmentStartObs).withPerson(person).withId(3).build();
-        Context.getObsService().saveObs(medicationLogTemplateObs,"");
+        Obs medicationLogTemplateObs = new ObsBuilder().withConcept(medicationLogConcept).withEncounter(encounter).withDatetime(Date.from(Instant.now())).withGroupMembers(tbTreatmentStartObs).withPerson(person).withPreviousVersion(tbTreatmentStartObs).build();
+        Context.getObsService().saveObs(medicationLogTemplateObs, "");
 
         JsonObject object = new JsonObject();
 
-        object.addProperty("name","Type of regimen");
+        object.addProperty("name", "Type of regimen");
         object.addProperty("fullName", "Medication log, Type of treatment regimen");
         object.add("units", null);
         object.add("hiNormal", null);
@@ -85,6 +85,7 @@ public class MedicationLogReportTest extends BaseIntegrationTest {
 
         List<JsonObject> objectList = new ArrayList<JsonObject>();
         objectList.add(object);
+
 
 //        String a = "[{'name':'Type of regimen','fullName':'Medication log, Type of treatment regimen','units':null,'hiNormal':null,'lowNormal':null}]";
         when(httpClient.get(URI.create("http://192.168.33.10:8080/openmrs/ws/rest/v1/reference-data/leafConcepts?conceptName=Medication+log+Template"))).thenReturn(objectList.toString());
