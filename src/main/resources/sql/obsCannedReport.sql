@@ -54,7 +54,7 @@ WHERE cn.name IN (#visitIndependentConceptInClause#);
 
 
 SELECT GROUP_CONCAT(DISTINCT CONCAT(
-    'IF (pat.name = \'',name,'\',COALESCE(pacn.name,pa.value,NULL), NULL) AS pat_tr_' , name
+    'IF (pat.name = \'',name,'\',COALESCE(pacn.name,pa.value,NULL), NULL) AS `pat_tr_' , name , '`'
 ))
 INTO @patientAttributesSelectClause
 FROM person_attribute_type
@@ -62,7 +62,7 @@ WHERE name IN (#patientAttributesInClause#);
 
 
 SELECT GROUP_CONCAT(DISTINCT CONCAT(
-   'MAX(pat_tr_',name,') AS ' , name
+   'MAX(`pat_tr_',name,'`) AS `' , name, '`'
 ))
 INTO @patientAttributesMaxSelectClause
 FROM person_attribute_type
@@ -70,13 +70,13 @@ WHERE name IN (#patientAttributesInClause#);
 
 SET @addressAttributesSql = REPLACE("#addressAttributesInClause#" ,'\'', '');
 
-SET @dateFilterVar = "ProgramEnrollment";
+SET @dateFilterVar = "#applyDateRangeFor#";
 SELECT CASE @dateFilterVar WHEN 'ProgramEnrollment' THEN  'pp.date_enrolled' ELSE ' o.obs_datetime'  END INTO @dateFilterQuery;
 
-SET @ShowObsOnlyForProgramDuration = FALSE ;
-SELECT IF(@ShowObsOnlyForProgramDuration AND "#enrolledProgram#" != "",'AND o.obs_datetime BETWEEN pp.date_enrolled AND pp.date_completed','') INTO @obsForProgramDuration;
+SET @ShowObsOnlyForProgramDuration = #showObsOnlyForProgramDuration# ;
+SELECT IF(@ShowObsOnlyForProgramDuration AND ("#enrolledProgram#" != ""),'AND o.obs_datetime BETWEEN pp.date_enrolled AND IF (pp.date_completed = NULL, NOW(), pp.date_completed)','') INTO @obsForProgramDuration;
 
-SET @dateFilterQuery = IF( "#enrolledProgram#" ="" , ' o.obs_datetime'  ,@dateFilterQuery);
+SET @dateFilterQuery = IF( "#enrolledProgram#" ="" , ' o.obs_datetime '  ,@dateFilterQuery);
 
 SET @sqlCore = CONCAT('SELECT
   pi.identifier,
@@ -85,7 +85,6 @@ SET @sqlCore = CONCAT('SELECT
   p.gender,
   Floor(Datediff(Date(o.date_created), p.birthdate) / 365) as age,
   ',@addressAttributesSql,',
-
 
   cn.name obs_name,
   coalesce( cans.name,o.value_numeric, o.value_boolean, o.value_text, o.date_created, e.encounter_datetime, NULL)  as obs_value,
@@ -196,4 +195,3 @@ SET @sqlWrapper = CONCAT(
 
 PREPARE stmt FROM @sqlWrapper;
 EXECUTE stmt;
-

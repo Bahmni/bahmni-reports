@@ -3,6 +3,7 @@ package org.bahmni.reports.web;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.exception.DRException;
+import org.apache.http.entity.ContentType;
 import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
@@ -105,6 +106,11 @@ public class MainReportController {
         } catch (DRException | IOException e) {
             logger.error("Could not convert response", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            String errorMessage = e.getMessage();
+            String content = "<h2>Incorrect Configuration</h2><h3>" + (errorMessage.substring(errorMessage.indexOf(':') + 2) +"</h3>");
+            response.setContentLength(content.length());
+            response.setContentType("text/html");
+            response.getOutputStream().write(content.getBytes());
         }
     }
 }
