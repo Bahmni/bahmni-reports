@@ -74,7 +74,7 @@ SET @dateFilterVar = "#applyDateRangeFor#";
 SELECT CASE @dateFilterVar WHEN 'ProgramEnrollment' THEN  'pp.date_enrolled' ELSE ' o.obs_datetime'  END INTO @dateFilterQuery;
 
 SET @ShowObsOnlyForProgramDuration = #showObsOnlyForProgramDuration# ;
-SELECT IF(@ShowObsOnlyForProgramDuration AND ("#enrolledProgram#" != ""),'AND o.obs_datetime BETWEEN pp.date_enrolled AND IF (pp.date_completed = NULL, NOW(), pp.date_completed)','') INTO @obsForProgramDuration;
+SELECT IF(@ShowObsOnlyForProgramDuration AND ("#enrolledProgram#" != ""),'AND o.obs_datetime BETWEEN pp.date_enrolled AND IF (pp.date_completed IS NULL, NOW(), pp.date_completed)','') INTO @obsForProgramDuration;
 
 SET @dateFilterQuery = IF( "#enrolledProgram#" ="" , ' o.obs_datetime '  ,@dateFilterQuery);
 
