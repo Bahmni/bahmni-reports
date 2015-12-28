@@ -60,20 +60,9 @@
     <visit_attribute_type visit_attribute_type_id="1" name="Audit Date" datatype="org.openmrs.customdatatype.datatype.DateDatatype" min_occurs="0" max_occurs="1" creator="1" date_created="2005-01-01 00:00:00.0" retired="0" uuid="8770f6d6-7673-11e0-8f03-001e378eb67e" />
     <location location_id="1" name="Unknown Location" description="The default location used when limited information is known" address1="" address2="" city_village="" state_province="" postal_code="" country="" creator="1" date_created="2005-09-22 00:00:00.0" retired="false" uuid="8d6c993e-c2cc-11de-8d13-0010c6dffd0f"/>
     <person_name person_name_id="2" preferred="true" person_id="2" prefix="Mr." given_name="Horatio" middle_name="Test" family_name="Hornblower" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-487d-94ce-c07bb3ca3cc7"/>
+    <person_name person_name_id="1" preferred="true" person_id="1" prefix="Mr." given_name="Horatio" middle_name="Test" family_name="Hornblower" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-487d-94ce-c079b3ca3cc7"/>
     <patient_identifier_type patient_identifier_type_id="3" name="Bahmni Id" format="" validator="org.openmrs.patient.impl.LuhnIdentifierValidator" description="New patient identifier type created for use by the Bahmni Registration System" check_digit="0" creator="1" date_created="2014-09-18 00:00:00" required="1" location_behavior="NOT_USED" retired="0" uuid="81433852-3f10-11e4-adec-0800271c1b75"/>
-
-    <!--<concept concept_id="2"  class_id="11" datatype_id="2" is_set="1" short_name="Medication Log" description="his log is a list of all the medications that the patient is currently taking. Record all medication changes on a new line. Record the date that any medication is stopped or has a change in dose." creator="1" date_created="2004-02-02 00:00:00.0" retired="false" uuid="97097dd9-b092-4b68-a2dc-e5e5be981d92"/>-->
-    <!--<concept concept_id="3"  class_id="11" datatype_id="2" is_set="1" short_name="TB Treatment Start" description="something" creator="1" date_created="2004-02-02 00:00:00.0" retired="false" uuid="97095dd9-b092-4b68-a2dc-e5e5be961d92"/>-->
-    <!--<concept concept_id="4"  class_id="11" datatype_id="2" is_set="0" short_name="Type of regimen" description="something" creator="1" date_created="2004-02-02 00:00:00.0" retired="false" uuid="97097dd9-b092-4b68-a2rc-e5e5be961d02"/>-->
-    <!--<concept concept_id="5"  class_id="11" datatype_id="4" is_set="0" short_name="Only 1st line drugs" description="something" creator="1" date_created="2004-02-02 00:00:00.0" retired="false" uuid="97097dd9-b092-4b68-a2rc-e5e7be961d92"/>-->
-
-    <!--&lt;!&ndash;<concept_view concept_id="2" concept_full_name="Medication log Template" concept_short_name="Medication Log" concept_class_name="Misc" concept_datatype_name="N/A" date_created="2015-09-02 21:05:49"/>&ndash;&gt;-->
-    <!--<concept_name concept_name_id="12" concept_id="2" name="Medication log Template" locale_preferred="1" creator="1" date_created="2015-09-02 21:05:49.0" concept_name_type="FULLY_SPECIFIED" uuid="46e4abf9-f399-41a2-9ec0-11ed4df1d890"/>-->
-
-    <!--<concept_set concept_set_id="1" concept_id="3" concept_set="2" creator="1" date_created="2015-10-20 12:19:06.06" uuid="5b3f9af3-9428-4c34-8f73-54bd79928953"/>-->
-    <!--<concept_set concept_set_id="2" concept_id="4" concept_set="3" creator="1" date_created="2015-10-20 12:19:06.06" uuid="5b3f9af8-9428-4c34-8f73-54bd79928953"/>-->
-
-    <!--<concept_answer concept_answer_id="1" concept_id="4" answer_concept="5" creator="1" date_created="2015-09-14 23:05:59" uuid="5d45804b-4857-4330-ab4e-d2e6aa355f15"/>-->
+    <encounter_role encounter_role_id="1" name="Unknown" description="something" creator="1" date_created="2005-09-22 00:00:00.0" retired="0" uuid="81433882-3f10-11e4-adec-0800271c1b75"/>
 
     <concept concept_id="1"  class_id="1" datatype_id="2" is_set="0" short_name="Test reference" description="something" creator="1" date_created="2004-02-02 00:00:00.0" retired="false" uuid="97097dd9-b092-4b68-a2dc-e5e5be961d92"/>
     <concept_reference_source concept_source_id="1" name="EndTB" creator="1" description="some description" date_created="2008-08-15 15:57:09.0"/>

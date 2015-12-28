@@ -77,8 +77,6 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     public void beforeBaseIntegrationTest() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        String json = "{\"datatype\":{\"display\":\"coded\"}}";//TODO: update it with correct json
-//        when(httpClient.get(any(URI.class))).thenReturn(json);
         when(bahmniReportsProperties.getConfigFilePath()).thenReturn("src/test/resources/reports.json");
         when(bahmniReportsProperties.getOpenmrsRootUrl()).thenReturn(dbProperties.getOpenmrsRootUrl());
         when(bahmniReportsProperties.getOpenmrsServiceUser()).thenReturn(dbProperties.getOpenmrsServiceUser());
@@ -86,13 +84,6 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         when(bahmniReportsProperties.getOpenmrsConnectionTimeout()).thenReturn(dbProperties.getOpenmrsConnectionTimeout());
         when(bahmniReportsProperties.getOpenmrsReplyTimeout()).thenReturn(dbProperties.getOpenmrsReplyTimeout());
         when(allDatasources.getConnectionFromDatasource(any(BaseReportTemplate.class))).thenReturn(getDatabaseConnection());
-
-//        when(any(HttpClient.class)).thenReturn(httpClient);
-//        whenNew(HttpClient.class).withParameterTypes(ConnectionDetails.class,OpenMRSLoginAuthenticator.class).withArguments(any(ConnectionDetails.class), any(OpenMRSLoginAuthenticator.class)).thenReturn(httpClient);
-
-
-//        HttpClient httpClient = Mockito.mock(HttpClient.class);
-
 
         setUpTestData();
         Context.authenticate("admin", "test");
