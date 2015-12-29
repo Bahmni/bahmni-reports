@@ -42,6 +42,8 @@
     <encounter_type encounter_type_id="7" name="Consultation" description="Consultation" creator="1" retired="false" date_created="2008-08-15 15:39:55.0"  uuid="02c933ab-b74b-4ee4-b6e5-ffb6d09a0ac8"/>
     <provider provider_id="1" person_id="1" identifier="Test" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="c2299800-cca9-11e0-9572-0800200c9a66" />
     <global_property property="order.nextOrderNumberSeed" property_value="1" uuid="7ed7aeb4-0663-11e1-8c99-2b4f0c4f671b" />
+    <concept_map_type concept_map_type_id="1" name="SAME-AS" creator="1" date_created="2014-09-18 00:00:00" uuid="35543629-7d8c-11e1-909d-c80aa9edcf4e"/>
+    <global_property property="concept.defaultConceptMapType" property_value="SAME-AS" uuid="7ed7aeb4-0663-91e1-8c99-2b4f0c4f671b" />
     <order_type order_type_id="17" name="Plain Order" java_class_name="org.openmrs.Order" description="Plain order" creator="1" date_created="2008-08-15 15:49:04.0" retired="0" uuid="dd3fb1d0-ae06-11e3-a5e2-0800200c9a77"/>
     <role role="Provider" description="General privileges held by all providers" uuid="3480cb6d-c291-46c8-8d3a-96dc33d199fb"/>
     <person person_id="501" gender="F" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="df8ae447-6745-45be-b859-403241d9913c"/>
@@ -63,10 +65,4 @@
     <person_name person_name_id="1" preferred="true" person_id="1" prefix="Mr." given_name="Horatio" middle_name="Test" family_name="Hornblower" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-487d-94ce-c079b3ca3cc7"/>
     <patient_identifier_type patient_identifier_type_id="3" name="Bahmni Id" format="" validator="org.openmrs.patient.impl.LuhnIdentifierValidator" description="New patient identifier type created for use by the Bahmni Registration System" check_digit="0" creator="1" date_created="2014-09-18 00:00:00" required="1" location_behavior="NOT_USED" retired="0" uuid="81433852-3f10-11e4-adec-0800271c1b75"/>
     <encounter_role encounter_role_id="1" name="Unknown" description="something" creator="1" date_created="2005-09-22 00:00:00.0" retired="0" uuid="81433882-3f10-11e4-adec-0800271c1b75"/>
-
-    <concept concept_id="1"  class_id="1" datatype_id="2" is_set="0" short_name="Test reference" description="something" creator="1" date_created="2004-02-02 00:00:00.0" retired="false" uuid="97097dd9-b092-4b68-a2dc-e5e5be961d92"/>
-    <concept_reference_source concept_source_id="1" name="EndTB" creator="1" description="some description" date_created="2008-08-15 15:57:09.0"/>
-    <concept_reference_term concept_reference_term_id="2"  concept_source_id="1" name="reference term" code="1234" creator="1" date_created="2008-08-15 15:57:09.0" uuid="341b4e41-c90c-484f-b6ed-71dc8da222de"/>
-    <concept_map_type concept_map_type_id="1" name="SAME-AS" creator="1" date_created="2014-09-18 00:00:00" uuid="35543629-7d8c-11e1-909d-c80aa9edcf4e"/>
-    <concept_reference_map concept_map_id="1" concept_reference_term_id="2" creator="1" date_created="2008-08-15 15:57:09.9" concept_id="1" uuid="341b4e41-c90c-484f-b6ed-71dc8da222di" concept_map_type_id="1"/>
 </dataset>

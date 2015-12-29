@@ -74,6 +74,19 @@ public class MedicationLogReportTest extends BaseIntegrationTest {
         Obs medicationLogTemplateObs = new ObsBuilder().withConcept(medicationLogConcept).withEncounter(encounter).withDatetime(DateUtil.parseDate("2015-11-02")).withGroupMembers(tbTreatmentStartObs).withPerson(person).build();
         Context.getObsService().saveObs(medicationLogTemplateObs, "");
 
+        ConceptSource conceptSource= new ConceptReferenceSourceBuilder().withName("EndTB").withDescription("dictionary").withDateCreated(DateUtil.parseDate("2015-11-02")).withRetired(false).build();
+        Context.getConceptService().saveConceptSource(conceptSource);
+
+        ConceptReferenceTerm conceptReferenceTerm = new ConceptReferenceTermBuilder().withConceptSource(conceptSource).withCode("1234").withName("referenceterm").withDateCreated(DateUtil.parseDate("2015-11-02")).build();
+        Context.getConceptService().saveConceptReferenceTerm(conceptReferenceTerm);
+
+        ConceptMap conceptMap = new ConceptReferenceMapBuilder().withConcept(onlyFirstLineDrugsConcept).withConceptReferenceTerm(conceptReferenceTerm).withDateCreated(DateUtil.parseDate("2015-11-02")).build();
+        Set<ConceptMap> conceptMaps = new HashSet<ConceptMap>();
+        conceptMaps.add(conceptMap);
+
+        onlyFirstLineDrugsConcept.setConceptMappings(conceptMaps);
+        Context.getConceptService().saveConcept(onlyFirstLineDrugsConcept);
+
         JsonObject object = new JsonObject();
 
         object.addProperty("name", "Type of regimen");
@@ -85,7 +98,7 @@ public class MedicationLogReportTest extends BaseIntegrationTest {
         List<JsonObject> objectList = new ArrayList<JsonObject>();
         objectList.add(object);
 
-        when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl()+"/reference-data/leafConcepts?conceptName=Medication+log+Template"))).thenReturn(objectList.toString());
+        when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/leafConcepts?conceptName=Medication+log+Template"))).thenReturn(objectList.toString());
     }
 
     @Test
@@ -95,5 +108,11 @@ public class MedicationLogReportTest extends BaseIntegrationTest {
         assertNotNull(report.getRow(1));
     }
 
+    @Test
+    public void shouldRetrieveReferenceCodeIfItisPresent() throws Exception {
+        Report report = fetchReport("Medication Log Data Export", "2015-10-13", "2016-10-21");
+        assertEquals(9, report.getNumberOfColumns());
+        assertEquals("1234",report.getColumnValueInRow(1,"Type of regimen"));
+    }
 
 }
