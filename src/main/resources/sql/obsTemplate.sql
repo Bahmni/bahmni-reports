@@ -16,7 +16,11 @@ SET @conceptSourceId = NULL;
 
 SELECT concept_source_id from concept_reference_source WHERE name = "#conceptSourceName#" into @conceptSourceId;
 
-SET @conceptRefMapSql = "LEFT JOIN (SELECT CRM.concept_id,  CRT.code FROM (SELECT * from concept_reference_term  WHERE concept_source_id = @conceptSourceId) as CRT INNER JOIN concept_reference_map as CRM ON CRT.concept_reference_term_id = CRM.concept_reference_term_id) CRT ON answer.concept_id = CRT.concept_id";
+SET @conceptMapType = NULL;
+
+SELECT concept_map_type_id from concept_map_type WHERE name = 'SAME-AS' into @conceptMapType;
+
+SET @conceptRefMapSql = "LEFT JOIN (SELECT CRM.concept_id,  CRT.code FROM (SELECT * from concept_reference_term  WHERE concept_source_id = @conceptSourceId) as CRT INNER JOIN concept_reference_map as CRM ON CRT.concept_reference_term_id = CRM.concept_reference_term_id AND CRM.concept_map_type_id = @conceptMapType) CRT ON answer.concept_id = CRT.concept_id";
 
 SET @sql = CONCAT('SELECT
                   o.identifier,

@@ -6,7 +6,8 @@ import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
 import org.openmrs.api.ConceptNameType;
 import org.openmrs.api.context.Context;
-import org.openmrs.util.LocaleUtility;
+
+import java.util.Locale;
 
 public class ConceptBuilder {
     private final org.openmrs.Concept concept;
@@ -20,7 +21,7 @@ public class ConceptBuilder {
     }
 
     public ConceptBuilder withName(String conceptName) {
-        ConceptName name = new ConceptName(conceptName, LocaleUtility.getDefaultLocale());
+        ConceptName name = new ConceptName(conceptName, Locale.ENGLISH);
         return withName(name);
     }
 

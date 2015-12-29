@@ -5,8 +5,6 @@ import org.openmrs.EncounterType;
 import org.openmrs.Patient;
 import org.openmrs.Visit;
 
-import java.util.Date;
-
 public class EncounterBuilder {
     private final Encounter encounter;
 

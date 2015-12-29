@@ -1,7 +1,6 @@
 package org.bahmni.reports.report.integrationtests;
 
 import org.bahmni.reports.builder.ConceptBuilder;
-import org.bahmni.reports.builder.DateUtil;
 import org.bahmni.reports.builder.EncounterBuilder;
 import org.bahmni.reports.builder.OrderBuilder;
 import org.bahmni.reports.builder.VisitBuilder;
@@ -20,8 +19,6 @@ import org.openmrs.PatientIdentifierType;
 import org.openmrs.Provider;
 import org.openmrs.Visit;
 import org.openmrs.api.context.Context;
-
-import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 

@@ -81,7 +81,6 @@ public class ObsBuilder {
         obs.setGroupMembers(new HashSet<>(Arrays.asList(groupMember)));
         return this;
     }
-
     public Obs build() {
         return obs;
     }

@@ -8,6 +8,14 @@ import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.reports.web.MainReportController;
 import org.bahmni.reports.wrapper.Report;
 import org.bahmni.webclients.HttpClient;
+import org.dbunit.DatabaseUnitException;
+import org.dbunit.database.DatabaseConfig;
+import org.dbunit.database.DatabaseConnection;
+import org.dbunit.database.IDatabaseConnection;
+import org.dbunit.dataset.DefaultDataSet;
+import org.dbunit.dataset.DefaultTable;
+import org.dbunit.ext.h2.H2DataTypeFactory;
+import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
@@ -17,7 +25,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseContextSensitiveTest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -28,10 +35,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
-import java.net.URI;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.Properties;
 
 import static org.mockito.Matchers.any;
@@ -49,14 +53,16 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     protected MockMvc mockMvc;
 
+    private static boolean isBaseSetup;
+
     @Mock
-    private HttpClient httpClient;
+    protected HttpClient httpClient;
 
     @Mock
     private JasperResponseConverter jasperResponseConverter;
 
     @Mock
-    private BahmniReportsProperties bahmniReportsProperties;
+    protected BahmniReportsProperties bahmniReportsProperties;
 
     @Mock
     private AllDatasources allDatasources;
@@ -66,14 +72,19 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     @InjectMocks
     private MainReportController controller;
 
+
     @Before
     public void beforeBaseIntegrationTest() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        String json = "{\"datatype\":{\"display\":\"coded\"}}";//TODO: update it with correct json
-        when(httpClient.get(any(URI.class))).thenReturn(json);
         when(bahmniReportsProperties.getConfigFilePath()).thenReturn("src/test/resources/reports.json");
+        when(bahmniReportsProperties.getOpenmrsRootUrl()).thenReturn(dbProperties.getOpenmrsRootUrl());
+        when(bahmniReportsProperties.getOpenmrsServiceUser()).thenReturn(dbProperties.getOpenmrsServiceUser());
+        when(bahmniReportsProperties.getOpenmrsServicePassword()).thenReturn(dbProperties.getOpenmrsServicePassword());
+        when(bahmniReportsProperties.getOpenmrsConnectionTimeout()).thenReturn(dbProperties.getOpenmrsConnectionTimeout());
+        when(bahmniReportsProperties.getOpenmrsReplyTimeout()).thenReturn(dbProperties.getOpenmrsReplyTimeout());
         when(allDatasources.getConnectionFromDatasource(any(BaseReportTemplate.class))).thenReturn(getDatabaseConnection());
+
         setUpTestData();
         Context.authenticate("admin", "test");
     }
@@ -126,5 +137,63 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         String result = mvcResult.getResponse().getContentAsString();
         perform.andExpect(status().isOk());
         return Report.getReport(result);
+    }
+
+    @Override
+    public void deleteAllData() throws Exception {
+        Context.clearSession();
+        Connection connection = this.getConnection();
+        this.turnOffDBConstraints(connection);
+        String[] types = {"Table"};
+        IDatabaseConnection dbUnitConn = this.setupDatabaseConnection(connection);
+        ResultSet resultSet = connection.getMetaData().getTables((String) null, "PUBLIC", "%",types);
+        DefaultDataSet dataset = new DefaultDataSet();
+
+        while(resultSet.next()) {
+            String tableName = resultSet.getString(3);
+            dataset.addTable(new DefaultTable(tableName));
+        }
+
+        DatabaseOperation.DELETE_ALL.execute(dbUnitConn, dataset);
+        this.turnOnDBConstraints(connection);
+        connection.commit();
+        this.updateSearchIndex();
+        isBaseSetup = false;
+    }
+
+    private void turnOffDBConstraints(Connection connection) throws SQLException {
+        String constraintsOffSql;
+        if(this.useInMemoryDatabase().booleanValue()) {
+            constraintsOffSql = "SET REFERENTIAL_INTEGRITY FALSE";
+        } else {
+            constraintsOffSql = "SET FOREIGN_KEY_CHECKS=0;";
+        }
+
+        PreparedStatement ps = connection.prepareStatement(constraintsOffSql);
+        ps.execute();
+        ps.close();
+    }
+
+    private IDatabaseConnection setupDatabaseConnection(Connection connection) throws DatabaseUnitException {
+        DatabaseConnection dbUnitConn = new DatabaseConnection(connection);
+        if(this.useInMemoryDatabase().booleanValue()) {
+            DatabaseConfig config = dbUnitConn.getConfig();
+            config.setProperty("http://www.dbunit.org/properties/datatypeFactory", new H2DataTypeFactory());
+        }
+
+        return dbUnitConn;
+    }
+
+    private void turnOnDBConstraints(Connection connection) throws SQLException {
+        String constraintsOnSql;
+        if(this.useInMemoryDatabase().booleanValue()) {
+            constraintsOnSql = "SET REFERENTIAL_INTEGRITY TRUE";
+        } else {
+            constraintsOnSql = "SET FOREIGN_KEY_CHECKS=1;";
+        }
+
+        PreparedStatement ps = connection.prepareStatement(constraintsOnSql);
+        ps.execute();
+        ps.close();
     }
 }

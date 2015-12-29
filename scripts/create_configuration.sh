@@ -7,7 +7,7 @@ mkdir $TARGET_DIR
 echo """openelis.url=jdbc:postgresql://localhost:5432/clinlims
 openelis.username=clinlims
 openelis.password=clinlims
-openmrs.url=jdbc:mysql://localhost:3306/openmrs
+openmrs.url=jdbc:mysql://localhost:3306/openmrs?allowMultiQueries=true
 openmrs.username=openmrs-user
 openmrs.password=password
 config.file.path=/var/www/bahmni_config/openmrs/apps/reports/reports.json
@@ -21,7 +21,7 @@ macrotemplates.temp.directory=/tmp/""" > $TARGET_DIR/bahmni-reports.properties
 echo """openelis.url=jdbc:postgresql://localhost:5432/clinlims
 openelis.username=clinlims
 openelis.password=clinlims
-openmrs.url=jdbc:mysql://localhost:3306/reports_integration_tests
+openmrs.url=jdbc:mysql://localhost:3306/reports_integration_tests?allowMultiQueries=true
 openmrs.username=openmrs-user
 openmrs.password=password
 config.file.path=/var/www/bahmni_config/openmrs/apps/reports/reports.json

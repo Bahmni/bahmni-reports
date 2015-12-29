@@ -11,9 +11,7 @@ import org.bahmni.reports.model.ObsTemplateConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.util.CommonComponents;
-import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
-import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.stringtemplate.v4.ST;
@@ -54,11 +52,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
             patientAttributes = new ArrayList<>();
         }
 
-        ConnectionDetails connectionDetails = new ConnectionDetails(bahmniReportsProperties.getOpenmrsRootUrl() + "/session",
-                bahmniReportsProperties.getOpenmrsServiceUser(),
-                bahmniReportsProperties.getOpenmrsServicePassword(), bahmniReportsProperties.getOpenmrsConnectionTimeout(),
-                bahmniReportsProperties.getOpenmrsReplyTimeout());
-        HttpClient httpClient = new HttpClient(connectionDetails, new OpenMRSLoginAuthenticator(connectionDetails));
+        HttpClient httpClient = report.getHttpClient();
 
         List<ConceptDetails> conceptDetails = null;
         try {
