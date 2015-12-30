@@ -7,7 +7,16 @@ public class IpdPatientsConfig implements Config {
     private List<String> patientAttributes;
     private List<String> conceptNames;
     private List<String> addressAttributes;
+    private List<String> locationTagNames;
     private String filterBy;
+
+    public List<String> getLocationTagNames() {
+        return locationTagNames;
+    }
+
+    public void setLocationTagNames(List<String> locationTagNames) {
+        this.locationTagNames = locationTagNames;
+    }
 
     public List<String> getPatientAttributes() {
         return patientAttributes;

@@ -31,6 +31,7 @@ SET @sql = CONCAT('SELECT
     INNER JOIN person_name pn ON pn.person_id = v.patient_id
     INNER JOIN person_address pa ON pa.person_id = v.patient_id
     INNER JOIN encounter e ON e.visit_id = v.visit_id
+    #countOnlyTaggedLocationsJoin#
     LEFT JOIN (
       #patientAttributeSql#
     ) personattribute on personattribute.person_id = p.person_id

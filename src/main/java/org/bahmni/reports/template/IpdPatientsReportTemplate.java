@@ -6,11 +6,13 @@ import net.sf.dynamicreports.report.builder.style.StyleBuilder;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.bahmni.reports.model.IpdPatientsConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.PatientAttributesHelper;
+import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -60,7 +62,7 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
 
         addColumns(jasperReport, report.getConfig().getConceptNames(), minimalColumnStyle);
 
-        String sqlString = getSqlString(patientAttributesHelper, conceptNames, startDate, endDate, getFilterColumn(report));
+        String sqlString = getSqlString(report.getConfig(),patientAttributesHelper, conceptNames, startDate, endDate, getFilterColumn(report));
         Statement stmt = null;
         try {
             stmt = connection.createStatement();
@@ -90,7 +92,8 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
         }
     }
 
-    private String getSqlString(PatientAttributesHelper patientAttributesHelper,String conceptNames, String startDate, String endDate, String filterColumn) {
+    private String getSqlString(IpdPatientsConfig reportConfig,PatientAttributesHelper patientAttributesHelper,String conceptNames, String startDate, String endDate, String filterColumn) {
+        String locationTagNames = SqlUtil.toEscapedCommaSeparatedSqlString(reportConfig.getLocationTagNames());
         String sql = getFileContent("sql/ipdPatients.sql");
         ST sqlTemplate = new ST(sql, '#', '#');
         sqlTemplate.add("startDate", startDate);
@@ -99,6 +102,15 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
         sqlTemplate.add("filterColumn", filterColumn);
         sqlTemplate.add("patientAttributesFromClause",patientAttributesHelper.getFromClause());
         sqlTemplate.add("patientAttributeSql",patientAttributesHelper.getSql());
+        if (StringUtils.isNotBlank(locationTagNames)) {
+            String countOnlyTaggedLocationsJoin = String.format("INNER JOIN " +
+                    "(SELECT DISTINCT location_id " +
+                    "FROM location_tag_map INNER JOIN location_tag ON location_tag_map.location_tag_id = location_tag.location_tag_id " +
+                    " AND location_tag.name IN (%s)) locations ON locations.location_id = e.location_id", locationTagNames);
+            sqlTemplate.add("countOnlyTaggedLocationsJoin", countOnlyTaggedLocationsJoin);
+        } else {
+            sqlTemplate.add("countOnlyTaggedLocationsJoin", "");
+        }
         return sqlTemplate.render();
     }
 
