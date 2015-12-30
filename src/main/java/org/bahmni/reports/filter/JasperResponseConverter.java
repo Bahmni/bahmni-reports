@@ -28,6 +28,7 @@ public class JasperResponseConverter {
         switch (responseType) {
             case "text/html":
                 response.setContentType("text/html");
+                report.pageFooter(Templates.footerComponent);
                 report.toHtml(outputStream);
                 break;
             case "application/vnd.ms-excel":
@@ -54,6 +55,7 @@ public class JasperResponseConverter {
             case "application/pdf":
                 response.setContentType("application/pdf");
                 response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
+                report.pageFooter(Templates.footerComponent);
                 report.toPdf(outputStream);
                 break;
             case "text/csv":

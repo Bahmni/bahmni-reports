@@ -10,7 +10,6 @@ public class CommonComponents {
     public static JasperReportBuilder addTo(JasperReportBuilder jasperReport, Report report, PageType pageType) {
         return jasperReport
                 .setPageFormat(pageType, PageOrientation.LANDSCAPE)
-                .pageFooter(Templates.footerComponent)
                 .setReportName(report.getName())
                 .setTemplate(Templates.reportTemplate);
     }
