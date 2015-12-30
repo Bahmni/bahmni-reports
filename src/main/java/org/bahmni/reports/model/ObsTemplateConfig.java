@@ -8,11 +8,20 @@ import java.util.List;
 public class ObsTemplateConfig implements Config {
     private String templateName;
     private List<String> patientAttributes;
+    private List<String> locationTagNames;
     private String applyDateRangeFor;
     private String conceptSource;
 
     public String getTemplateName() {
         return templateName;
+    }
+
+    public List<String> getLocationTagNames() {
+        return locationTagNames;
+    }
+
+    public void setLocationTagNames(List<String> locationTagNames) {
+        this.locationTagNames = locationTagNames;
     }
 
     public void setTemplateName(String templateName) {

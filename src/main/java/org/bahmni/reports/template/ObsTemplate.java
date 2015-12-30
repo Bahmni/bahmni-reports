@@ -5,12 +5,15 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.constant.PageType;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.ConceptDetails;
 import org.bahmni.reports.model.ObsTemplateConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.util.CommonComponents;
+import org.bahmni.reports.util.SqlUtil;
+import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
@@ -31,7 +34,6 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource("openmrs")
 public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
-
     private static final String ENCOUNTER_CREATE_DATE = "encounterCreateDate";
     private BahmniReportsProperties bahmniReportsProperties;
     private ObsTemplateConfig reportConfig;
@@ -126,6 +128,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
     private String getFormattedSql(String formattedSql, String conceptNameInClause, String
             patientAttributeInClause, String startDate, String endDate, String patientAttributesSql, String conceptNamesAndValue) {
+        String locationTagNames = SqlUtil.toEscapedCommaSeparatedSqlString(reportConfig.getLocationTagNames());
         ST sqlTemplate = new ST(formattedSql, '#', '#');
         sqlTemplate.add("conceptNameInClauseEscapeQuote", getInClauseWithEscapeQuote(conceptNameInClause));
         sqlTemplate.add("patientAttributesInClause", patientAttributeInClause);
@@ -137,6 +140,16 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         sqlTemplate.add("patientAttributes", patientAttributesSql);
         sqlTemplate.add("conceptNamesAndValue", conceptNamesAndValue);
         sqlTemplate.add("conceptSourceName",reportConfig.getConceptSource());
+
+        if (StringUtils.isNotBlank(locationTagNames)) {
+            String countOnlyTaggedLocationsJoin = String.format("INNER JOIN " +
+                    "(SELECT DISTINCT location_id " +
+                    "FROM location_tag_map INNER JOIN location_tag ON location_tag_map.location_tag_id = location_tag.location_tag_id " +
+                    " AND location_tag.name IN (%s)) locations ON locations.location_id = e.location_id", locationTagNames);
+            sqlTemplate.add("countOnlyTaggedLocationsJoin", countOnlyTaggedLocationsJoin);
+        } else {
+            sqlTemplate.add("countOnlyTaggedLocationsJoin", "");
+        }
         return sqlTemplate.render();
     }
 
@@ -189,3 +202,4 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         return StringUtils.join(parts, ", ");
     }
 }
+

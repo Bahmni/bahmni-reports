@@ -58,6 +58,7 @@ SET @sql = CONCAT('SELECT
                       IF(@conceptSourceId IS NULL, '', ', CRT.code'),
                      ' FROM obs ob
                        JOIN encounter e ON ob.encounter_id = e.encounter_id AND cast(#applyDateRangeFor# AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\' AND ob.voided IS FALSE
+                       #countOnlyTaggedLocationsJoin#
                        JOIN (select encounter_id from obs
                                             where concept_id = (select concept_id from concept_view where concept_full_name = \'#templateName#\') and voided is false) e1
                        ON e.encounter_id = e1.encounter_id
