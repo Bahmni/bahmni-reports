@@ -58,7 +58,7 @@ public class OrderFulfillmentReportTest extends BaseIntegrationTest {
     @Test
     public void shouldRetrieveOrderFulfillmentReport() throws Exception {
         Report report = fetchReport("Order Fulfillment Report", "2000-10-13", "2016-10-21");
-        assertEquals(9, report.getNumberOfColumns());
+        assertEquals(8, report.getNumberOfColumns());
         assertEquals("Order Fulfillment Report", report.getReportName());
         assertEquals("Plain Order Plain Concept 02-Nov-2015 SEM123-0 Horatio Hornblower  M No", report.getRowAsString(1, " "));
         assertEquals("Plain Order", report.getColumnValueInRow(1, "Order Type"));
