@@ -5,7 +5,9 @@ import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
 import org.bahmni.reports.template.BaseReportTemplate;
+import org.bahmni.reports.web.Initializer;
 import org.bahmni.reports.web.MainReportController;
+import org.bahmni.reports.web.security.SecurityConfig;
 import org.bahmni.reports.wrapper.Report;
 import org.bahmni.webclients.HttpClient;
 import org.dbunit.DatabaseUnitException;
@@ -27,7 +29,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseContextSensitiveTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -46,7 +50,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @Ignore
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:TestingApplicationContext.xml"}, inheritLocations = true)
+@WebAppConfiguration
 @Transactional
 @TransactionConfiguration(defaultRollback = false)
 public class BaseIntegrationTest extends BaseContextSensitiveTest {
