@@ -16,7 +16,7 @@ SELECT GROUP_CONCAT(DISTINCT
                     CONCAT(
                         'IF(cn.name = ''',
                         name,
-                        ''', coalesce(#listOfObservationTypes#), NULL) AS `vi_tr_',
+                        ''', coalesce(',#listOfObservationTypes#,'), NULL) AS `vi_tr_',
                         name, '`'
                     )
 )
@@ -94,7 +94,7 @@ SET @sqlCore = CONCAT('SELECT
   ',@addressAttributesSql,',
 
   cn.name obs_name,
-  coalesce(#listOfObservationTypes#)  as obs_value,
+  coalesce(',#listOfObservationTypes#,')  as obs_value,
   o.obs_datetime,
   e.visit_id ',
   IF(@conceptSourceId IS NULL, '', ',CRT.code'),

@@ -150,7 +150,7 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
         if (conceptSource == null)
             return "cans.name, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.date_created, e.encounter_datetime";
         else
-            return "CRT.code, cans.name, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.date_created, e.encounter_datetime";
+            return "IF (@conceptSourceId IS NULL, '', 'CRT.code,'),'cans.name, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.date_created, e.encounter_datetime'";
     }
 
     private String constructInClause(List<String> parameters) {
