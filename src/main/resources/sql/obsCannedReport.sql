@@ -1,3 +1,6 @@
+SET @conceptSourceId = NULL;
+SELECT concept_source_id from concept_reference_source WHERE name = "#conceptSourceName#" into @conceptSourceId;
+
 SET @conceptSelector = NULL;
 SELECT GROUP_CONCAT(DISTINCT
                     CONCAT(
@@ -16,7 +19,7 @@ SELECT GROUP_CONCAT(DISTINCT
                     CONCAT(
                         'IF(cn.name = ''',
                         name,
-                        ''', coalesce(',#listOfObservationTypes#,'), NULL) AS `vi_tr_',
+                        ''', coalesce(',IF (@conceptSourceId IS NULL, '', 'CRT.code,'),'cans.name, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.date_created, e.encounter_datetime','), NULL) AS `vi_tr_',
                         name, '`'
                     )
 )
@@ -78,11 +81,6 @@ SELECT IF(@ShowObsOnlyForProgramDuration AND ("#enrolledProgram#" != ""),'AND o.
 
 SET @dateFilterQuery = IF( "#enrolledProgram#" ="" , ' o.obs_datetime '  ,@dateFilterQuery);
 
-
-SET @conceptSourceId = NULL;
-
-SELECT concept_source_id from concept_reference_source WHERE name = "#conceptSourceName#" into @conceptSourceId;
-
 SET @conceptRefMapSql = " LEFT JOIN (SELECT CRM.concept_id,  CRT.code FROM (SELECT * from concept_reference_term  WHERE concept_source_id = @conceptSourceId) as CRT INNER JOIN concept_reference_map as CRM ON CRT.concept_reference_term_id = CRM.concept_reference_term_id) CRT ON cans.concept_id = CRT.concept_id ";
 
 SET @sqlCore = CONCAT('SELECT
@@ -94,7 +92,7 @@ SET @sqlCore = CONCAT('SELECT
   ',@addressAttributesSql,',
 
   cn.name obs_name,
-  coalesce(',#listOfObservationTypes#,')  as obs_value,
+  coalesce(',IF (@conceptSourceId IS NULL, '', 'CRT.code,'),'cans.name, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.date_created, e.encounter_datetime',')  as obs_value,
   o.obs_datetime,
   e.visit_id ',
   IF(@conceptSourceId IS NULL, '', ',CRT.code'),

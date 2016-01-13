@@ -140,17 +140,8 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
         sqlTemplate.add("visitIndependentConceptInClause", constructInClause(reportConfig.getVisitIndependentConcept()));
         sqlTemplate.add("visitIndependentConceptInClauseEscaped", getInClauseWithEscapeQuote(constructInClause(reportConfig.getVisitIndependentConcept())));
         sqlTemplate.add("conceptSourceName", reportConfig.getConceptSource());
-        sqlTemplate.add("listOfObservationTypes", getListOfObservationTypes());
 
         return sqlTemplate.render();
-    }
-
-    private String getListOfObservationTypes() {
-        String conceptSource = obsCannedReportTemplateConfig.getConceptSource();
-        if (conceptSource == null)
-            return "cans.name, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.date_created, e.encounter_datetime";
-        else
-            return "IF (@conceptSourceId IS NULL, '', 'CRT.code,'),'cans.name, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.date_created, e.encounter_datetime'";
     }
 
     private String constructInClause(List<String> parameters) {
