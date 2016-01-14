@@ -1,11 +1,15 @@
 package org.bahmni.reports.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ConceptDetails {
     private String name;
     private String fullName;
     private String units;
     private Double hiNormal;
     private Double lowNormal;
+    private Map<String, Object> attributes = new HashMap<>();
 
     public ConceptDetails() {
     }
@@ -65,5 +69,17 @@ public class ConceptDetails {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public Object getAttribute(String key) {
+        return attributes.get(key);
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
     }
 }
