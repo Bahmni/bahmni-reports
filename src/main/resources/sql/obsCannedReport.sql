@@ -1,3 +1,7 @@
+SET SESSION group_concat_max_len = 100000;
+SET @conceptSourceId = NULL;
+SELECT concept_source_id from concept_reference_source WHERE name = "#conceptSourceName#" into @conceptSourceId;
+
 SET @conceptSelector = NULL;
 SELECT GROUP_CONCAT(DISTINCT
                     CONCAT(
@@ -9,7 +13,7 @@ SELECT GROUP_CONCAT(DISTINCT
 )
 INTO @conceptSelector
 FROM concept_name cn
-WHERE cn.name IN (#conceptNameInClause#);
+WHERE cn.concept_name_type = "FULLY_SPECIFIED" AND cn.name IN (#conceptNameInClause#);
 
 SET @viConceptSelector = NULL;
 SELECT GROUP_CONCAT(DISTINCT
@@ -22,7 +26,7 @@ SELECT GROUP_CONCAT(DISTINCT
 )
 INTO @viConceptSelector
 FROM concept_name cn
-WHERE cn.name IN (#visitIndependentConceptInClause#);
+WHERE cn.concept_name_type = "FULLY_SPECIFIED" AND cn.name IN (#visitIndependentConceptInClause#);
 
 SET  @conceptMaxSelector = NULL;
 SELECT GROUP_CONCAT(DISTINCT
@@ -35,7 +39,7 @@ SELECT GROUP_CONCAT(DISTINCT
 )
 INTO @conceptMaxSelector
 FROM concept_name cn
-WHERE cn.name IN (#conceptNameInClause#);
+WHERE cn.concept_name_type = "FULLY_SPECIFIED" AND  cn.name IN (#conceptNameInClause#);
 
 
 
@@ -50,7 +54,7 @@ SELECT GROUP_CONCAT(DISTINCT
 )
 INTO @viConceptMaxSelector
 FROM concept_name cn
-WHERE cn.name IN (#visitIndependentConceptInClause#);
+WHERE cn.concept_name_type = "FULLY_SPECIFIED" AND cn.name IN (#visitIndependentConceptInClause#);
 
 
 SELECT GROUP_CONCAT(DISTINCT CONCAT(
