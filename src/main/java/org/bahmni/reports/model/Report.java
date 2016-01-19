@@ -8,7 +8,6 @@ import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.report.*;
 import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.webclients.HttpClient;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(
@@ -18,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
         property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = ObsCountReport.class, name = "obsCount"),
+        @JsonSubTypes.Type(value = DrugOrderReport.class, name = "DrugOrder"),
         @JsonSubTypes.Type(value = DiagnosisReport.class, name = "diagnosisCount"),
         @JsonSubTypes.Type(value = TestCountReport.class, name = "TestCount"),
         @JsonSubTypes.Type(value = ElisSqlReport.class, name = "ElisGeneric"),
