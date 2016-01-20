@@ -28,7 +28,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportTemplateConfig> {
 
-    private static final String ENCOUNTER_CREATE_DATE = "encounterCreateDate";
+    private static final String PROGRAM_ENROLLMENT = "ProgramEnrollment";
     private BahmniReportsProperties bahmniReportsProperties;
 
     public ObsCannedReportTemplate(BahmniReportsProperties bahmniReportsProperties) {
@@ -69,8 +69,7 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
         String patientAttributesInClause = constructInClause(patientAttributes);
         String addressAttributesInClause = constructInClause(addressAttributes);
         String sql = getFormattedSql(getFileContent("sql/obsCannedReport.sql"), report.getConfig(), conceptNameInClause,
-                patientAttributesInClause, startDate, endDate,addressAttributesInClause );
-        buildColumns(jasperReport, patientAttributes, conceptDetails,viConceptDetails, addressAttributes);
+                patientAttributesInClause, startDate, endDate,addressAttributesInClause );buildColumns(jasperReport, patientAttributes, conceptDetails,viConceptDetails, addressAttributes);
 
         Statement stmt;
         try {
@@ -130,7 +129,7 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
         sqlTemplate.add("patientAttributesInClauseEscapeQuote", getInClauseWithEscapeQuote(patientAttributeInClause));
         sqlTemplate.add("addressAttributesInClause", addressAttributesInClause);
         sqlTemplate.add("templateName", reportConfig.getTemplateName());
-        sqlTemplate.add("applyDateRangeFor", applyDateRangeFor(reportConfig.getApplyDateRangeFor()));
+        sqlTemplate.add("applyDateRangeFor", reportConfig.getApplyDateRangeFor());
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         sqlTemplate.add("enrolledProgram", reportConfig.getEnrolledProgram());
@@ -156,10 +155,4 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
         return inclause.replace("'", "\\'");
     }
 
-    private String applyDateRangeFor(String applyDateRangeFor) {
-        if (applyDateRangeFor != null && applyDateRangeFor.equals(ENCOUNTER_CREATE_DATE)) {
-            return "e.date_created";
-        }
-        return "e.encounter_datetime";
-    }
 }
