@@ -84,7 +84,8 @@ SET @dateFilterQuery = IF( "#enrolledProgram#" ="" , ' o.obs_datetime '  ,@dateF
 
 SET @conceptRefMapSql = " LEFT JOIN (SELECT CRM.concept_id,  CRT.code FROM (SELECT * from concept_reference_term  WHERE concept_source_id = @conceptSourceId) as CRT INNER JOIN concept_reference_map as CRM ON CRT.concept_reference_term_id = CRM.concept_reference_term_id) CRT ON cans.concept_id = CRT.concept_id ";
 
-SET @sqlCore = CONCAT('SELECT
+SET @sqlCore = CONCAT('SELECT * from(
+  SELECT
   pi.identifier,
   p.person_id,
   CONCAT(pname.given_name, \' \', pname.family_name) as patient_name,
@@ -122,14 +123,19 @@ IF( "#enrolledProgram#" ="" ,'' ,
 JOIN program
   ON program.program_id = pp.program_id
   AND program.name like \'#enrolledProgram#\'' ),'
-WHERE ',@dateFilterQuery,' BETWEEN \'#startDate# 00:00:00\'  AND \'#endDate# 23:59:59\'
+WHERE o.voided IS FALSE
+ AND ',@dateFilterQuery,' BETWEEN \'#startDate# 00:00:00\'  AND \'#endDate# 23:59:59\'
   ',@obsForProgramDuration,'
-GROUP BY o.person_id, e.visit_id, cn.name
-ORDER BY o.person_id, o.obs_datetime DESC');
+ORDER BY o.person_id, o.obs_datetime DESC
+) as temp
+GROUP BY person_id, visit_id, obs_name
+');
 
 
-SET @sqlCoreVi = CONCAT('SELECT
+SET @sqlCoreVi = CONCAT('SELECT * from (
+  SELECT
   o.person_id patient_id,
+  cn.name observation_name,
   ',@viConceptSelector,'
 FROM obs as o
 JOIN encounter e
@@ -146,10 +152,12 @@ JOIN concept_name cn
                             JOIN program
                               ON program.program_id = pp.program_id
                               AND program.name like \'#enrolledProgram#\'' ),'
-WHERE ',@dateFilterQuery,' BETWEEN \'#startDate# 00:00:00\' AND \'#endDate# 23:59:59\'
+WHERE o.voided IS FALSE
+AND ',@dateFilterQuery,' BETWEEN \'#startDate# 00:00:00\' AND \'#endDate# 23:59:59\'
   ',@obsForProgramDuration,'
-GROUP BY o.person_id,  cn.name
-ORDER BY o.person_id, o.obs_datetime DESC');
+ORDER BY o.person_id, o.obs_datetime DESC
+) as temp2
+GROUP BY patient_id,  observation_name');
 
 
 
