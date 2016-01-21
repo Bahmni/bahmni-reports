@@ -1,6 +1,6 @@
 SELECT
   diagnosis_concept_view.concept_full_name AS disease,
-  diagnosis_concept_view.icd10_code,
+  concept_reference_term_map_view.code as icd10_code,
   SUM(IF(person.gender = 'F', 1, 0))       AS female,
   SUM(IF(person.gender = 'M', 1, 0))       AS male,
   SUM(IF(person.gender = 'O', 1, 0))       AS other
@@ -50,9 +50,14 @@ from (select  diagnosis.value_coded, diagnosis.person_id, diagnosis.encounter_id
 						ON person.person_id = filtered_diagnosis.person_id
 						JOIN encounter e
 						ON e.encounter_id = filtered_diagnosis.encounter_id
+            #countOnlyTaggedLocationsJoin#
 						JOIN visit_attribute va on va.visit_id = e.visit_id and va.value_reference in (#visitTypes#)
 						LEFT JOIN visit_attribute_type vat on vat.visit_attribute_type_id = va.attribute_type_id AND vat.name = 'Visit Status'
-join diagnosis_concept_view
-ON diagnosis_concept_view.concept_id = filtered_diagnosis.value_coded
-GROUP BY disease, diagnosis_concept_view.icd10_code
+
+            JOIN concept_view diagnosis_concept_view on diagnosis_concept_view.concept_id = filtered_diagnosis.value_coded
+            LEFT JOIN concept_reference_term_map_view
+            ON concept_reference_term_map_view.concept_id = diagnosis_concept_view.concept_id
+            AND concept_reference_term_map_view.concept_reference_source_name= '#icd10ConceptSource#'
+            AND concept_reference_term_map_view.concept_map_type_name ='SAME-AS'
+GROUP BY disease, concept_reference_term_map_view.code
 ORDER BY disease;

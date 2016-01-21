@@ -8,6 +8,7 @@ import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
+import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.DiagnosisReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
@@ -56,7 +57,7 @@ public class DiagnosisSummaryTemplate extends BaseReportTemplate<DiagnosisReport
 
     private void addDateParameters(String startDate, String endDate, DiagnosisReportConfig reportSpecificConfig) {
         if (reportSpecificConfig.retrieveBasedOnDiagnosisDatetime()) {
-            observationsWhereClause.and("cast(revised_obs.obs_datetime AS date) BETWEEN '" + startDate + "' AND '" + endDate + "'");
+            observationsWhereClause.and("cast(diagnosis.obs_datetime AS date) BETWEEN '" + startDate + "' AND '" + endDate + "'");
         }
 
         if (reportSpecificConfig.retrieveBasedOnVisitStopDate()) {
@@ -66,7 +67,7 @@ public class DiagnosisSummaryTemplate extends BaseReportTemplate<DiagnosisReport
 
     private void addVisitTypeParameters(DiagnosisReportConfig reportSpecificConfig) {
         if (reportSpecificConfig.visitTypesPresent()) {
-            observationsWhereClause.and("vt.name in " + SqlUtil.toCommaSeparatedSqlString(reportSpecificConfig.getVisitTypes()));
+            observationsWhereClause.and("vt.name in ( " + SqlUtil.toCommaSeparatedSqlString(reportSpecificConfig.getVisitTypes()) + " )");
         }
     }
 
@@ -116,6 +117,19 @@ public class DiagnosisSummaryTemplate extends BaseReportTemplate<DiagnosisReport
         sqlTemplate.add("observationsWhereClause", observationsWhereClause);
         sqlTemplate.add("ageGroupName", reportConfig.getAgeGroupName(true));
         sqlTemplate.add("conceptName", reportConfig.getConcept());
+
+
+        String locationTagNames = SqlUtil.toCommaSeparatedSqlString(reportConfig.getLocationTagNames());
+        String countOnlyTaggedLocationsJoin = String.format("INNER JOIN " +
+                "(SELECT DISTINCT location_id " +
+                " FROM location_tag_map INNER JOIN location_tag ON location_tag_map.location_tag_id = location_tag.location_tag_id " +
+                " AND location_tag.name IN (%s)) locations ON locations.location_id = e.location_id", locationTagNames);
+
+        if (StringUtils.isNotBlank(locationTagNames)) {
+            sqlTemplate.add("countOnlyTaggedLocationsJoin", countOnlyTaggedLocationsJoin);
+        } else {
+            sqlTemplate.add("countOnlyTaggedLocationsJoin", "");
+        }
         return sqlTemplate.render();
     }
 

@@ -36,6 +36,10 @@ public class DiagnosisReportConfig implements Config {
 
     private String concept;
 
+    private String icd10ConceptSource;
+
+    private List<String> locationTagNames;
+
     public String getAgeGroupName() {
         return ageGroupName;
     }
@@ -106,6 +110,22 @@ public class DiagnosisReportConfig implements Config {
 
     public void setConcept(String concept) {
         this.concept = concept;
+    }
+
+    public String getIcd10ConceptSource() {
+        return icd10ConceptSource;
+    }
+
+    public void setIcd10ConceptSource(String icd10ConceptSource) {
+        this.icd10ConceptSource = icd10ConceptSource;
+    }
+
+    public List<String> getLocationTagNames() {
+        return locationTagNames;
+    }
+
+    public void setLocationTagNames(List<String> locationTagNames) {
+        this.locationTagNames = locationTagNames;
     }
 
     public boolean retrieveOnlyOpenVisits() {
