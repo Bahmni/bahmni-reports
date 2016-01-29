@@ -31,5 +31,5 @@ select  p.patientID as patientId,
     LEFT JOIN patient_identifier ON patient_identifier.patient_id = orders.patient_id
     LEFT JOIN encounter_provider ON encounter_provider.encounter_id = orders.encounter_id
     LEFT JOIN provider ON provider.provider_id = encounter_provider.provider_id
-  where orders.date_activated  BETWEEN "#startDate#" and "#endDate#"
- )p;
+  where (orders.date_activated < "#startDate#"
+  and IF(Date(orders.date_stopped) is NULL, orders.auto_expire_date,orders.date_stopped) is null) or (IF(Date(orders.date_stopped) is NULL, orders.auto_expire_date,orders.date_stopped) BETWEEN "#startDate#" and "#endDate#") or (orders.date_activated  BETWEEN "#startDate#" and "#endDate# "))p;
