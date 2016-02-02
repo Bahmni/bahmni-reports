@@ -4,12 +4,16 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
+import net.sf.dynamicreports.report.definition.ReportParameters;
+import net.sf.dynamicreports.report.definition.expression.DRIValueFormatter;
 import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.util.CommonComponents;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.stringtemplate.v4.ST;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +41,7 @@ public class DrugOrderTemplate extends BaseReportTemplate<Config> {
                 .setStyle(columnStyle);
 
         TextColumnBuilder<String> dose = col.column("Dose", "dose", type.stringType())
+                .setValueFormatter(new ValueFormatter())
                 .setStyle(columnStyle);
 
         TextColumnBuilder<String> unit = col.column("Unit", "unit", type.stringType())
@@ -80,9 +85,66 @@ public class DrugOrderTemplate extends BaseReportTemplate<Config> {
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
         jasperReport.setShowColumnTitle(true)
-                .columns(patientId,patientName,patientGender,patientAge,user,drugName,dose, unit, frequency, duration, route, startdate, stopDate,quantity)
+                .columns(patientId, patientName, patientGender, patientAge, user, drugName, dose, unit, frequency, duration, route, startdate, stopDate, quantity)
                 .setDataSource(getFormattedSql(sql, startDate, endDate),
                         connection);
         return jasperReport;
+    }
+
+    private class ValueFormatter implements DRIValueFormatter<String, String> {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public String format(String data, ReportParameters reportParameters) {
+            if (!data.matches("[+-]?\\d*(\\.\\d+)?")) {
+                ObjectMapper mapper = new ObjectMapper();
+
+                try {
+                    VariableDosageFormatter dosage = mapper.readValue(data, VariableDosageFormatter.class);
+                    return dosage.getMorningDose() + "-" + dosage.getAfternoonDose() + "-" + dosage.getEveningDose();
+
+                } catch (IOException e) {
+                    return e.toString();
+                }
+            }
+
+            return data;
+        }
+
+        @Override
+        public Class<String> getValueClass() {
+            return String.class;
+        }
+    }
+
+    private static class VariableDosageFormatter {
+        private String instructions;
+        private String additionalInstructions;
+        private String morningDose;
+        private String afternoonDose;
+        private String eveningDose;
+
+        public VariableDosageFormatter() {}
+
+        public String getMorningDose() {
+            return morningDose;
+        }
+
+        public String getAfternoonDose() {
+            return afternoonDose;
+        }
+
+        public String getEveningDose() {
+            return eveningDose;
+        }
+
+        public String getInstructions() {
+            return instructions;
+        }
+
+        public String getAdditionalInstructions() {
+            return additionalInstructions;
+        }
+
     }
 }
