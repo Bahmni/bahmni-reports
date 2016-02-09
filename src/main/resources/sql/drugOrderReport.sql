@@ -13,12 +13,12 @@ select  p.patientID as patientId,
         p.stopDate as stopDate,
         p.quantity as quantity from
   (select person.gender,floor(datediff(CURDATE(), person.birthdate) / 365) AS age,IF(drug_order.dose IS NULL , drug_order.dosing_instructions, drug_order.dose) AS dose, dcn.concept_full_name as units,rou.concept_full_name as route,drug_order.dose_units,fre.concept_full_name as frequency,
-     concat(drug_order.duration ,' ', du.concept_full_name) as duration,concat(drug_order.quantity,' ', dcn.concept_full_name) as quantity, orders.patient_id, IF(Date(orders.scheduled_date) IS NULL, orders.date_activated, orders.scheduled_date) as startDate,orders.concept_id,
-     concat(person_name.given_name, ' ', person_name.family_name) as patientName,
-     provider.name as user,
-    patient_identifier.identifier as patientID,
-     IF(Date(orders.date_stopped) is NULL, orders.auto_expire_date,orders.date_stopped) as stopDate,
-     IF(drug_order.drug_non_coded is NULL,drug.name,drug_order.drug_non_coded) as name from drug_order
+                        concat(drug_order.duration ,' ', du.concept_full_name) as duration,concat(drug_order.quantity,' ', dcn.concept_full_name) as quantity, orders.patient_id, IF(Date(orders.scheduled_date) IS NULL, orders.date_activated, orders.scheduled_date) as startDate,orders.concept_id,
+                        concat(person_name.given_name, ' ', person_name.family_name) as patientName,
+                        provider.name as user,
+                        patient_identifier.identifier as patientID,
+                        IF(Date(orders.date_stopped) is NULL, orders.auto_expire_date,orders.date_stopped) as stopDate,
+                        IF(drug_order.drug_non_coded is NULL,drug.name,drug_order.drug_non_coded) as name from drug_order
     LEFT JOIN  orders  ON orders.order_id = drug_order.order_id
     LEFT JOIN drug ON drug.concept_id = orders.concept_id
     LEFT JOIN concept_view dcn  ON dcn.concept_id = drug_order.dose_units
@@ -31,5 +31,16 @@ select  p.patientID as patientId,
     LEFT JOIN patient_identifier ON patient_identifier.patient_id = orders.patient_id
     LEFT JOIN encounter_provider ON encounter_provider.encounter_id = orders.encounter_id
     LEFT JOIN provider ON provider.provider_id = encounter_provider.provider_id
-  where (IF(Date(orders.scheduled_date) IS NULL, orders.date_activated, orders.scheduled_date) < "#startDate#"
-  and IF(Date(orders.date_stopped) is NULL, orders.auto_expire_date,orders.date_stopped) is null) or (IF(Date(orders.date_stopped) is NULL, orders.auto_expire_date,orders.date_stopped) BETWEEN "#startDate#" and "#endDate#") or (IF(Date(orders.scheduled_date) IS NULL, orders.date_activated, orders.scheduled_date)  BETWEEN "#startDate#" and "#endDate# "))p;
+   where
+     (
+       IF(Date(orders.scheduled_date) IS NULL , orders.date_activated, orders.scheduled_date ) < "#endDate#"
+       AND
+       ((orders.auto_expire_date > "#startDate#"
+         OR
+         orders.date_stopped > "#startDate#"
+         OR
+         (Date(orders.date_stopped) IS NULL) AND (Date(orders.auto_expire_date) IS NULL)
+       ))
+       AND
+       (orders.order_action) != "DISCONTINUE"
+     ))p;
