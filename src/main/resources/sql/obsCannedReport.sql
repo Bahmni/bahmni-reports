@@ -126,7 +126,7 @@ JOIN program
 WHERE o.voided IS FALSE
  AND ',@dateFilterQuery,' BETWEEN \'#startDate# 00:00:00\'  AND \'#endDate# 23:59:59\'
   ',@obsForProgramDuration,'
-ORDER BY o.person_id, o.obs_datetime DESC
+ORDER BY o.person_id, o.obs_datetime DESC, o.obs_id DESC
 ) as temp
 GROUP BY person_id, visit_id, obs_name
 ');
@@ -154,7 +154,7 @@ JOIN concept_name cn
 WHERE o.voided IS FALSE
 AND ',@dateFilterQuery,' BETWEEN \'#startDate# 00:00:00\' AND \'#endDate# 23:59:59\'
   ',@obsForProgramDuration,'
-ORDER BY o.person_id, o.obs_datetime DESC
+ORDER BY o.person_id, o.obs_datetime DESC, o.obs_id DESC
 ) as temp2
 GROUP BY patient_id,  observation_name');
 
