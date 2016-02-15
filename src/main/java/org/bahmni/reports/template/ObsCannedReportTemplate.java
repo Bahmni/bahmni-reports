@@ -3,6 +3,7 @@ package org.bahmni.reports.template;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.constant.PageType;
+import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.ObsCannedReportTemplateConfig;
@@ -74,6 +75,7 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
         String sql = getFormattedSql(getFileContent("sql/obsCannedReport.sql"), report.getConfig(), conceptNameInClause,
                 patientAttributesInClause, startDate, endDate,addressAttributesInClause );buildColumns(jasperReport, patientAttributes, conceptDetails,viConceptDetails, addressAttributes);
 
+        jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
         return SqlUtil.executeReportWithStoredProc(jasperReport, connection, sql);
     }
 
