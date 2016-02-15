@@ -205,3 +205,4 @@ SET @sqlWrapper = CONCAT(
 
 PREPARE stmt FROM @sqlWrapper;
 EXECUTE stmt;
+DEALLOCATE PREPARE stmt;
