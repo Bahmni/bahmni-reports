@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.model.VisitReportConfig;
+import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -68,24 +69,7 @@ public class VisitReportTemplate extends BaseReportTemplate<VisitReportConfig> {
         addColumns(jasperReport, report.getConfig().getPersonAttributes(), minimalColumnStyle);
 
         String sqlString = getSqlString(personAttributes, visitAttributes, startDate, endDate);
-        Statement stmt = null;
-        try {
-            stmt = connection.createStatement();
-            boolean hasMoreResultSets = stmt.execute(sqlString);
-            while (hasMoreResultSets || stmt.getUpdateCount() != -1) { //if there are any more queries to be processed
-                if (hasMoreResultSets) {
-                    ResultSet rs = stmt.getResultSet();
-                    if (rs.isBeforeFirst()) {
-                        jasperReport.setDataSource(rs);
-                        return jasperReport;
-                    }
-                }
-                hasMoreResultSets = stmt.getMoreResults(); //true if it is a resultset
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
-        return jasperReport;
+        return SqlUtil.executeReportWithStoredProc(jasperReport, connection, sqlString);
     }
 }

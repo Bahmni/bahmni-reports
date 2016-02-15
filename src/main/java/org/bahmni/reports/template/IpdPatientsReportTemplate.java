@@ -63,25 +63,8 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
         addColumns(jasperReport, report.getConfig().getConceptNames(), minimalColumnStyle);
 
         String sqlString = getSqlString(report.getConfig(),patientAttributesHelper, conceptNames, startDate, endDate, getFilterColumn(report));
-        Statement stmt = null;
-        try {
-            stmt = connection.createStatement();
-            boolean hasMoreResultSets = stmt.execute(sqlString);
-            while (hasMoreResultSets || stmt.getUpdateCount() != -1) { //if there are any more queries to be processed
-                if (hasMoreResultSets) {
-                    ResultSet rs = stmt.getResultSet();
-                    if (rs.isBeforeFirst()) {
-                        jasperReport.setDataSource(rs);
-                        return jasperReport;
-                    }
-                }
-                hasMoreResultSets = stmt.getMoreResults(); //true if it is a resultset
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
-        return jasperReport;
+        return SqlUtil.executeReportWithStoredProc(jasperReport, connection, sqlString);
     }
 
     private void addColumns(JasperReportBuilder jasperReport, List<String> attributes, StyleBuilder columnStyle) {

@@ -9,6 +9,7 @@ import org.bahmni.reports.model.ObsCannedReportTemplateConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.util.CommonComponents;
+import org.bahmni.reports.util.SqlUtil;
 import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
 import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
@@ -73,25 +74,7 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
         String sql = getFormattedSql(getFileContent("sql/obsCannedReport.sql"), report.getConfig(), conceptNameInClause,
                 patientAttributesInClause, startDate, endDate,addressAttributesInClause );buildColumns(jasperReport, patientAttributes, conceptDetails,viConceptDetails, addressAttributes);
 
-        Statement stmt;
-        try {
-            stmt = connection.createStatement();
-            boolean hasMoreResultSets = stmt.execute(sql);
-            while (hasMoreResultSets ||
-                    stmt.getUpdateCount() != -1) { //if there are any more queries to be processed
-                if (hasMoreResultSets) {
-                    ResultSet rs = stmt.getResultSet();
-                    if (rs.isBeforeFirst()) {
-                        jasperReport.setDataSource(rs);
-                        return jasperReport;
-                    }
-                }
-                hasMoreResultSets = stmt.getMoreResults(); //true if it is a resultset
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return jasperReport;
+        return SqlUtil.executeReportWithStoredProc(jasperReport, connection, sql);
     }
 
     private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<String> conceptNames,List<String> viConceptNames, List<String> addressAttributes) {

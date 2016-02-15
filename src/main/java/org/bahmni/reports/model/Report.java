@@ -27,6 +27,7 @@ import org.bahmni.webclients.HttpClient;
         @JsonSubTypes.Type(value = NumericConceptValuesCountReport.class, name = "NumericConceptValuesCount"),
         @JsonSubTypes.Type(value = ObsCountByConceptClassReport.class, name = "ObsCountByConceptClass"),
         @JsonSubTypes.Type(value = ObsTemplateReport.class, name = "obsTemplate"),
+        @JsonSubTypes.Type(value = ProgramObsTemplateReport.class, name = "programObsTemplate"),
         @JsonSubTypes.Type(value = ObsValueCountReport.class, name = "ObsValueCount"),
         @JsonSubTypes.Type(value = PatientsWithLabtestResultsReport.class, name = "PatientsWithLabtestResults"),
         @JsonSubTypes.Type(value = DateConceptValuesPatientsListReport.class, name = "DateConceptValuesPatientsList"),

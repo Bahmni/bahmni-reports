@@ -4,10 +4,11 @@ package org.bahmni.reports.template;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.constant.PageType;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.ConceptDetails;
-import org.bahmni.reports.model.ObsTemplateConfig;
+import org.bahmni.reports.model.ProgramObsTemplateConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.util.CommonComponents;
@@ -29,31 +30,34 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 @UsingDatasource("openmrs")
-public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
+public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateConfig> {
     private static final String ENCOUNTER_CREATE_DATE = "encounterCreateDate";
     public static final String UNKNOWN_CONCEPT_ATTRIBUTE_KEY = "Unknown Concept";
     private BahmniReportsProperties bahmniReportsProperties;
-    private ObsTemplateConfig reportConfig;
+    private ProgramObsTemplateConfig reportConfig;
 
-    public ObsTemplate(BahmniReportsProperties bahmniReportsProperties) {
+    public ProgramObsTemplate(BahmniReportsProperties bahmniReportsProperties) {
         this.bahmniReportsProperties = bahmniReportsProperties;
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsTemplateConfig> report, String
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramObsTemplateConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         this.reportConfig = report.getConfig();
         CommonComponents.addTo(jasperReport, report, pageType);
 
         List<String> patientAttributes = getPatientAttributes();
+        List<String> programAttributes = getProgramAttributes();
+        List<String> programNames = reportConfig.getProgramNames();
+
         List<ConceptDetails> conceptDetails = fetchLeafConceptsFor(reportConfig.getTemplateName(), report);
-        String formattedSql = getFormattedSql("sql/obsTemplate.sql", conceptDetails, patientAttributes, startDate, endDate);
-        buildColumns(jasperReport, patientAttributes, conceptDetails, reportConfig.getApplyDateRangeFor());
+        String formattedSql = getFormattedSql("sql/programObsTemplate.sql", conceptDetails, patientAttributes, startDate, endDate, programAttributes, programNames);
+        buildColumns(jasperReport, patientAttributes, conceptDetails, programAttributes);
 
         return SqlUtil.executeReportWithStoredProc(jasperReport, connection, formattedSql);
     }
 
-    private List<ConceptDetails> fetchLeafConceptsFor(String templateName, Report<ObsTemplateConfig> report) {
+    private List<ConceptDetails> fetchLeafConceptsFor(String templateName, Report<ProgramObsTemplateConfig> report) {
         HttpClient httpClient = report.getHttpClient();
         try {
             String encodedTemplateName = URLEncoder.encode(templateName, "UTF-8");
@@ -67,13 +71,15 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         return null;
     }
 
-    private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<ConceptDetails> conceptDetails,
-                              String applyDateRangeFor) {
+    private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<ConceptDetails> conceptDetails, List<String> programAttributes) {
         TextColumnBuilder<String> patientColumn = col.column("Patient ID", "identifier", type.stringType());
         TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "patient_name", type.stringType());
         TextColumnBuilder<String> patientGenderColumn = col.column("Gender", "gender", type.stringType());
         TextColumnBuilder<String> patientAgeColumn = col.column("Age", "age", type.stringType());
         TextColumnBuilder<String> providerColumn = col.column("User", "provider_name", type.stringType());
+        TextColumnBuilder<String> programName = col.column("Program Name", "program_name", type.stringType());
+        TextColumnBuilder<String> dateEnrolled = col.column("Start Date", "date_enrolled", type.stringType());
+        TextColumnBuilder<String> dateCompleted = col.column("Stop Date", "date_completed", type.stringType());
         TextColumnBuilder<String> encounterCreatedDateColumn = col.column("Encounter Created Date", "date_created", type.stringType());
         TextColumnBuilder<String> encounterDateTimeColumn = col.column("Encounter Date Time", "encounter_datetime", type.stringType());
 
@@ -83,20 +89,28 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
             jasperReport.addColumn(column);
         }
 
-        jasperReport.columns(providerColumn, encounterDateTimeColumn, encounterCreatedDateColumn);
+        for (String programAttribute : programAttributes) {
+            TextColumnBuilder<String> column = col.column(programAttribute, programAttribute, type.stringType());
+            jasperReport.addColumn(column);
+        }
+
+        jasperReport.columns(programName,dateEnrolled,dateCompleted,providerColumn, encounterDateTimeColumn, encounterCreatedDateColumn);
         for (ConceptDetails concept : conceptDetails) {
             TextColumnBuilder<String> column = col.column(concept.getName(), concept.getFullName(), type.stringType());
             jasperReport.addColumn(column);
         }
     }
 
-    private String getFormattedSql(String sqlFilePath, List<ConceptDetails> conceptDetails, List<String> patientAttributes, String startDate, String endDate) {
+    private String getFormattedSql(String sqlFilePath, List<ConceptDetails> conceptDetails, List<String> patientAttributes, String startDate, String endDate, List<String> programAttributes, List<String> programNames) {
         String locationTagNames = SqlUtil.toEscapedCommaSeparatedSqlString(reportConfig.getLocationTagNames());
 
         ST sqlTemplate = new ST(getFileContent(sqlFilePath), '#', '#');
         sqlTemplate.add("conceptNameInClauseEscapeQuote", getConceptNamesInClause(conceptDetails));
-        sqlTemplate.add("patientAttributesInClauseEscapeQuote", getPatientAttributesInClause(patientAttributes));
+        sqlTemplate.add("programNamesListInClause", getProgramNamesListInClause(programNames));
+        sqlTemplate.add("patientAttributesInClauseEscapeQuote", getAttributesInClause(patientAttributes));
+        sqlTemplate.add("programAttributesInClauseEscapeQuote", getAttributesInClause(programAttributes));
         sqlTemplate.add("patientAttributes", constructPatientAttributeNamesString(patientAttributes));
+        sqlTemplate.add("programAttributes", constructProgramAttributeNamesString(programAttributes));
         sqlTemplate.add("conceptNamesAndValue", constructConceptNamesString(conceptDetails));
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
@@ -117,6 +131,14 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
     }
 
+    private String getProgramNamesListInClause(List<String> programNames) {
+        if (CollectionUtils.isEmpty(programNames)) {
+            return "";
+        }
+
+        return String.format("AND prog.name IN (%s)", SqlUtil.toEscapedCommaSeparatedSqlString(programNames));
+    }
+
     private String getConceptNamesInClause(List<ConceptDetails> conceptDetails) {
         List<String> conceptNames = new ArrayList<>();
         for (ConceptDetails conceptDetail : conceptDetails) {
@@ -133,7 +155,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         return "'" + input + "'";
     }
 
-    private String getPatientAttributesInClause(List<String> parameters) {
+    private String getAttributesInClause(List<String> parameters) {
         List<String> convertedList = new ArrayList<>();
         if (parameters.isEmpty()) {
             return "''";
@@ -186,6 +208,17 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         return StringUtils.join(parts, ", ");
     }
 
+    private String constructProgramAttributeNamesString(List<String> programAttributes) {
+        ArrayList<String> parts = new ArrayList<>();
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(o.program_attr_name = \\'%s\\', o.program_attr_value, NULL))) AS \\'%s\\'";
+
+        for (String programAttribute : programAttributes) {
+            parts.add(String.format(helperString, programAttribute, programAttribute));
+        }
+
+        return StringUtils.join(parts, ", ");
+    }
+
     private String escapeQuotes(String inclause) {
         return inclause.replace("'", "\\'");
     }
@@ -193,5 +226,8 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
     private List<String> getPatientAttributes() {
         return reportConfig.getPatientAttributes() != null ? reportConfig.getPatientAttributes() : new ArrayList<String>();
     }
-}
 
+    private List<String> getProgramAttributes() {
+        return reportConfig.getProgramAttributes() != null ? reportConfig.getProgramAttributes() : new ArrayList<String>();
+    }
+}

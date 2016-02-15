@@ -6,7 +6,6 @@ import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.model.VisitAggregateCountConfig;
@@ -15,9 +14,6 @@ import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
@@ -50,25 +46,8 @@ public class VisitAggregateCountReportTemplate extends BaseReportTemplate<VisitA
                 .columns(visitTypeColumn, admittedColumn, dischargedColumn);
         String visitTypes = report.getConfig().getVisitTypes();
         String sqlString = getSqlString(visitTypes, startDate, endDate);
-        Statement stmt = null;
-        try {
-            stmt = connection.createStatement();
-            boolean hasMoreResultSets = stmt.execute(sqlString);
-            while (hasMoreResultSets || stmt.getUpdateCount() != -1) {
-                if (hasMoreResultSets) {
-                    ResultSet rs = stmt.getResultSet();
-                    if (rs.isBeforeFirst()) {
-                        jasperReport.setDataSource(rs);
-                        return jasperReport;
-                    }
-                }
-                hasMoreResultSets = stmt.getMoreResults();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
-        return jasperReport;
+        return SqlUtil.executeReportWithStoredProc(jasperReport, connection, sqlString);
     }
 
     private String getSqlString(String visitTypes, String startDate, String endDate) {
