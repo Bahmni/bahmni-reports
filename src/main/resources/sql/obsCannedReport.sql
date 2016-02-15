@@ -1,6 +1,4 @@
 SET SESSION group_concat_max_len = 100000;
-SET @conceptSourceId = NULL;
-SELECT concept_source_id from concept_reference_source WHERE name = "#conceptSourceName#" into @conceptSourceId;
 
 SET @conceptSelector = NULL;
 SELECT GROUP_CONCAT(DISTINCT
@@ -81,8 +79,6 @@ SET @ShowObsOnlyForProgramDuration = #showObsOnlyForProgramDuration# ;
 SELECT IF(@ShowObsOnlyForProgramDuration AND ("#enrolledProgram#" != ""),'AND o.obs_datetime BETWEEN pp.date_enrolled AND IF (pp.date_completed IS NULL, NOW(), pp.date_completed)','') INTO @obsForProgramDuration;
 
 SET @dateFilterQuery = IF( "#enrolledProgram#" ="" , ' o.obs_datetime '  ,@dateFilterQuery);
-
-SET @conceptRefMapSql = " LEFT JOIN (SELECT CRM.concept_id,  CRT.code FROM (SELECT * from concept_reference_term  WHERE concept_source_id = @conceptSourceId) as CRT INNER JOIN concept_reference_map as CRM ON CRT.concept_reference_term_id = CRM.concept_reference_term_id) CRT ON cans.concept_id = CRT.concept_id ";
 
 SET @sqlCore = CONCAT('SELECT * from(
   SELECT
