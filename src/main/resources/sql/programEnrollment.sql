@@ -5,7 +5,8 @@ SELECT GROUP_CONCAT(DISTINCT
                     CONCAT(
                         'MAX(IF(pat.program_attribute_type_id = ''',
                         program_attribute_type_id,
-                        ''', o.attr_value, NULL)) AS `',
+                        ''', IF( pat.datatype = "org.bahmni.module.bahmnicore.customdatatype.datatype.CodedConceptDatatype"
+                         , o.concept_name ,o.attr_value), NULL)) AS `',
                         description, '`'
                     )
 )
@@ -33,7 +34,8 @@ SET @sql = CONCAT('SELECT
         pp.date_enrolled as date_enrolled,
         pp.date_completed as date_completed,
         pp.patient_id,
-        prog.program_id
+        prog.program_id,
+        cn.name as concept_name
         FROM  patient_program pp
         JOIN program prog ON pp.program_id = prog.program_id
         and(
@@ -51,6 +53,7 @@ SET @sql = CONCAT('SELECT
        JOIN patient_identifier pi ON pa.patient_id = pi.patient_id
        LEFT OUTER JOIN patient_program_attribute attr ON pp.patient_program_id = attr.patient_program_id
        LEFT OUTER JOIN program_attribute_type attr_type ON attr.attribute_type_id = attr_type.program_attribute_type_id
+       LEFT OUTER JOIN concept_name cn ON cn.concept_id = attr.value_reference
        ) o
      LEFT OUTER JOIN program_attribute_type pat ON o.attribute_type_id = pat.program_attribute_type_id
      GROUP BY patient_id, program_id
