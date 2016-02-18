@@ -45,6 +45,7 @@
     <concept_map_type concept_map_type_id="1" name="SAME-AS" creator="1" date_created="2014-09-18 00:00:00" uuid="35543629-7d8c-11e1-909d-c80aa9edcf4e"/>
     <global_property property="concept.defaultConceptMapType" property_value="SAME-AS" uuid="7ed7aeb4-0663-91e1-8c99-2b4f0c4f671b" />
     <order_type order_type_id="17" name="Plain Order" java_class_name="org.openmrs.Order" description="Plain order" creator="1" date_created="2008-08-15 15:49:04.0" retired="0" uuid="dd3fb1d0-ae06-11e3-a5e2-0800200c9a77"/>
+    <order_type order_type_id="18" name="DrugOrder" java_class_name="org.openmrs.DrugOrder" description="Drug order" creator="1" date_created="2008-08-15 15:49:04.0" retired="0" uuid="07e1ffdf-d563-11e5-a6a1-0800274a5156"/>
     <role role="Provider" description="General privileges held by all providers" uuid="3480cb6d-c291-46c8-8d3a-96dc33d199fb"/>
     <person person_id="501" gender="F" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="df8ae447-6745-45be-b859-403241d9913c"/>
     <person person_id="502" gender="M" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:57:09.0" voided="false" uuid="341b4e41-290c-484f-b6ed-71dc8da222de"/>

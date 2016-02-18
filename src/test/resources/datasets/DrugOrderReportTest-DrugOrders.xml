@@ -1,0 +1,106 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<dataset>
+    <encounter encounter_id="5" encounter_type="7" patient_id="2" location_id="1"
+               encounter_datetime="2016-01-17 00:00:00.0" date_created="2016-01-15 00:00:00.0"
+               creator="501" uuid="d2cafaa0-d63c-11e5-9fec-0800274a5156"/>
+
+    <encounter encounter_id="6" encounter_type="7" patient_id="2" location_id="1"
+               encounter_datetime="2016-02-17 00:00:00.0" date_created="2016-02-15 00:00:00.0"
+               creator="501" uuid="fc41f4a8-d613-11e5-9fec-0800274a5156"/>
+
+    <concept concept_id="1100" retired="0" datatype_id="4" class_id="3" is_set="0" creator="1"
+             date_created="2004-08-12 00:00:00.0" version="" uuid="8e02d1a0-7869-11e3-981f-0800123c9a76"/>
+    <concept_name concept_name_id="2001" concept_id="1100" name="Paracetamol 1" locale="en" creator="1"
+                  date_created="2008-08-15 13:52:53.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1"
+                  voided="0" uuid="93f24a00-7869-11e3-123f-0800200c9a67"/>
+
+    <concept concept_id="1101" retired="0" datatype_id="4" class_id="3" is_set="0" creator="1"
+             date_created="2004-08-12 00:00:00.0" version="" uuid="4fd4f0df-d602-11e5-9fec-0800274a5156"/>
+    <concept_name concept_name_id="2002" concept_id="1101" name="Paracetamol 2" locale="en" creator="1"
+                  date_created="2008-08-15 13:52:53.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1"
+                  voided="0" uuid="e2132a8c-d602-11e5-9fec-0800274a5156"/>
+
+    <concept concept_id="1102" retired="0" datatype_id="4" class_id="3" is_set="0" creator="1"
+             date_created="2004-08-12 00:00:00.0" version="" uuid="ec7512c0-d602-11e5-9fec-0800274a5156"/>
+    <concept_name concept_name_id="2003" concept_id="1102" name="Aspirin" locale="en" creator="1"
+                  date_created="2008-08-15 13:52:53.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1"
+                  voided="0" uuid="f59c81f6-d602-11e5-9fec-0800274a5156"/>
+
+    <concept concept_id="1103" retired="0" datatype_id="4" class_id="3" is_set="0" creator="1"
+             date_created="2004-08-12 00:00:00.0" version="" uuid="0005962c-d603-11e5-9fec-0800274a5156"/>
+    <concept_name concept_name_id="2004" concept_id="1103" name="Ibrufin" locale="en" creator="1"
+                  date_created="2008-08-15 13:52:53.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1"
+                  voided="0" uuid="065f3580-d603-11e5-9fec-0800274a5156"/>
+
+    <concept concept_id="1104" retired="0" datatype_id="4" class_id="3" is_set="0" creator="1"
+             date_created="2004-08-12 00:00:00.0" version="" uuid="f531bd1a-d63c-11e5-9fec-0800274a5156"/>
+    <concept_name concept_name_id="2004" concept_id="1104" name="Alpamoler" locale="en" creator="1"
+                  date_created="2008-08-15 13:52:53.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1"
+                  voided="0" uuid="fd05a43c-d63c-11e5-9fec-0800274a5156"/>
+
+    <orders order_id="1999" order_type_id="18" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW"
+            concept_id="1104" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0"
+            scheduled_date="2016-01-17 12:34:31.0"
+            creator="1" date_created="2016-01-17 12:34:31.0" voided="0" patient_id="2"
+            uuid="4d673b17-d63d-11e5-9fec-0800274a5156" care_setting="1" encounter_id="6"/>
+
+    <orders order_id="2000" order_type_id="18" order_number="ORD-2000" urgency="ROUTINE" order_action="NEW"
+            concept_id="1100" orderer="1" date_activated="2016-02-15 00:00:00.0" auto_expire_date="2016-02-15 23:59:59.0"
+            scheduled_date="2016-02-15 00:00:00.0"
+            creator="1" date_created="2016-02-17 12:34:31.0" voided="0" patient_id="2"
+            uuid="56b9196c-bcac-4c2f-b3a2-123464a96439" care_setting="1" encounter_id="6"/>
+    <orders order_id="2001" order_type_id="18" order_number="ORD-2001" urgency="ROUTINE" order_action="NEW"
+            concept_id="1101" orderer="1" date_activated="2016-02-15 00:00:00.0" auto_expire_date="2016-02-19 12:34:30.0"
+            scheduled_date="2016-02-17 12:34:31.0"
+            creator="1" date_created="2016-02-17 12:34:31.0" voided="0" patient_id="2"
+            uuid="6e7065fa-d608-11e5-9fec-0800274a5156" care_setting="1" encounter_id="6"/>
+    <orders order_id="2002" order_type_id="18" order_number="ORD-2002" urgency="ROUTINE" order_action="NEW"
+            concept_id="1102" orderer="1" date_activated="2016-02-15 00:00:00.0" auto_expire_date="2016-02-18 23:59:59.0"
+            scheduled_date="2016-02-18 00:00:00.0"
+            creator="1" date_created="2016-02-17 12:34:31.0" voided="0" patient_id="2"
+            uuid="777921d0-d608-11e5-9fec-0800274a5156" care_setting="1" encounter_id="6"/>
+    <orders order_id="2003" order_type_id="18" order_number="ORD-2003" urgency="ROUTINE" order_action="NEW"
+            concept_id="1103" orderer="1" date_activated="2016-02-14 00:00:00.0" auto_expire_date="2016-02-16 23:59:59.0"
+            scheduled_date="2016-02-14 00:00:00.0"
+            creator="1" date_created="2016-02-17 12:36:13.0" voided="0" patient_id="2"
+            uuid="820564cc-d608-11e5-9fec-0800274a5156" care_setting="1" encounter_id="6"/>
+
+    <concept concept_id="1002" retired="0" datatype_id="4" class_id="11" is_set="0" creator="1" date_created="2004-08-12 00:00:00.0" version="" uuid="6be8113a-f1a3-43bb-b661-a273a1490360"/>
+    <concept_name concept_name_id="2002" concept_id="1002" name="Tablet" locale="en" creator="1" date_created="2008-08-15 13:52:53.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="0" uuid="4a6def87-5766-40f6-80ce-014g73b126df"/>
+
+    <concept concept_id="68" retired="0" datatype_id="2" class_id="4" is_set="0" creator="1" date_created="2004-08-12 00:00:00.0" version="" uuid="cd4e5153-d617-11e5-9fec-0800274a5156"/>
+    <concept_name concept_name_id="2002" concept_id="68" name="Oral" locale="en" creator="1" date_created="2008-08-15 13:52:53.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="0" uuid="4a6def87-5766-40f6-80ce-014g73b126df"/>
+
+    <drug drug_id="3001" concept_id="1100" name="Paracetamol 500mg" dosage_form="1002" combination="0" strength="2ml"
+          creator="1" date_created="2005-02-24 00:00:00.0" retired="0" uuid="865fceb1-ad0c-4102-aead-26ca25c77b09"/>
+
+    <drug drug_id="3002" concept_id="1101" name="Paracetamol 120mg" dosage_form="1002" combination="0" strength="2ml"
+          creator="1" date_created="2005-02-24 00:00:00.0" retired="0" uuid="e6c1090e-d603-11e5-9fec-0800274a5156"/>
+
+    <drug drug_id="3003" concept_id="1102" name="Aspirin 75mg" dosage_form="1002" combination="0" strength="2ml"
+          creator="1" date_created="2005-02-24 00:00:00.0" retired="0" uuid="f1927fec-d603-11e5-9fec-0800274a5156"/>
+
+    <drug drug_id="3004" concept_id="1103" name="Ibuprofen 400mg" dosage_form="1002" combination="0" strength="2ml"
+          creator="1" date_created="2005-02-24 00:00:00.0" retired="0" uuid="846911b0-d63d-11e5-9fec-0800274a5156"/>
+
+    <drug drug_id="3005" concept_id="1104" name="Alpamoler 100mg" dosage_form="1002" combination="0" strength="2ml"
+          creator="1" date_created="2005-02-24 00:00:00.0" retired="0" uuid="8bbbcb36-d63d-11e5-9fec-0800274a5156"/>
+
+    <drug_order order_id="1999" drug_inventory_id="3005" dose="2" dose_units="1002" as_needed="0"
+                dosing_type="org.openmrs.SimpleDosingInstructions" route="68" quantity="1.0" quantity_units="1002" num_refills="10"
+                dispense_as_written="0"/>
+    <drug_order order_id="2000" drug_inventory_id="3001" dose="2" dose_units="1002" as_needed="0"
+                dosing_type="org.openmrs.SimpleDosingInstructions" route="68" quantity="1.0" quantity_units="1002" num_refills="10"
+                dispense_as_written="0"/>
+    <drug_order order_id="2001" drug_inventory_id="3002" dose="1" dose_units="1002" as_needed="0"
+                dosing_type="org.openmrs.SimpleDosingInstructions" route="68" quantity="1.0" quantity_units="1002" num_refills="10"
+                dispense_as_written="0"/>
+    <drug_order order_id="2002" drug_inventory_id="3003" dose="1" dose_units="1002" as_needed="0"
+                dosing_type="org.openmrs.SimpleDosingInstructions" route="68" quantity="1.0" quantity_units="1002" num_refills="10"
+                dispense_as_written="0"/>
+    <drug_order order_id="2003" drug_inventory_id="3004" dose="2" dose_units="1002" as_needed="0"
+                dosing_type="org.openmrs.SimpleDosingInstructions" route="68" quantity="1.0" quantity_units="1002" num_refills="10"
+                dispense_as_written="0"/>
+
+</dataset>

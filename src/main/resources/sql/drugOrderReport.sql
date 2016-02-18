@@ -20,7 +20,7 @@ select  p.patientID as patientId,
                         IF(Date(orders.date_stopped) is NULL, orders.auto_expire_date,orders.date_stopped) as stopDate,
                         IF(drug_order.drug_non_coded is NULL,drug.name,drug_order.drug_non_coded) as name from drug_order
     LEFT JOIN  orders  ON orders.order_id = drug_order.order_id
-    LEFT JOIN drug ON drug.concept_id = orders.concept_id
+    LEFT JOIN drug ON drug.drug_id = drug_order.drug_inventory_id
     LEFT JOIN concept_view dcn  ON dcn.concept_id = drug_order.dose_units
     LEFT JOIN concept_view rou  ON rou.concept_id = drug_order.route
     LEFT JOIN concept_view du  ON du.concept_id = drug_order.duration_units
@@ -43,4 +43,4 @@ select  p.patientID as patientId,
        ))
        AND
        (orders.order_action) != "DISCONTINUE"
-     ))p;
+     ))p ORDER BY p.patientID;

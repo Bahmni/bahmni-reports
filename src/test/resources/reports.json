@@ -31,5 +31,9 @@
       "applyDateRangeFor": "encounterCreateDate",
       "conceptSource":"EndTB"
     }
+  },
+  "drugOrderReport":{
+    "name": "Drug Order report",
+    "type":"DrugOrder"
   }
 }
