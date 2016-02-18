@@ -11,15 +11,9 @@ import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
-import org.bahmni.webclients.ConnectionDetails;
-import org.bahmni.webclients.HttpClient;
-import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,13 +47,6 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
         if (addressAttributes == null) {
             addressAttributes = new ArrayList<>();
         }
-
-
-        ConnectionDetails connectionDetails = new ConnectionDetails(bahmniReportsProperties.getOpenmrsRootUrl() + "/session",
-                bahmniReportsProperties.getOpenmrsServiceUser(),
-                bahmniReportsProperties.getOpenmrsServicePassword(), bahmniReportsProperties.getOpenmrsConnectionTimeout(),
-                bahmniReportsProperties.getOpenmrsReplyTimeout());
-        HttpClient httpClient = new HttpClient(connectionDetails, new OpenMRSLoginAuthenticator(connectionDetails));
 
         List<String> conceptDetails = report.getConfig().getConceptNames();
         if (conceptDetails == null) {

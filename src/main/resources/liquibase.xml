@@ -85,5 +85,27 @@
             AND concept_reference_term_map_view.concept_map_type_name = 'SAME-AS' WHERE concept_class_name = 'Diagnosis';
         </createView>
     </changeSet>
+    <changeSet id="Reports-170220160438" author="Hemanth">
+        <comment>Creating a openmrs user for reports</comment>
+        <sql>
+            SET @puuid = uuid();
+            INSERT INTO person(birthdate_estimated, dead, creator, date_created, uuid) VALUES(0, 0, 1, now(), @puuid);
 
+            SELECT person_id INTO @person_id from person where uuid = @puuid;
+
+            INSERT INTO person_name(person_id, preferred, given_name, family_name, creator, date_created, uuid)
+            VALUES(@person_id, 1, 'Reports', 'User', 1, now(), @puuid);
+
+            INSERT INTO users(system_id, creator, date_created, person_id, uuid, username)
+            VALUES ('Reports User', 1, now(),@person_id, uuid(), 'reports-user');
+        </sql>
+    </changeSet>
+    <changeSet id="Reports-170220160455" author="Hemanth">
+        <comment>Add roles to Reports user</comment>
+        <sql>
+            SELECT user_id INTO @user_id FROM users where username = 'reports-user';
+
+            INSERT INTO user_role(user_id, role) VALUES(@user_id, 'Emr-Reports');
+        </sql>
+    </changeSet>
 </databaseChangeLog>

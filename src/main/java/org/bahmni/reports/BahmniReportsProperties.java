@@ -67,10 +67,6 @@ public class BahmniReportsProperties {
         return props.getProperty("openmrs.service.user");
     }
 
-    public String getOpenmrsServicePassword() {
-        return props.getProperty("openmrs.service.password");
-    }
-
     public Integer getOpenmrsConnectionTimeout() {
         return Integer.valueOf(props.getProperty("openmrs.connectionTimeoutInMilliseconds"));
     }
