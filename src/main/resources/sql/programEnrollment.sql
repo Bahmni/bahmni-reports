@@ -35,7 +35,8 @@ SET @sql = CONCAT('SELECT
         pp.date_completed as date_completed,
         pp.patient_id,
         prog.program_id,
-        cn.name as concept_name
+        cn.name as concept_name,
+        pp.patient_program_id
         FROM  patient_program pp
         JOIN program prog ON pp.program_id = prog.program_id
         and(
@@ -56,7 +57,7 @@ SET @sql = CONCAT('SELECT
        LEFT OUTER JOIN concept_name cn ON cn.concept_id = attr.value_reference
        ) o
      LEFT OUTER JOIN program_attribute_type pat ON o.attribute_type_id = pat.program_attribute_type_id
-     GROUP BY patient_id, program_id
+     GROUP BY patient_id, patient_program_id
      ORDER BY patient_id, date_enrolled
      ');
 
