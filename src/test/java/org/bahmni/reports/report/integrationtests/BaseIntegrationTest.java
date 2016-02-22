@@ -80,6 +80,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         when(bahmniReportsProperties.getConfigFilePath()).thenReturn("src/test/resources/reports.json");
         when(bahmniReportsProperties.getOpenmrsRootUrl()).thenReturn(dbProperties.getOpenmrsRootUrl());
         when(bahmniReportsProperties.getOpenmrsServiceUser()).thenReturn(dbProperties.getOpenmrsServiceUser());
+        when(bahmniReportsProperties.getOpenmrsServicePassword()).thenReturn(dbProperties.getOpenmrsServicePassword());
         when(bahmniReportsProperties.getOpenmrsConnectionTimeout()).thenReturn(dbProperties.getOpenmrsConnectionTimeout());
         when(bahmniReportsProperties.getOpenmrsReplyTimeout()).thenReturn(dbProperties.getOpenmrsReplyTimeout());
         when(allDatasources.getConnectionFromDatasource(any(BaseReportTemplate.class))).thenReturn(getDatabaseConnection());

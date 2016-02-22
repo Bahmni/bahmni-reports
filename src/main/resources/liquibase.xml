@@ -107,20 +107,4 @@
             INSERT INTO user_role(user_id, role) VALUES(@user_id, 'Emr-Reports');
         </sql>
     </changeSet>
-    <changeSet id="Reports-190220161105" author="Bharat">
-        <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">
-                SELECT COUNT(*) FROM global_property where property = 'reports.user.password'
-            </sqlCheck>
-        </preConditions>
-        <comment>Add global_property for </comment>
-        <sql>
-            insert into global_property (`property`, `property_value`, `description`, `uuid`)
-            values ('reports.user.password',
-            'Admin123',
-            'Reports user password',
-            uuid()
-            );
-        </sql>
-    </changeSet>
 </databaseChangeLog>
