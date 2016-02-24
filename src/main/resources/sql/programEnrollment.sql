@@ -5,7 +5,7 @@ SELECT GROUP_CONCAT(DISTINCT
                     CONCAT(
                         'MAX(IF(pat.program_attribute_type_id = ''',
                         program_attribute_type_id,
-                        ''', IF( pat.datatype = "org.bahmni.module.bahmnicore.customdatatype.datatype.CodedConceptDatatype"
+                        ''', IF( pat.datatype LIKE "%Concept%"
                          , o.concept_name ,o.attr_value), NULL)) AS `',
                         description, '`'
                     )

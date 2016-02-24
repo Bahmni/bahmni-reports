@@ -6,7 +6,7 @@ SET @patientAttributesSql = '#patientAttributes#';
 SET @patientAttributesJoin = 'JOIN person_attribute_type pat ON pat.name in(#patientAttributesInClauseEscapeQuote#)
                        LEFT JOIN person_attribute pattr ON pattr.person_attribute_type_id = pat. person_attribute_type_id
                                                          AND pattr.person_id = person.person_id AND pattr.voided = false
-                       LEFT JOIN concept_view person_attribute_cn ON pattr.value = person_attribute_cn.concept_id AND pat.format LIKE "%Concept"';
+                       LEFT JOIN concept_view person_attribute_cn ON pattr.value = person_attribute_cn.concept_id AND pat.format LIKE "%Concept%"';
 
 SET @patientAttributesSelectClause = 'pat.name  as patient_attr_name,
                        coalesce(person_attribute_cn.concept_short_name, person_attribute_cn.concept_full_name, pattr.value) as patient_attr_value,';
@@ -16,7 +16,7 @@ SET @programAttributesSql = '#programAttributes#';
 SET @programAttributesJoin = 'JOIN program_attribute_type pg_at ON pg_at.name in(#programAttributesInClauseEscapeQuote#)
                        LEFT JOIN patient_program_attribute pg_attr ON pg_attr.attribute_type_id = pg_at.program_attribute_type_id
                                                          AND pg_attr.patient_program_id = pp.patient_program_id AND pg_attr.voided = false
-                       LEFT JOIN concept_view pg_attr_cn ON pg_attr.value_reference = pg_attr_cn.concept_id AND pg_at.datatype LIKE "%Concept"';
+                       LEFT JOIN concept_view pg_attr_cn ON pg_attr.value_reference = pg_attr_cn.concept_id AND pg_at.datatype LIKE "%Concept%"';
 
 SET @programAttributesSelectClause = 'pg_at.name  as program_attr_name,
                        coalesce(pg_attr_cn.concept_short_name, pg_attr_cn.concept_full_name, pg_attr.value_reference) as program_attr_value,';

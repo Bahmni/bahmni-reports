@@ -10,21 +10,22 @@ SET @programNamesSql = '#programNamesInClauseEscapeQuote#';
 SET @medicationAsNeeded = '"(PRN)"';
 
 SET @patientAttributesJoinSql = ' LEFT JOIN person_attribute pa  on pp.patient_id= pa.person_id
-                          LEFT JOIN person_attribute_type prat on prat.person_attribute_type_id = pa.person_attribute_type_id and prat.name in (#patientAttributesInClauseEscapeQuote#)';
+                          LEFT JOIN person_attribute_type prat on prat.person_attribute_type_id = pa.person_attribute_type_id and prat.name in (#patientAttributesInClauseEscapeQuote#)
+                          LEFT JOIN concept_view person_attribute_cn ON pa.value = person_attribute_cn.concept_id AND prat.format LIKE "%Concept%"';
 
 SET @patientAttributesSelectClause = 'prat.name  as patient_attribute_name,
-                       COALESCE(pa.value) as patient_attribute_value,';
+                       coalesce(person_attribute_cn.concept_short_name, person_attribute_cn.concept_full_name, pa.value) as patient_attribute_value,';
 
 
 SET @programAttributesJoinSql= ' LEFT JOIN patient_program_attribute pg_attr ON pp.patient_program_id = pg_attr.patient_program_id
       LEFT JOIN program_attribute_type pg_attr_type ON pg_attr.attribute_type_id = pg_attr_type.program_attribute_type_id and pg_attr_type.name in (#programAttributesInClauseEscapeQuote#)
-            LEFT JOIN concept_view cv on pg_attr_type.dataType="org.bahmni.module.bahmnicore.customdatatype.datatype.CodedConceptDatatype" and cv.concept_id = pg_attr.value_reference';
+      LEFT JOIN concept_view pg_attr_cn ON pg_attr.value_reference = pg_attr_cn.concept_id AND pg_attr_type.datatype LIKE "%Concept%"';
 
 
 SET @programNamesConditionSql = ' AND (prog.name in (#programNamesInClauseEscapeQuote#))';
 
 SET @programAttributesSelectClause = 'pg_attr_type.name  as program_attribute_name,
-                        IF(pg_attr_type.dataType="org.bahmni.module.bahmnicore.customdatatype.datatype.CodedConceptDatatype", cv.concept_full_name, pg_attr.value_reference) as program_attribute_value,';
+                       coalesce(pg_attr_cn.concept_short_name, pg_attr_cn.concept_full_name, pg_attr.value_reference) as program_attribute_value,';
 
 
 
