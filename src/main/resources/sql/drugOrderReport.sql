@@ -33,7 +33,7 @@ select  p.patientID as patientId,
     LEFT JOIN provider ON provider.provider_id = encounter_provider.provider_id
    where
      (
-       IF(Date(orders.scheduled_date) IS NULL , orders.date_activated, orders.scheduled_date ) < "#endDate#"
+       IF(Date(orders.scheduled_date) IS NULL , orders.date_activated, orders.scheduled_date ) <= "#endDate#"
        AND
        ((orders.auto_expire_date > "#startDate#"
          OR
@@ -44,3 +44,4 @@ select  p.patientID as patientId,
        AND
        (orders.order_action) != "DISCONTINUE"
      ))p ORDER BY p.patientID;
+
