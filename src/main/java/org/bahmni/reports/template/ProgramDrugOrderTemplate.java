@@ -171,6 +171,9 @@ public class ProgramDrugOrderTemplate extends BaseReportTemplate<ProgramDrugOrde
         private String morningDose;
         private String afternoonDose;
         private String eveningDose;
+        private String instructions;
+        private String additionalInstructions;
+
 
         public VariableDosageFormatter() {}
 
@@ -184,6 +187,14 @@ public class ProgramDrugOrderTemplate extends BaseReportTemplate<ProgramDrugOrde
 
         public String getEveningDose() {
             return eveningDose;
+        }
+
+        public String getInstructions() {
+            return instructions;
+        }
+
+        public String getAdditionalInstructions() {
+            return additionalInstructions;
         }
 
 
