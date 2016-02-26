@@ -40,13 +40,8 @@ SET @sql = CONCAT('SELECT
         FROM  patient_program pp
         JOIN program prog ON pp.program_id = prog.program_id
         and(
-            (cast(pp.date_enrolled AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\')
-              OR
-            (cast(pp.date_completed AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\')
-              OR
-            (cast(pp.date_enrolled AS DATE) <= \'#startDate#\' AND cast(pp.date_completed AS DATE) >= \'#endDate#\')
-              OR
-            (pp.date_completed IS NULL AND (cast(pp.date_enrolled AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'))
+            (cast(pp.date_enrolled AS DATE) <=  \'#endDate#\')
+             AND (cast(pp.date_completed AS DATE) >= \'#startDate#\' OR  pp.date_completed is NULL)
           )
        JOIN person p ON pp.patient_id = p.person_id
        JOIN person_name pn ON p.person_id = pn.person_id

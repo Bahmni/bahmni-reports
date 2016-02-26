@@ -96,14 +96,8 @@ SET @sql = CONCAT('SELECT
                           LEFT JOIN concept_view fre  ON order_frequency.concept_id = fre.concept_id
                      WHERE (
                        (
-
-                        (cast(pp.date_enrolled AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\')
-                          OR
-                        (cast(pp.date_completed AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\')
-                          OR
-                        (cast(pp.date_enrolled AS DATE) <= \'#startDate#\' AND cast(pp.date_completed AS DATE) >= \'#endDate#\')
-                          OR
-                        (pp.date_completed IS NULL AND (cast(pp.date_enrolled AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'))
+                      (cast(pp.date_enrolled AS DATE) <=  \'#endDate#\')
+                      AND (cast(pp.date_completed AS DATE) >= \'#startDate#\' OR  pp.date_completed is NULL)
                      ))) o
                      LEFT OUTER JOIN program_attribute_type pat ON o.attribute_type_id = pat.program_attribute_type_id
                      LEFT OUTER JOIN person_attribute_type prat ON o.person_attribute_type_id = prat.person_attribute_type_id
