@@ -8,6 +8,7 @@ import java.util.List;
 public class ProgramObsTemplateConfig extends ObsTemplateConfig {
     private List<String> programAttributes;
     private List<String> programNames;
+    private List<String> addressAttributes;
 
     public List<String> getProgramAttributes() {
         return programAttributes;
@@ -23,5 +24,13 @@ public class ProgramObsTemplateConfig extends ObsTemplateConfig {
 
     public void setProgramNames(List<String> programNames) {
         this.programNames = programNames;
+    }
+
+    public List<String> getAddressAttributes() {
+        return addressAttributes;
+    }
+
+    public void setAddressAttributes(List<String> addressAttributes) {
+        this.addressAttributes = addressAttributes;
     }
 }

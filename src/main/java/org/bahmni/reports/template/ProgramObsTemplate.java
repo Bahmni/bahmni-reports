@@ -49,10 +49,11 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
         List<String> patientAttributes = getPatientAttributes();
         List<String> programAttributes = getProgramAttributes();
         List<String> programNames = reportConfig.getProgramNames();
+        List<String> addressAttributes = reportConfig.getAddressAttributes();
 
         List<ConceptDetails> conceptDetails = fetchLeafConceptsFor(reportConfig.getTemplateName(), report);
         String formattedSql = getFormattedSql("sql/programObsTemplate.sql", conceptDetails, patientAttributes, startDate, endDate, programAttributes, programNames);
-        buildColumns(jasperReport, patientAttributes, conceptDetails, programAttributes);
+        buildColumns(jasperReport, patientAttributes, conceptDetails, programAttributes, addressAttributes);
 
         return SqlUtil.executeReportWithStoredProc(jasperReport, connection, formattedSql);
     }
@@ -71,7 +72,7 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
         return null;
     }
 
-    private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<ConceptDetails> conceptDetails, List<String> programAttributes) {
+    private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<ConceptDetails> conceptDetails, List<String> programAttributes, List<String> addressAttributes) {
         TextColumnBuilder<String> patientColumn = col.column("Patient ID", "identifier", type.stringType());
         TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "patient_name", type.stringType());
         TextColumnBuilder<String> patientGenderColumn = col.column("Gender", "gender", type.stringType());
@@ -87,6 +88,13 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
         for (String patientAttribute : patientAttributes) {
             TextColumnBuilder<String> column = col.column(patientAttribute, patientAttribute, type.stringType());
             jasperReport.addColumn(column);
+        }
+
+        if (addressAttributes != null) {
+            for (String addressAttribute : addressAttributes) {
+                TextColumnBuilder<String> column = col.column(addressAttribute, addressAttribute, type.stringType());
+                jasperReport.addColumn(column);
+            }
         }
 
         for (String programAttribute : programAttributes) {
@@ -117,6 +125,8 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
         sqlTemplate.add("templateName", reportConfig.getTemplateName());
         sqlTemplate.add("applyDateRangeFor", applyDateRangeFor(reportConfig.getApplyDateRangeFor()));
         sqlTemplate.add("conceptSourceName", reportConfig.getConceptSource());
+        sqlTemplate.add("addressAttributesInInnerQuery", constructAttributesInSelectClause("address", reportConfig.getAddressAttributes()));
+        sqlTemplate.add("addressAttributesInOuterQuery", constructAttributesInSelectClause("o", reportConfig.getAddressAttributes()));
 
         if (StringUtils.isNotBlank(locationTagNames)) {
             String countOnlyTaggedLocationsJoin = String.format("INNER JOIN " +
@@ -129,6 +139,16 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
         }
         return sqlTemplate.render();
 
+    }
+
+    private String constructAttributesInSelectClause(String tableName, List<String> attributes) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (attributes != null) {
+            for (String attribute : attributes) {
+                stringBuilder.append(tableName).append(".").append(attribute).append(",");
+            }
+        }
+        return stringBuilder.toString();
     }
 
     private String getProgramNamesListInClause(List<String> programNames) {

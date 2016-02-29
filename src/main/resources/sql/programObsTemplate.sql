@@ -3,10 +3,10 @@ SET @sql = NULL;
 
 SET @patientAttributesSql = '#patientAttributes#';
 
-SET @patientAttributesJoin = 'JOIN person_attribute_type pat ON pat.name in(#patientAttributesInClauseEscapeQuote#)
+SET @patientAttributesJoin = ' JOIN person_attribute_type pat ON pat.name in(#patientAttributesInClauseEscapeQuote#)
                        LEFT JOIN person_attribute pattr ON pattr.person_attribute_type_id = pat. person_attribute_type_id
                                                          AND pattr.person_id = person.person_id AND pattr.voided = false
-                       LEFT JOIN concept_view person_attribute_cn ON pattr.value = person_attribute_cn.concept_id AND pat.format LIKE "%Concept%"';
+                       LEFT JOIN concept_view person_attribute_cn ON pattr.value = person_attribute_cn.concept_id AND pat.format LIKE "%Concept%" ';
 
 SET @patientAttributesSelectClause = 'pat.name  as patient_attr_name,
                        coalesce(person_attribute_cn.concept_short_name, person_attribute_cn.concept_full_name, pattr.value) as patient_attr_value,';
@@ -21,6 +21,9 @@ SET @programAttributesJoin = 'JOIN program_attribute_type pg_at ON pg_at.name in
 SET @programAttributesSelectClause = 'pg_at.name  as program_attr_name,
                        coalesce(pg_attr_cn.concept_short_name, pg_attr_cn.concept_full_name, pg_attr.value_reference) as program_attr_value,';
 
+SET @addressAttributesJoin = ' JOIN person_address address ON person.person_id = address.person_id ';
+SET @addressAttributesInInnerQuery = '#addressAttributesInInnerQuery#';
+SET @addressAttributesInOuterQuery = '#addressAttributesInOuterQuery#';
 
 SET @conceptSourceId = NULL;
 
@@ -44,6 +47,7 @@ SET @sql = CONCAT('SELECT
                       o.gender,',
                       IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')),
                       IF(@programAttributesSql = '', '', CONCAT(@programAttributesSql, ',')),
+                      IF(@addressAttributesInOuterQuery = '', '', @addressAttributesInOuterQuery),
                       'o.provider_id,
                       o.encounter_id,
                       o.program_name,
@@ -63,6 +67,7 @@ SET @sql = CONCAT('SELECT
                          person.gender,',
                          IF(@patientAttributesSql = '', '', @patientAttributesSelectClause),
                          IF(@programAttributesSql = '', '', @programAttributesSelectClause),
+                         IF(@addressAttributesInInnerQuery = '', '', @addressAttributesInInnerQuery),
                          'ep.provider_id,
                          ep.encounter_id,
                          concat(pn.given_name, '' '', pn.family_name)   AS provider_name,
@@ -96,7 +101,8 @@ SET @sql = CONCAT('SELECT
                             ON (pp.program_id = prog.program_id #programNamesListInClause#)
                          JOIN patient_identifier pi
                             ON pi.patient_id = ob.person_id
-                         JOIN person ON person.person_id = pi.patient_id ',
+                         JOIN person ON person.person_id = pi.patient_id',
+                         IF (@addressAttributesInInnerQuery = '', '', @addressAttributesJoin),
                          IF(@patientAttributesSql = '', '', @patientAttributesJoin),
                          IF(@programAttributesSql = '', '', @programAttributesJoin),
                        ' JOIN person_name pat_name ON pat_name.person_id = person.person_id
