@@ -27,6 +27,10 @@ SET @programNamesConditionSql = ' AND (prog.name in (#programNamesInClauseEscape
 SET @programAttributesSelectClause = 'pg_attr_type.name  as program_attribute_name,
                        coalesce(pg_attr_cn.concept_short_name, pg_attr_cn.concept_full_name, pg_attr.value_reference) as program_attribute_value,';
 
+SET @programAttributesTypejoin = ' LEFT OUTER JOIN program_attribute_type pat ON o.attribute_type_id = pat.program_attribute_type_id ';
+
+SET @patientAttributesTypejoin = ' LEFT OUTER JOIN person_attribute_type prat ON o.person_attribute_type_id = prat.person_attribute_type_id  ';
+
 
 
 SET @sql = CONCAT('SELECT
@@ -65,10 +69,10 @@ SET @sql = CONCAT('SELECT
                         IF(@patientAttributesSql = '', '', @patientAttributesSelectClause),
                         IF(@programAttributesSql = '', '', @programAttributesSelectClause),'
                         pp.patient_program_id,
-                        prog.name as programName,
-                        pg_attr.attribute_type_id,
-                        pp.patient_id,
-                       prat.person_attribute_type_id,
+                        prog.name as programName,'
+                         ,IF(@programAttributesSql = '','','pg_attr.attribute_type_id,'),'
+                        pp.patient_id,'
+                        ,IF(@patientAttributesSql = '','','prat.person_attribute_type_id,'),'
                        prog.program_id,
                        orders.order_id,
                        pp.date_enrolled
@@ -98,9 +102,9 @@ SET @sql = CONCAT('SELECT
                        (
                       (cast(pp.date_enrolled AS DATE) <=  \'#endDate#\')
                       AND (cast(pp.date_completed AS DATE) >= \'#startDate#\' OR  pp.date_completed is NULL)
-                     ))) o
-                     LEFT OUTER JOIN program_attribute_type pat ON o.attribute_type_id = pat.program_attribute_type_id
-                     LEFT OUTER JOIN person_attribute_type prat ON o.person_attribute_type_id = prat.person_attribute_type_id
+                     ))) o',
+                      IF(@patientAttributesSql = '','',@patientAttributesTypeJoin),
+                      IF(@programAttributesSql = '','',@programAttributesTypeJoin), '
                      GROUP BY patient_id, program_id, order_id
                      ORDER BY patient_id, date_enrolled');
 
