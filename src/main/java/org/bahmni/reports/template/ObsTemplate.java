@@ -154,7 +154,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
     private String constructConceptNamesString(List<ConceptDetails> conceptDetailsList) {
         ArrayList<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(ob.code, ob.value_numeric, ob.value_boolean, ob.value_text, ob.value_datetime, coded_answer.concept_short_name, coded_answer.concept_full_name, ob.date_created, e.encounter_datetime), %s)) SEPARATOR \\',\\') AS %s";;
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(CRTM.code, ob.value_numeric, ob.value_boolean, ob.value_text, ob.value_datetime, coded_answer.concept_short_name, coded_answer.concept_full_name, ob.date_created, e.encounter_datetime), %s)) SEPARATOR \\',\\') AS %s";;
         String unknownConceptClause = "IF(cv.concept_full_name = %s and cv.concept_full_name = \\'true\\', \\'Unknown\\', null)";
 
         if (reportConfig.getConceptSource() == null) {

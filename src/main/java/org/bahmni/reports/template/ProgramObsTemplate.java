@@ -202,7 +202,7 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
 
     private String constructConceptNamesString(List<ConceptDetails> conceptDetailsList) {
         ArrayList<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.code, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, answer.concept_short_name, answer.concept_full_name, e.date_created, e.encounter_datetime), %s)) SEPARATOR \\',\\') AS %s";;
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(CRTM.code, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, answer.concept_short_name, answer.concept_full_name, e.date_created, e.encounter_datetime), %s)) SEPARATOR \\',\\') AS %s";;
         String unknownConceptClause = "IF(cv.concept_full_name = %s and cv.concept_full_name = \\'true\\', \\'Unknown\\', null)";
 
         if (reportConfig.getConceptSource() == null) {
