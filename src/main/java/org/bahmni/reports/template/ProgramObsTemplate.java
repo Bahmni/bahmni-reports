@@ -89,7 +89,7 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
             jasperReport.addColumn(column);
         }
 
-        for (String programAttribute : programAttributes) {
+        for (String programAttribute : getCamelCaseProgramAttributes(programAttributes)) {
             TextColumnBuilder<String> column = col.column(programAttribute, programAttribute, type.stringType());
             jasperReport.addColumn(column);
         }
@@ -109,8 +109,10 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
         sqlTemplate.add("programNamesListInClause", getProgramNamesListInClause(programNames));
         sqlTemplate.add("patientAttributesInClauseEscapeQuote", getAttributesInClause(patientAttributes));
         sqlTemplate.add("programAttributesInClauseEscapeQuote", getAttributesInClause(programAttributes));
+        sqlTemplate.add("patientAttributesInSelectClause", constructAttributesInSelectClause("pattr_result", patientAttributes));
         sqlTemplate.add("patientAttributes", constructPatientAttributeNamesString(patientAttributes));
         sqlTemplate.add("programAttributes", constructProgramAttributeNamesString(programAttributes));
+        sqlTemplate.add("programAttributesInSelectClause", constructAttributesInSelectClause("prog_attr_result", getCamelCaseProgramAttributes(programAttributes)));
         sqlTemplate.add("conceptNamesAndValue", constructConceptNamesString(conceptDetails));
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
@@ -129,6 +131,31 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
         }
         return sqlTemplate.render();
 
+    }
+
+    private List<String> getCamelCaseProgramAttributes(List<String> programAttributes) {
+        List<String> camelCasedProgramAttributes = new ArrayList<>();
+        for (String programAttribute : programAttributes) {
+            camelCasedProgramAttributes.add(toCamelCase(programAttribute));
+        }
+        return camelCasedProgramAttributes;
+    }
+
+    private String toCamelCase(String programAttribute) {
+        String[] tokens = StringUtils.splitPreserveAllTokens(programAttribute, null, 0);
+        String str = tokens[0].trim();
+        tokens[0] = Character.toLowerCase(str.charAt(0)) + str.substring(1);
+        return StringUtils.join(tokens);
+    }
+
+    private String constructAttributesInSelectClause(String tableName, List<String> attributes) {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (attributes != null) {
+            for (String attribute : attributes) {
+                stringBuilder.append(tableName).append(".").append(attribute).append(", ");
+            }
+        }
+        return stringBuilder.toString();
     }
 
     private String getProgramNamesListInClause(List<String> programNames) {
@@ -175,11 +202,11 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
 
     private String constructConceptNamesString(List<ConceptDetails> conceptDetailsList) {
         ArrayList<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.code, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), %s)) SEPARATOR \\',\\') AS %s";;
-        String unknownConceptClause = "IF(cv.concept_full_name = %s and o.concept_full_name = \\'true\\', \\'Unknown\\', null)";
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.code, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, answer.concept_short_name, answer.concept_full_name, e.date_created, e.encounter_datetime), %s)) SEPARATOR \\',\\') AS %s";;
+        String unknownConceptClause = "IF(cv.concept_full_name = %s and cv.concept_full_name = \\'true\\', \\'Unknown\\', null)";
 
         if (reportConfig.getConceptSource() == null) {
-            helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), %s)) SEPARATOR \\',\\') AS %s";
+            helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, answer.concept_short_name, answer.concept_full_name, e.date_created, e.encounter_datetime), %s)) SEPARATOR \\',\\') AS %s";
         }
 
         for (ConceptDetails conceptDetails : conceptDetailsList) {
@@ -199,7 +226,7 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
 
     private String constructPatientAttributeNamesString(List<String> patientAttributes) {
         ArrayList<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(o.patient_attr_name = \\'%s\\', o.patient_attr_value, NULL))) AS \\'%s\\'";
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(pat.name = \\'%s\\', coalesce(person_attribute_cn.concept_short_name, person_attribute_cn.concept_full_name, pattr.value), NULL))) AS \\'%s\\'";
 
         for (String patientAttribute : patientAttributes) {
             parts.add(String.format(helperString, patientAttribute, patientAttribute));
@@ -210,10 +237,10 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
 
     private String constructProgramAttributeNamesString(List<String> programAttributes) {
         ArrayList<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(o.program_attr_name = \\'%s\\', o.program_attr_value, NULL))) AS \\'%s\\'";
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(pg_at.name = \\'%s\\', coalesce(pg_attr_cn.concept_short_name, pg_attr_cn.concept_full_name, pg_attr.value_reference), NULL))) AS \\'%s\\' ";
 
         for (String programAttribute : programAttributes) {
-            parts.add(String.format(helperString, programAttribute, programAttribute));
+            parts.add(String.format(helperString, programAttribute, toCamelCase(programAttribute)));
         }
 
         return StringUtils.join(parts, ", ");
