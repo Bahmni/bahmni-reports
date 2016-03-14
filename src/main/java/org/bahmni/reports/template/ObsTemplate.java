@@ -97,7 +97,6 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         sqlTemplate.add("conceptNameInClauseEscapeQuote", getConceptNamesInClause(conceptDetails));
         sqlTemplate.add("patientAttributesInClauseEscapeQuote", getPatientAttributesInClause(patientAttributes));
         sqlTemplate.add("patientAttributes", constructPatientAttributeNamesString(patientAttributes));
-        sqlTemplate.add("patientAttributesInSelectClause", constructPatientAttributesInSelectClauseString(patientAttributes));
         sqlTemplate.add("conceptNamesAndValue", constructConceptNamesString(conceptDetails));
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
@@ -154,11 +153,11 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
     private String constructConceptNamesString(List<ConceptDetails> conceptDetailsList) {
         ArrayList<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(CRTM.code, ob.value_numeric, ob.value_boolean, ob.value_text, ob.value_datetime, coded_answer.concept_short_name, coded_answer.concept_full_name, ob.date_created, e.encounter_datetime), %s)) SEPARATOR \\',\\') AS %s";;
-        String unknownConceptClause = "IF(cv.concept_full_name = %s and cv.concept_full_name = \\'true\\', \\'Unknown\\', null)";
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.code, o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), %s)) SEPARATOR \\',\\') AS %s";;
+        String unknownConceptClause = "IF(cv.concept_full_name = %s and o.concept_full_name = \\'true\\', \\'Unknown\\', null)";
 
         if (reportConfig.getConceptSource() == null) {
-            helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(ob.value_numeric, ob.value_boolean, ob.value_text, ob.value_datetime, coded_answer.concept_short_name, coded_answer.concept_full_name, ob.date_created, e.encounter_datetime), %s)) SEPARATOR \\',\\') AS %s";
+            helperString = "GROUP_CONCAT(DISTINCT(IF(cv.concept_full_name = %s, coalesce(o.value_numeric, o.value_boolean, o.value_text, o.value_datetime, o.concept_short_name, o.concept_full_name, o.date_created, o.encounter_datetime), %s)) SEPARATOR \\',\\') AS %s";
         }
 
         for (ConceptDetails conceptDetails : conceptDetailsList) {
@@ -178,24 +177,13 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
 
     private String constructPatientAttributeNamesString(List<String> patientAttributes) {
         ArrayList<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(pat.name = \\'%s\\', pattr.value, NULL))) AS \\'%s\\'";
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(o.patient_attr_name = \\'%s\\', o.patient_attr_value, NULL))) AS \\'%s\\'";
 
         for (String patientAttribute : patientAttributes) {
             parts.add(String.format(helperString, patientAttribute, patientAttribute));
         }
 
         return StringUtils.join(parts, ", ");
-    }
-
-    private String constructPatientAttributesInSelectClauseString(List<String> patientAttributes) {
-        ArrayList<String> parts = new ArrayList<>();
-        String helperString = "pattr_result.%s AS %s";
-
-        for (String patientAttribute : patientAttributes) {
-            parts.add(String.format(helperString, patientAttribute, patientAttribute));
-        }
-
-        return StringUtils.join(parts, ", ") + ", ";
     }
 
     private String escapeQuotes(String inclause) {
