@@ -15,7 +15,7 @@ select  p.patientID as patientId,
   (select person.gender,floor(datediff(CURDATE(), person.birthdate) / 365) AS age,IF(drug_order.dose IS NULL , drug_order.dosing_instructions, drug_order.dose) AS dose, dcn.concept_full_name as units,rou.concept_full_name as route,drug_order.dose_units,fre.concept_full_name as frequency,
                         concat(drug_order.duration ,' ', du.concept_full_name) as duration,concat(drug_order.quantity,' ', dcn.concept_full_name) as quantity, orders.patient_id, IF(Date(orders.scheduled_date) IS NULL, orders.date_activated, orders.scheduled_date) as startDate,orders.concept_id,
                         concat(person_name.given_name, ' ', person_name.family_name) as patientName,
-                        provider.name as user,
+                        concat(pro.given_name, ' ', pro.family_name) as user,
                         patient_identifier.identifier as patientID,
                         IF(Date(orders.date_stopped) is NULL, orders.auto_expire_date,orders.date_stopped) as stopDate,
                         IF(drug_order.drug_non_coded is NULL,drug.name,drug_order.drug_non_coded) as name from drug_order
@@ -31,6 +31,7 @@ select  p.patientID as patientId,
     LEFT JOIN patient_identifier ON patient_identifier.patient_id = orders.patient_id
     LEFT JOIN encounter_provider ON encounter_provider.encounter_id = orders.encounter_id
     LEFT JOIN provider ON provider.provider_id = encounter_provider.provider_id
+    LEFT JOIN person_name pro ON pro.person_id = provider.person_id
    where
      (
        IF(Date(orders.scheduled_date) IS NULL , orders.date_activated, orders.scheduled_date ) <= "#endDate#"
