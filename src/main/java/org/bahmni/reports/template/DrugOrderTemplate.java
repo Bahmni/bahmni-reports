@@ -38,56 +38,56 @@ public class DrugOrderTemplate extends BaseReportTemplate<Config> {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         TextColumnBuilder<String> drugName = col.column("Drug Name", "drugName", type.stringType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         TextColumnBuilder<String> dose = col.column("Dose", "dose", type.stringType())
-                .setValueFormatter(new ValueFormatter())
-                .setStyle(columnStyle);
+            .setValueFormatter(new ValueFormatter())
+            .setStyle(columnStyle);
 
         TextColumnBuilder<String> unit = col.column("Unit", "unit", type.stringType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         TextColumnBuilder<String> frequency = col.column("Frequency", "frequency", type.stringType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         TextColumnBuilder<String> duration = col.column("Duration", "duration", type.stringType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         TextColumnBuilder<String> route = col.column("Route", "route", type.stringType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         TextColumnBuilder<Date> startdate = col.column("Start Date", "startDate", type.dateType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         TextColumnBuilder<Date> stopDate = col.column("Stop Date", "stopDate", type.dateType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         TextColumnBuilder<String> quantity = col.column("Quantity", "quantity", type.stringType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         TextColumnBuilder<String> patientId = col.column("Patient ID", "patientId", type.stringType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         TextColumnBuilder<String> patientName = col.column("Patient Name", "patientName", type.stringType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         TextColumnBuilder<String> patientGender = col.column("Gender", "gender", type.stringType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         TextColumnBuilder<String> patientAge = col.column("Age", "age", type.stringType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         TextColumnBuilder<String> user = col.column("User", "user", type.stringType())
-                .setStyle(columnStyle);
+            .setStyle(columnStyle);
 
         String sql = getFileContent("sql/drugOrderReport.sql");
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
         jasperReport.setShowColumnTitle(true)
-                .columns(patientId, patientName, patientGender, patientAge, user, drugName, dose, unit, frequency, duration, route, startdate, stopDate, quantity)
-                .setDataSource(getFormattedSql(sql, startDate, endDate),
-                        connection);
+            .columns(patientId, patientName, patientGender, patientAge, user, drugName, dose, unit, frequency, duration, route, startdate, stopDate, quantity)
+            .setDataSource(getFormattedSql(sql, startDate, endDate),
+                connection);
         return jasperReport;
     }
 
@@ -101,7 +101,11 @@ public class DrugOrderTemplate extends BaseReportTemplate<Config> {
 
                 try {
                     VariableDosageFormatter dosage = mapper.readValue(data, VariableDosageFormatter.class);
-                    return dosage.getMorningDose() + "-" + dosage.getAfternoonDose() + "-" + dosage.getEveningDose();
+                    String variableDosage = dosage.getMorningDose() + "-" + dosage.getAfternoonDose() + "-" + dosage.getEveningDose();
+                    if ("--".equals(variableDosage)) {
+                        return dosage.getDose();
+                    }
+                    return variableDosage;
 
                 } catch (IOException e) {
                     return e.toString();
@@ -123,19 +127,44 @@ public class DrugOrderTemplate extends BaseReportTemplate<Config> {
         private String morningDose;
         private String afternoonDose;
         private String eveningDose;
+        private String dose;
+        private String doseUnits;
 
         public VariableDosageFormatter() {}
 
+        public String getDoseUnits() {
+            return doseUnits;
+        }
+
+        public void setDoseUnits(String doseUnits) {
+            this.doseUnits = doseUnits;
+        }
+
+        public String getDose() {
+            return dose;
+        }
+
+        public void setDose(String dose) {
+            this.dose = dose;
+        }
+
         public String getMorningDose() {
-            return morningDose;
+            return getEmptyStringIfEmpty(morningDose);
         }
 
         public String getAfternoonDose() {
-            return afternoonDose;
+            return getEmptyStringIfEmpty(afternoonDose);
         }
 
         public String getEveningDose() {
-            return eveningDose;
+            return getEmptyStringIfEmpty(eveningDose);
+        }
+
+        private String getEmptyStringIfEmpty(String value) {
+            if (null == value) {
+                return "";
+            }
+            return value;
         }
 
         public String getInstructions() {
