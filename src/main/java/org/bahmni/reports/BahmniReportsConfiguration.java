@@ -8,6 +8,7 @@ import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import java.beans.PropertyVetoException;
 
@@ -43,6 +44,14 @@ public class BahmniReportsConfiguration {
                 .withUser(bahmniReportsProperties.getOpenelisUser())
                 .withPassword(bahmniReportsProperties.getOpenelisPassword())
                 .withDriver(org.postgresql.Driver.class).build();
+    }
+
+    @Bean
+    public CommonsMultipartResolver multipartResolver(){
+        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
+        commonsMultipartResolver.setDefaultEncoding("utf-8");
+        commonsMultipartResolver.setMaxUploadSize(50000000);
+        return commonsMultipartResolver;
     }
 
 }
