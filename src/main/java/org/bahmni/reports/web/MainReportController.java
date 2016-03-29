@@ -3,7 +3,6 @@ package org.bahmni.reports.web;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.exception.DRException;
-import org.apache.http.entity.ContentType;
 import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
@@ -68,7 +67,7 @@ public class MainReportController {
             JasperReportBuilder reportBuilder = reportTemplate.build(connection, jasperReport, report, startDate, endDate, resources,
                     pageType);
 
-            convertToResponse(responseType, reportBuilder, response, reportName, macroTemplateLocation);
+            convertToResponse(responseType, reportBuilder, response, reportName, macroTemplateLocation, bahmniReportsProperties.getMacroTemplatesTempDirectory());
 
             resources.add(connection);
         } catch (Throwable e) {
@@ -99,10 +98,10 @@ public class MainReportController {
         }
     }
 
-    private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response, String fileName, String macroTemplateLocation)
+    private void convertToResponse(String responseType, JasperReportBuilder reportBuilder, HttpServletResponse response, String fileName, String macroTemplateLocation, String macroTemplatesTempDirectory)
             throws Exception {
         try {
-            converter.convert(responseType, reportBuilder, response, fileName, macroTemplateLocation);
+            converter.convert(responseType, reportBuilder, response, fileName, macroTemplateLocation, macroTemplatesTempDirectory);
         } catch (DRException | IOException e) {
             logger.error("Could not convert response", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

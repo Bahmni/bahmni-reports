@@ -20,7 +20,7 @@ public class JasperResponseConverter {
 
     private static final Logger logger = Logger.getLogger(JasperResponseConverter.class);
 
-    public void convert(String responseType, JasperReportBuilder report, HttpServletResponse response, final String fileName, String macroTemplateLocation) throws
+    public void convert(String responseType, JasperReportBuilder report, HttpServletResponse response, final String fileName, String macroTemplateLocation, String macroTemplatesTempDirectory) throws
             IOException, DRException, SQLException, JRException {
 
         response.setContentType("application/vnd.ms-excel");
@@ -47,9 +47,11 @@ public class JasperResponseConverter {
                 exporterBuilder.addSheetName("Report");
                 report.toXls(exporterBuilder);
                 File templateFile = new File(macroTemplateLocation);
-                boolean delete = templateFile.delete();
-                if(!delete){
-                    logger.warn("Template file not deleted");
+                if(macroTemplateLocation.startsWith(macroTemplatesTempDirectory)) {
+                    boolean delete = templateFile.delete();
+                    if(!delete){
+                        logger.warn("Template file not deleted");
+                    }
                 }
                 break;
             case "application/pdf":
