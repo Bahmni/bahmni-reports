@@ -23,7 +23,7 @@ SET @programAttributesJoin = ' LEFT JOIN (SELECT
                             GROUP BY patient_program_id ) prog_attr_result ON prog_attr_result.patient_program_id = pp.patient_program_id ';
 SET @programAttributesSelectClause = '#programAttributesInSelectClause#';
 
-SET @addressAttributesJoin = ' JOIN person_address address ON person.person_id = address.person_id ';
+SET @addressAttributesJoin = ' LEFT JOIN person_address address ON person.person_id = address.person_id ';
 SET @addressAttributesInInnerQuery = '#addressAttributesInInnerQuery#';
 SET @addressAttributesInOuterQuery = '#addressAttributesInOuterQuery#';
 
