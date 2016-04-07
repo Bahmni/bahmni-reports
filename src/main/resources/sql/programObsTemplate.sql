@@ -75,7 +75,9 @@ SET @sql = CONCAT('SELECT
                         IF(@patientAttributesSql = '', '', @patientAttributesJoin),
                         IF(@programAttributesSql = '', '', @programAttributesJoin),
                         ' INNER JOIN patient_identifier pi ON pi.patient_id = o.person_id
-                        INNER JOIN person_name pn ON pn.person_id = o.creator
+                        LEFT JOIN encounter_provider ON encounter_provider.encounter_id = o.encounter_id
+                        LEFT JOIN provider ON provider.provider_id = encounter_provider.provider_id
+                        LEFT JOIN person_name pn ON pn.person_id = provider.person_id
                         LEFT JOIN concept_view answer ON o.value_coded = answer.concept_id',
                         IF(@conceptSourceId IS NULL, '', @conceptRefMapSql),
                       ' GROUP BY pi.identifier, prog.name');
