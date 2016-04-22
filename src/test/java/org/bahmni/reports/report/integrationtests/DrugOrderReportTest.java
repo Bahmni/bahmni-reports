@@ -15,15 +15,7 @@ public class DrugOrderReportTest extends BaseIntegrationTest {
     @Before
     public void setUp() throws Exception {
 
-        Person person = Context.getPersonService().getPerson(2);
-
         Patient patient = Context.getPatientService().getPatient(2);
-        PatientIdentifierType patientIdentifierType = Context.getPatientService().getPatientIdentifierTypeByName("Bahmni Id");
-        Location location = Context.getLocationService().getLocation(1);
-
-        PatientIdentifier patientIdentifier = new PatientIdentifier("SEM123-0", patientIdentifierType, location);
-        patientIdentifier.setPatient(patient);
-        Context.getPatientService().savePatientIdentifier(patientIdentifier);
 
         Visit visit1 = new VisitBuilder().withPatient(patient).withVisitType(1).withStartDate("2016-01-17").build();
         Context.getVisitService().saveVisit(visit1);
@@ -41,12 +33,12 @@ public class DrugOrderReportTest extends BaseIntegrationTest {
     @Test
     public void shouldRetrieveDrugOrderReportWithFourteenColmns() throws Exception {
         Report drugOrderReport = fetchReport("Drug Order report","2016-02-01","2016-02-29");
-        assertEquals(14, drugOrderReport.getNumberOfColumns());
+        assertEquals(14, drugOrderReport.columnsCount());
     }
 
     @Test
     public void shouldRetrieveDrugOrderReportWithFourRecords() throws Exception {
         Report drugOrderReport = fetchReport("Drug Order report","2016-02-01","2016-02-29");
-        assertEquals(4, drugOrderReport.numberOfRows());
+        assertEquals(4, drugOrderReport.rowsCount());
     }
 }

@@ -41,6 +41,7 @@ public class Report {
         String[] row;
         reportName = joinStringArray(csvReader.readNext(), "");
         dateHeader = joinStringArray(csvReader.readNext(), "");
+        String reportRanDatetime = joinStringArray(csvReader.readNext(), "");
         columnHeaders = csvReader.readNext();
         columnMap = buildIndexMap(columnHeaders);
         boolean pageStart = false;
@@ -59,7 +60,7 @@ public class Report {
 
     }
 
-    public int numberOfRows() {
+    public int rowsCount() {
         return rows.size();
     }
 
@@ -88,7 +89,7 @@ public class Report {
         return null;
     }
 
-    public int getNumberOfColumns() {
+    public int columnsCount() {
         return columnHeaders.length;
     }
 

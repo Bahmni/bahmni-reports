@@ -1,0 +1,52 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<dataset>
+    <!--voided person-->
+    <person person_id="506" gender="F" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="true" uuid="dfqae447-6745-45be-b859-403241d9913c"/>
+    <patient patient_id="506" creator="1" date_created="2006-01-18 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:25:31.0" voided="false" void_reason=",,,,"/>
+    <patient_identifier patient_identifier_id="506" patient_id="506" identifier="GAN1235" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-b377-455c-87ad-231cf34a21ca"/>
+
+    <!--voided patient-->
+    <person person_id="507" gender="F" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="dfqae447-6745-45be-b659-403241d9913c"/>
+    <patient patient_id="507" creator="1" date_created="2006-01-18 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:25:31.0" voided="true" void_reason=",,,,"/>
+    <patient_identifier patient_identifier_id="506" patient_id="506" identifier="GAN1236" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-b377-455c-87ad-231cf34a21ac"/>
+
+    <!--voided location tag-->
+    <location location_id="4" name="Location1" description="This is a voided location" address1="" address2="" city_village="" state_province="" postal_code="" country="" creator="1" date_created="2005-09-22 00:00:00.0" retired="false" uuid="8d6c993e-c2cc-11de-8d13-0010c6dddd4f"/>
+    <location_tag location_tag_id="4" name="Voided Location Tag" creator="1" date_created="2005-09-22 00:00:00.0" retired="true" uuid="81433882-3f10-11e4-adec-080027561b81"/>
+    <location_tag_map location_id="4" location_tag_id="4"/>
+
+    <!--voided location-->
+    <location location_id="5" name="Location2" description="This is a voided location" address1="" address2="" city_village="" state_province="" postal_code="" country="" creator="1" date_created="2005-09-22 00:00:00.0" retired="true" uuid="8d6c993e-c2cc-11de-8d13-0010c6ddddaf"/>
+    <location_tag_map location_id="5" location_tag_id="2"/>
+
+    <visit visit_id="2" patient_id="2" visit_type_id="1" date_started="2016-04-20 00:00:00.0"
+           date_stopped="2016-05-21 00:00:00.0" location_id="2" creator="1" date_created="2005-01-01 00:00:00.0"
+           voided="0" uuid="1e5d5d48-6b78-11e0-933c-18a905e044cd"/>
+
+    <visit visit_id="3" patient_id="2" visit_type_id="2" date_started="2016-03-20 00:00:00.0"
+           date_stopped="2016-04-21 00:00:00.0" location_id="3" creator="1" date_created="2005-01-01 00:00:00.0"
+           voided="0" uuid="1e5d5d48-6b78-11e0-933c-18a905e0443r"/>
+
+    <visit visit_id="4" patient_id="2" visit_type_id="1" date_started="2016-04-20 00:00:00.0"
+           date_stopped="2016-05-21 00:00:00.0" location_id="2" creator="1" date_created="2005-01-01 00:00:00.0"
+           voided="1" uuid="1e5d5d48-6b78-11e0-933c-18a90se044cd"/>
+
+    <visit visit_id="5" patient_id="506" visit_type_id="1" date_started="2016-04-20 00:00:00.0"
+           date_stopped="2016-05-21 00:00:00.0" location_id="2" creator="1" date_created="2005-01-01 00:00:00.0"
+           voided="false" uuid="1e5d5d48-6b78-11e0-933c-18ad0se044cd"/>
+
+    <visit visit_id="6" patient_id="507" visit_type_id="1" date_started="2016-04-20 00:00:00.0"
+           date_stopped="2016-05-21 00:00:00.0" location_id="2" creator="1" date_created="2005-01-01 00:00:00.0"
+           voided="false" uuid="1e5d5da8-6b78-11e0-933c-18ad0se044cd"/>
+
+    <visit visit_id="7" patient_id="2" visit_type_id="1" date_started="2017-04-20 00:00:00.0"
+           date_stopped="2017-05-21 00:00:00.0" location_id="4" creator="1" date_created="2005-01-01 00:00:00.0"
+           voided="false" uuid="1e5d5da8-6b78-11e0-933c-18ad34ad4412"/>
+
+    <visit visit_id="8" patient_id="2" visit_type_id="1" date_started="2017-04-20 00:00:00.0"
+           date_stopped="2017-05-21 00:00:00.0" location_id="5" creator="1" date_created="2005-01-01 00:00:00.0"
+           voided="false" uuid="1e5d5da8-6b78-11e0-933c-18aad4ad4412"/>
+
+    <visit_attribute visit_attribute_id="1" visit_id="2" attribute_type_id="3" value_reference="Admitted" creator="1" date_created="2005-01-01 00:00:00.0" voided="0" uuid="8770f6d6-7673-11e0-8f03-001e378eb6e7"/>
+</dataset>

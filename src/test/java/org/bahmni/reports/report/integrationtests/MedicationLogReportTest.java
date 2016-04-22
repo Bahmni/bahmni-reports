@@ -104,14 +104,14 @@ public class MedicationLogReportTest extends BaseIntegrationTest {
     @Test
     public void shouldRetrieveMedicationReport() throws Exception {
         Report report = fetchReport("Medication Log Data Export", "2015-10-13", "2016-10-21");
-        assertEquals(8, report.getNumberOfColumns());
+        assertEquals(8, report.columnsCount());
         assertNotNull(report.getRow(1));
     }
 
     @Test
     public void shouldRetrieveReferenceCodeIfItisPresent() throws Exception {
         Report report = fetchReport("Medication Log Data Export", "2015-10-13", "2016-10-21");
-        assertEquals(8, report.getNumberOfColumns());
+        assertEquals(8, report.columnsCount());
         assertEquals("1234",report.getColumnValueInRow(1,"Type of regimen"));
     }
 

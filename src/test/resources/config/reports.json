@@ -22,18 +22,18 @@
       ]
     }
   },
-  "medicationLogTemplateReport":{
+  "medicationLogTemplateReport": {
     "name": "Medication Log Data Export",
     "type": "obsTemplate",
     "config": {
       "templateName": "Medication log Template",
       "patientAttributes": [],
       "applyDateRangeFor": "encounterCreateDate",
-      "conceptSource":"EndTB"
+      "conceptSource": "EndTB"
     }
   },
-  "drugOrderReport":{
+  "drugOrderReport": {
     "name": "Drug Order report",
-    "type":"DrugOrder"
+    "type": "DrugOrder"
   }
 }

@@ -72,13 +72,20 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     @InjectMocks
     private MainReportController controller;
+    private String configFilePath = "src/test/resources/config/reports.json";
 
+    public BaseIntegrationTest(String configFilePath) {
+        this.configFilePath = configFilePath;
+    }
+
+    public BaseIntegrationTest() {
+    }
 
     @Before
     public void beforeBaseIntegrationTest() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        when(bahmniReportsProperties.getConfigFilePath()).thenReturn("src/test/resources/reports.json");
+        when(bahmniReportsProperties.getConfigFilePath()).thenReturn(configFilePath);
         when(bahmniReportsProperties.getOpenmrsRootUrl()).thenReturn(dbProperties.getOpenmrsRootUrl());
         when(bahmniReportsProperties.getOpenmrsServiceUser()).thenReturn(dbProperties.getOpenmrsServiceUser());
         when(bahmniReportsProperties.getOpenmrsServicePassword()).thenReturn(dbProperties.getOpenmrsServicePassword());
@@ -148,10 +155,10 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         this.turnOffDBConstraints(connection);
         String[] types = {"Table"};
         IDatabaseConnection dbUnitConn = this.setupDatabaseConnection(connection);
-        ResultSet resultSet = connection.getMetaData().getTables((String) null, "PUBLIC", "%",types);
+        ResultSet resultSet = connection.getMetaData().getTables((String) null, "PUBLIC", "%", types);
         DefaultDataSet dataset = new DefaultDataSet();
 
-        while(resultSet.next()) {
+        while (resultSet.next()) {
             String tableName = resultSet.getString(3);
             dataset.addTable(new DefaultTable(tableName));
         }
@@ -165,7 +172,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     private void turnOffDBConstraints(Connection connection) throws SQLException {
         String constraintsOffSql;
-        if(this.useInMemoryDatabase().booleanValue()) {
+        if (this.useInMemoryDatabase().booleanValue()) {
             constraintsOffSql = "SET REFERENTIAL_INTEGRITY FALSE";
         } else {
             constraintsOffSql = "SET FOREIGN_KEY_CHECKS=0;";
@@ -178,7 +185,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     private IDatabaseConnection setupDatabaseConnection(Connection connection) throws DatabaseUnitException {
         DatabaseConnection dbUnitConn = new DatabaseConnection(connection);
-        if(this.useInMemoryDatabase().booleanValue()) {
+        if (this.useInMemoryDatabase().booleanValue()) {
             DatabaseConfig config = dbUnitConn.getConfig();
             config.setProperty("http://www.dbunit.org/properties/datatypeFactory", new H2DataTypeFactory());
         }
@@ -188,7 +195,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     private void turnOnDBConstraints(Connection connection) throws SQLException {
         String constraintsOnSql;
-        if(this.useInMemoryDatabase().booleanValue()) {
+        if (this.useInMemoryDatabase().booleanValue()) {
             constraintsOnSql = "SET REFERENTIAL_INTEGRITY TRUE";
         } else {
             constraintsOnSql = "SET FOREIGN_KEY_CHECKS=1;";
