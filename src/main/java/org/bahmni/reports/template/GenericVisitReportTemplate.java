@@ -36,10 +36,10 @@ public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitR
 
         createAndAddMandatoryColumns(jasperReport);
         if (report.getConfig() != null) {
-            createAndAddDataAnalysisColumns(jasperReport, report.getConfig());
             createAndAddPatientAttributeColumns(jasperReport, report.getConfig());
             createAndAddPatientAddressColumns(jasperReport, report.getConfig());
             createAndAddVisitAttributeColumns(jasperReport, report.getConfig());
+            createAndAddDataAnalysisColumns(jasperReport, report.getConfig());
         }
 
         String formattedSql = getFormattedSql(report.getConfig(), startDate, endDate);
@@ -99,11 +99,14 @@ public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitR
         TextColumnBuilder<Integer> ageColumn = col.column("Age", "Age", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Date> birthdateColumn = col.column("Birthdate", "Birthdate", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> genderColumn = col.column("Gender", "Gender", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<String> locationNameColumn = col.column("Location Name", "Location Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+//        TextColumnBuilder<String> locationNameColumn = col.column("Location Name", "Location Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+//        TODO: Hemanth|Chethan|Shan|Swaroop|Sushma Currently we don't have map location to visit. So commenting this line for now to not show the "Location Name" column.
+//        TODO: Once we have map between visit and location, Some BA's(Shan) will ask you to show this column. Just uncomment this line and add this column to the report. Make sure the tests passes.
+
         TextColumnBuilder<String> visitTypeColumn = col.column("Visit Type", "Visit Type", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Date> dateStartedColumn = col.column("Date started", "Date started", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Date> dateStoppedColumn = col.column("Date stopped", "Date stopped", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, locationNameColumn, visitTypeColumn, dateStartedColumn, dateStoppedColumn);
+        jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, visitTypeColumn, dateStartedColumn, dateStoppedColumn);
     }
 
     private String constructLocationTagsString(List<String> locationTagsToFilter) {
