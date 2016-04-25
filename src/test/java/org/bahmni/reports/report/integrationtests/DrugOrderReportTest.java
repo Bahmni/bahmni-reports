@@ -34,11 +34,6 @@ public class DrugOrderReportTest extends BaseIntegrationTest {
     public void shouldRetrieveDrugOrderReportWithFourteenColmns() throws Exception {
         Report drugOrderReport = fetchReport("Drug Order report","2016-02-01","2016-02-29");
         assertEquals(14, drugOrderReport.columnsCount());
-    }
-
-    @Test
-    public void shouldRetrieveDrugOrderReportWithFourRecords() throws Exception {
-        Report drugOrderReport = fetchReport("Drug Order report","2016-02-01","2016-02-29");
-        assertEquals(4, drugOrderReport.rowsCount());
+        assertEquals(16, drugOrderReport.rowsCount());
     }
 }
