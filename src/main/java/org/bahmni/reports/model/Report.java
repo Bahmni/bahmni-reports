@@ -23,6 +23,7 @@ import org.bahmni.webclients.HttpClient;
         @JsonSubTypes.Type(value = TestCountReport.class, name = "TestCount"),
         @JsonSubTypes.Type(value = ElisSqlReport.class, name = "ElisGeneric"),
         @JsonSubTypes.Type(value = MRSSqlReport.class, name = "MRSGeneric"),
+        @JsonSubTypes.Type(value = ERPSqlReport.class, name = "ERPGeneric"),
         @JsonSubTypes.Type(value = IpdOpdVisitCountReport.class, name = "IpdOpdVisitCount"),
         @JsonSubTypes.Type(value = IpdPatientsReport.class, name = "ipdPatients"),
         @JsonSubTypes.Type(value = NumericConceptValuesCountReport.class, name = "NumericConceptValuesCount"),

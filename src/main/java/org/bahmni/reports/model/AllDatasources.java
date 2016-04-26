@@ -11,6 +11,9 @@ import java.sql.SQLException;
 public class AllDatasources {
 
     @Autowired
+    private DataSource openerpDataSource;
+
+    @Autowired
     private DataSource openmrsDataSource;
 
     @Autowired
@@ -45,6 +48,8 @@ public class AllDatasources {
                 return openelisDataSource;
             case "openmrs":
                 return openmrsDataSource;
+            case "openerp":
+                return openerpDataSource;
             default:
                 throw new RuntimeException("No datasource found for " + value + ". Verify value of UsingDatasource annotation. ");
         }

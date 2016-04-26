@@ -47,11 +47,20 @@ public class BahmniReportsConfiguration {
     }
 
     @Bean
-    public CommonsMultipartResolver multipartResolver(){
+    public CommonsMultipartResolver multipartResolver() {
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
         commonsMultipartResolver.setDefaultEncoding("utf-8");
         commonsMultipartResolver.setMaxUploadSize(50000000);
         return commonsMultipartResolver;
+    }
+
+    @Bean
+    public ComboPooledDataSource openerpDataSource() throws PropertyVetoException {
+        ComboPooledDataSourceBuilder comboPooledDataSourceBuilder = new ComboPooledDataSourceBuilder();
+        return comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getOpenERPUrl())
+                .withUser(bahmniReportsProperties.getOpenERPUser())
+                .withPassword(bahmniReportsProperties.getOpenERPPassword())
+                .withDriver(org.postgresql.Driver.class).build();
     }
 
 }
