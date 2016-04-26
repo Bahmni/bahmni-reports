@@ -45,4 +45,13 @@ public class BahmniReportsConfiguration {
                 .withDriver(org.postgresql.Driver.class).build();
     }
 
+    @Bean
+    public ComboPooledDataSource openerpDataSource() throws PropertyVetoException {
+        ComboPooledDataSourceBuilder comboPooledDataSourceBuilder = new ComboPooledDataSourceBuilder();
+        return comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getOpenERPUrl())
+                .withUser(bahmniReportsProperties.getOpenERPUser())
+                .withPassword(bahmniReportsProperties.getOpenERPPassword())
+                .withDriver(org.postgresql.Driver.class).build();
+    }
+
 }
