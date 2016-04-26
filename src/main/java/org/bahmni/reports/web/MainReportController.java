@@ -57,7 +57,9 @@ public class MainReportController {
             String responseType = request.getParameter("responseType");
             String macroTemplateLocation = request.getParameter("macroTemplateLocation");
             PageType pageType = "A3".equals(request.getParameter("paperSize")) ? PageType.A3 : PageType.A4;
-            Report report = Reports.find(reportName, bahmniReportsProperties.getConfigFilePath());
+            String appName = request.getParameter("appName");
+            String configFilePath = (appName != null) ? "/var/www/bahmni_config/openmrs/apps/" + appName + "/reports.json" : bahmniReportsProperties.getConfigFilePath();
+            Report report = Reports.find(reportName, configFilePath);
             report.setHttpClient(httpClient);
             BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
             connection = allDatasources.getConnectionFromDatasource(reportTemplate);
