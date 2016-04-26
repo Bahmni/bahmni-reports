@@ -47,6 +47,18 @@ public class BahmniReportsProperties {
         return props.getProperty("openelis.password");
     }
 
+    public String getOpenERPUrl() {
+        return props.getProperty("openerp.url");
+    }
+
+    public String getOpenERPUser() {
+        return props.getProperty("openerp.username");
+    }
+
+    public String getOpenERPPassword() {
+        return props.getProperty("openerp.password");
+    }
+
     public String getOpenmrsUrl() {
         return props.getProperty("openmrs.url");
     }
