@@ -17,6 +17,7 @@ import org.stringtemplate.v4.ST;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,7 +48,7 @@ public class ProgramDrugOrderTemplate extends BaseReportTemplate<ProgramDrugOrde
 
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramDrugOrderTemplateConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramDrugOrderTemplateConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         CommonComponents.addTo(jasperReport, report, pageType);
         this.programDrugOrderTemplateConfig = report.getConfig();
 

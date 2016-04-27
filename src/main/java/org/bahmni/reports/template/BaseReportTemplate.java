@@ -6,9 +6,10 @@ import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.Report;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 public abstract class BaseReportTemplate<T extends Config> {
     public abstract JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<T> report,
-                                              String startDate, String endDate, List<AutoCloseable> resources, PageType pageType);
+                                              String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException;
 }

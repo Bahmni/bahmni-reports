@@ -14,6 +14,7 @@ import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
@@ -26,7 +27,7 @@ public class VisitAggregateCountReportTemplate extends BaseReportTemplate<VisitA
     private VisitAggregateCountConfig reportConfig;
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<VisitAggregateCountConfig> report,
-                                     String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+                                     String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
 
         this.reportConfig = report.getConfig();
         CommonComponents.addTo(jasperReport, report, pageType);

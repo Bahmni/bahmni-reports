@@ -31,7 +31,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsConfig> {
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<IpdPatientsConfig> report,
-                                     String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+                                     String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         PatientAttributesHelper patientAttributesHelper = new PatientAttributesHelper(report.getConfig().getPatientAttributes());

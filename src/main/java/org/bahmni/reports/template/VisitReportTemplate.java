@@ -51,7 +51,7 @@ public class VisitReportTemplate extends BaseReportTemplate<VisitReportConfig> {
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<VisitReportConfig> report, String
-            startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+            startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
 
         String personAttributes = sqlStringListParameter(report.getConfig().getPersonAttributes());
         String visitAttributes = sqlStringListParameter(report.getConfig().getVisitAttributes());

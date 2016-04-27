@@ -75,6 +75,11 @@ public class MainReportController {
         } catch (Throwable e) {
             logger.error("Error running report", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            try {
+                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         } finally {
             try {
                 response.flushBuffer();

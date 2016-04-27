@@ -21,6 +21,7 @@ import org.stringtemplate.v4.ST;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramObsTemplateConfig> report, String
-            startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+            startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         this.reportConfig = report.getConfig();
         CommonComponents.addTo(jasperReport, report, pageType);
 

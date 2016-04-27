@@ -4400,6 +4400,45 @@ CREATE TABLE `visit_type` (
   CONSTRAINT `visit_type_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `visit_type_retired_by` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+
+DROP TABLE IF EXISTS `episode_patient_program`;
+CREATE TABLE `episode_patient_program`
+(
+    `episode_id` INT(11) NOT NULL,
+    `patient_program_id` INT(11) NOT NULL,
+    PRIMARY KEY (`episode_id`,`patient_program_id`),
+    CONSTRAINT `episode_patient_program_episode_id` FOREIGN KEY (`episode_id`) REFERENCES `episode` (`episode_id`),
+    CONSTRAINT `episode_patient_program_patient_program_id` FOREIGN KEY (`patient_program_id`) REFERENCES `patient_program` (`patient_program_id`)
+);
+CREATE INDEX `episode_patient_program_episode_index` ON `episode_patient_program` (`episode_id`);
+CREATE INDEX `episode_patient_program_patient_program_id` ON `episode_patient_program` (`patient_program_id`);
+
+DROP TABLE IF EXISTS `episode_encounter`;
+CREATE TABLE `episode_encounter`
+(
+    `episode_id` INT(11) NOT NULL,
+    `encounter_id` INT(11) NOT NULL,
+    PRIMARY KEY (`episode_id`,`encounter_id`),
+    CONSTRAINT `episode_encounter_encounter_id` FOREIGN KEY (`encounter_id`) REFERENCES `encounter` (`encounter_id`),
+    CONSTRAINT `episode_encounter_episode_id` FOREIGN KEY (`episode_id`) REFERENCES `episode` (`episode_id`)
+);
+CREATE INDEX `episode_encounter_encounter_id` ON `episode_encounter` (`encounter_id`);
+CREATE INDEX `episode_encounter_episode_index` ON `episode_encounter` (`episode_id`);
+
+DROP TABLE IF EXISTS `episode`;
+CREATE TABLE episode
+(
+    `episode_id` INT(11) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    `creator` INT(11),
+    `date_created` DATETIME NOT NULL,
+    `changed_by` INT(11),
+    `date_changed` DATETIME,
+    `voided` TINYINT(1) DEFAULT '0' NOT NULL,
+    `voided_by` INT(11),
+    `date_voided` DATETIME,
+    `void_reason` VARCHAR(255),
+    `uuid` CHAR(38) NOT NULL
+);
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --

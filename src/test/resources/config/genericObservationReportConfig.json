@@ -1,0 +1,271 @@
+{
+  "observationReportWithoutAnyConfig": {
+    "name": "Observation report without any config",
+    "type": "genericObservationReport"
+  },
+  "observationReportWithEmptyConfig": {
+    "name": "Observation report with empty config",
+    "type": "genericObservationReport",
+    "config": {}
+  },
+  "observationReportWithProviderInfo": {
+    "name": "Observation report with provider info",
+    "type": "genericObservationReport",
+    "config": {
+      "showProvider": true
+    }
+  },
+  "observationReportWithVisitInfo": {
+    "name": "Observation report with visit info",
+    "type": "genericObservationReport",
+    "config": {
+      "showVisitInfo": true
+    }
+  },
+  "observationReportWithPatientAttributes": {
+    "name": "Observation report with patient attributes",
+    "type": "genericObservationReport",
+    "config": {
+      "patientAttributes": [
+        "caste",
+        "education",
+        "primaryContact",
+        "secondaryContact",
+        "class",
+        "cluster"
+      ]
+    }
+  },
+  "observationReportWithVisitAttributes": {
+    "name": "Observation report with visit attributes",
+    "type": "genericObservationReport",
+    "config": {
+      "visitAttributes": [
+        "Visit Status",
+        "Admission Status"
+      ]
+    }
+  },
+  "observationReportWithPatientAddress": {
+    "name": "Observation report with patient address",
+    "type": "genericObservationReport",
+    "config": {
+      "patientAddresses": [
+        "address1",
+        "address3"
+      ]
+    }
+  },
+  "observationReportWithWrongPatientAddress": {
+    "name": "Observation report with wrong patient address",
+    "type": "genericObservationReport",
+    "config": {
+      "patientAddresses": [
+        "address10",
+        "address3"
+      ]
+    }
+  },
+  "observationReportWithDataAnalysisColumns": {
+    "name": "Observation report with data analysis columns",
+    "type": "genericObservationReport",
+    "config": {
+      "forDataAnalysis": true
+    }
+  },
+  "observationReportFilteredByConceptNames": {
+    "name": "Observation report filtered by concept names",
+    "type": "genericObservationReport",
+    "config": {
+      "conceptNamesToFilter": [
+        "Height"
+      ]
+    }
+  },
+  "observationReportFilteredByConceptClass": {
+    "name": "Observation report filtered by concept class",
+    "type": "genericObservationReport",
+    "config": {
+      "conceptClassesToFilter": [
+        "Misc"
+      ]
+    }
+  },
+  "observationReportFilteredByConceptNamesAndClass": {
+    "name": "Observation report filtered by concept names and class",
+    "type": "genericObservationReport",
+    "config": {
+      "conceptNamesToFilter": [
+        "Vitals"
+      ],
+      "conceptClassesToFilter": [
+        "Procedure"
+      ]
+    }
+  },
+  "observationReportFilteredByLocationTags": {
+    "name": "Observation report filtered by location tags",
+    "type": "genericObservationReport",
+    "config": {
+      "locationTagsToFilter": [
+        "Admission Location"
+      ]
+    }
+  },
+  "observationReportFilteredByConceptNamesAndLocationTags": {
+    "name": "Observation report filtered by concept names and location tags",
+    "type": "genericObservationReport",
+    "config": {
+      "conceptNamesToFilter": [
+        "Height"
+      ],
+      "locationTagsToFilter": [
+        "Admission Location"
+      ]
+    }
+  },
+  "observationReportFilteredByConceptClassAndLocationTags": {
+    "name": "Observation report filtered by concept class and location tags",
+    "type": "genericObservationReport",
+    "config": {
+      "conceptClassesToFilter": [
+        "Misc"
+      ],
+      "locationTagsToFilter": [
+        "Admission Location"
+      ]
+    }
+  },
+  "observationReportFilteredByConceptNamesAndConceptClassAndLocationTags": {
+    "name": "Observation report filtered by concept names and concept class and location tags",
+    "type": "genericObservationReport",
+    "config": {
+      "conceptNamesToFilter": [
+        "Height"
+      ],
+      "conceptClassesToFilter": [
+        "Misc"
+      ],
+      "locationTagsToFilter": [
+        "Admission Location"
+      ]
+    }
+  },
+  "observationReportFilteredByProgramName": {
+    "name": "Observation report filtered by program name",
+    "type": "genericObservationReport",
+    "config": {
+      "programsToFilter": [
+        "MDR-TB PROGRAM"
+      ]
+    }
+  },
+  "observationReportFilteredByProgramNameAndConceptNames": {
+    "name": "Observation report filtered by program name and concept name",
+    "type": "genericObservationReport",
+    "config": {
+      "programsToFilter": [
+        "MDR-TB PROGRAM"
+      ],
+      "conceptNamesToFilter": [
+        "Height"
+      ]
+    }
+  },
+  "observationReportFilteredByProgramNameAndLocationTags": {
+    "name": "Observation report filtered by program name and location tags",
+    "type": "genericObservationReport",
+    "config": {
+      "programsToFilter": [
+        "MDR-TB PROGRAM"
+      ],
+      "locationTagsToFilter": [
+        "Admission Location"
+      ]
+    }
+  },
+  "observationReportFilteredByProgramNameAndConceptNameAndLocationTags": {
+    "name": "Observation report filtered by program name and concept names and location tags",
+    "type": "genericObservationReport",
+    "config": {
+      "programsToFilter": [
+        "MDR-TB PROGRAM"
+      ],
+      "locationTagsToFilter": [
+        "Admission Location"
+      ],
+      "conceptNamesToFilter": [
+        "Height"
+      ]
+    }
+  },
+  "observationReportFilteredByProgramNameAndConceptClass": {
+    "name": "Observation report filtered by program name and concept class",
+    "type": "genericObservationReport",
+    "config": {
+      "programsToFilter": [
+        "MDR-TB PROGRAM"
+      ],
+      "conceptClassesToFilter": [
+        "Misc"
+      ]
+    }
+  },
+  "observationReportFilteredByProgramNameAndConceptNameAndConceptClass": {
+    "name": "Observation report filtered by program name and concept names and concept class",
+    "type": "genericObservationReport",
+    "config": {
+      "programsToFilter": [
+        "MDR-TB PROGRAM"
+      ],
+      "conceptClassesToFilter": [
+        "Misc"
+      ],
+      "conceptNamesToFilter": [
+        "Vitals"
+      ]
+    }
+  },
+  "observationReportFilteredByProgramNameAndConceptNameAndConceptClassAndLocationTags": {
+    "name": "Observation report filtered by program name and concept names and concept class and location tags",
+    "type": "genericObservationReport",
+    "config": {
+      "programsToFilter": [
+        "MDR-TB PROGRAM"
+      ],
+      "conceptClassesToFilter": [
+        "Misc"
+      ],
+      "conceptNamesToFilter": [
+        "Vitals"
+      ],
+      "locationTagsToFilter": [
+        "Admission Location"
+      ]
+    }
+  },
+  "shouldApplyDateRangeFilterForVisitStartDate": {
+    "name": "Observation report apply date range for visit start date",
+    "type": "genericObservationReport",
+    "config": {
+      "applyDateRangeFor": "visitStartDate"
+    }
+  },
+  "shouldApplyDateRangeFilterForVisitStopDate": {
+    "name": "Observation report apply date range for visit stop date",
+    "type": "genericObservationReport",
+    "config": {
+      "applyDateRangeFor": "visitStopDate"
+    }
+  },
+  "observationReportEncounterPerRow": {
+    "name": "Observation report encounter per row",
+    "type": "genericObservationReport",
+    "config": {
+      "encounterPerRow": true,
+      "conceptNamesToFilter": [
+        "Vitals"
+      ]
+    }
+  }
+}

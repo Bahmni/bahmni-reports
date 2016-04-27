@@ -33,7 +33,7 @@ public class SqlUtil {
         return sb.substring(0, sb.length() - 1);
     }
 
-    public static JasperReportBuilder executeReportWithStoredProc(JasperReportBuilder jasperReport, Connection connection, String formattedSql) {
+    public static JasperReportBuilder executeReportWithStoredProc(JasperReportBuilder jasperReport, Connection connection, String formattedSql) throws SQLException {
         Statement stmt;
 
         try {
@@ -52,6 +52,7 @@ public class SqlUtil {
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            throw e;
         }
 
         return jasperReport;

@@ -14,6 +14,7 @@ import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +28,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitReportConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<GenericVisitReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<GenericVisitReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         jasperReport.setShowColumnTitle(true)

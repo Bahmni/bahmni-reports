@@ -14,6 +14,7 @@ import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
 
     @Override
     public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCannedReportTemplateConfig> report, String
-            startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+            startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         CommonComponents.addTo(jasperReport, report, pageType);
         this.obsCannedReportTemplateConfig = report.getConfig();
 
