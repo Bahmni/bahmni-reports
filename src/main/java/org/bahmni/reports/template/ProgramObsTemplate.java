@@ -113,7 +113,6 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
         String locationTagNames = SqlUtil.toEscapedCommaSeparatedSqlString(reportConfig.getLocationTagNames());
 
         ST sqlTemplate = new ST(getFileContent(sqlFilePath), '#', '#');
-        sqlTemplate.add("conceptNameInClauseEscapeQuote", getConceptNamesInClause(conceptDetails));
         sqlTemplate.add("programNamesListInClause", getProgramNamesListInClause(programNames));
         sqlTemplate.add("patientAttributesInClauseEscapeQuote", getAttributesInClause(patientAttributes));
         sqlTemplate.add("programAttributesInClauseEscapeQuote", getAttributesInClause(programAttributes));
@@ -176,17 +175,6 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
         return String.format("AND prog.name IN (%s)", SqlUtil.toEscapedCommaSeparatedSqlString(programNames));
     }
 
-    private String getConceptNamesInClause(List<ConceptDetails> conceptDetails) {
-        List<String> conceptNames = new ArrayList<>();
-        for (ConceptDetails conceptDetail : conceptDetails) {
-            Map<String, Object> attributes = conceptDetail.getAttributes();
-            if (attributes.containsKey(UNKNOWN_CONCEPT_ATTRIBUTE_KEY)) {
-                conceptNames.add(encloseWithQuotes((String) attributes.get(UNKNOWN_CONCEPT_ATTRIBUTE_KEY)));
-            }
-            conceptNames.add(encloseWithQuotes(conceptDetail.getFullName()));
-        }
-        return escapeQuotes(StringUtils.join(conceptNames, ","));
-    }
 
     private String encloseWithQuotes(String input) {
         return "'" + input + "'";

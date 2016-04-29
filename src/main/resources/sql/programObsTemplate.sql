@@ -64,10 +64,18 @@ SET @sql = CONCAT('SELECT
                         JOIN episode_patient_program epp ON epp.patient_program_id = pp.patient_program_id
                         JOIN episode_encounter ee ON ee.episode_id = epp.episode_id
                         JOIN encounter e ON e.encounter_id = ee.encounter_id
-                        JOIN (select encounter_id from obs
-                          WHERE concept_id = (select concept_id from concept_view WHERE concept_full_name = \'#templateName#\') and voided is false) e1
-                            ON e.encounter_id = e1.encounter_id
-                        JOIN obs o ON o.encounter_id = e.encounter_id AND o.voided IS FALSE
+                        JOIN (SELECT child_obs.obs_id,child_obs.encounter_id, child_obs.obs_group_id,max(root_obs.obs_id) root_obs_id
+                              FROM obs child_obs
+                                JOIN obs root_obs on (child_obs.encounter_id = root_obs.encounter_id and
+                                                  child_obs.voided is FALSE AND
+                                                  root_obs.voided is FALSE and
+                                                  child_obs.obs_id > root_obs.obs_id and
+                                                  root_obs.obs_group_id is null AND
+                                                  child_obs.form_namespace_and_path = root_obs.form_namespace_and_path )
+                                JOIN concept on ( concept.uuid =  TRIM(TRAILING ''^'' FROM root_obs.form_namespace_and_path ))
+                                JOIN concept_view template on ( concept.concept_id=template.concept_id and template.concept_full_name = \'#templateName#\' )
+                              GROUP BY child_obs.obs_id, child_obs.obs_group_id, child_obs.encounter_id) root_obs on (e.encounter_id = root_obs.encounter_id )
+                        JOIN obs o ON o.obs_id = root_obs.obs_id AND o.voided IS FALSE
                         RIGHT JOIN concept_view cv ON cv.concept_id = o.concept_id
                         INNER JOIN person_name pat_name ON pat_name.person_id = o.person_id
                         INNER JOIN person ON person.person_id = o.person_id ',
@@ -80,7 +88,7 @@ SET @sql = CONCAT('SELECT
                         LEFT JOIN person_name pn ON pn.person_id = provider.person_id
                         LEFT JOIN concept_view answer ON o.value_coded = answer.concept_id',
                         IF(@conceptSourceId IS NULL, '', @conceptRefMapSql),
-                      ' GROUP BY pi.identifier, prog.name');
+                      ' GROUP BY pi.identifier, e.encounter_id,root_obs.root_obs_id');
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
