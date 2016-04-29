@@ -28,11 +28,12 @@ FROM
      rou.concept_full_name                                                                             AS route,
      IF(Date(orders.scheduled_date) IS NULL, Date(orders.date_activated), Date(orders.scheduled_date)) AS startDate,
      IF(Date(orders.date_stopped) IS NULL, Date(orders.auto_expire_date), Date(orders.date_stopped))   AS stopDate,
-     concat(drug_order.quantity, ' ', dcn.concept_full_name)                                           AS quantity
+     concat(drug_order.quantity, ' ', tqu.concept_full_name)                                           AS quantity
    FROM drug_order
      LEFT JOIN orders ON orders.order_id = drug_order.order_id AND orders.order_action != "DISCONTINUE"
      LEFT JOIN drug ON drug.drug_id = drug_order.drug_inventory_id
      LEFT JOIN concept_view dcn ON dcn.concept_id = drug_order.dose_units
+     LEFT JOIN concept_view tqu ON tqu.concept_id = drug_order.quantity_units
      LEFT JOIN concept_view rou ON rou.concept_id = drug_order.route
      LEFT JOIN concept_view du ON du.concept_id = drug_order.duration_units
      LEFT JOIN order_frequency ON order_frequency.order_frequency_id = drug_order.frequency
