@@ -9,10 +9,12 @@ import net.sf.dynamicreports.report.builder.style.Styles;
 import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
+import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.CodedObsByCodedObsReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.util.CommonComponents;
+import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -75,12 +77,22 @@ public class CodedObsByObsReportTemplate extends BaseReportTemplate<CodedObsByCo
 
     private String getSqlString(CodedObsByCodedObsReportConfig reportConfig, String startDate, String endDate) {
         String sql = getFileContent("sql/codedObsByCodedObs.sql");
+        String locationTagNames = SqlUtil.toCommaSeparatedSqlString(reportConfig.getLocationTagNames());
         ST sqlTemplate = new ST(sql, '#', '#');
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         sqlTemplate.add("firstConcept", reportConfig.firstConcept());
         sqlTemplate.add("secondConcept", reportConfig.secondConcept());
         sqlTemplate.add("reportGroupName", reportConfig.getAgeGroupName());
+        if (StringUtils.isNotBlank(locationTagNames)) {
+            String countOnlyTaggedLocationsJoin = String.format("INNER JOIN " +
+                    "(SELECT DISTINCT location_id " +
+                    "FROM location_tag_map INNER JOIN location_tag ON location_tag_map.location_tag_id = location_tag.location_tag_id " +
+                    " AND location_tag.name IN (%s)) locations ON locations.location_id = e.location_id", locationTagNames);
+            sqlTemplate.add("countOnlyTaggedLocationsJoin", countOnlyTaggedLocationsJoin);
+        } else {
+            sqlTemplate.add("countOnlyTaggedLocationsJoin", "");
+        }
         return sqlTemplate.render();
     }
 

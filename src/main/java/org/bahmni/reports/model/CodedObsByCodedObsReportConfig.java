@@ -8,6 +8,12 @@ public class CodedObsByCodedObsReportConfig implements Config {
     private List<String> conceptPair;
     private List<String> rowsGroupBy;
     private List<String> columnsGroupBy;
+    private List<String> locationTagNames;
+    public List<String> getLocationTagNames() { return locationTagNames; }
+
+    public void setLocationTagNames(List<String> locationTagNames) {
+        this.locationTagNames = locationTagNames;
+    }
 
     public String getAgeGroupName() {
         return ageGroupName;

@@ -99,10 +99,11 @@ FROM
                         ON o1.value_coded = cn2.concept_id
                            AND cn2.concept_name_type = 'FULLY_SPECIFIED'
                            AND cn2.voided = 0
-                      INNER JOIN encounter e1
-                        ON o1.encounter_id = e1.encounter_id
+                      INNER JOIN encounter e
+                        ON o1.encounter_id = e.encounter_id
+                        #countOnlyTaggedLocationsJoin#
                       INNER JOIN visit v1
-                        ON v1.visit_id = e1.visit_id
+                        ON v1.visit_id = e.visit_id
                            AND v1.date_stopped IS NOT NULL
                     WHERE cast(v1.date_stopped AS DATE) BETWEEN '#startDate#' AND '#endDate#'
                   ) first_concept
@@ -123,10 +124,11 @@ FROM
                         ON o1.value_coded = cn2.concept_id
                            AND cn2.concept_name_type = 'FULLY_SPECIFIED'
                            AND cn2.voided = 0
-                      INNER JOIN encounter e1
-                        ON o1.encounter_id = e1.encounter_id
+                      INNER JOIN encounter e
+                        ON o1.encounter_id = e.encounter_id
+                        #countOnlyTaggedLocationsJoin#
                       INNER JOIN visit v1
-                        ON v1.visit_id = e1.visit_id
+                        ON v1.visit_id = e.visit_id
                            AND v1.date_stopped IS NOT NULL
                     WHERE cast(v1.date_stopped AS DATE) BETWEEN '#startDate#' AND '#endDate#'
                   ) second_concept
