@@ -87,8 +87,8 @@ public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitR
 
     private void createAndAddDataAnalysisColumns(JasperReportBuilder jasperReport, GenericVisitReportConfig config) {
         if (config.isForDataAnalysis()) {
-            TextColumnBuilder<Integer> patientIdColumn = col.column("Patient Id", "Patient Id", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            TextColumnBuilder<Integer> visitIdColumn = col.column("Visit Id", "Visit Id", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            TextColumnBuilder<Integer> patientIdColumn = col.column("Patient Id", "Patient Id", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
+            TextColumnBuilder<Integer> visitIdColumn = col.column("Visit Id", "Visit Id", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
             jasperReport.addColumn(patientIdColumn);
             jasperReport.addColumn(visitIdColumn);
         }
