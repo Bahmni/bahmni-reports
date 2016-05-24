@@ -32,11 +32,12 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 170 2016-04-21 15:30:31.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Height 170 2016-04-21 15:30:31.0", report.getRowAsString(1, " "));
     }
+
 
     @Test
     public void shouldFetchMandatoryColumnsIfEmptyConfigSpecified() throws Exception {
@@ -44,10 +45,10 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 170 2016-04-21 15:30:31.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Height 170 2016-04-21 15:30:31.0", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -56,12 +57,12 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-06-01 10:20:00.0", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Vitals  2016-06-01 10:20:00.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Height 180 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM weight 80 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -70,12 +71,12 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(12, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-06-01 10:20:00.0  Clinical Provider", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-06-01 10:20:00.0 Vitals Clinical Provider", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-06-01 10:20:00.0 Vitals Clinical Provider", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Vitals  2016-06-01 10:20:00.0  Clinical Provider", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Height 180 2016-06-01 10:20:00.0 Vitals Clinical Provider", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM weight 80 2016-06-01 10:20:00.0 Vitals Clinical Provider", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -84,12 +85,12 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
 
-        assertEquals(13, report.columnsCount());
+        assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-06-01 10:20:00.0  Initial HIV Clinic Visit 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-06-01 10:20:00.0 Vitals Initial HIV Clinic Visit 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-06-01 10:20:00.0 Vitals Initial HIV Clinic Visit 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Vitals  2016-06-01 10:20:00.0  Initial HIV Clinic Visit 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Height 180 2016-06-01 10:20:00.0 Vitals Initial HIV Clinic Visit 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM weight 80 2016-06-01 10:20:00.0 Vitals Initial HIV Clinic Visit 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -98,12 +99,12 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
 
-        assertEquals(16, report.columnsCount());
+        assertEquals(17, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-06-01 10:20:00.0   10th pass  8763245677 General", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-06-01 10:20:00.0 Vitals  10th pass  8763245677 General", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-06-01 10:20:00.0 Vitals  10th pass  8763245677 General", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Vitals  2016-06-01 10:20:00.0   10th pass  8763245677 General", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Height 180 2016-06-01 10:20:00.0 Vitals  10th pass  8763245677 General", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM weight 80 2016-06-01 10:20:00.0 Vitals  10th pass  8763245677 General", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -112,12 +113,12 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
 
-        assertEquals(12, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-06-01 10:20:00.0  OPD", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-06-01 10:20:00.0 Vitals OPD", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-06-01 10:20:00.0 Vitals OPD", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Vitals  2016-06-01 10:20:00.0  OPD", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Height 180 2016-06-01 10:20:00.0 Vitals OPD", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM weight 80 2016-06-01 10:20:00.0 Vitals OPD", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -126,12 +127,12 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
 
-        assertEquals(12, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-06-01 10:20:00.0   Dindori", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-06-01 10:20:00.0 Vitals  Dindori", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-06-01 10:20:00.0 Vitals  Dindori", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Vitals  2016-06-01 10:20:00.0   Dindori", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Height 180 2016-06-01 10:20:00.0 Vitals  Dindori", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM weight 80 2016-06-01 10:20:00.0 Vitals  Dindori", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -140,12 +141,12 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
 
-        assertEquals(19, report.columnsCount());
+        assertEquals(20, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-06-01 10:20:00.0  1000 1100 1100 1100   1002 Vitals", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-06-01 10:20:00.0 Vitals 1000 1100 1100 1101 1100  1000 Height", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-06-01 10:20:00.0 Vitals 1000 1100 1100 1102 1100  1001 Weight weight", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Vitals  2016-06-01 10:20:00.0  1000 1100 1100 1100   1002 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Height 180 2016-06-01 10:20:00.0 Vitals 1000 1100 1100 1101 1100  1000 Height", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM weight 80 2016-06-01 10:20:00.0 Vitals 1000 1100 1100 1102 1100  1001 Weight weight", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -159,10 +160,10 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Height 180 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -171,11 +172,11 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Height 180 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM weight 80 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -191,10 +192,10 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-06-01 10:20:00.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM Vitals  2016-06-01 10:20:00.0", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -203,12 +204,12 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-08-01 10:20:00.0", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Vitals  2016-08-01 10:20:00.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -222,10 +223,10 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -234,11 +235,11 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -252,10 +253,10 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -264,12 +265,12 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-08-01 10:20:00.0", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Vitals  2016-08-01 10:20:00.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -283,10 +284,10 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -295,12 +296,12 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-08-01 10:20:00.0", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Vitals  2016-08-01 10:20:00.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -314,10 +315,10 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -326,11 +327,11 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -346,11 +347,11 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -366,11 +367,11 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -379,15 +380,15 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-01");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(6, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-08-01 10:20:00.0", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
-        assertEquals("OBS1 Generic Observation1   F Chithari Vitals  2016-08-02 00:00:00.0", report.getRowAsString(4, " "));
-        assertEquals("OBS1 Generic Observation1   F Chithari Height 170 2016-08-02 00:00:00.0 Vitals", report.getRowAsString(5, " "));
-        assertEquals("OBS1 Generic Observation1   F Chithari weight 70 2016-08-02 00:00:00.0 Vitals", report.getRowAsString(6, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Vitals  2016-08-01 10:20:00.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Chithari  Vitals  2016-08-02 00:00:00.0", report.getRowAsString(4, " "));
+        assertEquals("OBS1 Generic Observation1   F Chithari  Height 170 2016-08-02 00:00:00.0 Vitals", report.getRowAsString(5, " "));
+        assertEquals("OBS1 Generic Observation1   F Chithari  weight 70 2016-08-02 00:00:00.0 Vitals", report.getRowAsString(6, " "));
     }
 
     @Test
@@ -396,15 +397,15 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-08-30", "2016-08-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(6, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Vitals  2016-08-01 10:20:00.0", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
-        assertEquals("OBS1 Generic Observation1   F Chithari Vitals  2016-08-02 00:00:00.0", report.getRowAsString(4, " "));
-        assertEquals("OBS1 Generic Observation1   F Chithari Height 170 2016-08-02 00:00:00.0 Vitals", report.getRowAsString(5, " "));
-        assertEquals("OBS1 Generic Observation1   F Chithari weight 70 2016-08-02 00:00:00.0 Vitals", report.getRowAsString(6, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Vitals  2016-08-01 10:20:00.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM Height 180 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM weight 80 2016-08-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Chithari  Vitals  2016-08-02 00:00:00.0", report.getRowAsString(4, " "));
+        assertEquals("OBS1 Generic Observation1   F Chithari  Height 170 2016-08-02 00:00:00.0 Vitals", report.getRowAsString(5, " "));
+        assertEquals("OBS1 Generic Observation1   F Chithari  weight 70 2016-08-02 00:00:00.0 Vitals", report.getRowAsString(6, " "));
     }
 
     @Test
@@ -423,10 +424,10 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
         Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
 
         verify(httpClient, never()).get(getChildConceptsUri);
-        assertEquals(8, report.columnsCount());
+        assertEquals(9, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari 180 80", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Chithari 170 70", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM 180 80", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Chithari  170 70", report.getRowAsString(2, " "));
     }
 }

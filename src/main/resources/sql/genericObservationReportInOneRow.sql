@@ -50,6 +50,7 @@ SET @sql = CONCAT('SELECT
   o.person_id                                                   AS "Patient Id",
   o.encounter_id                                                AS "Encounter Id",
   v.visit_id                                                    AS "Visit Id",
+  program.name                                                  AS "Program Name",
   ',IF(@showProvider = '', '', @providerSelectSql),'
 FROM obs o
   JOIN concept obs_concept ON obs_concept.concept_id=o.concept_id AND obs_concept.retired is false
@@ -73,7 +74,10 @@ FROM obs o
   ',IF(@visitAttributesSql = '', '', @visitAttributeJoinSql),'
   ',IF(@patientAttributesSql = '', '', @patientAttributeJoinSql),'
   ',IF(@patientAddressesSql = '', '', @patientAddressJoinSql),'
-  ',IF(@filterByPrograms != '' OR @dateRangeFilter = 'programDatetime', @programsJoinSql, ''),'
+  ',IF(@filterByPrograms != '' OR @dateRangeFilter = 'programDatetime', @programsJoinSql, 'LEFT JOIN episode_encounter ee ON e.encounter_id = ee.encounter_id
+  LEFT JOIN episode_patient_program epp ON ee.episode_id=epp.episode_id
+  LEFT JOIN patient_program pp ON epp.patient_program_id = pp.patient_program_id
+  LEFT JOIN program program ON pp.program_id = program.program_id'),'
   ',IF(@filterByPrograms != '', @filterByProgramsSql, ''),'
 WHERE o.voided is false
   ',IF(@locationTagsToFilterSql = '', '', 'AND l.location_id in (SELECT ltm.location_id from location_tag_map ltm JOIN location_tag lt ON ltm.location_tag_id=lt.location_tag_id AND lt.retired is false AND lt.name in (#locationTagsToFilter#))'),'
