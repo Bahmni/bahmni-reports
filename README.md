@@ -12,6 +12,6 @@ Hosts the reports web application for the [Bahmni project](http://www.bahmni.org
 
 # For developers
 
-1. Run `scripts/create_configuration.sh` file to create the necessary configuration to run the reports application. Modify the configuration files to suit your needs.
+1. Run `scripts/create_configuration.sh` script to create necessary config files to run the integration tests. Modify the config file at $HOME/.bahmni-reports/bahmni-reports-test.properties to suit your needs.
 
 2. Run `mvn clean install` to build your changes.
