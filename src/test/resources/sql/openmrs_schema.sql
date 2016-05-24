@@ -4439,6 +4439,65 @@ CREATE TABLE episode
     `void_reason` VARCHAR(255),
     `uuid` CHAR(38) NOT NULL
 );
+
+
+CREATE TABLE program_attribute_type
+(
+    program_attribute_type_id INT(11) PRIMARY KEY NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description VARCHAR(1024),
+    datatype VARCHAR(255),
+    datatype_config TEXT,
+    preferred_handler VARCHAR(255),
+    handler_config TEXT,
+    min_occurs INT(11) NOT NULL,
+    max_occurs INT(11),
+    creator INT(11) NOT NULL,
+    date_created DATETIME NOT NULL,
+    changed_by INT(11),
+    date_changed DATETIME,
+    retired SMALLINT(6) DEFAULT '0' NOT NULL,
+    retired_by INT(11),
+    date_retired DATETIME,
+    retire_reason VARCHAR(255),
+    uuid CHAR(38) NOT NULL,
+    CONSTRAINT program_attribute_type_changed_by_fk FOREIGN KEY (changed_by) REFERENCES users (user_id),
+    CONSTRAINT program_attribute_type_creator_fk FOREIGN KEY (creator) REFERENCES users (user_id),
+    CONSTRAINT program_attribute_type_retired_by_fk FOREIGN KEY (retired_by) REFERENCES users (user_id)
+);
+CREATE UNIQUE INDEX name ON program_attribute_type (name);
+CREATE INDEX program_attribute_type_changed_by_fk ON program_attribute_type (changed_by);
+CREATE INDEX program_attribute_type_creator_fk ON program_attribute_type (creator);
+CREATE INDEX program_attribute_type_retired_by_fk ON program_attribute_type (retired_by);
+CREATE UNIQUE INDEX uuid ON program_attribute_type (uuid);
+
+
+CREATE TABLE patient_program_attribute
+(
+    patient_program_attribute_id INT(11) PRIMARY KEY NOT NULL,
+    patient_program_id INT(11) NOT NULL,
+    attribute_type_id INT(11) NOT NULL,
+    value_reference TEXT NOT NULL,
+    uuid CHAR(38) NOT NULL,
+    creator INT(11) NOT NULL,
+    date_created DATETIME NOT NULL,
+    changed_by INT(11),
+    date_changed DATETIME,
+    voided TINYINT(1) DEFAULT '0' NOT NULL,
+    voided_by INT(11),
+    date_voided DATETIME,
+    void_reason VARCHAR(255),
+    CONSTRAINT patient_program_attribute_attributetype_fk FOREIGN KEY (attribute_type_id) REFERENCES program_attribute_type (program_attribute_type_id),
+    CONSTRAINT patient_program_attribute_changed_by_fk FOREIGN KEY (changed_by) REFERENCES users (user_id),
+    CONSTRAINT patient_program_attribute_creator_fk FOREIGN KEY (creator) REFERENCES users (user_id),
+    CONSTRAINT patient_program_attribute_programid_fk FOREIGN KEY (patient_program_id) REFERENCES patient_program (patient_program_id)
+);
+CREATE INDEX patient_program_attribute_attributetype_fk ON patient_program_attribute (attribute_type_id);
+CREATE INDEX patient_program_attribute_changed_by_fk ON patient_program_attribute (changed_by);
+CREATE INDEX patient_program_attribute_creator_fk ON patient_program_attribute (creator);
+CREATE INDEX patient_program_attribute_programid_fk ON patient_program_attribute (patient_program_id);
+CREATE UNIQUE INDEX uuid ON patient_program_attribute (uuid);
+
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
