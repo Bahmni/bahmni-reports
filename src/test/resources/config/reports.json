@@ -35,5 +35,13 @@
   "drugOrderReport": {
     "name": "Drug Order report",
     "type": "DrugOrder"
+  },
+
+  "customSqlReport": {
+    "name": "ObsSqlReport",
+    "type": "MRSGeneric",
+    "config": {
+      "sqlPath": "src/test/resources/sql/obsData.sql"
+    }
   }
 }

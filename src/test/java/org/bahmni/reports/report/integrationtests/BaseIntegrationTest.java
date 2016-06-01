@@ -148,6 +148,19 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         return Report.getReport(result);
     }
 
+    protected JasperReportBuilder fetchReportBuilder(String reportName, String startDate, String endDate) throws Exception {
+        getConnection().commit();
+        ArgumentCaptor<JasperReportBuilder> reportBuilderArgumentCaptor = ArgumentCaptor.forClass(JasperReportBuilder.class);
+        doCallRealMethod().when(jasperResponseConverter).convert(any(String.class), reportBuilderArgumentCaptor.capture(),
+                any(HttpServletResponse.class), any(String.class), any(String.class), anyString());
+        String url = "/report?name=" + reportName + "&startDate=" + startDate + "&endDate=" + endDate + "&responseType=text/csv&paperSize=A3";
+        ResultActions perform = mockMvc.perform(get(url));
+        MvcResult mvcResult = perform.andReturn();
+        String result = mvcResult.getResponse().getContentAsString();
+        perform.andExpect(status().isOk());
+        return reportBuilderArgumentCaptor.getValue();
+    }
+
     @Override
     public void deleteAllData() throws Exception {
         Context.clearSession();
