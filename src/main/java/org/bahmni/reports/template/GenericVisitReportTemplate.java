@@ -58,7 +58,6 @@ public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitR
             sqlTemplate.add("patientAddresses", constructPatientAddresses(getPatientAddresses(config)));
             sqlTemplate.add("visitAttributes", constructVisitAttributeNamesString(getVisitAttributes(config)));
             sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(getVisitTypesToFilter(config)));
-            sqlTemplate.add("locationTagsToFilter", constructLocationTagsString(getLocationTagsToFilter(config)));
         }
         sqlTemplate.add("applyDateRangeFor", getDateRangeFor(config));
         return sqlTemplate.render();
@@ -100,22 +99,15 @@ public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitR
         TextColumnBuilder<Integer> ageColumn = col.column("Age", "Age", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Date> birthdateColumn = col.column("Birthdate", "Birthdate", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> genderColumn = col.column("Gender", "Gender", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-//        TextColumnBuilder<String> locationNameColumn = col.column("Location Name", "Location Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-//        TODO: Hemanth|Chethan|Shan|Swaroop|Sushma Currently we don't have map location to visit. So commenting this line for now to not show the "Location Name" column.
-//        TODO: Once we have map between visit and location, Some BA's(Shan) will ask you to show this column. Just uncomment this line and add this column to the report. Make sure the tests passes.
+        TextColumnBuilder<Date> patientCreatedDateColumn = col.column("Patient Created Date", "Patient Created Date", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
 
         TextColumnBuilder<String> visitTypeColumn = col.column("Visit Type", "Visit Type", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Date> dateStartedColumn = col.column("Date started", "Date started", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Date> dateStoppedColumn = col.column("Date stopped", "Date stopped", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, visitTypeColumn, dateStartedColumn, dateStoppedColumn);
-    }
+        TextColumnBuilder<Date> dateOfAdmission = col.column("Date Of Admission", "Date Of Admission", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        TextColumnBuilder<Date> dateOfDischarge = col.column("Date Of Discharge", "Date Of Discharge", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
 
-    private String constructLocationTagsString(List<String> locationTagsToFilter) {
-        List<String> parts = new ArrayList<>();
-        for (String locationTag : locationTagsToFilter) {
-            parts.add("\"" + locationTag + "\"");
-        }
-        return StringUtils.join(parts, ',');
+        jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, patientCreatedDateColumn, visitTypeColumn, dateStartedColumn, dateStoppedColumn, dateOfAdmission, dateOfDischarge);
     }
 
     private String constructVisitTypesString(List<String> visitTypesToFilter) {
@@ -172,10 +164,6 @@ public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitR
 
     private List<String> getPatientAddresses(GenericVisitReportConfig config) {
         return config.getPatientAddresses() != null ? config.getPatientAddresses() : new ArrayList<String>();
-    }
-
-    private List<String> getLocationTagsToFilter(GenericVisitReportConfig config) {
-        return config.getLocationTagsToFilter() != null ? config.getLocationTagsToFilter() : new ArrayList<String>();
     }
 
     private String getDateRangeFor(GenericVisitReportConfig config) {

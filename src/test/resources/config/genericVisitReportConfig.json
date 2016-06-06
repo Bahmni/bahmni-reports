@@ -1,18 +1,18 @@
 {
-  "genericVisitReportWithoutConfig": {
+  "visitsWithoutConfig": {
     "name": "Generic Visit Report Without Config",
-    "type": "genericVisitReport"
+    "type": "visits"
   },
-  "GenericVisitReportWithDataAnalysis": {
+  "visitsWithDataAnalysis": {
     "name": "Generic Visit Report With Data Analysis",
-    "type": "genericVisitReport",
+    "type": "visits",
     "config": {
       "forDataAnalysis": true
     }
   },
-  "GenericVisitReportWithPatientAttributes": {
+  "visitsWithPatientAttributes": {
     "name": "Generic Visit Report With Patient Attributes",
-    "type": "genericVisitReport",
+    "type": "visits",
     "config": {
       "patientAttributes": [
         "caste",
@@ -24,9 +24,9 @@
       ]
     }
   },
-  "GenericVisitReportWithVisitAttributes": {
+  "visitsWithVisitAttributes": {
     "name": "Generic Visit Report With Visit Attributes",
-    "type": "genericVisitReport",
+    "type": "visits",
     "config": {
       "visitAttributes": [
         "Visit Status",
@@ -34,9 +34,9 @@
       ]
     }
   },
-  "GenericVisitReportWithPatientAddresses": {
+  "visitsWithPatientAddresses": {
     "name": "Generic Visit Report With Patient Addresses",
-    "type": "genericVisitReport",
+    "type": "visits",
     "config": {
       "patientAddresses": [
         "address1",
@@ -44,41 +44,41 @@
       ]
     }
   },
-  "GenericVisitReportWithVisitStoppedDateForDateRange": {
+  "visitsWithVisitStoppedDateForDateRange": {
     "name": "Generic Visit Report With Visit Stopped Date For Date Range",
-    "type": "genericVisitReport",
+    "type": "visits",
     "config": {
       "applyDateRangeFor": "visitStopDate"
     }
   },
-  "GenericVisitReportWithVisitStartDateForDateRange": {
+  "visitsWithVisitStartDateForDateRange": {
     "name": "Generic Visit Report With Visit Start Date For Date Range",
-    "type": "genericVisitReport",
+    "type": "visits",
     "config": {
       "applyDateRangeFor": "visitStartDate"
     }
   },
-  "GenericVisitReportFilteredByVisitTypes": {
+  "visitsFilteredByVisitTypes": {
     "name": "Generic Visit Report Filtered By Visit Types",
-    "type": "genericVisitReport",
+    "type": "visits",
     "config": {
       "visitTypesToFilter": [
         "Initial HIV Clinic Visit"
       ]
     }
   },
-  "GenericVisitReportFilteredByLocationTags": {
+  "visitsFilteredByLocationTags": {
     "name": "Generic Visit Report Filtered By Location Tags",
-    "type": "genericVisitReport",
+    "type": "visits",
     "config": {
       "locationTagsToFilter": [
         "Admission Location"
       ]
     }
   },
-  "GenericVisitReportFilteredByVoidedLocationTags": {
+  "visitsFilteredByVoidedLocationTags": {
     "name": "Generic Visit Report Filtered By Voided Location Tags",
-    "type": "genericVisitReport",
+    "type": "visits",
     "config": {
       "locationTagsToFilter": [
         "Voided Location Tag",
@@ -86,9 +86,9 @@
       ]
     }
   },
-  "GenericVisitReportWithFullConfig": {
+  "visitsWithFullConfig": {
     "name": "Generic Visit Report With Full Config",
-    "type": "genericVisitReport",
+    "type": "visits",
     "config": {
       "forDataAnalysis": true,
       "patientAttributes": [

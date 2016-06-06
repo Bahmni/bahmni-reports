@@ -23,10 +23,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(8, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M Initial HIV Clinic Visit 20-Apr-2016 21-May-2016", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -35,10 +35,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 2 2", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  2 2", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -47,10 +47,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(14, report.columnsCount());
+        assertEquals(17, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M Initial HIV Clinic Visit 20-Apr-2016 21-May-2016  10th pass   General", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005   10th pass   General", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -59,10 +59,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M Initial HIV Clinic Visit 20-Apr-2016 21-May-2016  Admitted", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005   Admitted", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -71,10 +71,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M Initial HIV Clinic Visit 20-Apr-2016 21-May-2016  Dindori", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005   Dindori", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -83,10 +83,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(8, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M Return TB Clinic Visit 20-Mar-2016 21-Apr-2016", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Return TB Clinic Visit 20-Mar-2016 21-Apr-2016", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -95,10 +95,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(8, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M Initial HIV Clinic Visit 20-Apr-2016 21-May-2016", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -107,10 +107,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-03-01", "2016-04-30");
 
-        assertEquals(8, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M Initial HIV Clinic Visit 20-Apr-2016 21-May-2016", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -119,11 +119,11 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-05-30");
 
-        assertEquals(19, report.columnsCount());
+        assertEquals(22, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M Initial HIV Clinic Visit 20-Apr-2016 21-May-2016  General 10th pass   Dindori Ramgarh  Admitted 2 2", report.getRowAsString(1, " "));
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M Return TB Clinic Visit 20-Mar-2016 21-Apr-2016  General 10th pass   Dindori Ramgarh   2 3", report.getRowAsString(2, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005   General 10th pass   Dindori Ramgarh  Admitted 2 2", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Return TB Clinic Visit 20-Mar-2016 21-Apr-2016    General 10th pass   Dindori Ramgarh   2 3", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -132,10 +132,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2017-04-01", "2017-05-30");
 
-        assertEquals(8, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M Initial HIV Clinic Visit 20-Apr-2017 21-May-2017", report.getRowAsString(1, " "));
-        assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M Initial HIV Clinic Visit 20-Apr-2017 21-May-2017", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2017 21-May-2017 01-Jan-2005 01-Jan-2005", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2017 21-May-2017", report.getRowAsString(2, " "));
     }
 }
