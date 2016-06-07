@@ -66,6 +66,12 @@ public class JasperResponseConverter {
                 report.setTemplate(Templates.excelReportTemplate);
                 report.toCsv(outputStream);
                 break;
+            case "application/vnd.oasis.opendocument.spreadsheet":
+                response.setContentType("application/vnd.oasis.opendocument.spreadsheet");
+                response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".ods");
+                report.setTemplate(Templates.excelReportTemplate);
+                report.toOds(outputStream);
+                break;
         }
     }
 }
