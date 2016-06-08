@@ -11,6 +11,7 @@ SET @dateRangeFilter = '#applyDateRangeFor#';
 SET @encounterPerRow = '#selectConceptNamesSql#';
 SET @selectConceptNamesSql = '#selectConceptNamesSql#';
 SET @showProvider = '#showProvider#';
+SET @visitTypesToFilterSql = '#visitTypesToFilter#';
 SET @visitAttributeJoinSql = ' LEFT OUTER JOIN visit_attribute va ON va.visit_id=v.visit_id AND va.voided is false
   LEFT OUTER JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.retired is false';
 SET @patientAttributeJoinSql = ' LEFT OUTER JOIN person_attribute pa ON p.person_id = pa.person_id AND pa.voided is false
@@ -51,6 +52,9 @@ SET @sql = CONCAT('SELECT
   o.encounter_id                                                AS "Encounter Id",
   v.visit_id                                                    AS "Visit Id",
   program.name                                                  AS "Program Name",
+  pp.date_enrolled                                              AS "Program Enrollment Date",
+  pp.date_completed                                             AS "Program End Date",
+  p.date_created                                                AS "Patient Created Date",
   ',IF(@showProvider = '', '', @providerSelectSql),'
 FROM obs o
   JOIN concept obs_concept ON obs_concept.concept_id=o.concept_id AND obs_concept.retired is false
@@ -81,7 +85,7 @@ FROM obs o
   ',IF(@filterByPrograms != '', @filterByProgramsSql, ''),'
 WHERE o.voided is false
   ',IF(@locationTagsToFilterSql = '', '', 'AND l.location_id in (SELECT ltm.location_id from location_tag_map ltm JOIN location_tag lt ON ltm.location_tag_id=lt.location_tag_id AND lt.retired is false AND lt.name in (#locationTagsToFilter#))'),'
-  ',@dateRangeSql,'
+  ',@dateRangeSql,IF(@visitTypesToFilterSql = '', '', 'AND vt.name in (#visitTypesToFilter#)'),'
 GROUP BY e.encounter_id');
 
 PREPARE stmt FROM @sql;

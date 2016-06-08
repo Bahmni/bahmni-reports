@@ -46,6 +46,14 @@
 
     <obs obs_id="1000" person_id="1000" concept_id="1000" encounter_id="1000" obs_datetime="2016-04-21 15:30:31.0" location_id="2" value_numeric="170" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="39fb7f47-e80a-4056-9285-bd798e213c63"/>
 
+    <visit visit_id="1001" patient_id="1000" visit_type_id="2" date_started="2016-05-22 00:00:00.0" date_stopped="2016-05-25 00:00:00.0" location_id="2" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="1e5d5d48-6b78-11e0-933c-18alp5e044ce"/>
+
+    <encounter encounter_id="1001" encounter_type="2" patient_id="1000" visit_id="1001" location_id="2" encounter_datetime="2016-05-23 00:00:00.0" creator="1" date_created="2016-04-21 00:00:00.0" voided="false" uuid="6519d653-393b-4118-9c83-a371nb82d4ar"/>
+    <episode_encounter episode_id="1001" encounter_id="1001"/>
+    <encounter_provider encounter_provider_id="1001" encounter_id="1001" provider_id="1" encounter_role_id="1" creator="1" date_created="2016-05-23 00:00:00.0" voided="false" uuid="19e0aae8-20ee-46b7-ade6-9e68l197b7a4" />
+
+    <obs obs_id="1001" person_id="1000" concept_id="1000" encounter_id="1001" obs_datetime="2016-05-23 15:30:31.0" location_id="2" value_numeric="170" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="39fb7f47-e80a-4056-9285-bd798e213c64"/>
+
     <visit visit_id="1100" patient_id="1000" visit_type_id="1" date_started="2016-06-01 00:00:00.0" date_stopped="2016-06-30 00:00:00.0" location_id="2" creator="1" date_created="2016-06-01 00:00:00.0" voided="false" uuid="1e5d5d48-6b78-11e0-933c-18alp5e0nacd"/>
     <visit_attribute visit_attribute_id="1003" visit_id="1100" attribute_type_id="2" value_reference="OPD" creator="1" date_created="2005-01-01 00:00:00.0" voided="0" uuid="8770f6d6-7673-11e0-8pl3-001e37pob6e7"/>
 

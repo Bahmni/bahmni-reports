@@ -15,6 +15,15 @@ public class GenericObservationReportConfig implements Config {
     private List<String> programsToFilter;
     private List<String> conceptNamesToFilter;
     private boolean encounterPerRow = false;
+    private List<String> visitTypesToFilter;
+
+    public List<String> getVisitTypesToFilter() {
+        return visitTypesToFilter;
+    }
+
+    public void setVisitTypesToFilter(List<String> visitTypesToFilter) {
+        this.visitTypesToFilter = visitTypesToFilter;
+    }
 
     public boolean isForDataAnalysis() {
         return forDataAnalysis;

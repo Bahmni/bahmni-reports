@@ -135,7 +135,10 @@ public class GenericObservationReportTemplateHelper {
         TextColumnBuilder<String> genderColumn = col.column("Gender", "Gender", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> locationNameColumn = col.column("Location Name", "Location Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> programNameColumn = col.column("Program Name", "Program Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, locationNameColumn, programNameColumn);
+        TextColumnBuilder<Date> programEnrollmentDateColumn = col.column("Program Enrollment Date", "Program Enrollment Date", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        TextColumnBuilder<Date> programEndDateColumn = col.column("Program End Date", "Program End Date", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        TextColumnBuilder<Date> patientCreatedDateColumn = col.column("Patient Created Date", "Patient Created Date", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, locationNameColumn, programNameColumn, programEnrollmentDateColumn, programEndDateColumn, patientCreatedDateColumn);
 
         if (config == null || !config.isEncounterPerRow()) {
             TextColumnBuilder<String> conceptNameColumn = col.column("Concept Name", "Concept Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
@@ -273,6 +276,18 @@ public class GenericObservationReportTemplateHelper {
 
     private static List<String> getConceptClassesToFilter(GenericObservationReportConfig config) {
         return config.getConceptClassesToFilter() != null ? config.getConceptClassesToFilter() : new ArrayList<String>();
+    }
+
+    public static List<String> getVisitTypesToFilter(GenericObservationReportConfig config) {
+        return config.getVisitTypesToFilter() != null ? config.getVisitTypesToFilter() : new ArrayList<String>();
+    }
+
+    public static String constructVisitTypesString(List<String> visitTypesToFilter) {
+        List<String> parts = new ArrayList<>();
+        for (String visitType : visitTypesToFilter) {
+            parts.add("\"" + visitType + "\"");
+        }
+        return StringUtils.join(parts, ',');
     }
 
 }

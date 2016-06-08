@@ -44,7 +44,7 @@ import org.bahmni.webclients.HttpClient;
         @JsonSubTypes.Type(value = ProgramStateTransitionReport.class, name = "programStateTransitionReport"),
         @JsonSubTypes.Type(value = VisitReport.class, name = "visitReport"),
         @JsonSubTypes.Type(value = GenericVisitReport.class, name = "visits"),
-        @JsonSubTypes.Type(value = GenericObservationReport.class, name = "genericObservationReport"),
+        @JsonSubTypes.Type(value = GenericObservationReport.class, name = "observations"),
         @JsonSubTypes.Type(value = ObsCannedReport.class, name = "obsCannedReport"),
         @JsonSubTypes.Type(value = GenericProgramReport.class, name = "genericProgramReport")
 
