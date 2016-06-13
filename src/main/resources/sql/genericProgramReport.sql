@@ -26,24 +26,22 @@ SET @sql = CONCAT('SELECT pi.identifier AS "Patient Identifier",
        ', IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')), '
        ', IF(@patientAddressesSql = '', '', CONCAT(@patientAddressesSql, '')), '
        ', IF(@programAttributesSql = '', '', CONCAT(@programAttributesSql, ',')), '
-       coalesce(prsname.name, prfname.name) AS "Program Name",
+       prog.name AS "Program Name",
        pprog.date_enrolled AS "Enrolled Date",
        pprog.date_completed AS "Completed Date",
        coalesce(stsname.name, stfname.name) AS "Current State",
        p.person_id AS "Patient Id",
        prog.program_id AS "Program Id",
        ', IF(@showAllStates = 'true', CONCAT(@selectAllStatesSql, ','), ''), '
-       coalesce(ofname.name, osname.name) AS "Outcome"
+       coalesce(NULLIF(osname.name,''''), ofname.name) AS "Outcome"
 
 FROM patient_program pprog
   JOIN program prog on prog.program_id = pprog.program_id AND pprog.voided is FALSE
   JOIN person p on p.person_id = pprog.patient_id AND p.voided is  FALSE
   JOIN person_name pn on pn.person_id = p.person_id AND pn.voided is FALSE
   JOIN patient_identifier pi on pi.patient_id = p.person_id AND pi.voided is FALSE
-  JOIN concept_name prfname on prfname.concept_id = prog.concept_id AND prfname.concept_name_type = "FULLY_SPECIFIED" AND prfname.voided is FALSE
   ', IF(@programNamesToFilterSql = '', '',
-        'AND prfname.name in (#programNamesToFilterSql#)'), '
-  LEFT JOIN concept_name prsname on prsname.concept_id = prog.concept_id AND prsname.concept_name_type = "SHORT" AND prsname.voided is FALSE
+        'AND prog.name in (#programNamesToFilterSql#)'), '
   LEFT JOIN patient_state ps on ps.patient_program_id = pprog.patient_program_id AND ps.voided is FALSE
   ', IF(@showAllStates = 'true', '', 'AND end_date is NULL'), '
   JOIN program_workflow_state pws on pws.program_workflow_state_id = ps.state AND pws.retired is FALSE
