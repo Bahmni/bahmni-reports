@@ -57,4 +57,28 @@ public class SqlUtil {
 
         return jasperReport;
     }
+    public static ResultSet executeSqlWithStoredProc(Connection connection, String formattedSql) throws SQLException {
+        Statement stmt;
+        ResultSet rs;
+        try {
+            stmt = connection.createStatement();
+            boolean hasMoreResultSets = stmt.execute(formattedSql);
+            while (hasMoreResultSets ||
+                    stmt.getUpdateCount() != -1) { //if there are any more queries to be processed
+                if (hasMoreResultSets) {
+                    rs = stmt.getResultSet();
+                    if (rs.isBeforeFirst()) {
+                        return rs;
+                    }
+                }
+                hasMoreResultSets = stmt.getMoreResults(); //true if it is a resultset
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+
+        return null;
+    }
 }
+

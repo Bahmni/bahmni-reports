@@ -76,7 +76,11 @@ public class MainReportController {
             logger.error("Error running report", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             try {
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                String errorMessage = e.getMessage();
+                String content = "<h2>Incorrect Configuration</h2><h3>" + errorMessage +"</h3>";
+                response.setContentLength(content.length());
+                response.setContentType("text/html");
+                response.getOutputStream().write(content.getBytes());
             } catch (IOException e1) {
                 e1.printStackTrace();
             }
