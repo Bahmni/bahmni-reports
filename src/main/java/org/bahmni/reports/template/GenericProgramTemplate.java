@@ -76,11 +76,11 @@ public class GenericProgramTemplate extends BaseReportTemplate<GenericProgramRep
         TextColumnBuilder<Integer> ageColumn = col.column("Age", "Age", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Date> birthdateColumn = col.column("Birthdate", "Birthdate", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> genderColumn = col.column("Gender", "Gender", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        TextColumnBuilder<Date> patientCreatedDateColumn = col.column("Patient Created Date", "Patient Created Date", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> programNameColumn = col.column("Program Name", "Program Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-
         TextColumnBuilder<Date> dateEnrolledColumn = col.column("Enrolled Date", "Enrolled Date", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Date> dateCompletedColumn = col.column("Completed Date", "Completed Date", type.dateType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, programNameColumn, dateEnrolledColumn, dateCompletedColumn);
+        jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, patientCreatedDateColumn, programNameColumn, dateEnrolledColumn, dateCompletedColumn);
     }
 
     private void createAndAddPatientAttributeColumns(JasperReportBuilder jasperReport, GenericProgramReportConfig config) {

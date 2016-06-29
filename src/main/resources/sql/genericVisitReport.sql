@@ -15,7 +15,7 @@ SET @patientAddressJoinSql = ' LEFT OUTER JOIN person_address paddress ON p.pers
 SET @sql = CONCAT('SELECT
   pi.identifier                                                 AS "Patient Identifier",
   concat(pn.given_name, " ", pn.family_name)                    AS "Patient Name",
-  floor(DATEDIFF(DATE(v.date_started), p.birthdate) / 365)      AS "Age",
+  CAST(floor(DATEDIFF(DATE(v.date_started), p.birthdate) / 365) AS unsigned)      AS "Age",
   p.birthdate                                                   AS "Birthdate",
   p.gender                                                      AS "Gender",
   ',IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')),'

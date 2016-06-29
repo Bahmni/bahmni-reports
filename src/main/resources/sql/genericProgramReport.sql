@@ -31,6 +31,7 @@ SET @sql = CONCAT('SELECT pi.identifier AS "Patient Identifier",
        pprog.date_completed AS "Completed Date",
        coalesce(stsname.name, stfname.name) AS "Current State",
        p.person_id AS "Patient Id",
+       p.date_created AS "Patient Created Date",
        prog.program_id AS "Program Id",
        ', IF(@showAllStates = 'true', CONCAT(@selectAllStatesSql, ','), ''), '
        coalesce(NULLIF(osname.name,''''), ofname.name) AS "Outcome"

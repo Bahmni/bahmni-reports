@@ -22,13 +22,13 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(9, report.columnsCount());
+        assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(4, report.rowsCount());
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
-        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
     }
 
 
@@ -38,29 +38,14 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(9, report.columnsCount());
+        assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(4, report.rowsCount());
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
-        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
     }
-
-//    @Test
-//    public void shouldFetchOnlyNonVoidedPatientProgram() throws Exception {
-//        String reportName = "Generic Patient Program Report Non Voided Data";
-//
-//        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
-//
-//        assertEquals(10, report.columnsCount());
-//        assertEquals(reportName, report.getReportName());
-//        assertEquals(4, report.rowsCount());
-//        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM  19-Apr-2016 19-Apr-2016", report.getRowAsString(1, " "));
-//        assertEquals("prog2 Generic Program2   F HIV PROGRAM  19-Apr-2016", report.getRowAsString(2, " "));
-//        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM  19-Apr-2016 30-Apr-2016", report.getRowAsString(3, " "));
-//        assertEquals("prog1 Generic Program1   F HIV PROGRAM Ganiyari 20-Apr-2016 30-Apr-2016", report.getRowAsString(4, " "));
-//    }
 
     @Test
     public void shouldFetchProgramsEnrolledWithInSpecifiedDateRange() throws Exception {
@@ -68,12 +53,12 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-20", "2016-04-30");
 
-        assertEquals(9, report.columnsCount());
+        assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -82,7 +67,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "", "");
 
-        assertEquals(9, report.columnsCount());
+        assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(0, report.rowsCount());
     }
@@ -93,13 +78,13 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(14, report.columnsCount());
+        assertEquals(15, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(4, report.rowsCount());
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2 10th pass  8763245677 General", report.getRowAsString(1, " "));
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 10th pass  8763245677 General", report.getRowAsString(2, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2 10th pass  8763245677 General", report.getRowAsString(3, " "));
-        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 10th pass  8763245677 General", report.getRowAsString(4, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2 10th pass  8763245677 General", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 10th pass  8763245677 General", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2 10th pass  8763245677 General", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 10th pass  8763245677 General", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -108,14 +93,14 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(9, report.columnsCount());
+        assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(4, report.rowsCount());
 
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
-        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -124,15 +109,15 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(9, report.columnsCount());
+        assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(4, report.rowsCount());
 
 
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
-        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -141,13 +126,13 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
 
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(12, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(4, report.rowsCount());
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2 Ramgarh Dindori", report.getRowAsString(1, " "));
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 Ramgarh Dindori", report.getRowAsString(2, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2 Hyderabad Address Three", report.getRowAsString(3, " "));
-        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 Hyderabad Address Three", report.getRowAsString(4, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2 Ramgarh Dindori", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 Ramgarh Dindori", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2 Hyderabad Address Three", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 Hyderabad Address Three", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -157,9 +142,9 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         Report report = fetchReport(reportName, "2016-04-31", "2016-05-30");
 
         assertEquals(reportName, report.getReportName());
-        assertEquals(9, report.columnsCount());
+        assertEquals(10, report.columnsCount());
         assertEquals(1, report.rowsCount());
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(1, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -169,9 +154,9 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         Report report = fetchReport(reportName, "2016-04-31", "2016-05-30");
 
         assertEquals(reportName, report.getReportName());
-        assertEquals(12, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(1, report.rowsCount());
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2 1,001 1", report.getRowAsString(1, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2 1,001 1", report.getRowAsString(1, " "));
 
     }
 
@@ -182,9 +167,9 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         Report report = fetchReport(reportName, "2016-04-31", "2016-05-30");
 
         assertEquals(reportName, report.getReportName());
-        assertEquals(9, report.columnsCount());
+        assertEquals(10, report.columnsCount());
         assertEquals(1, report.rowsCount());
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(1, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -194,12 +179,12 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(reportName, report.getReportName());
-        assertEquals(12, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(4, report.rowsCount());
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2   true", report.getRowAsString(1, " "));
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1  FOLLOWING false", report.getRowAsString(2, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2  DIED true", report.getRowAsString(3, " "));
-        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2   true", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1  FOLLOWING false", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2  DIED true", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -209,10 +194,10 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(reportName, report.getReportName());
-        assertEquals(9, report.columnsCount());
+        assertEquals(10, report.columnsCount());
         assertEquals(2, report.rowsCount());
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(1, " "));
-        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(2, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(1, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -222,12 +207,12 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(reportName, report.getReportName());
-        assertEquals(9, report.columnsCount());
+        assertEquals(10, report.columnsCount());
         assertEquals(4, report.rowsCount());
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
-        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -237,14 +222,14 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(reportName, report.getReportName());
-        assertEquals(11, report.columnsCount());
+        assertEquals(12, report.columnsCount());
         assertEquals(6, report.rowsCount());
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 1 19-Apr-2016 22-Apr-2016", report.getRowAsString(1, " "));
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2 21-Apr-2016", report.getRowAsString(2, " "));
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 21-Apr-2016", report.getRowAsString(3, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 1 19-Apr-2016 20-Apr-2016", report.getRowAsString(4, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2 21-Apr-2016", report.getRowAsString(5, " "));
-        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 21-Apr-2016", report.getRowAsString(6, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 1 19-Apr-2016 22-Apr-2016", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2 21-Apr-2016", report.getRowAsString(2, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 21-Apr-2016", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 1 19-Apr-2016 20-Apr-2016", report.getRowAsString(4, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2 21-Apr-2016", report.getRowAsString(5, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 21-Apr-2016", report.getRowAsString(6, " "));
     }
 
     @Test
@@ -254,10 +239,10 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(reportName, report.getReportName());
-        assertEquals(24, report.columnsCount());
+        assertEquals(25, report.columnsCount());
         assertEquals(2, report.rowsCount());
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 21-Apr-2016  10th pass  8763245677 General   FOLLOWING false Ramgarh Dindori 1,000 2", report.getRowAsString(1, " "));
-        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 21-Apr-2016  10th pass  8763245677 General     Hyderabad Address Three 1,001 2", report.getRowAsString(2, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 21-Apr-2016  10th pass  8763245677 General   FOLLOWING false Ramgarh Dindori 1,000 2", report.getRowAsString(1, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 21-Apr-2016  10th pass  8763245677 General     Hyderabad Address Three 1,001 2", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -267,14 +252,14 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         Report report = fetchReport(reportName, "2016-04-19", "2016-04-23");
 
         assertEquals(reportName, report.getReportName());
-        assertEquals(11, report.columnsCount());
+        assertEquals(12, report.columnsCount());
         assertEquals(6, report.rowsCount());
 
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 1 19-Apr-2016 22-Apr-2016", report.getRowAsString(1, " "));
-        assertEquals("prog1 Generic Program1   F HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2 21-Apr-2016", report.getRowAsString(2, " "));
-        assertEquals("prog1 Generic Program1   F MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 21-Apr-2016", report.getRowAsString(3, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 1 19-Apr-2016 20-Apr-2016", report.getRowAsString(4, " "));
-        assertEquals("prog2 Generic Program2   F HIV PROGRAM 19-Apr-2016  State 2 21-Apr-2016", report.getRowAsString(5, " "));
-        assertEquals("prog2 Generic Program2   F MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 21-Apr-2016", report.getRowAsString(6, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 1 19-Apr-2016 22-Apr-2016", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2 21-Apr-2016", report.getRowAsString(2, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 21-Apr-2016", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 1 19-Apr-2016 20-Apr-2016", report.getRowAsString(4, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2 21-Apr-2016", report.getRowAsString(5, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 21-Apr-2016", report.getRowAsString(6, " "));
     }
 }
