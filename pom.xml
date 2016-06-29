@@ -14,6 +14,7 @@
         <dynamicreports.version>4.0.0</dynamicreports.version>
         <jackson.version>2.5.1</jackson.version>
         <skipDump>false</skipDump>
+        <openMRSVersion>1.12.0</openMRSVersion>
     </properties>
 
     <build>
@@ -157,14 +158,14 @@
         <dependency>
             <groupId>org.openmrs.api</groupId>
             <artifactId>openmrs-api</artifactId>
-            <version>1.11.4</version>
+            <version>${openMRSVersion}</version>
             <scope>test</scope>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.openmrs.api</groupId>
             <artifactId>openmrs-api</artifactId>
-            <version>1.11.4</version>
+            <version>${openMRSVersion}</version>
             <type>test-jar</type>
             <scope>test</scope>
         </dependency>
@@ -176,7 +177,7 @@
         <dependency>
             <groupId>org.openmrs.test</groupId>
             <artifactId>openmrs-test</artifactId>
-            <version>1.11.4</version>
+            <version>${openMRSVersion}</version>
             <type>pom</type>
             <scope>test</scope>
         </dependency>
