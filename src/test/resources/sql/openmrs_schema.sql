@@ -2868,6 +2868,8 @@ CREATE TABLE `orders` (
   `comment_to_fulfiller` varchar(1024) DEFAULT NULL,
   `care_setting` int(11) NOT NULL,
   `scheduled_date` datetime DEFAULT NULL,
+  `order_group_id` INT(11),
+  `sort_weight` DOUBLE,
   PRIMARY KEY (`order_id`),
   UNIQUE KEY `orders_uuid_index` (`uuid`),
   KEY `order_creator` (`creator`),
