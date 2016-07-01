@@ -12,6 +12,7 @@ import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.dao.GenericDao;
 import org.bahmni.reports.dao.impl.GenericObservationDaoImpl;
+import org.bahmni.reports.dao.impl.GenericVisitDaoImpl;
 import org.bahmni.reports.model.*;
 import org.bahmni.reports.util.CommonComponents;
 
@@ -74,7 +75,7 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
                     ctab.measure("", distinctgroup, String.class, Calculation.DISTINCT_COUNT));
         }
 
-        GenericDao genericDao = setGenericDao(aggregateReport);
+        GenericDao genericDao = getReportToAggregate(aggregateReport);
         ResultSet reportData = genericDao != null ? genericDao.getResultSet(connection, startDate, endDate, null) : null;
 
 
@@ -96,12 +97,14 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
     }
 
 
-    private GenericDao setGenericDao(Report<AggregationReportConfig> aggregateReport) {
+    private GenericDao getReportToAggregate(Report<AggregationReportConfig> aggregateReport) {
         Report report = aggregateReport.getConfig().getReport();
         report.setHttpClient(aggregateReport.getHttpClient());
         switch (aggregateReport.getConfig().getReport().getType()) {
             case "observations":
                 return new GenericObservationDaoImpl(report, bahmniReportsProperties);
+            case "visits":
+                return new GenericVisitDaoImpl(report);
             default:
                 return null;
 

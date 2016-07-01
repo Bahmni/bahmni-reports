@@ -1,84 +1,103 @@
 {
-  "aggregateReport": {
-    "name": "Aggregate Report Name",
-    "type": "aggregation",
-    "config": {
-      "report": {
-        "type" : "observations",
-        "config":{
-
+    "aggregateReport": {
+        "name": "Aggregate Report Name",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "observations",
+                "config": {
+                }
+            },
+            "rowGroups": [
+                "Age"
+            ],
+            "columnGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient ID"
+            ]
         }
-      },
-      "rowGroups": [
-        "Age"
-      ],
-      "columnGroups": [
-        "Gender"
-      ],
-      "distinctGroups": [
-        "Patient ID"
-      ]
-    }
-  },
-  "aggregateReportWithConfig": {
-    "name": "Aggregate Report with config",
-    "type": "aggregation",
-    "config": {
-      "report": {
-        "type" : "observations",
-        "config":{
-          "conceptNamesToFilter": [
-            "Weight"
-          ]
+    },
+    "aggregateReportWithConfig": {
+        "name": "Aggregate Report with config",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "observations",
+                "config": {
+                    "conceptNamesToFilter": [
+                        "Weight"
+                    ]
+                }
+            },
+            "rowGroups": [
+                "Age"
+            ],
+            "columnGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient ID"
+            ]
         }
-      },
-      "rowGroups": [
-        "Age"
-      ],
-      "columnGroups": [
-        "Gender"
-      ],
-      "distinctGroups": [
-        "Patient ID"
-      ]
+    },
+    "aggregateReportWithMultipleRowGropus": {
+        "name": "Aggregate Report with multiple Row Groups config",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "observations",
+                "config": {}
+            },
+            "rowGroups": [
+                "Age",
+                "Patient Id"
+            ],
+            "columnGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient ID"
+            ]
+        }
+    },
+    "aggregateReportWithMultipleColumnGropus": {
+        "name": "Aggregate Report with multiple Column Groups config",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "observations",
+                "config": {}
+            },
+            "rowGroups": [
+                "Age"
+            ],
+            "columnGroups": [
+                "Gender",
+                "Patient Id"
+            ],
+            "distinctGroups": [
+                "Concept Name"
+            ]
+        }
+    },
+    "aggregateReportForVisitsReport": {
+        "name": "Aggregated report for visits report",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "visits"
+            },
+            "rowGroups": [
+                "Visit Type"
+            ],
+            "columnGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient Identifier"
+            ]
+        }
     }
-  },
-  "aggregateReportWithMultipleRowGropus": {
-    "name": "Aggregate Report with multiple Row Groups config",
-    "type": "aggregation",
-    "config": {
-      "report": {
-        "type" : "observations",
-        "config":{}
-      },
-      "rowGroups": [
-        "Age","Patient Id"
-      ],
-      "columnGroups": [
-        "Gender"
-      ],
-      "distinctGroups": [
-        "Patient ID"
-      ]
-    }
-  },
-  "aggregateReportWithMultipleColumnGropus": {
-    "name": "Aggregate Report with multiple Column Groups config",
-    "type": "aggregation",
-    "config": {
-      "report": {
-        "type" : "observations",
-        "config":{}
-      },
-      "rowGroups": [
-        "Age"
-      ],
-      "columnGroups": [
-        "Gender","Patient Id"
-      ],
-      "distinctGroups": [
-        "Concept Name"
-      ]
-    }
-  }
 }
