@@ -45,8 +45,8 @@ FROM patient_program pprog
         'AND prog.name in (#programNamesToFilterSql#)'), '
   LEFT JOIN patient_state ps on ps.patient_program_id = pprog.patient_program_id AND ps.voided is FALSE
   ', IF(@showAllStates = 'true', '', 'AND end_date is NULL'), '
-  JOIN program_workflow_state pws on pws.program_workflow_state_id = ps.state AND pws.retired is FALSE
-  JOIN concept_name stfname on stfname.concept_id = pws.concept_id AND stfname.concept_name_type = "FULLY_SPECIFIED" AND stfname.voided is FALSE
+  LEFT JOIN program_workflow_state pws on pws.program_workflow_state_id = ps.state AND pws.retired is FALSE
+  LEFT JOIN concept_name stfname on stfname.concept_id = pws.concept_id AND stfname.concept_name_type = "FULLY_SPECIFIED" AND stfname.voided is FALSE
   LEFT JOIN concept_name stsname on stsname.concept_id = pws.concept_id AND stsname.concept_name_type = "SHORT" AND stsname.voided is FALSE
   LEFT JOIN concept_name ofname on ofname.concept_id = pprog.outcome_concept_id AND ofname.concept_name_type = "FULLY_SPECIFIED" AND ofname.voided is FALSE
   LEFT JOIN concept_name osname on osname.concept_id = pprog.outcome_concept_id AND osname.concept_name_type = "SHORT" AND ofname.voided is FALSE

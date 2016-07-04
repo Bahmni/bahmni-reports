@@ -262,4 +262,17 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2 21-Apr-2016", report.getRowAsString(5, " "));
         assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 21-Apr-2016", report.getRowAsString(6, " "));
     }
+
+    @Test
+    public void shouldFetchTheProgramEvenThoughIfItDoesNotHaveState() throws Exception{
+        String reportName = "Generic Patient Program Report Without Config";
+
+        Report report = fetchReport(reportName, "2017-04-01", "2017-04-30");
+
+        assertEquals(10, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(2, report.rowsCount());
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(1, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2017 21-Apr-2017", report.getRowAsString(2, " "));
+    }
 }
