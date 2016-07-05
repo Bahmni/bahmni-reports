@@ -12,6 +12,7 @@ import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.dao.GenericDao;
 import org.bahmni.reports.dao.impl.GenericObservationDaoImpl;
+import org.bahmni.reports.dao.impl.GenericProgramDaoImpl;
 import org.bahmni.reports.dao.impl.GenericVisitDaoImpl;
 import org.bahmni.reports.model.*;
 import org.bahmni.reports.util.CommonComponents;
@@ -23,6 +24,7 @@ import java.util.List;
 import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
 import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
+import static org.bahmni.reports.model.Constants.*;
 
 @UsingDatasource("openmrs")
 public class AggregationReportTemplate extends BaseReportTemplate<AggregationReportConfig> {
@@ -101,10 +103,12 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
         Report report = aggregateReport.getConfig().getReport();
         report.setHttpClient(aggregateReport.getHttpClient());
         switch (aggregateReport.getConfig().getReport().getType()) {
-            case "observations":
+            case OBSERVAIONS:
                 return new GenericObservationDaoImpl(report, bahmniReportsProperties);
-            case "visits":
+            case VISITS:
                 return new GenericVisitDaoImpl(report);
+            case PROGRAMS:
+                return new GenericProgramDaoImpl(report);
             default:
                 return null;
 

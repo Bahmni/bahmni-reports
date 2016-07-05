@@ -99,5 +99,37 @@
                 "Patient Identifier"
             ]
         }
+    },
+    "aggregateReportForProgramsReport": {
+        "name": "Aggregated report for programs report",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "programs",
+                "config" : {
+                    "patientAttributes": [
+                    ],
+                    "patientAddresses": [
+                        "city_village",
+                        "address3"
+                    ],
+                    "programAttributes": [],
+                    "forDataAnalysis": true,
+                    "showAllStates": true,
+                    "programNamesToFilter": [
+                        "HIV PROGRAM"
+                    ]
+                }
+            },
+            "rowGroups": [
+                "Program Name"
+            ],
+            "columnGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient Identifier"
+            ]
+        }
     }
 }

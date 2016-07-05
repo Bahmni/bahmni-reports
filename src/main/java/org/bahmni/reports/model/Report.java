@@ -9,6 +9,8 @@ import org.bahmni.reports.report.*;
 import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.webclients.HttpClient;
 
+import static org.bahmni.reports.model.Constants.*;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -43,10 +45,10 @@ import org.bahmni.webclients.HttpClient;
         @JsonSubTypes.Type(value = ProgramEnrollmentReport.class, name = "ProgramEnrollmentReport"),
         @JsonSubTypes.Type(value = ProgramStateTransitionReport.class, name = "programStateTransitionReport"),
         @JsonSubTypes.Type(value = VisitReport.class, name = "visitReport"),
-        @JsonSubTypes.Type(value = GenericVisitReport.class, name = "visits"),
-        @JsonSubTypes.Type(value = GenericObservationReport.class, name = "observations"),
+        @JsonSubTypes.Type(value = GenericVisitReport.class, name = VISITS),
+        @JsonSubTypes.Type(value = GenericObservationReport.class, name = OBSERVAIONS),
         @JsonSubTypes.Type(value = ObsCannedReport.class, name = "obsCannedReport"),
-        @JsonSubTypes.Type(value = GenericProgramReport.class, name = "programs"),
+        @JsonSubTypes.Type(value = GenericProgramReport.class, name = PROGRAMS),
         @JsonSubTypes.Type(value = AggregationReport.class, name = "aggregation")
 })
 

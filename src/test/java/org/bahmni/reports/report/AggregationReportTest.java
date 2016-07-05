@@ -95,4 +95,19 @@ public class AggregationReportTest extends BaseIntegrationTest {
         assertEquals("Initial HIV Clinic Visit 1 1", report.getRowAsString(3, " "));
         assertEquals("Return TB Clinic Visit 1 0", report.getRowAsString(4, " "));
     }
+
+    @Test
+    public void shouldFetchAggregateReportForProgramsReport() throws Exception {
+        executeDataSet("datasets/genericProgramReportDataSet.xml");
+        String reportName = "Aggregated report for programs report";
+
+        Report report = fetchReport(reportName, "2016-04-20", "2016-05-01");
+        assertEquals(2, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(3, report.rowsCount());
+        assertEquals("F", report.getRowAsString(1, " "));
+        assertEquals("", report.getRowAsString(2, " "));
+        assertEquals("HIV PROGRAM 2", report.getRowAsString(3, " "));
+
+    }
 }
