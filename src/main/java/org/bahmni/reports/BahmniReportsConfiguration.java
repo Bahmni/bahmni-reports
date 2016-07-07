@@ -5,6 +5,7 @@ import org.bahmni.reports.builder.ComboPooledDataSourceBuilder;
 import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
 import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
+import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,6 +18,7 @@ public class BahmniReportsConfiguration {
 
     @Autowired
     private BahmniReportsProperties bahmniReportsProperties;
+    private static int IDLE_CONNECTION_TEST_TIME = 300; //in seconds
 
     @Bean
     public HttpClient httpClient() {
@@ -31,19 +33,27 @@ public class BahmniReportsConfiguration {
     @Bean
     public ComboPooledDataSource openmrsDataSource() throws PropertyVetoException {
         ComboPooledDataSourceBuilder comboPooledDataSourceBuilder = new ComboPooledDataSourceBuilder();
-        return comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getOpenmrsUrl())
+        ComboPooledDataSource dataSource = comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getOpenmrsUrl())
                 .withUser(bahmniReportsProperties.getOpenmrsUser())
                 .withPassword(bahmniReportsProperties.getOpenmrsPassword())
                 .withDriver(com.mysql.jdbc.Driver.class).build();
+
+        dataSource.setIdleConnectionTestPeriod(IDLE_CONNECTION_TEST_TIME);
+        dataSource.setPreferredTestQuery("SELECT 1;");
+        return dataSource;
     }
 
     @Bean
     public ComboPooledDataSource openelisDataSource() throws PropertyVetoException {
         ComboPooledDataSourceBuilder comboPooledDataSourceBuilder = new ComboPooledDataSourceBuilder();
-        return comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getOpenelisUrl())
+        ComboPooledDataSource dataSource = comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getOpenelisUrl())
                 .withUser(bahmniReportsProperties.getOpenelisUser())
                 .withPassword(bahmniReportsProperties.getOpenelisPassword())
-                .withDriver(org.postgresql.Driver.class).build();
+                .withDriver(Driver.class).build();
+
+        dataSource.setIdleConnectionTestPeriod(IDLE_CONNECTION_TEST_TIME);
+        dataSource.setPreferredTestQuery("SELECT 1;");
+        return dataSource;
     }
 
     @Bean
@@ -57,10 +67,14 @@ public class BahmniReportsConfiguration {
     @Bean
     public ComboPooledDataSource openerpDataSource() throws PropertyVetoException {
         ComboPooledDataSourceBuilder comboPooledDataSourceBuilder = new ComboPooledDataSourceBuilder();
-        return comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getOpenERPUrl())
+        ComboPooledDataSource dataSource = comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getOpenERPUrl())
                 .withUser(bahmniReportsProperties.getOpenERPUser())
                 .withPassword(bahmniReportsProperties.getOpenERPPassword())
-                .withDriver(org.postgresql.Driver.class).build();
+                .withDriver(Driver.class).build();
+
+        dataSource.setIdleConnectionTestPeriod(IDLE_CONNECTION_TEST_TIME);
+        dataSource.setPreferredTestQuery("SELECT 1;");
+        return dataSource;
     }
 
 }
