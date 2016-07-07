@@ -7,6 +7,7 @@ import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import net.sf.dynamicreports.report.definition.datatype.DRIDataType;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.SqlReportConfig;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.stringtemplate.v4.ST;
 
@@ -24,7 +25,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class SqlReportTemplate extends BaseReportTemplate<SqlReportConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<SqlReportConfig> report, String
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<SqlReportConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
@@ -48,7 +49,7 @@ public class SqlReportTemplate extends BaseReportTemplate<SqlReportConfig> {
         jasperReport.setDataSource(resultSet);
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
         resources.add(statement);
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 
     private String getSqlString(Report<SqlReportConfig> reportConfig, String startDate, String endDate) {

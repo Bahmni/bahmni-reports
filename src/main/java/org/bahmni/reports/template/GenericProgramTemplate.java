@@ -15,6 +15,7 @@ import org.bahmni.reports.model.UsingDatasource;
 
 import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.*;
 
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 
 @UsingDatasource("openmrs")
@@ -26,7 +27,7 @@ public class GenericProgramTemplate extends BaseReportTemplate<GenericProgramRep
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<GenericProgramReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<GenericProgramReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         CommonComponents.addTo(jasperReport, report, pageType);
 
          jasperReport.setShowColumnTitle(true)
@@ -44,6 +45,7 @@ public class GenericProgramTemplate extends BaseReportTemplate<GenericProgramRep
 
         GenericProgramDaoImpl genericProgramDao = new GenericProgramDaoImpl(report);
         ResultSet programResultSet = genericProgramDao.getResultSet(connection, startDate, endDate, null);
-        return programResultSet != null ? jasperReport.setDataSource(programResultSet) : jasperReport;
+        JasperReportBuilder jasperReportBuilder = programResultSet != null ? jasperReport.setDataSource(programResultSet) : jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 }

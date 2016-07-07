@@ -9,6 +9,7 @@ import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.model.ProgramConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.stringtemplate.v4.ST;
 
@@ -24,7 +25,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class PatientProgramTemplate extends BaseReportTemplate<ProgramConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramConfig> report, String
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
@@ -69,7 +70,7 @@ public class PatientProgramTemplate extends BaseReportTemplate<ProgramConfig> {
                         stateColumn, stateStartDateColumn, stateEndDateColumn, programEndDateColumn, outcomeColumn)
                 .setDataSource(getFormattedSql(sql, report.getConfig(), startDate, endDate),
                         connection);
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 
     private String getFormattedSql(String formattedSql, ProgramConfig reportConfig, String startDate, String endDate) {

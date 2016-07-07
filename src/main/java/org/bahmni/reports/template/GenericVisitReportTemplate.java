@@ -7,6 +7,7 @@ import org.bahmni.reports.dao.impl.GenericVisitDaoImpl;
 import org.bahmni.reports.model.GenericVisitReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 
 import java.sql.Connection;
@@ -20,7 +21,7 @@ import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.*;
 public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitReportConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<GenericVisitReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<GenericVisitReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         jasperReport.setShowColumnTitle(true)
@@ -38,6 +39,7 @@ public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitR
         GenericVisitDaoImpl genericVisitDao = new GenericVisitDaoImpl(report);
         ResultSet obsResultSet = genericVisitDao.getResultSet(connection, startDate, endDate, null);
 
-        return obsResultSet != null ? jasperReport.setDataSource(obsResultSet) : jasperReport;
+        JasperReportBuilder jasperReportBuilder = obsResultSet != null ? jasperReport.setDataSource(obsResultSet) : jasperReport;
+        return new BahmniReportBuilder(jasperReportBuilder);
     }
 }

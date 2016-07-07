@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.model.VisitAggregateCountConfig;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
@@ -26,7 +27,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class VisitAggregateCountReportTemplate extends BaseReportTemplate<VisitAggregateCountConfig> {
     private VisitAggregateCountConfig reportConfig;
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<VisitAggregateCountConfig> report,
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<VisitAggregateCountConfig> report,
                                      String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
 
         this.reportConfig = report.getConfig();
@@ -48,7 +49,8 @@ public class VisitAggregateCountReportTemplate extends BaseReportTemplate<VisitA
         String visitTypes = report.getConfig().getVisitTypes();
         String sqlString = getSqlString(visitTypes, startDate, endDate);
 
-        return SqlUtil.executeReportWithStoredProc(jasperReport, connection, sqlString);
+        JasperReportBuilder jasperReportBuilder = SqlUtil.executeReportWithStoredProc(jasperReport, connection, sqlString);
+        return new BahmniReportBuilder(jasperReportBuilder);
     }
 
     private String getSqlString(String visitTypes, String startDate, String endDate) {

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.ProgramDrugOrderTemplateConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -48,7 +49,7 @@ public class ProgramDrugOrderTemplate extends BaseReportTemplate<ProgramDrugOrde
 
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramDrugOrderTemplateConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramDrugOrderTemplateConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         CommonComponents.addTo(jasperReport, report, pageType);
         this.programDrugOrderTemplateConfig = report.getConfig();
 
@@ -72,7 +73,8 @@ public class ProgramDrugOrderTemplate extends BaseReportTemplate<ProgramDrugOrde
         buildColumns(jasperReport, patientAttributes, programAttributes, programs);
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
-        return SqlUtil.executeReportWithStoredProc(jasperReport, connection, sql);
+        JasperReportBuilder jasperReportBuilder = SqlUtil.executeReportWithStoredProc(jasperReport, connection, sql);
+        return new BahmniReportBuilder(jasperReportBuilder);
     }
 
     private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<String> programAttributes, List<String> programs) {

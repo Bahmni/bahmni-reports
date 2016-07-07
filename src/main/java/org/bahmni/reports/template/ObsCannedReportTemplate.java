@@ -9,6 +9,7 @@ import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.ObsCannedReportTemplateConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
@@ -34,7 +35,7 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCannedReportTemplateConfig> report, String
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCannedReportTemplateConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         CommonComponents.addTo(jasperReport, report, pageType);
         this.obsCannedReportTemplateConfig = report.getConfig();
@@ -64,7 +65,8 @@ public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportT
                 patientAttributesInClause, startDate, endDate,addressAttributesInClause );buildColumns(jasperReport, patientAttributes, conceptDetails,viConceptDetails, addressAttributes);
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
-        return SqlUtil.executeReportWithStoredProc(jasperReport, connection, sql);
+        JasperReportBuilder jasperReportBuilder = SqlUtil.executeReportWithStoredProc(jasperReport, connection, sql);
+        return new BahmniReportBuilder(jasperReportBuilder);
     }
 
     private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<String> conceptNames,List<String> viConceptNames, List<String> addressAttributes) {

@@ -9,6 +9,7 @@ import org.bahmni.reports.dao.impl.GenericObservationDaoImpl;
 import org.bahmni.reports.model.GenericObservationReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.GenericObservationReportTemplateHelper;
 
@@ -30,7 +31,7 @@ public class GenericObservationReportTemplate extends BaseReportTemplate<Generic
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
                                      Report<GenericObservationReportConfig> report,
                                      String startDate, String endDate, List<AutoCloseable> resources,
                                      PageType pageType) throws SQLException {
@@ -60,7 +61,8 @@ public class GenericObservationReportTemplate extends BaseReportTemplate<Generic
 
         ResultSet obsResultSet = genericObservationDao.getResultSet(connection, startDate, endDate, conceptNamesToFilter);
 
-        return obsResultSet != null ? jasperReport.setDataSource(obsResultSet) : jasperReport;
+        JasperReportBuilder jasperReportBuilder = obsResultSet != null ? jasperReport.setDataSource(obsResultSet) : jasperReport;
+        return new BahmniReportBuilder(jasperReportBuilder);
     }
 
 }

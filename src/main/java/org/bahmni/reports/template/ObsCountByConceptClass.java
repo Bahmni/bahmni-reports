@@ -10,6 +10,7 @@ import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.model.ObsCountByConceptClassConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
@@ -23,7 +24,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource(value = "openmrs")
 public class ObsCountByConceptClass extends BaseReportTemplate<ObsCountByConceptClassConfig> {
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountByConceptClassConfig>
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountByConceptClassConfig>
             report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
@@ -54,7 +55,7 @@ public class ObsCountByConceptClass extends BaseReportTemplate<ObsCountByConcept
                 .subtotalsAtSummary(totalCount)
                 .setDataSource(getFormattedSql(sql, report.getConfig(), startDate, endDate),
                         connection);
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 
     private String getFormattedSql(String formattedSql, ObsCountByConceptClassConfig reportConfig, String startDate, String endDate) {

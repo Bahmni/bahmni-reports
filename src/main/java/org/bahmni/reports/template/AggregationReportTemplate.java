@@ -15,6 +15,7 @@ import org.bahmni.reports.dao.impl.GenericObservationDaoImpl;
 import org.bahmni.reports.dao.impl.GenericProgramDaoImpl;
 import org.bahmni.reports.dao.impl.GenericVisitDaoImpl;
 import org.bahmni.reports.model.*;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 
 import java.sql.Connection;
@@ -36,7 +37,7 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
                                      Report<AggregationReportConfig> aggregateReport,
                                      String startDate, String endDate, List<AutoCloseable> resources,
                                      PageType pageType) throws Exception {
@@ -94,8 +95,8 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
                 .add(cmp.verticalGap(10))
         );
 
-
-        return reportData != null ? jasperReport.setDataSource(reportData).summary(crosstab) : jasperReport;
+        JasperReportBuilder jasperReportBuilder = reportData != null ? jasperReport.setDataSource(reportData).summary(crosstab) : jasperReport;
+        return new BahmniReportBuilder(jasperReportBuilder);
     }
 
 

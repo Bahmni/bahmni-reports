@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.model.VisitReportConfig;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
@@ -50,7 +51,7 @@ public class VisitReportTemplate extends BaseReportTemplate<VisitReportConfig> {
 
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<VisitReportConfig> report, String
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<VisitReportConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
 
         String personAttributes = sqlStringListParameter(report.getConfig().getPersonAttributes());
@@ -70,6 +71,7 @@ public class VisitReportTemplate extends BaseReportTemplate<VisitReportConfig> {
 
         String sqlString = getSqlString(personAttributes, visitAttributes, startDate, endDate);
 
-        return SqlUtil.executeReportWithStoredProc(jasperReport, connection, sqlString);
+        JasperReportBuilder jasperReportBuilder = SqlUtil.executeReportWithStoredProc(jasperReport, connection, sqlString);
+        return new BahmniReportBuilder(jasperReportBuilder);
     }
 }

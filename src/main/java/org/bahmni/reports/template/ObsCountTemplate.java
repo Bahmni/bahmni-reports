@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.ObsCountConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
@@ -31,7 +32,7 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
     private final String VISIT_TYPE_CRITERIA = "and va.value_reference in (%s)";
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
 
         CommonComponents.addTo(jasperReport, report, pageType);
@@ -87,7 +88,7 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
                 .summary(crosstab)
                 .setDataSource(initialformattedSql, connection);
 
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 
     private String getFormattedSql(String formattedSql, ObsCountConfig reportConfig, String visitType, String startDate, String endDate) {

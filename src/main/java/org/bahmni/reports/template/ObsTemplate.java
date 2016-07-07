@@ -10,6 +10,7 @@ import org.bahmni.reports.model.ConceptDetails;
 import org.bahmni.reports.model.ObsTemplateConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.bahmni.webclients.HttpClient;
@@ -41,7 +42,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsTemplateConfig> report, String
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsTemplateConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         this.reportConfig = report.getConfig();
         CommonComponents.addTo(jasperReport, report, pageType);
@@ -51,7 +52,8 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         String formattedSql = getFormattedSql("sql/obsTemplate.sql", conceptDetails, patientAttributes, startDate, endDate);
         buildColumns(jasperReport, patientAttributes, conceptDetails, reportConfig.getApplyDateRangeFor());
 
-        return SqlUtil.executeReportWithStoredProc(jasperReport, connection, formattedSql);
+        JasperReportBuilder jasperReportBuilder = SqlUtil.executeReportWithStoredProc(jasperReport, connection, formattedSql);
+        return new BahmniReportBuilder(jasperReportBuilder);
     }
 
     private List<ConceptDetails> fetchLeafConceptsFor(String templateName, Report<ObsTemplateConfig> report) {

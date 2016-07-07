@@ -9,6 +9,7 @@ import net.sf.dynamicreports.report.definition.expression.DRIValueFormatter;
 import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.stringtemplate.v4.ST;
@@ -34,7 +35,7 @@ public class DrugOrderTemplate extends BaseReportTemplate<Config> {
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report report, String startDate, String endDate, List resources, PageType pageType) {
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report report, String startDate, String endDate, List resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         TextColumnBuilder<String> drugName = col.column("Drug Name", "drugName", type.stringType())
@@ -88,7 +89,7 @@ public class DrugOrderTemplate extends BaseReportTemplate<Config> {
             .columns(patientId, patientName, patientGender, patientAge, user, drugName, dose, unit, frequency, duration, route, startdate, stopDate, quantity)
             .setDataSource(getFormattedSql(sql, startDate, endDate),
                 connection);
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 
     private class ValueFormatter implements DRIValueFormatter<String, String> {

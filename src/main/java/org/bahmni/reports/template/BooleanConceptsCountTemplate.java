@@ -13,6 +13,7 @@ import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.ObsCountConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
@@ -26,7 +27,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class BooleanConceptsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
         CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup("concept_name", String.class)
@@ -67,7 +68,7 @@ public class BooleanConceptsCountTemplate extends BaseReportTemplate<ObsCountCon
         jasperReport.setColumnStyle(textStyle)
                 .summary(crosstab)
                 .setDataSource(formattedSql, connection);
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 
     private String getFormattedSql(String formattedSql, ObsCountConfig reportConfig, String startDate, String endDate) {

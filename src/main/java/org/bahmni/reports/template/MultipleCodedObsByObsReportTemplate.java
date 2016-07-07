@@ -12,6 +12,7 @@ import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.MultipleCodedObsByCodedObsReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.stringtemplate.v4.ST;
 
@@ -28,7 +29,7 @@ public class MultipleCodedObsByObsReportTemplate extends BaseReportTemplate<Mult
     private static final List<String> FIXED_ROW_COLUMN_NAMES = Arrays.asList("gender", "age_group");
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
                                      Report<MultipleCodedObsByCodedObsReportConfig> report, String startDate, String endDate,
                                      List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
@@ -85,7 +86,7 @@ public class MultipleCodedObsByObsReportTemplate extends BaseReportTemplate<Mult
         jasperReport.setColumnStyle(textStyle)
                 .summary(crosstab)
                 .setDataSource(getSqlString(reportSpecificConfig, startDate, endDate), connection);
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 
     private String getSqlString(MultipleCodedObsByCodedObsReportConfig reportConfig, String startDate, String endDate) {

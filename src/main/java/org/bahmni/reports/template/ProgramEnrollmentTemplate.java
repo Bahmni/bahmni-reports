@@ -10,6 +10,7 @@ import org.bahmni.reports.model.ProgramConfig;
 import org.bahmni.reports.model.ProgramEnrollmentConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.stringtemplate.v4.ST;
 
@@ -25,7 +26,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class ProgramEnrollmentTemplate extends BaseReportTemplate<ProgramEnrollmentConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramEnrollmentConfig> report, String
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramEnrollmentConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
@@ -57,7 +58,7 @@ public class ProgramEnrollmentTemplate extends BaseReportTemplate<ProgramEnrollm
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 
     private String getFormattedSql(String formattedSql, String startDate, String endDate) {

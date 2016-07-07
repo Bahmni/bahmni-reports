@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.ObsCountConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
@@ -29,7 +30,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
@@ -83,7 +84,7 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
                 .summary(crosstab)
                 .setDataSource(initialformattedSql,
                         connection);
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 
     private String getSqlString(ObsCountConfig reportConfig, String startDate, String endDate) {

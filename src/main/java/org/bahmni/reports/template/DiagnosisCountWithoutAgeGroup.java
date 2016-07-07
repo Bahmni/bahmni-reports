@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.DiagnosisReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
@@ -21,7 +22,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class DiagnosisCountWithoutAgeGroup extends BaseReportTemplate<DiagnosisReportConfig> {
 
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig,
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> reportConfig,
                                      String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, reportConfig, pageType);
 
@@ -39,7 +40,7 @@ public class DiagnosisCountWithoutAgeGroup extends BaseReportTemplate<DiagnosisR
                 .columns(disease, icd10Code, female, male, other)
                 .setDataSource(getFormattedSql(sql, reportConfig.getConfig(), startDate, endDate),
                         connection);
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 
     private String getFormattedSql(String formattedSql, DiagnosisReportConfig reportConfig, String startDate, String endDate) {

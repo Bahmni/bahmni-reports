@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.bahmni.reports.model.IpdPatientsConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.PatientAttributesHelper;
 import org.bahmni.reports.util.SqlUtil;
@@ -30,7 +31,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsConfig> {
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<IpdPatientsConfig> report,
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<IpdPatientsConfig> report,
                                      String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         CommonComponents.addTo(jasperReport, report, pageType);
 
@@ -64,7 +65,8 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
 
         String sqlString = getSqlString(report.getConfig(),patientAttributesHelper, conceptNames, startDate, endDate, getFilterColumn(report));
 
-        return SqlUtil.executeReportWithStoredProc(jasperReport, connection, sqlString);
+        JasperReportBuilder jasperReportBuilder = SqlUtil.executeReportWithStoredProc(jasperReport, connection, sqlString);
+        return new BahmniReportBuilder(jasperReportBuilder);
     }
 
     private void addColumns(JasperReportBuilder jasperReport, List<String> attributes, StyleBuilder columnStyle) {

@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.DiagnosisReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
@@ -29,7 +30,7 @@ public class DiagnosisSummaryTemplate extends BaseReportTemplate<DiagnosisReport
     private WhereClause observationsWhereClause = new WhereClause();
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> report,
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<DiagnosisReportConfig> report,
                                      String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
@@ -51,8 +52,7 @@ public class DiagnosisSummaryTemplate extends BaseReportTemplate<DiagnosisReport
         jasperReport.setColumnStyle(Templates.columnStyle)
                 .summary(crosstab)
                 .setDataSource(getSqlString(reportSpecificConfig), connection);
-        return jasperReport;
-
+        return new BahmniReportBuilder(jasperReport);
     }
 
     private void addDateParameters(String startDate, String endDate, DiagnosisReportConfig reportSpecificConfig) {

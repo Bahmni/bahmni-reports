@@ -8,6 +8,7 @@ import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.stringtemplate.v4.ST;
 
@@ -20,7 +21,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource(value = "openmrs")
 public class IpdOpdVisitCount extends BaseReportTemplate<Config> {
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> report, String startDate,
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> report, String startDate,
                                      String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
@@ -51,7 +52,7 @@ public class IpdOpdVisitCount extends BaseReportTemplate<Config> {
                 .columns(newOpd, oldOpd, totalOpd, newIpd, oldIpd, totalIpd)
                 .setDataSource(getFormattedSql(sql, startDate, endDate),
                         connection);
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 
     private String getFormattedSql(String formattedSql, String startDate, String endDate) {

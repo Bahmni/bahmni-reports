@@ -8,6 +8,7 @@ import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.model.OrderFulfillmentConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
@@ -33,7 +34,7 @@ public class OrderFulfillmentReportTemplate extends BaseReportTemplate<OrderFulf
     }
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<OrderFulfillmentConfig> report,
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<OrderFulfillmentConfig> report,
                                      String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
@@ -77,6 +78,6 @@ public class OrderFulfillmentReportTemplate extends BaseReportTemplate<OrderFulf
                 .columns(orderType, concept, orderDate, patientId, patientName, patientGender, fulfillmentStatus, fulfillmentDate)
                 .setDataSource(getFormattedSql(sql, report.getConfig(), startDate, endDate),
                         connection);
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 }

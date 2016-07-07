@@ -9,6 +9,7 @@ import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 
 import java.sql.Connection;
@@ -22,7 +23,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class TestCountTemplate extends BaseReportTemplate<Config> {
 
     @Override
-    public JasperReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> report, String startDate,
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<Config> report, String startDate,
                                      String endDate, List<AutoCloseable> resources, PageType pageType) {
         CommonComponents.addTo(jasperReport, report, pageType);
 
@@ -52,6 +53,6 @@ public class TestCountTemplate extends BaseReportTemplate<Config> {
                 .groupBy(departmentGroup)
                 .setDataSource(String.format(sql, startDate, endDate),
                         connection);
-        return jasperReport;
+        return new BahmniReportBuilder(jasperReport);
     }
 }
