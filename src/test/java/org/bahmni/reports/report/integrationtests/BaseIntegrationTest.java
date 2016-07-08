@@ -139,15 +139,28 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     }
 
     protected CsvReport fetchCsvReport(String reportName, String startDate, String endDate) throws Exception {
-        MvcResult mvcResult = fetchMvcResult(reportName, startDate, endDate, "text/csv");
+        MvcResult mvcResult = fetchMvcResult(reportName, startDate, endDate, "text/csv", false);
         String result = mvcResult.getResponse().getContentAsString();
         return CsvReport.getReport(result);
     }
 
     protected XSSFWorkbook fetchXlsReport(String reportName, String startDate, String endDate) throws Exception {
-        MvcResult mvcResult = fetchMvcResult(reportName, startDate, endDate, "application/vnd.ms-excel");
+        MvcResult mvcResult = fetchMvcResult(reportName, startDate, endDate, "application/vnd.ms-excel", false);
         XSSFWorkbook workbook = new XSSFWorkbook(new ByteArrayInputStream(mvcResult.getResponse().getContentAsByteArray()));
         return workbook;
+    }
+
+    protected MvcResult fetchMvcResult(String reportName, String startDate, String endDate, String responseType, boolean ignoreStatusCheck) throws Exception {
+        getConnection().commit();
+        ArgumentCaptor<BahmniReportBuilder> reportBuilderArgumentCaptor = ArgumentCaptor.forClass(BahmniReportBuilder.class);
+        doCallRealMethod().when(jasperResponseConverter).convert(any(String.class), reportBuilderArgumentCaptor.capture(),
+                any(HttpServletResponse.class), any(String.class), any(String.class), anyString());
+        String url = "/report?name=" + reportName + "&startDate=" + startDate + "&endDate=" + endDate + "&responseType=" + responseType + "&paperSize=A3";
+        ResultActions perform = mockMvc.perform(get(url));
+        final MvcResult mvcResult = perform.andReturn();
+        if(!ignoreStatusCheck)
+            perform.andExpect(status().isOk());
+        return mvcResult;
     }
 
     protected JasperReportBuilder fetchReportBuilder(String reportName, String startDate, String endDate) throws Exception {
@@ -220,17 +233,4 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         ps.execute();
         ps.close();
     }
-
-    private MvcResult fetchMvcResult(String reportName, String startDate, String endDate, String responseType) throws Exception {
-        getConnection().commit();
-        ArgumentCaptor<BahmniReportBuilder> reportBuilderArgumentCaptor = ArgumentCaptor.forClass(BahmniReportBuilder.class);
-        doCallRealMethod().when(jasperResponseConverter).convert(any(String.class), reportBuilderArgumentCaptor.capture(),
-                any(HttpServletResponse.class), any(String.class), any(String.class), anyString());
-        String url = "/report?name=" + reportName + "&startDate=" + startDate + "&endDate=" + endDate + "&responseType=" + responseType + "&paperSize=A3";
-        ResultActions perform = mockMvc.perform(get(url));
-        final MvcResult mvcResult = perform.andReturn();
-        perform.andExpect(status().isOk());
-        return mvcResult;
-    }
-
 }

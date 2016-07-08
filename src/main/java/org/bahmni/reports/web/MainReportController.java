@@ -60,6 +60,7 @@ public class MainReportController {
             String configFilePath = (appName != null) ? "/var/www/bahmni_config/openmrs/apps/" + appName +
                     "/reports.json" : bahmniReportsProperties.getConfigFilePath();
             Report report = Reports.find(reportName, configFilePath);
+            validateResponseTypeSupportedFor(report, responseType);
             BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
             connection = allDatasources.getConnectionFromDatasource(reportTemplate);
             BahmniReportBuilder reportBuilder = BahmniReportUtil.build(report, httpClient, connection, startDate,
@@ -72,7 +73,7 @@ public class MainReportController {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             try {
                 String errorMessage = e.getMessage();
-                String content = "<h2>Incorrect Configuration</h2><h3>" + errorMessage +"</h3>";
+                String content = "<h2>Incorrect Configuration</h2><h3>" + errorMessage + "</h3>";
                 response.setContentLength(content.length());
                 response.setContentType("text/html");
                 response.getOutputStream().write(content.getBytes());
@@ -104,6 +105,12 @@ public class MainReportController {
         }
     }
 
+    private void validateResponseTypeSupportedFor(Report report, String responseType) {
+        if (report != null && report.getType().equals("concatenated") && responseType.equals("text/csv")) {
+            throw new UnsupportedOperationException("CSV format is not supported for Concatenated report");
+        }
+    }
+
     private void convertToResponse(String responseType, BahmniReportBuilder reportBuilder, HttpServletResponse response, String fileName, String macroTemplateLocation, String macroTemplatesTempDirectory)
             throws Exception {
         try {
@@ -112,7 +119,7 @@ public class MainReportController {
             logger.error("Could not convert response", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             String errorMessage = e.getMessage();
-            String content = "<h2>Incorrect Configuration</h2><h3>" + (errorMessage.substring(errorMessage.indexOf(':') + 2) +"</h3>");
+            String content = "<h2>Incorrect Configuration</h2><h3>" + (errorMessage.substring(errorMessage.indexOf(':') + 2) + "</h3>");
             response.setContentLength(content.length());
             response.setContentType("text/html");
             response.getOutputStream().write(content.getBytes());
