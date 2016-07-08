@@ -1,7 +1,7 @@
 package org.bahmni.reports.report;
 
 import org.bahmni.reports.report.integrationtests.BaseIntegrationTest;
-import org.bahmni.reports.wrapper.Report;
+import org.bahmni.reports.wrapper.CsvReport;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,7 +26,7 @@ public class AggregationReportTest extends BaseIntegrationTest {
     public void shouldGivePatientCountOnGroupByAgeAndGender() throws Exception {
         String reportName = "Aggregate Report Name";
 
-        Report report = fetchReport(reportName, "2014-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2014-08-01", "2016-08-30");
         assertEquals(3, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
@@ -45,7 +45,7 @@ public class AggregationReportTest extends BaseIntegrationTest {
         when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=Weight"))).thenReturn(objectList.toString());
 
 
-        Report report = fetchReport(reportName, "2014-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2014-08-01", "2016-08-30");
         assertEquals(2, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
@@ -58,7 +58,7 @@ public class AggregationReportTest extends BaseIntegrationTest {
     public void shouldGivePatientOnGroupByAgeAndPatientIdAsRowGroupAndGenderAsColumnGroupForObsReport() throws Exception {
         String reportName = "Aggregate Report with multiple Row Groups config";
 
-        Report report = fetchReport(reportName, "2014-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2014-08-01", "2016-08-30");
         assertEquals(4, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(4, report.rowsCount());
@@ -72,7 +72,7 @@ public class AggregationReportTest extends BaseIntegrationTest {
     public void shouldGivePatientOnGroupByAgeAsRowGroupAndPatientIdAndGenderAsColumnGroupForObsReport() throws Exception {
         String reportName = "Aggregate Report with multiple Column Groups config";
 
-        Report report = fetchReport(reportName, "2014-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2014-08-01", "2016-08-30");
         assertEquals(3, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(4, report.rowsCount());
@@ -86,7 +86,7 @@ public class AggregationReportTest extends BaseIntegrationTest {
     public void shouldFetchAggregateReportForVisitsReport() throws Exception {
         String reportName = "Aggregated report for visits report";
 
-        Report report = fetchReport(reportName, "2014-08-01", "2017-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2014-08-01", "2017-08-30");
         assertEquals(3, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(4, report.rowsCount());
@@ -101,7 +101,7 @@ public class AggregationReportTest extends BaseIntegrationTest {
         executeDataSet("datasets/genericProgramReportDataSet.xml");
         String reportName = "Aggregated report for programs report";
 
-        Report report = fetchReport(reportName, "2016-04-20", "2016-05-01");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-20", "2016-05-01");
         assertEquals(2, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());

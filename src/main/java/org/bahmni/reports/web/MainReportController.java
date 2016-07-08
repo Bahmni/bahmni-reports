@@ -1,6 +1,5 @@
 package org.bahmni.reports.web;
 
-import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.exception.DRException;
 import org.apache.log4j.Logger;
@@ -11,6 +10,7 @@ import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.Reports;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.template.BaseReportTemplate;
+import org.bahmni.reports.util.BahmniReportUtil;
 import org.bahmni.webclients.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,8 +24,6 @@ import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
-import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 
 @Controller
 public class MainReportController {
@@ -59,19 +57,15 @@ public class MainReportController {
             String macroTemplateLocation = request.getParameter("macroTemplateLocation");
             PageType pageType = "A3".equals(request.getParameter("paperSize")) ? PageType.A3 : PageType.A4;
             String appName = request.getParameter("appName");
-            String configFilePath = (appName != null) ? "/var/www/bahmni_config/openmrs/apps/" + appName + "/reports.json" : bahmniReportsProperties.getConfigFilePath();
+            String configFilePath = (appName != null) ? "/var/www/bahmni_config/openmrs/apps/" + appName +
+                    "/reports.json" : bahmniReportsProperties.getConfigFilePath();
             Report report = Reports.find(reportName, configFilePath);
-            report.setHttpClient(httpClient);
             BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
             connection = allDatasources.getConnectionFromDatasource(reportTemplate);
-            JasperReportBuilder jasperReport = report();
-            jasperReport = new ReportHeader().add(jasperReport, reportName, startDate, endDate);
-
-            BahmniReportBuilder reportBuilder = reportTemplate.build(connection, jasperReport, report, startDate, endDate, resources,
-                    pageType);
-
-            convertToResponse(responseType, reportBuilder, response, reportName, macroTemplateLocation, bahmniReportsProperties.getMacroTemplatesTempDirectory());
-
+            BahmniReportBuilder reportBuilder = BahmniReportUtil.build(report, httpClient, connection, startDate,
+                    endDate, resources, pageType, bahmniReportsProperties);
+            convertToResponse(responseType, reportBuilder, response, reportName, macroTemplateLocation,
+                    bahmniReportsProperties.getMacroTemplatesTempDirectory());
             resources.add(connection);
         } catch (Throwable e) {
             logger.error("Error running report", e);
@@ -113,7 +107,7 @@ public class MainReportController {
     private void convertToResponse(String responseType, BahmniReportBuilder reportBuilder, HttpServletResponse response, String fileName, String macroTemplateLocation, String macroTemplatesTempDirectory)
             throws Exception {
         try {
-            converter.convert(responseType, reportBuilder.getReportBuilders().get(0), response, fileName, macroTemplateLocation, macroTemplatesTempDirectory);
+            converter.convert(responseType, reportBuilder, response, fileName, macroTemplateLocation, macroTemplatesTempDirectory);
         } catch (DRException | IOException e) {
             logger.error("Could not convert response", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

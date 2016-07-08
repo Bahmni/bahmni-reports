@@ -49,7 +49,8 @@ import static org.bahmni.reports.model.Constants.*;
         @JsonSubTypes.Type(value = GenericObservationReport.class, name = OBSERVAIONS),
         @JsonSubTypes.Type(value = ObsCannedReport.class, name = "obsCannedReport"),
         @JsonSubTypes.Type(value = GenericProgramReport.class, name = PROGRAMS),
-        @JsonSubTypes.Type(value = AggregationReport.class, name = "aggregation")
+        @JsonSubTypes.Type(value = AggregationReport.class, name = "aggregation"),
+        @JsonSubTypes.Type(value = ConcatenatedReport.class, name = "concatenated")
 })
 
 public abstract class Report<T extends Config> {

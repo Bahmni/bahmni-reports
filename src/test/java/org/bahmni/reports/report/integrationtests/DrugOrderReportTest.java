@@ -1,7 +1,7 @@
 package org.bahmni.reports.report.integrationtests;
 
 import org.bahmni.reports.builder.VisitBuilder;
-import org.bahmni.reports.wrapper.Report;
+import org.bahmni.reports.wrapper.CsvReport;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.*;
@@ -32,7 +32,7 @@ public class DrugOrderReportTest extends BaseIntegrationTest {
 
     @Test
     public void shouldRetrieveDrugOrderReportWithFourteenColmns() throws Exception {
-        Report drugOrderReport = fetchReport("Drug Order report","2016-02-01","2016-02-29");
+        CsvReport drugOrderReport = fetchCsvReport("Drug Order report","2016-02-01","2016-02-29");
         assertEquals(14, drugOrderReport.columnsCount());
         assertEquals(16, drugOrderReport.rowsCount());
     }

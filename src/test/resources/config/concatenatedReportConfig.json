@@ -1,0 +1,33 @@
+{
+    "obsAndVisitConcatenatedReport": {
+        "name": "Concatenated Report Name",
+        "type": "concatenated",
+        "config": {
+            "reports": [
+                {
+                    "name": "Observation report",
+                    "type": "observations",
+                    "config": {
+                        "locationTagsToFilter": [
+                            "Admission Location"
+                        ]
+                    }
+                },
+                {
+                    "name": "Generic Visit Report",
+                    "type": "visits",
+                    "config": {
+                        "patientAttributes": [
+                            "caste",
+                            "education",
+                            "primaryContact",
+                            "secondaryContact",
+                            "class",
+                            "cluster"
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+}

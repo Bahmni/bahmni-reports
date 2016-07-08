@@ -1,7 +1,7 @@
 package org.bahmni.reports.report;
 
 import org.bahmni.reports.report.integrationtests.BaseIntegrationTest;
-import org.bahmni.reports.wrapper.Report;
+import org.bahmni.reports.wrapper.CsvReport;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,7 +21,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
     public void shouldFetchBasicColumnsIfNoConfigSpecified() throws Exception {
         String reportName = "Generic Visit Report Without Config";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -33,7 +33,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
     public void shouldFetchVisitIdAndPatientIdAlongWithBasicColumns() throws Exception {
         String reportName = "Generic Visit Report With Data Analysis";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -45,7 +45,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
     public void shouldFetchConfiguredPatientAttributesAlongWithBasicColumns() throws Exception {
         String reportName = "Generic Visit Report With Patient Attributes";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(17, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -57,7 +57,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
     public void shouldFetchConfiguredVisitAttributesAlongWithBasicColumns() throws Exception {
         String reportName = "Generic Visit Report With Visit Attributes";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -69,7 +69,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
     public void shouldFetchConfiguredAddressFieldsAlongWithBasicColumnsWhenConfigured() throws Exception {
         String reportName = "Generic Visit Report With Patient Addresses";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -81,7 +81,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
     public void shouldConsiderVisitStopDateInDateRangeIfSpecified() throws Exception {
         String reportName = "Generic Visit Report With Visit Stopped Date For Date Range";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -93,7 +93,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
     public void shouldConsiderVisitStartDateInDateRangeIfSpecified() throws Exception {
         String reportName = "Generic Visit Report With Visit Start Date For Date Range";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -105,7 +105,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
     public void shouldFilterByVisitTypesIfSpecified() throws Exception {
         String reportName = "Generic Visit Report Filtered By Visit Types";
 
-        Report report = fetchReport(reportName, "2016-03-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-03-01", "2016-04-30");
 
         assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -117,7 +117,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
     public void shouldFetchAllConfiguredData() throws Exception {
         String reportName = "Generic Visit Report With Full Config";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-05-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-05-30");
 
         assertEquals(22, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -130,7 +130,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
     public void shouldNotFetchLocationInfoIfLocationIsVoided() throws Exception {
         String reportName = "Generic Visit Report Filtered By Voided Location Tags";
 
-        Report report = fetchReport(reportName, "2017-04-01", "2017-05-30");
+        CsvReport report = fetchCsvReport(reportName, "2017-04-01", "2017-05-30");
 
         assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());

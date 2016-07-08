@@ -1,7 +1,7 @@
 package org.bahmni.reports.report;
 
 import org.bahmni.reports.report.integrationtests.BaseIntegrationTest;
-import org.bahmni.reports.wrapper.Report;
+import org.bahmni.reports.wrapper.CsvReport;
 import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,7 +20,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchBasicColumnsIfNoConfigSpecified() throws Exception {
         String reportName = "Generic Patient Program Report Without Config";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -36,7 +36,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchBasicColumnsOnlyIfEmptyConfigSpecified() throws Exception {
         String reportName = "Generic Patient Program Report With Empty Config";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -51,7 +51,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchProgramsEnrolledWithInSpecifiedDateRange() throws Exception {
         String reportName = "Generic Patient Program Report Without Config";
 
-        Report report = fetchReport(reportName, "2016-04-20", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-20", "2016-04-30");
 
         assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -65,7 +65,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldNotThrowErrorIfStartAndEndDatesAreEmpty() throws Exception {
         String reportName = "Generic Patient Program Report Without Config";
 
-        Report report = fetchReport(reportName, "", "");
+        CsvReport report = fetchCsvReport(reportName, "", "");
 
         assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -76,7 +76,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchConfiguredPatientAttributesAlongWithBasicColumns() throws Exception {
         String reportName = "Generic Patient Program Report With Patient Attributes";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(15, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -91,7 +91,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldNotFetchPatientAttributesWhenEmptyListIsConfigured() throws Exception {
         String reportName = "Generic Patient Program Report With Empty Patient Attributes";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -107,7 +107,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldNotFetchPersonAddressesWhenEmptyListIsConfigured() throws Exception {
         String reportName = "Generic Patient Program Report With Empty Patient Addresses";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -124,7 +124,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchConfiguredPatientAddressesAlongWithBasicColumns() throws Exception {
         String reportName = "Generic Patient Program Report With Patient Addresses";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(12, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -139,7 +139,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchActiveProgramsWithInTheDateRange() throws Exception {
         String reportName = "Generic Patient Program Report Without Config";
 
-        Report report = fetchReport(reportName, "2016-04-31", "2016-05-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-31", "2016-05-30");
 
         assertEquals(reportName, report.getReportName());
         assertEquals(10, report.columnsCount());
@@ -151,7 +151,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchFieldsForDataAnalysisAlongWithBasic() throws Exception {
         String reportName = "Generic Patient Program Report For Data Analysis";
 
-        Report report = fetchReport(reportName, "2016-04-31", "2016-05-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-31", "2016-05-30");
 
         assertEquals(reportName, report.getReportName());
         assertEquals(13, report.columnsCount());
@@ -164,7 +164,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchBasicFieldsWithDataAnalysisFalse() throws Exception {
         String reportName = "Generic Patient Program Report For Data Analysis False";
 
-        Report report = fetchReport(reportName, "2016-04-31", "2016-05-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-31", "2016-05-30");
 
         assertEquals(reportName, report.getReportName());
         assertEquals(10, report.columnsCount());
@@ -176,7 +176,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchConfiguredProgramAttributes() throws Exception {
         String reportName = "Generic Patient Program Report With Program Attributes";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(reportName, report.getReportName());
         assertEquals(13, report.columnsCount());
@@ -191,7 +191,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchDataFilteredByConfiguredProgramName() throws Exception {
         String reportName = "Generic Patient Program Report Filtered By Program Names";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(reportName, report.getReportName());
         assertEquals(10, report.columnsCount());
@@ -204,7 +204,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchBasicColumnsWhenProgramNamesAreEmpty() throws Exception {
         String reportName = "Generic Patient Program Report With Empty Program Names";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(reportName, report.getReportName());
         assertEquals(10, report.columnsCount());
@@ -219,7 +219,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchAllStatesWhenConfiguredToShowAll() throws Exception {
         String reportName = "Generic Patient Program Report With All The States";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(reportName, report.getReportName());
         assertEquals(12, report.columnsCount());
@@ -236,7 +236,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchAllTheDataWithFullConfig() throws Exception {
         String reportName = "Generic Patient Program Report With Full Config";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(reportName, report.getReportName());
         assertEquals(25, report.columnsCount());
@@ -249,7 +249,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchAllTheStatesForAParticularPatientWhenConfiguredToSeeAll() throws Exception {
         String reportName = "Generic Patient Program To See All States As Multiple Rows";
 
-        Report report = fetchReport(reportName, "2016-04-19", "2016-04-23");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-19", "2016-04-23");
 
         assertEquals(reportName, report.getReportName());
         assertEquals(12, report.columnsCount());
@@ -267,7 +267,7 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
     public void shouldFetchTheProgramEvenThoughIfItDoesNotHaveState() throws Exception{
         String reportName = "Generic Patient Program Report Without Config";
 
-        Report report = fetchReport(reportName, "2017-04-01", "2017-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2017-04-01", "2017-04-30");
 
         assertEquals(10, report.columnsCount());
         assertEquals(reportName, report.getReportName());

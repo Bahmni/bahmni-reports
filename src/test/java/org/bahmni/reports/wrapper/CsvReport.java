@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Report {
+public class CsvReport {
 
     private CSVReader csvReader;
     private String reportName;
@@ -21,8 +21,8 @@ public class Report {
     private List<String[]> rows;
     private String footerPattern = "\\d+,,,,, of \\d+,,,";
 
-    public static Report getReport(String result) {
-        Report report = new Report(result);
+    public static CsvReport getReport(String result) {
+        CsvReport report = new CsvReport(result);
         try {
             report.process();
         } catch (IOException e) {
@@ -31,7 +31,7 @@ public class Report {
         return report;
     }
 
-    private Report(String result) {
+    private CsvReport(String result) {
         this.csvReader = new CSVReader(new StringReader(result));
         footers = new ArrayList<>();
         rows = new ArrayList<>();

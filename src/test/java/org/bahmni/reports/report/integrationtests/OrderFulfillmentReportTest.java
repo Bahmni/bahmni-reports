@@ -1,10 +1,11 @@
 package org.bahmni.reports.report.integrationtests;
 
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bahmni.reports.builder.ConceptBuilder;
 import org.bahmni.reports.builder.EncounterBuilder;
 import org.bahmni.reports.builder.OrderBuilder;
 import org.bahmni.reports.builder.VisitBuilder;
-import org.bahmni.reports.wrapper.Report;
+import org.bahmni.reports.wrapper.CsvReport;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.*;
@@ -39,12 +40,26 @@ public class OrderFulfillmentReportTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void shouldRetrieveOrderFulfillmentReport() throws Exception {
-        Report report = fetchReport("Order Fulfillment Report", "2000-10-13", "2016-10-21");
+    public void shouldRetrieveOrderFulfillmentCsvReport() throws Exception {
+        CsvReport report = fetchCsvReport("Order Fulfillment Report", "2000-10-13", "2016-10-21");
         assertEquals(8, report.columnsCount());
         assertEquals("Order Fulfillment Report", report.getReportName());
         assertEquals("Plain Order Plain Concept 02-Nov-2015 GAN1234 Horatio Hornblower M No", report.getRowAsString(1, " "));
         assertEquals("Plain Order", report.getColumnValueInRow(1, "Order Type"));
         assertEquals("GAN1234", report.getColumnValueInRow(1, "Patient ID"));
+    }
+
+    @Test
+    public void shouldRetrieveOrderFulfillmentXlsReport() throws Exception {
+        XSSFWorkbook report = fetchXlsReport("Order Fulfillment Report", "2000-10-13", "2016-10-21");
+        assertEquals(1, report.getNumberOfSheets());
+
+        assertEquals("Order Fulfillment Report", report.getSheetAt(0).getSheetName());
+
+        assertEquals("Patient ID", report.getSheetAt(0).getRow(5).getCell(4).toString());
+        assertEquals("GAN1234", report.getSheetAt(0).getRow(6).getCell(4).toString());
+
+        assertEquals("Order Type", report.getSheetAt(0).getRow(5).getCell(1).toString());
+        assertEquals("Plain Order", report.getSheetAt(0).getRow(6).getCell(1).toString());
     }
 }

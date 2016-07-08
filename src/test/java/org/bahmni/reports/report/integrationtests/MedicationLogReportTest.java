@@ -3,7 +3,7 @@ package org.bahmni.reports.report.integrationtests;
 
 import com.google.gson.JsonObject;
 import org.bahmni.reports.builder.*;
-import org.bahmni.reports.wrapper.Report;
+import org.bahmni.reports.wrapper.CsvReport;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.*;
@@ -103,14 +103,14 @@ public class MedicationLogReportTest extends BaseIntegrationTest {
 
     @Test
     public void shouldRetrieveMedicationReport() throws Exception {
-        Report report = fetchReport("Medication Log Data Export", "2015-10-13", "2016-10-21");
+        CsvReport report = fetchCsvReport("Medication Log Data Export", "2015-10-13", "2016-10-21");
         assertEquals(8, report.columnsCount());
         assertNotNull(report.getRow(1));
     }
 
     @Test
     public void shouldRetrieveReferenceCodeIfItisPresent() throws Exception {
-        Report report = fetchReport("Medication Log Data Export", "2015-10-13", "2016-10-21");
+        CsvReport report = fetchCsvReport("Medication Log Data Export", "2015-10-13", "2016-10-21");
         assertEquals(8, report.columnsCount());
         assertEquals("1234",report.getColumnValueInRow(1,"Type of regimen"));
     }

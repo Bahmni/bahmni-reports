@@ -1,9 +1,7 @@
 package org.bahmni.reports.report;
 
-import com.google.gson.JsonObject;
-import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import org.bahmni.reports.report.integrationtests.BaseIntegrationTest;
-import org.bahmni.reports.wrapper.Report;
+import org.bahmni.reports.wrapper.CsvReport;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,7 +28,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldFetchMandatoryColumnsIfNoConfigSpecified() throws Exception {
         String reportName = "Observation report without any config";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -43,7 +41,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldFetchMandatoryColumnsIfEmptyConfigSpecified() throws Exception {
         String reportName = "Observation report with empty config";
 
-        Report report = fetchReport(reportName, "2016-04-01", "2016-04-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -55,7 +53,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldFetchOneConceptPerRow() throws Exception {
         String reportName = "Observation report without any config";
 
-        Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -69,7 +67,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldShowProviderInfoIfConfigured() throws Exception {
         String reportName = "Observation report with provider info";
 
-        Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
 
         assertEquals(15, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -83,7 +81,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldShowVisitInfoIfConfigured() throws Exception {
         String reportName = "Observation report with visit info";
 
-        Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
 
         assertEquals(17, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -97,7 +95,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldShowPatientAttributesIfConfigured() throws Exception {
         String reportName = "Observation report with patient attributes";
 
-        Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
 
         assertEquals(20, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -111,7 +109,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldShowVisitAttributesIfConfigured() throws Exception {
         String reportName = "Observation report with visit attributes";
 
-        Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
 
         assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -125,7 +123,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldShowPatientAddressIfConfigured() throws Exception {
         String reportName = "Observation report with patient address";
 
-        Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
 
         assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -139,7 +137,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldShowDataAnalysisColumnsIfConfigured() throws Exception {
         String reportName = "Observation report with data analysis columns";
 
-        Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
 
         assertEquals(23, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -158,7 +156,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=Height"))).thenReturn(objectList.toString());
 
-        Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -170,7 +168,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldFilterByConceptClass() throws Exception {
         String reportName = "Observation report filtered by concept class";
 
-        Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -190,7 +188,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=Vitals"))).thenReturn(objectList.toString());
 
-        Report report = fetchReport(reportName, "2016-06-01", "2016-06-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -202,7 +200,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldFilterByLocationTags() throws Exception {
         String reportName = "Observation report filtered by location tags";
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -221,7 +219,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=Height"))).thenReturn(objectList.toString());
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -233,7 +231,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldFilterByConceptClassesAndLocationTags() throws Exception {
         String reportName = "Observation report filtered by concept class and location tags";
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -251,7 +249,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=Height"))).thenReturn(objectList.toString());
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -263,7 +261,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldFilterByPrograms() throws Exception {
         String reportName = "Observation report filtered by program name";
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -282,7 +280,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=Height"))).thenReturn(objectList.toString());
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -294,7 +292,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldFilterByProgramsAndLocationTags() throws Exception {
         String reportName = "Observation report filtered by program name and location tags";
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -313,7 +311,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=Height"))).thenReturn(objectList.toString());
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -325,7 +323,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldFilterByProgramsAndConceptClassFilter() throws Exception {
         String reportName = "Observation report filtered by program name and concept class";
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -345,7 +343,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=Vitals"))).thenReturn(objectList.toString());
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -365,7 +363,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=Vitals"))).thenReturn(objectList.toString());
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -385,7 +383,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=Vitals"))).thenReturn(objectList.toString());
 
-        Report report = fetchReport(reportName, "2016-04-21", "2016-05-23");
+        CsvReport report = fetchCsvReport(reportName, "2016-04-21", "2016-05-23");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -397,7 +395,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldApplyDateRangeFilterForVisitStartDate() throws Exception {
         String reportName = "Observation report apply date range for visit start date";
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-01");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-01");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -414,7 +412,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldApplyDateRangeFilterForVisitStopDate() throws Exception {
         String reportName = "Observation report apply date range for visit stop date";
 
-        Report report = fetchReport(reportName, "2016-08-30", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-30", "2016-08-30");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -440,7 +438,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
         when(httpClient.get(getLeafConceptsUri)).thenReturn(objectList.toString());
 
 
-        Report report = fetchReport(reportName, "2016-08-01", "2016-08-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
 
         verify(httpClient, never()).get(getChildConceptsUri);
         assertEquals(12, report.columnsCount());
