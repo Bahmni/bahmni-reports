@@ -67,7 +67,6 @@ public class MainReportController {
                     endDate, resources, pageType, bahmniReportsProperties);
             convertToResponse(responseType, reportBuilder, response, reportName, macroTemplateLocation,
                     bahmniReportsProperties.getMacroTemplatesTempDirectory());
-            resources.add(connection);
         } catch (Throwable e) {
             logger.error("Error running report", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -87,9 +86,7 @@ public class MainReportController {
                 if (null != connection && !connection.getAutoCommit()) {
                     connection.rollback();
                 }
-            } catch (IOException e) {
-                logger.error(e);
-            } catch (SQLException e) {
+            } catch (IOException | SQLException e) {
                 logger.error(e);
             }
 
@@ -101,6 +98,14 @@ public class MainReportController {
                 } catch (Exception e) {
                     logger.error("Could not close resource.", e);
                 }
+            }
+
+            try {
+                if (connection != null && !connection.isClosed()) {
+                    connection.close();
+                }
+            } catch (Exception e) {
+                logger.error("Could not close connection.", e);
             }
         }
     }
