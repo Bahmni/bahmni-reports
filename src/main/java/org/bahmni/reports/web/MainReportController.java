@@ -67,6 +67,7 @@ public class MainReportController {
                     endDate, resources, pageType, bahmniReportsProperties);
             convertToResponse(responseType, reportBuilder, response, reportName, macroTemplateLocation,
                     bahmniReportsProperties.getMacroTemplatesTempDirectory());
+            resources.add(connection);
         } catch (Throwable e) {
             logger.error("Error running report", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -121,6 +122,7 @@ public class MainReportController {
         try {
             converter.convert(responseType, reportBuilder, response, fileName, macroTemplateLocation, macroTemplatesTempDirectory);
         } catch (DRException | IOException e) {
+            response.reset();
             logger.error("Could not convert response", e);
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             String errorMessage = e.getMessage();
