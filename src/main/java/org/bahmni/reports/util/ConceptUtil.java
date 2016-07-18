@@ -2,6 +2,7 @@ package org.bahmni.reports.util;
 
 import org.apache.log4j.Logger;
 import org.bahmni.webclients.HttpClient;
+import org.bahmni.webclients.WebClientsException;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -32,6 +33,9 @@ public class ConceptUtil {
             } catch (IllegalArgumentException e) {
                 return ConceptDataTypes.Others;
             }
+        } catch(WebClientsException e){
+            logger.error(e);
+            throw new ConceptDataTypeException("Concept not found:"+concept);
         } catch (Exception e) {
             logger.error(e);
             throw new ConceptDataTypeException(e.getMessage());

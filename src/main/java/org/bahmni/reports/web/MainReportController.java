@@ -61,6 +61,7 @@ public class MainReportController {
                     "/reports.json" : bahmniReportsProperties.getConfigFilePath();
             Report report = Reports.find(reportName, configFilePath);
             validateResponseTypeSupportedFor(report, responseType);
+            report.setHttpClient(httpClient);
             BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
             connection = allDatasources.getConnectionFromDatasource(reportTemplate);
             BahmniReportBuilder reportBuilder = BahmniReportUtil.build(report, httpClient, connection, startDate,
