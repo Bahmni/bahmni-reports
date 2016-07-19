@@ -54,6 +54,7 @@ public class JasperResponseConverter {
                 JasperXlsExporterBuilder exporterBuilder = Exporters.xlsExporter(outputStream).setDetectCellType(true);
                 exporterBuilder.setKeepWorkbookTemplateSheets(true);
                 exporterBuilder.setWorkbookTemplate(macroTemplateLocation);
+                exporterBuilder.addSheetName("Report");
                 concatenatedReportBuilder.toXls(exporterBuilder);
                 File templateFile = new File(macroTemplateLocation);
                 if (macroTemplateLocation.startsWith(macroTemplatesTempDirectory)) {
