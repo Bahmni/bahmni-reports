@@ -43,7 +43,8 @@ public class CsvReport {
         dateHeader = joinStringArray(csvReader.readNext(), "");
         String reportRanDatetime = joinStringArray(csvReader.readNext(), "");
         columnHeaders = csvReader.readNext();
-        columnMap = buildIndexMap(columnHeaders);
+        if (columnHeaders != null)
+            columnMap = buildIndexMap(columnHeaders);
         boolean pageStart = false;
         while ((row = csvReader.readNext()) != null) {
             if (pageStart) {
@@ -80,7 +81,7 @@ public class CsvReport {
         return getRow(rowNumber)[columnMap.get(columnName)];
     }
 
-    public String[] getRowHavingColumnValue(String columnName, String value) {
+    public String[] getRowHbavingColumnValue(String columnName, String value) {
         int indexOfColumn = columnMap.get(columnName);
         for (String[] row : rows) {
             if (row[indexOfColumn].equals(value))

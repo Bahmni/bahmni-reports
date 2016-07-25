@@ -139,7 +139,11 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     }
 
     protected CsvReport fetchCsvReport(String reportName, String startDate, String endDate) throws Exception {
-        MvcResult mvcResult = fetchMvcResult(reportName, startDate, endDate, "text/csv", false);
+       return fetchCsvReport(reportName, startDate, endDate, false);
+    }
+
+    protected CsvReport fetchCsvReport(String reportName, String startDate, String endDate, boolean ignoreStatusCheck) throws Exception {
+        MvcResult mvcResult = fetchMvcResult(reportName, startDate, endDate, "text/csv", ignoreStatusCheck);
         String result = mvcResult.getResponse().getContentAsString();
         return CsvReport.getReport(result);
     }

@@ -11,10 +11,13 @@ import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.dao.GenericDao;
+import org.bahmni.reports.dao.impl.GenericLabOrderDaoImpl;
 import org.bahmni.reports.dao.impl.GenericObservationDaoImpl;
 import org.bahmni.reports.dao.impl.GenericProgramDaoImpl;
 import org.bahmni.reports.dao.impl.GenericVisitDaoImpl;
-import org.bahmni.reports.model.*;
+import org.bahmni.reports.model.AggregationReportConfig;
+import org.bahmni.reports.model.Report;
+import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 
@@ -22,9 +25,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
-import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
-import static net.sf.dynamicreports.report.builder.DynamicReports.stl;
+import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.model.Constants.*;
 
 @UsingDatasource("openmrs")
@@ -111,6 +112,8 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
                 return new GenericVisitDaoImpl(report);
             case PROGRAMS:
                 return new GenericProgramDaoImpl(report);
+            case LABORDERS:
+                return new GenericLabOrderDaoImpl(report, bahmniReportsProperties);
             default:
                 return null;
 
