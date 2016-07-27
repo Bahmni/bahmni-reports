@@ -1,5 +1,6 @@
 package org.bahmni.reports.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GenericObservationReportConfig implements Config {
@@ -16,6 +17,7 @@ public class GenericObservationReportConfig implements Config {
     private List<String> conceptNamesToFilter;
     private boolean encounterPerRow = false;
     private List<String> visitTypesToFilter;
+    private List<String> excludeColumns = new ArrayList<>();
 
     public List<String> getVisitTypesToFilter() {
         return visitTypesToFilter;
@@ -119,5 +121,13 @@ public class GenericObservationReportConfig implements Config {
 
     public void setEncounterPerRow(boolean encounterPerRow) {
         this.encounterPerRow = encounterPerRow;
+    }
+
+    public List<String> getExcludeColumns() {
+        return excludeColumns != null ? excludeColumns : new ArrayList<String>();
+    }
+
+    public void setExcludeColumns(List<String> excludeColumns) {
+        this.excludeColumns = excludeColumns;
     }
 }

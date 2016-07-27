@@ -9,10 +9,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 public class GenericObservationReportTest extends BaseIntegrationTest {
     public GenericObservationReportTest() {
@@ -446,5 +444,126 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
         assertEquals(2, report.rowsCount());
         assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 180 80", report.getRowAsString(1, " "));
         assertEquals("OBS1 Generic Observation1   F Chithari    15-Aug-2008 170 70", report.getRowAsString(2, " "));
+    }
+
+    @Test
+    public void shouldExcludeSpecifiedFromTheDefaultColumns() throws Exception {
+        String reportName = "Observation report excluding default columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
+
+        assertEquals(13, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(1, report.rowsCount());
+        assertEquals("Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 170 2016-04-21 15:30:31.0", report.getRowAsString(1, " "));
+    }
+
+    @Test
+    public void shouldExcludeSpecifiedFromTheVisitInfoColumns() throws Exception {
+        String reportName = "Observation report excluding visit info columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
+
+        assertEquals(16, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(3, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Vitals  2016-06-01 10:20:00.0  2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 Vitals 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 weight 80 2016-06-01 10:20:00.0 Vitals 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(3, " "));
+    }
+
+    @Test
+    public void shouldExcludeSpecifiedFromPatientAttributeColumns() throws Exception {
+        String reportName = "Observation report excluding patient attribute columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
+
+        assertEquals(19, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(3, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Vitals  2016-06-01 10:20:00.0  10th pass  8763245677 General", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 Vitals 10th pass  8763245677 General", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 weight 80 2016-06-01 10:20:00.0 Vitals 10th pass  8763245677 General", report.getRowAsString(3, " "));
+
+    }
+
+    @Test
+    public void shouldExcludeSpecifiedFromVisitAttributeColumns() throws Exception {
+
+        String reportName = "Observation report excluding visit attribute columns";
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
+
+        assertEquals(15, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(3, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Vitals  2016-06-01 10:20:00.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 weight 80 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
+
+    }
+    @Test
+    public void shouldExcludePatientAddressColumn() throws Exception {
+        String reportName = "Observation report excluding patient address columns";
+
+
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
+
+        assertEquals(15, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(3, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Vitals  2016-06-01 10:20:00.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 weight 80 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
+    }
+
+    @Test
+    public void shouldExcludeProviderNameColumn() throws Exception {
+        String reportName = "Observation report excluding provider info column";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
+
+        assertEquals(14, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(3, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Vitals  2016-06-01 10:20:00.0", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 weight 80 2016-06-01 10:20:00.0 Vitals", report.getRowAsString(3, " "));
+    }
+
+    @Test
+    public void shouldExcludeDataAnalysisColumns() throws Exception {
+        String reportName = "Observation report excluding data analysis columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
+
+        assertEquals(22, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(3, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Vitals  2016-06-01 10:20:00.0  1100 1100 1100   1002 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 Vitals 1100 1100 1101 1100  1000 Height", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 weight 80 2016-06-01 10:20:00.0 Vitals 1100 1100 1102 1100  1001 Weight weight", report.getRowAsString(3, " "));
+    }
+
+    @Test
+    public void shouldExcludeConceptColumns() throws Exception {
+        String reportName = "Observation report excluding concept name columns";
+
+        List<String> objectList = new ArrayList<>();
+        objectList.add("\"Height\"");
+        objectList.add("\"Weight\"");
+
+        URI getLeafConceptsUri = URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/leafConceptNames?conceptNames=Vitals");
+        URI getChildConceptsUri = URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=Vitals");
+        when(httpClient.get(getLeafConceptsUri)).thenReturn(objectList.toString());
+
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
+
+        verify(httpClient, never()).get(getChildConceptsUri);
+        assertEquals(11, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(2, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 80", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Chithari    15-Aug-2008 70", report.getRowAsString(2, " "));
     }
 }

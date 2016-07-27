@@ -127,7 +127,7 @@ public class GenericObservationReportTemplateHelper {
         return StringUtils.join(parts, ',');
     }
 
-    public static void createAndAddMandatoryColumns(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
+    public static void createAndAddDefaultColumns(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
         TextColumnBuilder<String> patientIdentifierColumn = col.column("Patient Identifier", "Patient Identifier", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "Patient Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Integer> ageColumn = col.column("Age", "Age", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);

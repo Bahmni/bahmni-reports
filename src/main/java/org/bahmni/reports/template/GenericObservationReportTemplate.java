@@ -1,8 +1,10 @@
 package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import net.sf.dynamicreports.report.base.column.DRColumn;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
+import org.apache.commons.collections.CollectionUtils;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.dao.GenericDao;
 import org.bahmni.reports.dao.impl.GenericObservationDaoImpl;
@@ -44,7 +46,7 @@ public class GenericObservationReportTemplate extends BaseReportTemplate<Generic
 
         List<String> conceptNamesToFilter = new ArrayList<>();
 
-        GenericObservationReportTemplateHelper.createAndAddMandatoryColumns(jasperReport, report.getConfig());
+        GenericObservationReportTemplateHelper.createAndAddDefaultColumns(jasperReport, report.getConfig());
         if (report.getConfig() != null) {
             createAndAddPatientAttributeColumns(jasperReport, report.getConfig());
             createAndAddVisitAttributeColumns(jasperReport, report.getConfig());
@@ -56,13 +58,32 @@ public class GenericObservationReportTemplate extends BaseReportTemplate<Generic
                 createAndAddConceptColumns(conceptNamesToFilter, jasperReport);
             }
             createAndAddDataAnalysisColumns(jasperReport, report.getConfig());
+            if (CollectionUtils.isNotEmpty(report.getConfig().getExcludeColumns())) {
+                List<DRColumn<?>> filteredColumns = filterExcludedColumns(jasperReport.getReport().getColumns(), report.getConfig().getExcludeColumns());
+                jasperReport.getReport().setColumns(filteredColumns);
+            }
         }
+
+        if (jasperReport.getReport().getColumns().size() == 0) {
+            throw new IllegalArgumentException("You have excluded all columns.");
+        }
+
         GenericDao genericObservationDao = new GenericObservationDaoImpl(report, bahmniReportsProperties);
 
         ResultSet obsResultSet = genericObservationDao.getResultSet(connection, startDate, endDate, conceptNamesToFilter);
 
         JasperReportBuilder jasperReportBuilder = obsResultSet != null ? jasperReport.setDataSource(obsResultSet) : jasperReport;
         return new BahmniReportBuilder(jasperReportBuilder);
+    }
+
+    private List<DRColumn<?>> filterExcludedColumns(List<DRColumn<?>> columns, List<String> excludeColumns) {
+        List<DRColumn<?>> columnsToAdd = new ArrayList<>();
+        for (DRColumn<?> column : columns) {
+            if (!excludeColumns.contains(column.getName())) {
+                columnsToAdd.add(column);
+            }
+        }
+        return columnsToAdd;
     }
 
 }
