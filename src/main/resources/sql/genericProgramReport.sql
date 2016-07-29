@@ -27,11 +27,11 @@ SET @sql = CONCAT('SELECT pi.identifier AS "Patient Identifier",
        ', IF(@patientAddressesSql = '', '', CONCAT(@patientAddressesSql, '')), '
        ', IF(@programAttributesSql = '', '', CONCAT(@programAttributesSql, ',')), '
        prog.name AS "Program Name",
-       pprog.date_enrolled AS "Enrolled Date",
-       pprog.date_completed AS "Completed Date",
+       DATE_FORMAT(pprog.date_enrolled, "%d-%b-%Y") AS "Enrolled Date",
+       DATE_FORMAT(pprog.date_completed, "%d-%b-%Y") AS "Completed Date",
        coalesce(stsname.name, stfname.name) AS "Current State",
        p.person_id AS "Patient Id",
-       p.date_created AS "Patient Created Date",
+       DATE_FORMAT(p.date_created, "%d-%b-%Y") AS "Patient Created Date",
        prog.program_id AS "Program Id",
        ', IF(@showAllStates = 'true', CONCAT(@selectAllStatesSql, ','), ''), '
        coalesce(NULLIF(osname.name,''''), ofname.name) AS "Outcome"
