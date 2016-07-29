@@ -8,10 +8,18 @@ Hosts the reports web application for the [Bahmni project](http://www.bahmni.org
 
 2. Run `mvn clean install -DskipDump -DskipTests` to build it
 
-3. Deploy the application found under target/bahmnireports.war
+3. Deploy the WAR file in `target/bahmnireports.war`
 
-# For developers
+# For developers : How to run integration tests
 
-1. Run `scripts/create_configuration.sh` script to create necessary config files to run the integration tests. Modify the config file at $HOME/.bahmni-reports/bahmni-reports-test.properties to suit your needs.
+1. Run `scripts/create_configuration.sh` to create the properties file required to run integration tests. The file created at `$HOME/.bahmni-reports/bahmni-reports-test.properties` comes with default values.
 
-2. Run `mvn clean install` to build your changes.
+3. Install MySQL client and server in your machine. If you already have a MySQL server available make sure that the user has the privileges to dump the database.
+
+4. Change `openmrs.url` in the properties file to set the host and port of the MySQL server.
+
+5. Change `openmrs.username` to set the database user.
+
+6. Change `openmrs.password` to set the database user password
+
+7. Run `mvn clean install` to build your changes and run integration tests. If you are using an IDE you can directly run a specific integration test.
