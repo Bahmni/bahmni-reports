@@ -36,8 +36,8 @@ public class ProgramStateCountTemplate extends BaseReportTemplate<ProgramConfig>
                 .setHorizontalAlignment(HorizontalAlignment.CENTER);
 
 
-        String sql = getFileContent("sql/programStateCount.sql");
 
+        String sql = getFileContent("sql/programStateCount.sql");
         jasperReport.setShowColumnTitle(true)
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL)
                 .setColumnStyle(textStyle)

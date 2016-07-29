@@ -38,7 +38,7 @@ SET @sql = CONCAT('SELECT
         cn.name as concept_name,
         pp.patient_program_id
         FROM  patient_program pp
-        JOIN program prog ON pp.program_id = prog.program_id
+        JOIN program prog ON pp.program_id = prog.program_id and pp.voided = 0
         and(
             (cast(pp.date_enrolled AS DATE) <=  \'#endDate#\')
              AND (cast(pp.date_completed AS DATE) >= \'#startDate#\' OR  pp.date_completed is NULL)

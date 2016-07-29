@@ -59,7 +59,7 @@ SET @sql = CONCAT('SELECT
                       e.encounter_datetime
                       #conceptNamesAndValue#
                       FROM patient_program pp
-                        JOIN program prog ON (pp.program_id = prog.program_id #programNamesListInClause#)
+                        JOIN program prog ON (pp.program_id = prog.program_id #programNamesListInClause#)  AND pp.voided = 0
                                               AND cast(pp.date_enrolled AS DATE) <= \'#endDate#\'  AND (cast(pp.date_completed AS DATE) >= \'#startDate#\' or  pp.date_completed is NULL)
                         JOIN episode_patient_program epp ON epp.patient_program_id = pp.patient_program_id
                         JOIN episode_encounter ee ON ee.episode_id = epp.episode_id

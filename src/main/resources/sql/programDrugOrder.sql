@@ -77,7 +77,7 @@ SET @sql = CONCAT('SELECT
                        orders.order_id,
                        pp.date_enrolled
                         FROM  patient_program pp
-                        JOIN program prog ON pp.program_id = prog.program_id'
+                        JOIN program prog ON pp.program_id = prog.program_id and pp.voided = 0'
                          ,IF(@programNamesSql = '', '', @programNamesConditionSql),'
 
                        JOIN person p ON pp.patient_id = p.person_id
