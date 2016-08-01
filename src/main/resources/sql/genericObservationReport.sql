@@ -35,7 +35,7 @@ SET @sql = CONCAT('SELECT
   pi.identifier                                                 AS "Patient Identifier",
   concat(pn.given_name, " ", pn.family_name)                    AS "Patient Name",
   floor(DATEDIFF(DATE(o.obs_datetime), p.birthdate) / 365)      AS "Age",
-  p.birthdate                                                   AS "Birthdate",
+  DATE_FORMAT(p.birthdate, "%d-%b-%Y")                          AS "Birthdate",
   p.gender                                                      AS "Gender",
   ',IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')),'
   ',IF(@patientAddressesSql = '', '', CONCAT(@patientAddressesSql, '')),'
@@ -47,8 +47,8 @@ SET @sql = CONCAT('SELECT
   DATE_FORMAT(o.obs_datetime, "%d-%b-%Y")                       AS "Observation Date",
   parent_cn.name                                                AS "Parent Concept",
   ',IF(@showProvider = '', '', CONCAT(@providerSelectSql, ',')),'
-  v.date_started                                                AS "Visit Start Date",
-  v.date_stopped                                                AS "Visit Stop Date",
+  DATE_FORMAT(v.date_started, "%d-%b-%Y")                       AS "Visit Start Date",
+  DATE_FORMAT(v.date_stopped, "%d-%b-%Y")                       AS "Visit Stop Date",
   vt.name                                                       AS "Visit Type",
   o.obs_id                                                      AS "Obs Id",
   o.obs_group_id                                                AS "Obs Group Id",
@@ -60,9 +60,9 @@ SET @sql = CONCAT('SELECT
   o.order_id                                                    AS "Order Id",
   v.visit_id                                                    AS "Visit Id",
   program.name                                                  AS "Program Name",
-  pp.date_enrolled                                              AS "Program Enrollment Date",
-  pp.date_completed                                             AS "Program End Date",
-  p.date_created                                                AS "Patient Created Date"
+  DATE_FORMAT(pp.date_enrolled, "%d-%b-%Y")                     AS "Program Enrollment Date",
+  DATE_FORMAT(pp.date_completed, "%d-%b-%Y")                    AS "Program End Date",
+  DATE_FORMAT(p.date_created, "%d-%b-%Y")                       AS "Patient Created Date"
 
 FROM obs o
   JOIN concept obs_concept ON obs_concept.concept_id=o.concept_id AND obs_concept.retired is false

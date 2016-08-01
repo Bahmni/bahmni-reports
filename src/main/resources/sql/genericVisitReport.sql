@@ -16,19 +16,19 @@ SET @sql = CONCAT('SELECT
   pi.identifier                                                 AS "Patient Identifier",
   concat(pn.given_name, " ", pn.family_name)                    AS "Patient Name",
   floor(DATEDIFF(DATE(v.date_started), p.birthdate) / 365)      AS "Age",
-  p.birthdate                                                   AS "Birthdate",
+  DATE_FORMAT(p.birthdate, "%d-%b-%Y")         AS "Birthdate",
   p.gender                                                      AS "Gender",
   ',IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')),'
   ',IF(@patientAddressesSql = '', '', CONCAT(@patientAddressesSql, '')),'
   ',IF(@visitAttributesSql = '', '', CONCAT(@visitAttributesSql, ',')),'
   vt.name                                                       AS "Visit type",
-  v.date_started                                                AS "Date started",
-  v.date_stopped                                                AS "Date stopped",
+  DATE_FORMAT(v.date_started, "%d-%b-%Y")                       AS "Date started",
+  DATE_FORMAT(v.date_stopped, "%d-%b-%Y")                       AS "Date stopped",
   v.visit_id                                                    AS "Visit Id",
   p.person_id                                                   AS "Patient Id",
-  p.date_created                                                AS "Patient Created Date",
-  admission_details.admission_date                              AS "Date Of Admission",
-  admission_details.discharge_date                              AS "Date Of Discharge"
+  DATE_FORMAT(p.date_created, "%d-%b-%Y")                       AS "Patient Created Date",
+  DATE_FORMAT(admission_details.admission_date, "%d-%b-%Y")     AS "Date Of Admission",
+  DATE_FORMAT(admission_details.discharge_date, "%d-%b-%Y")     AS "Date Of Discharge"
 FROM visit v
   JOIN visit_type vt ON v.visit_type_id = vt.visit_type_id
   JOIN person p ON p.person_id = v.patient_id AND p.voided is false

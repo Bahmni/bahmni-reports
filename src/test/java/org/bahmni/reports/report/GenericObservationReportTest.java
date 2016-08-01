@@ -84,9 +84,9 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
         assertEquals(18, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Vitals  2016-06-01 10:20:00.0 01-Jun-2016  Initial HIV Clinic Visit 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 01-Jun-2016 Vitals Initial HIV Clinic Visit 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 weight 80 2016-06-01 10:20:00.0 01-Jun-2016 Vitals Initial HIV Clinic Visit 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Vitals  2016-06-01 10:20:00.0 01-Jun-2016  Initial HIV Clinic Visit 01-Jun-2016 30-Jun-2016", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 01-Jun-2016 Vitals Initial HIV Clinic Visit 01-Jun-2016 30-Jun-2016", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 weight 80 2016-06-01 10:20:00.0 01-Jun-2016 Vitals Initial HIV Clinic Visit 01-Jun-2016 30-Jun-2016", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -467,9 +467,9 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
         assertEquals(17, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Vitals  2016-06-01 10:20:00.0 01-Jun-2016  2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 01-Jun-2016 Vitals 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 weight 80 2016-06-01 10:20:00.0 01-Jun-2016 Vitals 2016-06-01 00:00:00.0 2016-06-30 00:00:00.0", report.getRowAsString(3, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Vitals  2016-06-01 10:20:00.0 01-Jun-2016  01-Jun-2016 30-Jun-2016", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 01-Jun-2016 Vitals 01-Jun-2016 30-Jun-2016", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 weight 80 2016-06-01 10:20:00.0 01-Jun-2016 Vitals 01-Jun-2016 30-Jun-2016", report.getRowAsString(3, " "));
     }
 
     @Test

@@ -15,13 +15,13 @@ SET @programAttributesJoinSql = '  LEFT OUTER JOIN patient_program_attribute ppa
   LEFT OUTER JOIN concept_name pratsn ON prat.datatype like "%Concept%" AND ppa.value_reference = pratsn.concept_id AND pratsn.concept_name_type = "SHORT" AND pratsn.voided is false
   LEFT OUTER JOIN concept_name pratfn ON prat.datatype like "%Concept%" AND ppa.value_reference = pratfn.concept_id AND pratfn.concept_name_type = "FULLY_SPECIFIED" AND pratfn.voided is false ';
 SET @patientAddressJoinSql = ' LEFT OUTER JOIN person_address paddress ON p.person_id = paddress.person_id AND paddress.voided is false ';
-SET @selectAllStatesSql = 'ps.start_date AS "Start Date", ps.end_date AS "End Date"';
+SET @selectAllStatesSql = 'DATE_FORMAT(ps.start_date, "%d-%b-%Y") AS "Start Date", DATE_FORMAT(ps.end_date, "%d-%b-%Y") AS "End Date"';
 
 
 SET @sql = CONCAT('SELECT pi.identifier AS "Patient Identifier",
        CONCAT(pn.given_name, " ", pn.family_name)  AS "Patient Name",
        FLOOR(DATEDIFF(DATE(CURDATE()), p.birthdate) / 365)      AS "Age",
-       p.birthdate     AS "Birthdate",
+        DATE_FORMAT(p.birthdate, "%d-%b-%Y")                             AS "Birthdate",
        p.gender AS "Gender",
        ', IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')), '
        ', IF(@patientAddressesSql = '', '', CONCAT(@patientAddressesSql, '')), '
