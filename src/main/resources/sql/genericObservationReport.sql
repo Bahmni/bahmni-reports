@@ -44,6 +44,7 @@ SET @sql = CONCAT('SELECT
   coalesce(obs_scn.name, obs_fscn.name)                         AS "Concept Name",
   coalesce(o.value_numeric, o.value_text, o.value_datetime, coded_scn.name, coded_fscn.name) AS "Value",
   o.obs_datetime                                                AS "Observation Datetime",
+  DATE_FORMAT(o.obs_datetime, "%d-%b-%Y")                       AS "Observation Date",
   parent_cn.name                                                AS "Parent Concept",
   ',IF(@showProvider = '', '', CONCAT(@providerSelectSql, ',')),'
   v.date_started                                                AS "Visit Start Date",
