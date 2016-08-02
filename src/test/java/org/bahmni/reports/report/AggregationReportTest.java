@@ -108,6 +108,49 @@ public class AggregationReportTest extends BaseIntegrationTest {
         assertEquals("F", report.getRowAsString(1, " "));
         assertEquals("", report.getRowAsString(2, " "));
         assertEquals("HIV PROGRAM 2", report.getRowAsString(3, " "));
+    }
 
+    @Test
+    public void shouldShowTotalColumnIfConfigured() throws Exception {
+        executeDataSet("datasets/genericProgramReportDataSet.xml");
+        String reportName = "Aggregated report for programs with total column";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-20", "2016-05-01");
+        assertEquals(3, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(3, report.rowsCount());
+        assertEquals("F Total", report.getRowAsString(1, " "));
+        assertEquals("", report.getRowAsString(2, " "));
+        assertEquals("HIV PROGRAM 2 2", report.getRowAsString(3, " "));
+    }
+
+    @Test
+    public void shouldShowTotalRowIfConfigured() throws Exception {
+        executeDataSet("datasets/genericProgramReportDataSet.xml");
+        String reportName = "Aggregated report for programs with total row";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-20", "2016-05-01");
+        assertEquals(2, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(4, report.rowsCount());
+        assertEquals("F", report.getRowAsString(1, " "));
+        assertEquals("", report.getRowAsString(2, " "));
+        assertEquals("HIV PROGRAM 2", report.getRowAsString(3, " "));
+        assertEquals("Total 2", report.getRowAsString(4, " "));
+    }
+
+    @Test
+    public void shouldShowTotalRowAndColumnIfConfigured() throws Exception {
+        executeDataSet("datasets/genericProgramReportDataSet.xml");
+        String reportName = "Aggregated report for programs with total row and column";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-20", "2016-05-01");
+        assertEquals(3, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(4, report.rowsCount());
+        assertEquals("F Total", report.getRowAsString(1, " "));
+        assertEquals("", report.getRowAsString(2, " "));
+        assertEquals("HIV PROGRAM 2 2", report.getRowAsString(3, " "));
+        assertEquals("Total 2 2", report.getRowAsString(4, " "));
     }
 }

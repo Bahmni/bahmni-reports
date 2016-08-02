@@ -42,9 +42,10 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
                                      String startDate, String endDate, List<AutoCloseable> resources,
                                      PageType pageType) throws Exception {
 
-        List<String> rowGroups = aggregateReport.getConfig().getRowGroups();
-        List<String> columnGroups = aggregateReport.getConfig().getColumnGroups();
-        List<String> distinctGroups = aggregateReport.getConfig().getDistinctGroups();
+        AggregationReportConfig config = aggregateReport.getConfig();
+        List<String> rowGroups = config.getRowGroups();
+        List<String> columnGroups = config.getColumnGroups();
+        List<String> distinctGroups = config.getDistinctGroups();
         String reportHeading = null;
 
 
@@ -62,14 +63,14 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
 
         for (String row : rowGroups) {
             CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup(row, String.class)
-                    .setShowTotal(false);
+                    .setShowTotal(config.getShowTotalRow());
             crosstab.rowGroups(rowGroup);
 
         }
 
         for (String column : columnGroups) {
             CrosstabColumnGroupBuilder<String> columnGroup = ctab.columnGroup(column, String.class)
-                    .setShowTotal(false);
+                    .setShowTotal(config.getShowTotalColumn());
             crosstab.columnGroups(columnGroup);
         }
 

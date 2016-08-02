@@ -106,14 +106,11 @@
         "config": {
             "report": {
                 "type": "programs",
-                "config" : {
-                    "patientAttributes": [
-                    ],
+                "config": {
                     "patientAddresses": [
                         "city_village",
                         "address3"
                     ],
-                    "programAttributes": [],
                     "forDataAnalysis": true,
                     "showAllStates": true,
                     "programNamesToFilter": [
@@ -130,6 +127,94 @@
             "distinctGroups": [
                 "Patient Identifier"
             ]
+        }
+    },
+    "aggregateReportForProgramsWithTotalColumn": {
+        "name": "Aggregated report for programs with total column",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "programs",
+                "config": {
+                    "patientAddresses": [
+                        "city_village",
+                        "address3"
+                    ],
+                    "showAllStates": true,
+                    "programNamesToFilter": [
+                        "HIV PROGRAM"
+                    ]
+                }
+            },
+            "rowGroups": [
+                "Program Name"
+            ],
+            "columnGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient Identifier"
+            ],
+            "showTotalColumn": true
+        }
+    },
+    "aggregateReportForProgramsWithTotalRow": {
+        "name": "Aggregated report for programs with total row",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "programs",
+                "config": {
+                    "patientAddresses": [
+                        "city_village",
+                        "address3"
+                    ],
+                    "showAllStates": true,
+                    "programNamesToFilter": [
+                        "HIV PROGRAM"
+                    ]
+                }
+            },
+            "rowGroups": [
+                "Program Name"
+            ],
+            "columnGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient Identifier"
+            ],
+            "showTotalRow": true
+        }
+    },
+    "aggregateReportForProgramsWithTotalRowAndColumn": {
+        "name": "Aggregated report for programs with total row and column",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "programs",
+                "config": {
+                    "patientAddresses": [
+                        "city_village",
+                        "address3"
+                    ],
+                    "showAllStates": true,
+                    "programNamesToFilter": [
+                        "HIV PROGRAM"
+                    ]
+                }
+            },
+            "rowGroups": [
+                "Program Name"
+            ],
+            "columnGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient Identifier"
+            ],
+            "showTotalColumn": true,
+            "showTotalRow": true
         }
     }
 }
