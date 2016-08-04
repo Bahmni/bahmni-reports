@@ -1,126 +1,179 @@
 {
-  "programsWithoutConfig": {
-    "name": "Generic Patient Program Report Without Config",
-    "type": "programs"
-  },
-  "programsWithEmptyConfig": {
-    "name": "Generic Patient Program Report With Empty Config",
-    "type": "programs",
-    "config": {}
-  },
-  "programsWithPatientAttributes": {
-    "name": "Generic Patient Program Report With Patient Attributes",
-    "type": "programs",
-    "config": {
-      "patientAttributes": [
-        "education",
-        "primaryContact",
-        "secondaryContact",
-        "class",
-        "cluster"
-      ]
+    "programsWithoutConfig": {
+        "name": "Generic Patient Program Report Without Config",
+        "type": "programs"
+    },
+    "programsWithEmptyConfig": {
+        "name": "Generic Patient Program Report With Empty Config",
+        "type": "programs",
+        "config": {}
+    },
+    "programsWithPatientAttributes": {
+        "name": "Generic Patient Program Report With Patient Attributes",
+        "type": "programs",
+        "config": {
+            "patientAttributes": [
+                "education",
+                "primaryContact",
+                "secondaryContact",
+                "class",
+                "cluster"
+            ]
+        }
+    },
+    "programsWithEmptyPatientAttributes": {
+        "name": "Generic Patient Program Report With Empty Patient Attributes",
+        "type": "programs",
+        "config": {
+            "patientAttributes": []
+        }
+    },
+    "programsWithEmptyPatientAddresses": {
+        "name": "Generic Patient Program Report With Empty Patient Addresses",
+        "type": "programs",
+        "config": {
+            "patientAddresses": []
+        }
+    },
+    "programsWithPatientAddresses": {
+        "name": "Generic Patient Program Report With Patient Addresses",
+        "type": "programs",
+        "config": {
+            "patientAddresses": [
+                "city_village",
+                "address3"
+            ]
+        }
+    },
+    "programsForDataAnalysis": {
+        "name": "Generic Patient Program Report For Data Analysis",
+        "type": "programs",
+        "config": {
+            "forDataAnalysis": true
+        }
+    },
+    "programsForDataAnalysisFalse": {
+        "name": "Generic Patient Program Report For Data Analysis False",
+        "type": "programs",
+        "config": {
+            "forDataAnalysis": false
+        }
+    },
+    "programsWithProgramAttributes": {
+        "name": "Generic Patient Program Report With Program Attributes",
+        "type": "programs",
+        "config": {
+            "programAttributes": [
+                "Registration Id",
+                "High Risk Reasons",
+                "High Risk"
+            ]
+        }
+    },
+    "programsFilteredByProgramNames": {
+        "name": "Generic Patient Program Report Filtered By Program Names",
+        "type": "programs",
+        "config": {
+            "programNamesToFilter": [
+                "MDR-TB PROGRAM"
+            ]
+        }
+    },
+    "programsWithEmptyrogramNames": {
+        "name": "Generic Patient Program Report With Empty Program Names",
+        "type": "programs",
+        "config": {
+            "programNamesToFilter": []
+        }
+    },
+    "programsWithAllTheStates": {
+        "name": "Generic Patient Program Report With All The States",
+        "type": "programs",
+        "config": {
+            "showAllStates": true
+        }
+    },
+    "programsWithFullConfig": {
+        "name": "Generic Patient Program Report With Full Config",
+        "type": "programs",
+        "config": {
+            "patientAttributes": [
+                "education",
+                "primaryContact",
+                "secondaryContact",
+                "class",
+                "cluster"
+            ],
+            "patientAddresses": [
+                "city_village",
+                "address3"
+            ],
+            "programAttributes": [
+                "Registration Id",
+                "High Risk Reasons",
+                "High Risk"
+            ],
+            "forDataAnalysis": true,
+            "showAllStates": true,
+            "programNamesToFilter": [
+                "MDR-TB PROGRAM"
+            ]
+        }
+    },
+    "programsWithAllStatesAsMultipleRows": {
+        "name": "Generic Patient Program To See All States As Multiple Rows",
+        "type": "programs",
+        "config": {
+            "showAllStates": true
+        }
+    },
+    "programReportWithExcludedColumn": {
+        "name": "Generic Patient Program Report With Excluded Column",
+        "type": "programs",
+        "config": {
+            "patientAttributes": [
+                "education",
+                "primaryContact",
+                "secondaryContact",
+                "class",
+                "cluster"
+            ],
+            "patientAddresses": [
+                "city_village",
+                "address3"
+            ],
+            "programAttributes": [
+                "Registration Id",
+                "High Risk Reasons",
+                "High Risk"
+            ],
+            "excludeColumns": [
+                "education",
+                "primaryContact"
+            ],
+            "forDataAnalysis": true,
+            "showAllStates": true,
+            "programNamesToFilter": [
+                "MDR-TB PROGRAM"
+            ]
+        }
+    },
+    "programReportWithExcludedAllColumn": {
+        "name": "Generic Patient Program Report With Excluded All Column Ignore case",
+        "type": "programs",
+        "config": {
+            "excludeColumns": [
+                "patient identifier",
+                "Patient Name",
+                "Age",
+                "Birthdate",
+                "Gender",
+                "Patient Created Date",
+                "Program Name",
+                "Enrolled Date",
+                "Completed Date",
+                "Current State"
+            ]
+        }
     }
-  },
-  "programsWithEmptyPatientAttributes": {
-    "name": "Generic Patient Program Report With Empty Patient Attributes",
-    "type": "programs",
-    "config": {
-      "patientAttributes": []
-    }
-  },
-  "programsWithEmptyPatientAddresses": {
-    "name": "Generic Patient Program Report With Empty Patient Addresses",
-    "type": "programs",
-    "config": {
-      "patientAddresses": []
-    }
-  },
-  "programsWithPatientAddresses": {
-    "name": "Generic Patient Program Report With Patient Addresses",
-    "type": "programs",
-    "config": {
-      "patientAddresses": [
-        "city_village",
-        "address3"
-      ]
-    }
-  },
-  "programsForDataAnalysis": {
-    "name": "Generic Patient Program Report For Data Analysis",
-    "type": "programs",
-    "config": {
-      "forDataAnalysis": true
-    }
-  },
-  "programsForDataAnalysisFalse": {
-    "name": "Generic Patient Program Report For Data Analysis False",
-    "type": "programs",
-    "config": {
-      "forDataAnalysis": false
-    }
-  },
-  "programsWithProgramAttributes":{
-    "name": "Generic Patient Program Report With Program Attributes",
-    "type": "programs",
-    "config": {
-      "programAttributes": [
-        "Registration Id",
-        "High Risk Reasons",
-        "High Risk"
-      ]
-    }
-  },
-  "programsFilteredByProgramNames": {
-    "name":"Generic Patient Program Report Filtered By Program Names",
-    "type": "programs",
-    "config":{
-      "programNamesToFilter":["MDR-TB PROGRAM"]
-    }
-  },
-  "programsWithEmptyrogramNames":{
-    "name":"Generic Patient Program Report With Empty Program Names",
-    "type": "programs",
-    "config":{
-      "programNamesToFilter":[]
-    }
-  },
-  "programsWithAllTheStates":{
-    "name":"Generic Patient Program Report With All The States",
-    "type": "programs",
-    "config":{
-      "showAllStates": true
-    }
-  },
-  "programsWithFullConfig":{
-    "name":"Generic Patient Program Report With Full Config",
-    "type": "programs",
-    "config":{
-      "patientAttributes": [
-        "education",
-        "primaryContact",
-        "secondaryContact",
-        "class",
-        "cluster"
-      ],
-      "patientAddresses": [
-        "city_village",
-        "address3"
-      ],
-      "programAttributes": [
-        "Registration Id",
-        "High Risk Reasons",
-        "High Risk"
-      ],
-      "forDataAnalysis": true,
-      "showAllStates": true,
-      "programNamesToFilter":["MDR-TB PROGRAM"]
-    }
-  },
-  "programsWithAllStatesAsMultipleRows":{
-    "name": "Generic Patient Program To See All States As Multiple Rows",
-    "type": "programs",
-    "config":{
-      "showAllStates": true
-    }
-  }
 }

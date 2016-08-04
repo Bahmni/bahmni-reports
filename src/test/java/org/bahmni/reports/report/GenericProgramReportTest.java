@@ -275,4 +275,28 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(1, " "));
         assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2017 21-Apr-2017", report.getRowAsString(2, " "));
     }
+
+    @Test
+    public void shouldExcludeColumnsSpecifedInTheConfig() throws Exception {
+        String reportName = "Generic Patient Program Report With Excluded Column";
+
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
+
+        assertEquals(reportName, report.getReportName());
+        assertEquals(23, report.columnsCount());
+        assertEquals(2, report.rowsCount());
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 21-Apr-2016  8763245677 General   FOLLOWING false Ramgarh Dindori 1,000 2", report.getRowAsString(1, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 21-Apr-2016  8763245677 General     Hyderabad Address Three 1,001 2", report.getRowAsString(2, " "));
+    }
+
+    @Test
+    public void shouldThrowAnExceptionIfAllColumnsAreExcluded() throws Exception {
+
+        String reportName = "Generic Patient Program Report With Excluded All Column Ignore case";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2016-01-30", true);
+
+        assertEquals("<h2>Incorrect Configuration</h2><h3>You have excluded all columns.</h3>", report.getReportName());
+    }
 }

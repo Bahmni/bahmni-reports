@@ -242,7 +242,7 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2016-01-30", true);
 
-        assertEquals("<h2>Incorrect Configuration</h2><h3>You have excluded all columns</h3>", report.getReportName());
+        assertEquals("<h2>Incorrect Configuration</h2><h3>You have excluded all columns.</h3>", report.getReportName());
     }
 
     @Test

@@ -546,7 +546,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
     @Test
     public void shouldExcludeConceptColumns() throws Exception {
-        String reportName = "Observation report excluding concept name columns";
+        String reportName = "Observation report excluding concept name columns ignore case";
 
         List<String> objectList = new ArrayList<>();
         objectList.add("\"Height\"");
@@ -565,5 +565,15 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
         assertEquals(2, report.rowsCount());
         assertEquals("OBS1 Generic Observation1   F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 80", report.getRowAsString(1, " "));
         assertEquals("OBS1 Generic Observation1   F Chithari    15-Aug-2008 70", report.getRowAsString(2, " "));
+    }
+
+    @Test
+    public void shouldThrowAnExceptionIfAllColumnsAreExcluded() throws Exception {
+
+        String reportName = "Observation report excluding all columns ignore case";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30", true);
+
+        assertEquals("<h2>Incorrect Configuration</h2><h3>You have excluded all columns.</h3>", report.getReportName());
     }
 }

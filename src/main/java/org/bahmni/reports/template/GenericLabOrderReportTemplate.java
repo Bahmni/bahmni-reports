@@ -53,31 +53,10 @@ public class GenericLabOrderReportTemplate extends BaseReportTemplate<GenericLab
             createAndAddDataAnalysisColumns(jasperReportBuilder, report.getConfig());
         }
 
-        removeExcludedColumns(jasperReportBuilder, report);
-
-        if (jasperReportBuilder.getReport().getColumns().size() == 0) {
-            throw new Exception("You have excluded all columns");
-        }
-
         GenericDao genericObservationDao = new GenericLabOrderDaoImpl(report, bahmniReportsProperties);
         ResultSet obsResultSet = genericObservationDao.getResultSet(connection, startDate, endDate, conceptNamesToFilter);
         jasperReportBuilder = obsResultSet != null ? jasperReportBuilder.setDataSource(obsResultSet) : jasperReportBuilder;
         return new BahmniReportBuilder(jasperReportBuilder);
     }
 
-    private void removeExcludedColumns(JasperReportBuilder jasperReportBuilder, Report<GenericLabOrderReportConfig> report) {
-        GenericLabOrderReportConfig config = report.getConfig();
-        if (config == null || config.getExcludeColumns() == null)
-            return;
-
-        List<DRColumn<?>> columns = jasperReportBuilder.getReport().getColumns();
-        List<String> excludedColumns = report.getConfig().getExcludeColumns();
-        List<DRColumn<?>> columnsToAdd = new ArrayList<>();
-
-        for (DRColumn<?> column : columns) {
-            if (!excludedColumns.contains(column.getName()))
-                columnsToAdd.add(column);
-        }
-        jasperReportBuilder.getReport().setColumns(columnsToAdd);
-    }
 }

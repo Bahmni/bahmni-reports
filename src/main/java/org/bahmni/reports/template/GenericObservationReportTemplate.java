@@ -58,14 +58,6 @@ public class GenericObservationReportTemplate extends BaseReportTemplate<Generic
                 createAndAddConceptColumns(conceptNamesToFilter, jasperReport);
             }
             createAndAddDataAnalysisColumns(jasperReport, report.getConfig());
-            if (CollectionUtils.isNotEmpty(report.getConfig().getExcludeColumns())) {
-                List<DRColumn<?>> filteredColumns = filterExcludedColumns(jasperReport.getReport().getColumns(), report.getConfig().getExcludeColumns());
-                jasperReport.getReport().setColumns(filteredColumns);
-            }
-        }
-
-        if (jasperReport.getReport().getColumns().size() == 0) {
-            throw new IllegalArgumentException("You have excluded all columns.");
         }
 
         GenericDao genericObservationDao = new GenericObservationDaoImpl(report, bahmniReportsProperties);
@@ -75,15 +67,4 @@ public class GenericObservationReportTemplate extends BaseReportTemplate<Generic
         JasperReportBuilder jasperReportBuilder = obsResultSet != null ? jasperReport.setDataSource(obsResultSet) : jasperReport;
         return new BahmniReportBuilder(jasperReportBuilder);
     }
-
-    private List<DRColumn<?>> filterExcludedColumns(List<DRColumn<?>> columns, List<String> excludeColumns) {
-        List<DRColumn<?>> columnsToAdd = new ArrayList<>();
-        for (DRColumn<?> column : columns) {
-            if (!excludeColumns.contains(column.getName())) {
-                columnsToAdd.add(column);
-            }
-        }
-        return columnsToAdd;
-    }
-
 }

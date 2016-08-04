@@ -362,7 +362,7 @@
         }
     },
     "observationReportExcludingConceptNames": {
-        "name": "Observation report excluding concept name columns",
+        "name": "Observation report excluding concept name columns ignore case",
         "type": "observations",
         "config": {
             "encounterPerRow": true,
@@ -370,7 +370,30 @@
                 "Vitals"
             ],
             "excludeColumns": [
-                "Height"
+                "height"
+            ]
+        }
+    },
+    "observationReportExcludingAllColumns": {
+        "name": "Observation report excluding all columns ignore case",
+        "type": "observations",
+        "config": {
+            "excludeColumns": [
+                "patient identifier",
+                "Patient Name",
+                "Age",
+                "Birthdate",
+                "Gender",
+                "Location Name",
+                "Program Name",
+                "Program Enrollment Date",
+                "Program End Date",
+                "Patient Created Date",
+                "Concept Name",
+                "Value",
+                "Observation Datetime",
+                "Observation Date",
+                "Parent Concept"
             ]
         }
     }
