@@ -71,7 +71,7 @@ public class SqlReportTemplate extends BaseReportTemplate<SqlReportConfig> {
                 return DataTypes.integerType();
 
             case Types.BIGINT:
-                return DataTypes.bigIntegerType();
+                return DataTypes.longType();
 
             case Types.FLOAT:
                 return DataTypes.floatType();
