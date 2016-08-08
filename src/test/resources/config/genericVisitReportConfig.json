@@ -144,5 +144,24 @@
                 "Date Of Discharge"
             ]
         }
+    },
+    "visitsWithExtraIdentifiers": {
+        "name": "Generic Visit Report With Extra Identifiers",
+        "type": "visits",
+        "config": {
+            "additionalPatientIdentifiers": [
+                "Aadhaar Id",
+                "Pan Id"
+            ]
+        }
+    },
+    "visitsWithOneExtraIdentifier": {
+        "name": "Generic Visit Report With One Extra Identifiers",
+        "type": "visits",
+        "config": {
+            "additionalPatientIdentifiers": [
+                "Pan Id"
+            ]
+        }
     }
 }

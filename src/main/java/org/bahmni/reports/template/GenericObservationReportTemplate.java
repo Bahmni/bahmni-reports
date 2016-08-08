@@ -46,8 +46,9 @@ public class GenericObservationReportTemplate extends BaseReportTemplate<Generic
 
         List<String> conceptNamesToFilter = new ArrayList<>();
 
-        GenericObservationReportTemplateHelper.createAndAddDefaultColumns(jasperReport, report.getConfig());
+        createAndAddDefaultColumns(jasperReport, report.getConfig());
         if (report.getConfig() != null) {
+            createAndAddExtraPatientIdentifierTypes(jasperReport, report.getConfig());
             createAndAddPatientAttributeColumns(jasperReport, report.getConfig());
             createAndAddVisitAttributeColumns(jasperReport, report.getConfig());
             createAndAddPatientAddressColumns(jasperReport, report.getConfig());

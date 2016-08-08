@@ -14,7 +14,7 @@
     <person_attribute person_attribute_id="1005" person_id="1000" value="human" person_attribute_type_id="1" creator="1" date_created="2008-08-15 15:57:09.0" uuid="asdfa-78f1-42a5-8768-45c219a1fa56" voided="false"/>
 
     <patient patient_id="1000" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:29:59.0" voided="false" void_reason=""/>
-    <patient_identifier patient_identifier_id="1000" patient_id="1000" identifier="PatientIdentifier1" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-b377-455c-8k50-231cf34a21ac"/>
+    <patient_identifier patient_identifier_id="1001" patient_id="1000" identifier="PatientIdentifier1" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-b377-455c-8k50-231cf34a21ac"/>
 
     <person person_id="2000" gender="M" dead="false" creator="1" birthdate="1991-03-04" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="df8ae447-6745-45be-b859-409241d9943c"/>
     <person_name person_name_id="2000" preferred="true" person_id="2000" prefix="Mr." given_name="PatientName2" middle_name="" family_name="familyname2" family_name_suffix="Es." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="399e3a7b-6482-487d-c4ce-c07bb7ca3cc7"/>
@@ -28,14 +28,17 @@
     <person_attribute person_attribute_id="2004" person_id="2000" value="4" person_attribute_type_id="6" creator="1" date_created="2008-08-15 15:57:09.0" uuid="898f6ecd-78f1-42a5-8768-25c219a1fa56" voided="false"/>
 
     <patient patient_id="2000" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:29:59.0" voided="false" void_reason=""/>
-    <patient_identifier patient_identifier_id="2000" patient_id="2000" identifier="PatientIdentifier2" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-b377-455c-9k50-231cf34a21ac"/>
+    <patient_identifier patient_identifier_id="2001" patient_id="2000" identifier="PatientIdentifier2" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-b377-455c-9k50-231cf34a21ac"/>
+    <patient_identifier patient_identifier_id="2000" patient_id="2000" identifier="Aadhar2" identifier_type="4" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-8xy-455c-9k50-231cf34a21ac"/>
+    <patient_identifier patient_identifier_id="2002" patient_id="2000" identifier="Pan2" identifier_type="5" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-8xy-455c-9k50-sdaf"/>
 
 
     <person person_id="3000" gender="M" dead="false" creator="1" birthdate="1991-03-04" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="123-6745-45be-b859-409241d9943c"/>
     <person_name person_name_id="3000" preferred="true" person_id="3000" prefix="Mr." given_name="PatientName3" middle_name="" family_name="familyname3" family_name_suffix="Es." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="1223-6482-487d-c4ce-c07bb7ca3cc7"/>
 
     <patient patient_id="3000" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:29:59.0" voided="false" void_reason=""/>
-    <patient_identifier patient_identifier_id="3000" patient_id="3000" identifier="PatientIdentifier3" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="1231-b377-455c-9k50-231cf34a21ac"/>
+    <patient_identifier patient_identifier_id="3001" patient_id="3000" identifier="PatientIdentifier3" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="1231-b377-455c-9k50-231cf34a21ac"/>
+    <patient_identifier patient_identifier_id="3000" patient_id="3000" identifier="PatientIdentifier3-2" identifier_type="4" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="1231-b377-455c-9k50-231cfsdljf1ac"/>
 
     <concept concept_id="1000" retired="false" datatype_id="1" class_id="11" is_set="false" creator="1" date_created="2008-08-15 15:27:51.0" version="" uuid="0cbejed3-cd5f-4f46-9459-2612exw265ab"/>
     <concept_name concept_id="1000" concept_name_id="1000" name="BoneOrder" locale="en" creator="1" date_created="2008-08-15 15:27:51.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="74a4c3d3-e6d0-407d-8ed3-3895e4bbas5b"/>

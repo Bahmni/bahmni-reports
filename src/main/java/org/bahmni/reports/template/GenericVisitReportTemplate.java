@@ -15,7 +15,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.*;
+import static org.bahmni.reports.util.GenericReportsHelper.createAndAddExtraPatientIdentifierTypes;
+import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.createAndAddDataAnalysisColumns;
+import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.createAndAddMandatoryColumns;
+import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.createAndAddPatientAddressColumns;
+import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.createAndAddPatientAttributeColumns;
+import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.createAndAddVisitAttributeColumns;
 
 @UsingDatasource("openmrs")
 public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitReportConfig> {
@@ -30,6 +35,7 @@ public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitR
 
         createAndAddMandatoryColumns(jasperReport);
         if (report.getConfig() != null) {
+            createAndAddExtraPatientIdentifierTypes(jasperReport, report.getConfig());
             createAndAddPatientAttributeColumns(jasperReport, report.getConfig());
             createAndAddPatientAddressColumns(jasperReport, report.getConfig());
             createAndAddVisitAttributeColumns(jasperReport, report.getConfig());

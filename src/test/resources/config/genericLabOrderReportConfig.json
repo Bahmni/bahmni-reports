@@ -275,5 +275,24 @@
     "config": {
       "showOrderDateTime" : true
     }
+  },
+  "LabOrderReportWithExtraIdentifiers": {
+    "name": "LabOrder report with extra identifiers",
+    "type": "labOrders",
+    "config": {
+      "additionalPatientIdentifiers": [
+        "Aadhaar Id",
+        "Pan Id"
+      ]
+    }
+  },
+  "LabOrderReportWithOneExtraIdentifier": {
+    "name": "LabOrder report with one extra identifier",
+    "type": "labOrders",
+    "config": {
+      "additionalPatientIdentifiers": [
+        "Pan Id"
+      ]
+    }
   }
 }

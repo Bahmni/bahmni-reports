@@ -576,4 +576,28 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         assertEquals("<h2>Incorrect Configuration</h2><h3>You have excluded all columns.</h3>", report.getReportName());
     }
+
+    @Test
+    public void shouldShowExtraIdentifiersIfConfigured() throws Exception {
+        String reportName = "Observation report having multiple identifiers";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
+
+        assertEquals(16, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(1, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 170 2016-04-21 15:30:31.0 21-Apr-2016  Pan11", report.getRowAsString(1, " "));
+    }
+
+    @Test
+    public void shouldShowExtraIdentifiersIfConfiguredInEncounterPerRow() throws Exception {
+        String reportName = "Observation report having multiple identifiers with encounter per row";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
+
+        assertEquals(12, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(1, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1   F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Adhar11 Pan11", report.getRowAsString(1, " "));
+    }
 }

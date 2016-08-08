@@ -4,12 +4,14 @@
     <!--voided person-->
     <person person_id="506" gender="F" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="true" uuid="dfqae447-6745-45be-b859-403241d9913c"/>
     <patient patient_id="506" creator="1" date_created="2006-01-18 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:25:31.0" voided="false" void_reason=",,,,"/>
-    <patient_identifier patient_identifier_id="506" patient_id="506" identifier="GAN1235" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-b377-455c-87ad-231cf34a21ca"/>
+    <patient_identifier patient_identifier_id="606" patient_id="506" identifier="GAN1235" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-b377-455c-87ad-231cf34a21ca"/>
+    <patient_identifier patient_identifier_id="506" patient_id="506" identifier="OMRS1235" identifier_type="4" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-123-455c-87ad-231cf34a21ca"/>
 
     <!--voided patient-->
     <person person_id="507" gender="F" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="dfqae447-6745-45be-b659-403241d9913c"/>
     <patient patient_id="507" creator="1" date_created="2006-01-18 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:25:31.0" voided="true" void_reason=",,,,"/>
-    <patient_identifier patient_identifier_id="506" patient_id="506" identifier="GAN1236" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-b377-455c-87ad-231cf34a21ac"/>
+    <patient_identifier patient_identifier_id="607" patient_id="506" identifier="GAN1236" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-b377-455c-87ad-231cf34a21ac"/>
+    <patient_identifier patient_identifier_id="507" patient_id="506" identifier="OMRS1236" identifier_type="4" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-b377-455c-87ad-231cf34a98uhj"/>
 
     <!--voided location tag-->
     <location location_id="4" name="Location1" description="This is a voided location" address1="" address2="" city_village="" state_province="" postal_code="" country="" creator="1" date_created="2005-09-22 00:00:00.0" retired="false" uuid="8d6c993e-c2cc-11de-8d13-0010c6dddd4f"/>
@@ -19,6 +21,9 @@
     <!--voided location-->
     <location location_id="5" name="Location2" description="This is a voided location" address1="" address2="" city_village="" state_province="" postal_code="" country="" creator="1" date_created="2005-09-22 00:00:00.0" retired="true" uuid="8d6c993e-c2cc-11de-8d13-0010c6ddddaf"/>
     <location_tag_map location_id="5" location_tag_id="2"/>
+
+    <patient_identifier patient_identifier_id="201" patient_id="2" identifier="Pan1" identifier_type="5" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf2fa-b377-455c-zxcv-231cf34a21ca"/>
+    <patient_identifier patient_identifier_id="200" patient_id="2" identifier="Adhar1" identifier_type="4" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="0b7cf123-123-455c-87ad-231cf34a21ca"/>
 
     <visit visit_id="2" patient_id="2" visit_type_id="1" date_started="2016-04-20 00:00:00.0"
            date_stopped="2016-05-21 00:00:00.0" location_id="2" creator="1" date_created="2005-01-01 00:00:00.0"

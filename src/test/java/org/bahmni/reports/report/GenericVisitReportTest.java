@@ -138,6 +138,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2017 21-May-2017 01-Jan-2005 01-Jan-2005", report.getRowAsString(1, " "));
         assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2017 21-May-2017", report.getRowAsString(2, " "));
     }
+
     @Test
     public void shouldExcludeColumnsSpecifedInTheConfig() throws Exception {
         String reportName = "Generic Visit Report With Excluded Column";
@@ -159,4 +160,29 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         assertEquals("<h2>Incorrect Configuration</h2><h3>You have excluded all columns.</h3>", report.getReportName());
     }
+
+    @Test
+    public void shouldShowConfiguredExtraIdentifiers() throws Exception {
+        String reportName = "Generic Visit Report With Extra Identifiers";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
+
+        assertEquals(13, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(1, report.rowsCount());
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  Adhar1 Pan1", report.getRowAsString(1, " "));
+    }
+
+    @Test
+    public void shouldShowConfiguredOneExtraIdentifier() throws Exception {
+        String reportName = "Generic Visit Report With One Extra Identifiers";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
+
+        assertEquals(12, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(1, report.rowsCount());
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  Pan1", report.getRowAsString(1, " "));
+    }
+
 }

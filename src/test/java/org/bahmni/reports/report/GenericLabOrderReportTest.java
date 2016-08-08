@@ -403,8 +403,8 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
         assertEquals(4, report.rowsCount());
         assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BloodOrder     3000 1001  3001", report.getRowAsString(1, " "));
         assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180 3000 1009 3001 3002", report.getRowAsString(2, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 30 04-Mar-1991 M 16-Jan-2022 BP_Level     3000 1009  3003", report.getRowAsString(3, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 30 04-Mar-1991 M 16-Jan-2022 Hg     3000 1006  3003", report.getRowAsString(4, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 30 04-Mar-1991 M 16-Jan-2022 Hg     3000 1006  3003", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 30 04-Mar-1991 M 16-Jan-2022 BP_Level     3000 1009  3003", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -429,8 +429,8 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
         assertEquals(15, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 BP_Level high Normal 12  3000 1009 3015 3005", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 Hg     3000 1006  3005", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 Hg     3000 1006  3005", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 BP_Level high Normal 12  3000 1009 3015 3005", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -442,7 +442,34 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
         assertEquals(12, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 BP_Level high Normal 12  2022-03-16 12:34:31.0", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 Hg     2022-03-16 12:34:31.0", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 Hg     2022-03-16 12:34:31.0", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 BP_Level high Normal 12  2022-03-16 12:34:31.0", report.getRowAsString(2, " "));
+    }
+
+
+    @Test
+    public void shouldShowExtraIdentifiers() throws Exception {
+        String reportName = "LabOrder report with extra identifiers";
+
+        CsvReport report = fetchCsvReport(reportName, "2017-02-01", "2017-02-20");
+
+        assertEquals(13, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(2, report.rowsCount());
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   Aadhar2 Pan2", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     Aadhar2 Pan2", report.getRowAsString(2, " "));
+    }
+
+    @Test
+    public void shouldShowOneExtraIdentifier() throws Exception {
+        String reportName = "LabOrder report with one extra identifier";
+
+        CsvReport report = fetchCsvReport(reportName, "2017-02-01", "2017-02-20");
+
+        assertEquals(12, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(2, report.rowsCount());
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   Pan2", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     Pan2", report.getRowAsString(2, " "));
     }
 }

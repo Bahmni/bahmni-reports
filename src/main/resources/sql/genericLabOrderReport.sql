@@ -7,6 +7,7 @@ SET @filterByConceptNames = '#conceptNamesToFilter#';
 SET @filterByConceptValues = '#conceptValuesToFilter##numericRangesFilterSql#';
 SET @filterByPrograms = '#programsToFilter#';
 SET @showProvider = '#showProvider#';
+SET @extraPatientIdentifierTypes = '#extraPatientIdentifierTypes#';
 SET @visitAttributeJoinSql = ' LEFT JOIN visit_attribute va ON va.visit_id=v.visit_id AND va.voided is false
   LEFT JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.retired is false';
 SET @patientAttributeJoinSql = ' LEFT JOIN person_attribute pa ON p.person_id = pa.person_id AND pa.voided is false
@@ -67,8 +68,15 @@ INTO @labNotesConceptId;
 SET @orderIdList = NULL;
 SELECT GROUP_CONCAT(DISTINCT(ord.order_id)) FROM orders ord WHERE cast(ord.date_created AS DATE) BETWEEN "#startDate#" AND "#endDate#" and ord.order_type_id = @labOrderType and ord.voided is false INTO @orderIdList;
 
+SET @primaryIdentifierTypeUuid = NULL;
+SELECT property_value FROM global_property WHERE property = 'emr.primaryIdentifierType' into @primaryIdentifierTypeUuid;
+
+SET @primaryIdentifierTypeName = NULL;
+SELECT name FROM patient_identifier_type WHERE uuid = @primaryIdentifierTypeUuid INTO @primaryIdentifierTypeName;
+
 SET @sql = CONCAT('SELECT * FROM (SELECT
-  pi.identifier                                                 AS "Patient Identifier",
+  GROUP_CONCAT(DISTINCT(IF(pit.name = @primaryIdentifierTypeName, pi.identifier, NULL)))     AS "Patient Identifier",
+  ',IF(@extraPatientIdentifierTypes = '', '', CONCAT(@extraPatientIdentifierTypes, ',')),'
   concat(pn.given_name, " ", pn.family_name)                    AS "Patient Name",
   floor(DATEDIFF(DATE(ord.date_created), p.birthdate) / 365)      AS "Age",
   p.birthdate                                                   AS "Birthdate",
@@ -113,6 +121,7 @@ FROM (SELECT * FROM orders ord WHERE cast(ord.date_created AS DATE) BETWEEN "#st
   LEFT JOIN concept_name coded_scn on coded_scn.concept_id = o.value_coded AND coded_scn.concept_name_type="SHORT" AND coded_scn.voided is false
   JOIN person p ON p.person_id = ord.patient_id AND p.voided is false
   JOIN patient_identifier pi ON p.person_id = pi.patient_id AND pi.voided is false
+  JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id AND pit.retired is false
   JOIN person_name pn ON pn.person_id = p.person_id AND pn.voided is false
   JOIN encounter e ON ord.encounter_id=e.encounter_id AND e.voided is false
   JOIN encounter_provider ep ON ep.encounter_id=e.encounter_id and ep.voided is false ',
@@ -124,7 +133,7 @@ FROM (SELECT * FROM orders ord WHERE cast(ord.date_created AS DATE) BETWEEN "#st
   ', IF(@patientAddressesSql = '', '', @patientAddressJoinSql), '
   ', IF(@filterByPrograms != '', @programsJoinSql, ''), '
   ', IF(@filterByPrograms != '', @filterByProgramsSql, ''),
-                  ' GROUP BY ord.order_id, cs.concept_id, o.concept_id ORDER BY ord.date_created asc) bigTable',
+                  ' GROUP BY ord.order_id, cs.concept_id, o.concept_id ORDER BY ord.date_created asc, o.obs_id asc) bigTable',
                   IF(@filterByConceptNames != '' OR @filterByConceptValues != '', ' WHERE', ''),
                   IF(@filterByConceptNames = '', '', @conceptNamesToFilterSql), '
    ', IF(@filterByConceptValues = '', '', @filterByConceptValuesSql)

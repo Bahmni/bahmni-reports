@@ -10,6 +10,7 @@ SET @filterByPrograms = '#programsToFilter#';
 SET @dateRangeFilter = '#applyDateRangeFor#';
 SET @showProvider = '#showProvider#';
 SET @visitTypesToFilterSql = '#visitTypesToFilter#';
+SET @extraPatientIdentifierTypes = '#extraPatientIdentifierTypes#';
 SET @visitAttributeJoinSql = ' LEFT OUTER JOIN visit_attribute va ON va.visit_id=v.visit_id AND va.voided is false
   LEFT OUTER JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.retired is false';
 SET @patientAttributeJoinSql = ' LEFT OUTER JOIN person_attribute pa ON p.person_id = pa.person_id AND pa.voided is false
@@ -31,8 +32,15 @@ SET @providerJoinSql = '  JOIN provider pro ON pro.provider_id=ep.provider_id
   LEFT OUTER JOIN person_name provider_person ON provider_person.person_id = pro.person_id';
 SET @providerSelectSql = 'coalesce(pro.name, concat(provider_person.given_name, " ", provider_person.family_name)) AS "Provider"';
 
+SET @primaryIdentifierTypeUuid = NULL;
+SELECT property_value FROM global_property WHERE property = 'emr.primaryIdentifierType' into @primaryIdentifierTypeUuid;
+
+SET @primaryIdentifierTypeName = NULL;
+SELECT name FROM patient_identifier_type WHERE uuid = @primaryIdentifierTypeUuid INTO @primaryIdentifierTypeName;
+
 SET @sql = CONCAT('SELECT
-  pi.identifier                                                 AS "Patient Identifier",
+  GROUP_CONCAT(DISTINCT(IF(pit.name = @primaryIdentifierTypeName, pi.identifier, NULL)))     AS "Patient Identifier",
+  ',IF(@extraPatientIdentifierTypes = '', '', CONCAT(@extraPatientIdentifierTypes, ',')),'
   concat(pn.given_name, " ", pn.family_name)                    AS "Patient Name",
   floor(DATEDIFF(DATE(o.obs_datetime), p.birthdate) / 365)      AS "Age",
   DATE_FORMAT(p.birthdate, "%d-%b-%Y")                          AS "Birthdate",
@@ -72,6 +80,7 @@ FROM obs o
   ',IF(@filterByConceptClass = '', '', @conceptClassesToFilterSql),'
   JOIN person p ON p.person_id = o.person_id AND p.voided is false
   JOIN patient_identifier pi ON p.person_id = pi.patient_id AND pi.voided is false
+  JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id AND pit.retired is false
   JOIN person_name pn ON pn.person_id = p.person_id AND pn.voided is false
   JOIN encounter e ON o.encounter_id=e.encounter_id AND e.voided is false
   JOIN encounter_provider ep ON ep.encounter_id=e.encounter_id

@@ -9,7 +9,7 @@ public class GenericReportsConfig {
     private List<String> patientAttributes;
     private List<String> visitAttributes;
     private List<String> patientAddresses;
-
+    private List<String> additionalPatientIdentifiers;
 
     public List<String> getExcludeColumns() {
         return excludeColumns;
@@ -49,5 +49,13 @@ public class GenericReportsConfig {
 
     public void setPatientAddresses(List<String> patientAddresses) {
         this.patientAddresses = patientAddresses;
+    }
+
+    public List<String> getAdditionalPatientIdentifiers() {
+        return additionalPatientIdentifiers;
+    }
+
+    public void setAdditionalPatientIdentifiers(List<String> additionalPatientIdentifiers) {
+        this.additionalPatientIdentifiers = additionalPatientIdentifiers;
     }
 }

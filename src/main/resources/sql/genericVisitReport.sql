@@ -4,6 +4,7 @@ SET @patientAttributesSql = '#patientAttributes#';
 SET @patientAddressesSql = '#patientAddresses#';
 SET @visitAttributesSql = '#visitAttributes#';
 SET @visitTypesToFilterSql = '#visitTypesToFilter#';
+SET @extraPatientIdentifierTypes = '#extraPatientIdentifierTypes#';
 SET @visitAttributeJoinSql = ' LEFT OUTER JOIN visit_attribute va ON va.visit_id=v.visit_id AND va.voided is false
   LEFT OUTER JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.retired is false';
 SET @patientAttributeJoinSql = ' LEFT OUTER JOIN person_attribute pa ON p.person_id = pa.person_id AND pa.voided is false
@@ -12,8 +13,15 @@ SET @patientAttributeJoinSql = ' LEFT OUTER JOIN person_attribute pa ON p.person
   LEFT OUTER JOIN concept_name fscn ON pat.format = "org.openmrs.Concept" AND pa.value = fscn.concept_id AND fscn.concept_name_type = "FULLY_SPECIFIED" AND fscn.voided is false ';
 SET @patientAddressJoinSql = ' LEFT OUTER JOIN person_address paddress ON p.person_id = paddress.person_id AND paddress.voided is false ';
 
+SET @primaryIdentifierTypeUuid = NULL;
+SELECT property_value FROM global_property WHERE property = 'emr.primaryIdentifierType' into @primaryIdentifierTypeUuid;
+
+SET @primaryIdentifierTypeName = NULL;
+SELECT name FROM patient_identifier_type WHERE uuid = @primaryIdentifierTypeUuid INTO @primaryIdentifierTypeName;
+
 SET @sql = CONCAT('SELECT
-  pi.identifier                                                 AS "Patient Identifier",
+  GROUP_CONCAT(DISTINCT(IF(pit.name = @primaryIdentifierTypeName, pi.identifier, NULL)))     AS "Patient Identifier",
+  ',IF(@extraPatientIdentifierTypes = '', '', CONCAT(@extraPatientIdentifierTypes, ',')),'
   concat(pn.given_name, " ", pn.family_name)                    AS "Patient Name",
   floor(DATEDIFF(DATE(v.date_started), p.birthdate) / 365)      AS "Age",
   DATE_FORMAT(p.birthdate, "%d-%b-%Y")         AS "Birthdate",
@@ -33,6 +41,7 @@ FROM visit v
   JOIN visit_type vt ON v.visit_type_id = vt.visit_type_id
   JOIN person p ON p.person_id = v.patient_id AND p.voided is false
   JOIN patient_identifier pi ON p.person_id = pi.patient_id AND pi.voided is false
+  JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id AND pit.retired is false
   JOIN person_name pn ON pn.person_id = p.person_id AND pn.voided is false
   LEFT OUTER JOIN (SELECT
                       va.date_created                                              AS admission_date,

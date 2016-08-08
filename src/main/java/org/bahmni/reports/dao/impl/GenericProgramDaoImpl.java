@@ -13,6 +13,7 @@ import java.util.List;
 
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.*;
+import static org.bahmni.reports.util.GenericReportsHelper.constructExtraPatientIdentifiersToFilter;
 
 public class GenericProgramDaoImpl implements GenericDao {
 
@@ -35,6 +36,7 @@ public class GenericProgramDaoImpl implements GenericDao {
             sqlTemplate.add("programAttributes", constructProgramAttributeNamesString(getProgramAttributes(config)));
             sqlTemplate.add("showAllStates", config.isShowAllStates());
             sqlTemplate.add("programNamesToFilterSql", constructProgramNamesString(getProgramNamesToFilter(config)));
+            sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
         }
         sqlTemplate.add("applyDateRangeFor", getDateRangeFor(config));
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());

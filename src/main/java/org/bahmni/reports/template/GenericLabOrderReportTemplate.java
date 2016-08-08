@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.*;
+import static org.bahmni.reports.util.GenericReportsHelper.createAndAddExtraPatientIdentifierTypes;
 
 @UsingDatasource("openmrs")
 public class GenericLabOrderReportTemplate extends BaseReportTemplate<GenericLabOrderReportConfig> {
@@ -44,6 +45,7 @@ public class GenericLabOrderReportTemplate extends BaseReportTemplate<GenericLab
         GenericLabOrderReportTemplateHelper.createAndAddMandatoryColumns(jasperReportBuilder, report.getConfig());
         showOrderDateTime(jasperReportBuilder, report.getConfig());
         if (report.getConfig() != null) {
+            createAndAddExtraPatientIdentifierTypes(jasperReportBuilder, report.getConfig());
             createAndAddPatientAttributeColumns(jasperReportBuilder, report.getConfig());
             createAndAddVisitAttributeColumns(jasperReportBuilder, report.getConfig());
             createAndAddPatientAddressColumns(jasperReportBuilder, report.getConfig());

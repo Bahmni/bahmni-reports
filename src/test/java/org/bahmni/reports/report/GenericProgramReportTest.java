@@ -299,4 +299,35 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
 
         assertEquals("<h2>Incorrect Configuration</h2><h3>You have excluded all columns.</h3>", report.getReportName());
     }
+
+    @Test
+    public void shouldFetchReportWithExtraIdentifiers() throws Exception {
+        String reportName = "Generic Patient Program Report with extra identifiers";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
+
+        assertEquals(12, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(4, report.rowsCount());
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2 Aadhar1 Pan1", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 Aadhar1 Pan1", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2 Aadhar2 Pan2", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 Aadhar2 Pan2", report.getRowAsString(4, " "));
+    }
+
+    @Test
+    public void shouldFetchReportWithOneExtraIdentifiers() throws Exception {
+        String reportName = "Generic Patient Program Report with one extra identifiers";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
+
+        assertEquals(11, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(4, report.rowsCount());
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2 Pan1", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 Pan1", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2 Pan2", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2   F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 Pan2", report.getRowAsString(4, " "));
+    }
+
 }

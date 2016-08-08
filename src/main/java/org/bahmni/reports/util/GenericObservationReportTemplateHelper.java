@@ -23,7 +23,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 
-public class GenericObservationReportTemplateHelper {
+public class GenericObservationReportTemplateHelper extends  GenericReportsHelper {
 
     public static void createAndAddPatientAttributeColumns(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
         for (String patientAttribute : getPatientAttributes(config)) {

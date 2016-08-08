@@ -50,7 +50,9 @@
 
 
     <patient patient_id="1000" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:29:59.0" voided="false" void_reason=""/>
-    <patient_identifier patient_identifier_id="1000" patient_id="1000" identifier="prog1" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="patient-identifier-uuid-1000"/>
+    <patient_identifier patient_identifier_id="3000" patient_id="1000" identifier="Pan1" identifier_type="5" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="patient-identifier-uuid-1000-3"/>
+    <patient_identifier patient_identifier_id="2000" patient_id="1000" identifier="prog1" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="patient-identifier-uuid-1000"/>
+    <patient_identifier patient_identifier_id="1000" patient_id="1000" identifier="Aadhar1" identifier_type="4" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="patient-identifier-uuid-1000-2"/>
 
     <visit visit_id="1000" patient_id="1000" visit_type_id="1" date_started="2016-04-20 00:00:00.0" date_stopped="2016-05-21 00:00:00.0" location_id="2" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="visit-uuid-1000"/>
     <visit_attribute visit_attribute_id="1000" visit_id="1000" attribute_type_id="3" value_reference="Admitted" creator="1" date_created="2005-01-01 00:00:00.0" voided="0" uuid="visit-attribute-uuid-1000"/>
@@ -116,7 +118,9 @@
 
 
     <patient patient_id="1001" creator="1" date_created="2005-09-22 00:00:00.0" changed_by="1" date_changed="2008-08-18 12:29:59.0" voided="false" void_reason=""/>
-    <patient_identifier patient_identifier_id="1001" patient_id="1001" identifier="prog2" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="patient-identifier-uuid-1001"/>
+    <patient_identifier patient_identifier_id="3001" patient_id="1001" identifier="Pan2" identifier_type="5" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="patient-identifier-uuid-1001-3"/>
+    <patient_identifier patient_identifier_id="2001" patient_id="1001" identifier="prog2" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="patient-identifier-uuid-1001"/>
+    <patient_identifier patient_identifier_id="1001" patient_id="1001" identifier="Aadhar2" identifier_type="4" preferred="1" location_id="1" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="patient-identifier-uuid-1001-2"/>
 
     <visit visit_id="1001" patient_id="1001" visit_type_id="1" date_started="2016-04-20 00:00:00.0" date_stopped="2016-05-21 00:00:00.0" location_id="2" creator="1" date_created="2005-01-01 00:00:00.0" voided="false" uuid="visit-uuid-1001"/>
     <visit_attribute visit_attribute_id="1002" visit_id="1000" attribute_type_id="3" value_reference="Admitted" creator="1" date_created="2005-01-01 00:00:00.0" voided="0" uuid="visit-attribute-uuid-1002"/>

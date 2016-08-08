@@ -175,5 +175,24 @@
                 "Current State"
             ]
         }
+    },
+    "programsWithExtraIdentifiersConfigured": {
+        "name": "Generic Patient Program Report with extra identifiers",
+        "type": "programs",
+        "config": {
+            "additionalPatientIdentifiers": [
+                "Aadhaar Id",
+                "Pan Id"
+            ]
+        }
+    },
+    "programsWithOneExtraIdentifiersConfigured": {
+        "name": "Generic Patient Program Report with one extra identifiers",
+        "type": "programs",
+        "config": {
+            "additionalPatientIdentifiers": [
+                "Pan Id"
+            ]
+        }
     }
 }

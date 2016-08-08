@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.*;
+import static org.bahmni.reports.util.GenericReportsHelper.constructExtraPatientIdentifiersToFilter;
 
 public class GenericLabOrderDaoImpl implements GenericDao {
 
@@ -46,6 +47,7 @@ public class GenericLabOrderDaoImpl implements GenericDao {
             }
             sqlTemplate.add("conceptValuesToFilter", conceptValuesToFilter);
             sqlTemplate.add("numericRangesFilterSql", constructNumericRangeFilters(report.getConfig()));
+            sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
         }
 
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());

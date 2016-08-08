@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
+import static org.bahmni.reports.util.GenericReportsHelper.constructExtraPatientIdentifiersToFilter;
 import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.*;
 
 public class GenericVisitDaoImpl implements GenericDao {
@@ -34,6 +35,7 @@ public class GenericVisitDaoImpl implements GenericDao {
             sqlTemplate.add("patientAddresses", constructPatientAddresses(getPatientAddresses(report.getConfig())));
             sqlTemplate.add("visitAttributes", constructVisitAttributeNamesString(getVisitAttributes(report.getConfig())));
             sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(getVisitTypesToFilter(report.getConfig())));
+            sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
         }
         sqlTemplate.add("applyDateRangeFor", getDateRangeFor(report.getConfig()));
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());

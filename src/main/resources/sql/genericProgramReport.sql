@@ -5,6 +5,7 @@ SET @patientAddressesSql = '#patientAddresses#';
 SET @programAttributesSql = '#programAttributes#';
 SET @programNamesToFilterSql = '#programNamesToFilterSql#';
 SET @showAllStates = '#showAllStates#';
+SET @extraPatientIdentifierTypes = '#extraPatientIdentifierTypes#';
 
 SET @patientAttributeJoinSql = ' LEFT OUTER JOIN person_attribute pa ON p.person_id = pa.person_id AND pa.voided is false
   LEFT OUTER JOIN person_attribute_type pat ON pa.person_attribute_type_id = pat.person_attribute_type_id AND pat.retired is false
@@ -17,8 +18,15 @@ SET @programAttributesJoinSql = '  LEFT OUTER JOIN patient_program_attribute ppa
 SET @patientAddressJoinSql = ' LEFT OUTER JOIN person_address paddress ON p.person_id = paddress.person_id AND paddress.voided is false ';
 SET @selectAllStatesSql = 'DATE_FORMAT(ps.start_date, "%d-%b-%Y") AS "Start Date", DATE_FORMAT(ps.end_date, "%d-%b-%Y") AS "End Date"';
 
+SET @primaryIdentifierTypeUuid = NULL;
+SELECT property_value FROM global_property WHERE property = 'emr.primaryIdentifierType' into @primaryIdentifierTypeUuid;
 
-SET @sql = CONCAT('SELECT pi.identifier AS "Patient Identifier",
+SET @primaryIdentifierTypeName = NULL;
+SELECT name FROM patient_identifier_type WHERE uuid = @primaryIdentifierTypeUuid INTO @primaryIdentifierTypeName;
+
+SET @sql = CONCAT('SELECT
+       GROUP_CONCAT(DISTINCT(IF(pit.name = @primaryIdentifierTypeName, pi.identifier, NULL)))     AS "Patient Identifier",
+       ',IF(@extraPatientIdentifierTypes = '', '', CONCAT(@extraPatientIdentifierTypes, ',')),'
        CONCAT(pn.given_name, " ", pn.family_name)  AS "Patient Name",
        FLOOR(DATEDIFF(DATE(CURDATE()), p.birthdate) / 365)      AS "Age",
         DATE_FORMAT(p.birthdate, "%d-%b-%Y")                             AS "Birthdate",
@@ -40,8 +48,8 @@ FROM patient_program pprog
   JOIN program prog on prog.program_id = pprog.program_id AND pprog.voided is FALSE
   JOIN person p on p.person_id = pprog.patient_id AND p.voided is  FALSE
   JOIN person_name pn on pn.person_id = p.person_id AND pn.voided is FALSE
-  JOIN patient_identifier pi on pi.patient_id = p.person_id AND pi.voided is FALSE
-  ', IF(@programNamesToFilterSql = '', '',
+  JOIN patient_identifier pi ON p.person_id = pi.patient_id AND pi.voided is false
+  JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id AND pit.retired is false  ', IF(@programNamesToFilterSql = '', '',
         'AND prog.name in (#programNamesToFilterSql#)'), '
   LEFT JOIN patient_state ps on ps.patient_program_id = pprog.patient_program_id AND ps.voided is FALSE
   ', IF(@showAllStates = 'true', '', 'AND end_date is NULL'), '

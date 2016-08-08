@@ -396,5 +396,25 @@
                 "Parent Concept"
             ]
         }
+    },
+    "observationReportHavingWithExtraIdentifiers": {
+        "name": "Observation report having multiple identifiers",
+        "type": "observations",
+        "config": {
+            "additionalPatientIdentifiers": [
+                "Pan Id"
+            ]
+        }
+    },
+    "observationReportHavingWithExtraIdentifiersWithEncounterPerRow": {
+        "name": "Observation report having multiple identifiers with encounter per row",
+        "type": "observations",
+        "config": {
+            "encounterPerRow": true,
+            "additionalPatientIdentifiers": [
+                "Aadhaar Id",
+                "Pan Id"
+            ]
+        }
     }
 }

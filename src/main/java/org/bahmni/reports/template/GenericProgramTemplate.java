@@ -14,6 +14,7 @@ import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 
 import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.*;
+import static org.bahmni.reports.util.GenericReportsHelper.createAndAddExtraPatientIdentifierTypes;
 
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
@@ -37,6 +38,7 @@ public class GenericProgramTemplate extends BaseReportTemplate<GenericProgramRep
         createAndAddMandatoryColumns(jasperReport);
         createAndAddProgramStatesColumns(jasperReport, report.getConfig());
         if (report.getConfig() != null) {
+            createAndAddExtraPatientIdentifierTypes(jasperReport, report.getConfig());
             createAndAddPatientAttributeColumns(jasperReport, report.getConfig());
             createAndAddProgramAttributeColumns(jasperReport, report.getConfig());
             createAndAddPatientAddressColumns(jasperReport, report.getConfig());
