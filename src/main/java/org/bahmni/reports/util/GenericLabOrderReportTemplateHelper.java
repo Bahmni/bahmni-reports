@@ -199,7 +199,7 @@ public class GenericLabOrderReportTemplateHelper {
         }
         List<String> conceptNamesWithDoubleQuote = new ArrayList<>();
         for (String conceptName : childConceptsAsList) {
-            conceptNamesWithDoubleQuote.add("\"" + conceptName + "\"");
+            conceptNamesWithDoubleQuote.add("\"" + conceptName.replace("'", "\\'") + "\"");
         }
         return StringUtils.join(conceptNamesWithDoubleQuote, ',');
     }

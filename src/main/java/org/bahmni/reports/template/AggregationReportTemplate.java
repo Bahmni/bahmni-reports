@@ -23,6 +23,7 @@ import org.bahmni.reports.util.CommonComponents;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.*;
@@ -81,7 +82,7 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
         }
 
         GenericDao genericDao = getReportToAggregate(aggregateReport);
-        ResultSet reportData = genericDao != null ? genericDao.getResultSet(connection, startDate, endDate, null) : null;
+        ResultSet reportData = genericDao != null ? genericDao.getResultSet(connection, startDate, endDate, new ArrayList<String>()) : null;
 
 
         reportHeading = reportData != null ? "Aggregation report for " + aggregateReport.getName() :

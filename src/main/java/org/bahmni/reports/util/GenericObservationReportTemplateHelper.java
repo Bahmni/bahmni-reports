@@ -250,7 +250,7 @@ public class GenericObservationReportTemplateHelper extends  GenericReportsHelpe
         }
         List<String> conceptNamesWithDoubleQuote = new ArrayList<>();
         for (String conceptName : childConceptsAsList) {
-            conceptNamesWithDoubleQuote.add("\"" + conceptName + "\"");
+            conceptNamesWithDoubleQuote.add("\"" + conceptName.replace("'", "\\'") + "\"");
         }
         return StringUtils.join(conceptNamesWithDoubleQuote, ',');
     }
