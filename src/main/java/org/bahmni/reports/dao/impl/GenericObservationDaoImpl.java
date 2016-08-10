@@ -38,6 +38,7 @@ public class GenericObservationDaoImpl implements GenericDao {
         ST sqlTemplate = new ST(sql, '#', '#');
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
+        sqlTemplate.add("ignoreEmptyValues", "Having Value is not null");
         if (report.getConfig() != null) {
             sqlTemplate.add("patientAttributes", constructPatientAttributeNamesToDisplay(report.getConfig()));
             sqlTemplate.add("patientAddresses", constructPatientAddressesToDisplay(report.getConfig()));
@@ -50,7 +51,12 @@ public class GenericObservationDaoImpl implements GenericDao {
             sqlTemplate.add("showProvider", report.getConfig().showProvider());
             sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(getVisitTypesToFilter(report.getConfig())));
             sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
+            if(!report.getConfig().isIgnoreEmptyValues()) {
+                sqlTemplate.remove("ignoreEmptyValues");
+                sqlTemplate.add("ignoreEmptyValues",  "");
+            }
         }
+
         sqlTemplate.add("applyDateRangeFor", getDateRangeFor(report.getConfig()));
 
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());

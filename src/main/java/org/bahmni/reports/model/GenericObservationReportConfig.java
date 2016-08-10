@@ -11,8 +11,16 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
     private List<String> programsToFilter;
     private List<String> conceptNamesToFilter;
     private boolean encounterPerRow = false;
+    private boolean ignoreEmptyValues = true;
     private List<String> visitTypesToFilter;
 
+    public boolean isIgnoreEmptyValues() {
+        return ignoreEmptyValues;
+    }
+
+    public void setIgnoreEmptyValues(boolean ignoreEmptyValues) {
+        this.ignoreEmptyValues = ignoreEmptyValues;
+    }
     public List<String> getVisitTypesToFilter() {
         return visitTypesToFilter;
     }
