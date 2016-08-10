@@ -6,6 +6,8 @@ SET @programAttributesSql = '#programAttributes#';
 SET @programNamesToFilterSql = '#programNamesToFilterSql#';
 SET @showAllStates = '#showAllStates#';
 SET @extraPatientIdentifierTypes = '#extraPatientIdentifierTypes#';
+SET @applyAgeGroup = '#ageGroupName#';
+
 
 SET @patientAttributeJoinSql = ' LEFT OUTER JOIN person_attribute pa ON p.person_id = pa.person_id AND pa.voided is false
   LEFT OUTER JOIN person_attribute_type pat ON pa.person_attribute_type_id = pat.person_attribute_type_id AND pat.retired is false
@@ -17,6 +19,11 @@ SET @programAttributesJoinSql = '  LEFT OUTER JOIN patient_program_attribute ppa
   LEFT OUTER JOIN concept_name pratfn ON prat.datatype like "%Concept%" AND ppa.value_reference = pratfn.concept_id AND pratfn.concept_name_type = "FULLY_SPECIFIED" AND pratfn.voided is false ';
 SET @patientAddressJoinSql = ' LEFT OUTER JOIN person_address paddress ON p.person_id = paddress.person_id AND paddress.voided is false ';
 SET @selectAllStatesSql = 'DATE_FORMAT(ps.start_date, "%d-%b-%Y") AS "Start Date", DATE_FORMAT(ps.end_date, "%d-%b-%Y") AS "End Date"';
+SET @ageGroupJoinSql = 'JOIN reporting_age_group rag ON DATE("#endDate#") BETWEEN (DATE_ADD(
+                     DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(
+                     DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
+                                                       AND rag.report_group_name = "#ageGroupName#"';
+SET @ageGroupSelectSql = 'rag.name AS "Age Group", rag.sort_order AS "Age Group Order"';
 
 SET @primaryIdentifierTypeUuid = NULL;
 SELECT property_value FROM global_property WHERE property = 'emr.primaryIdentifierType' into @primaryIdentifierTypeUuid;
@@ -34,6 +41,7 @@ SET @sql = CONCAT('SELECT
        ', IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')), '
        ', IF(@patientAddressesSql = '', '', CONCAT(@patientAddressesSql, '')), '
        ', IF(@programAttributesSql = '', '', CONCAT(@programAttributesSql, ',')), '
+       ',IF(@applyAgeGroup = '', '', CONCAT(@ageGroupSelectSql, ',')),'
        prog.name AS "Program Name",
        DATE_FORMAT(pprog.date_enrolled, "%d-%b-%Y") AS "Enrolled Date",
        DATE_FORMAT(pprog.date_completed, "%d-%b-%Y") AS "Completed Date",
@@ -53,6 +61,7 @@ FROM patient_program pprog
         'AND prog.name in (#programNamesToFilterSql#)'), '
   LEFT JOIN patient_state ps on ps.patient_program_id = pprog.patient_program_id AND ps.voided is FALSE
   ', IF(@showAllStates = 'true', '', 'AND end_date is NULL'), '
+  ',IF(@applyAgeGroup = '', '', @ageGroupJoinSql),'
   LEFT JOIN program_workflow_state pws on pws.program_workflow_state_id = ps.state AND pws.retired is FALSE
   LEFT JOIN concept_name stfname on stfname.concept_id = pws.concept_id AND stfname.concept_name_type = "FULLY_SPECIFIED" AND stfname.voided is FALSE
   LEFT JOIN concept_name stsname on stsname.concept_id = pws.concept_id AND stsname.concept_name_type = "SHORT" AND stsname.voided is FALSE

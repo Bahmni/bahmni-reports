@@ -10,6 +10,7 @@ public class GenericReportsConfig {
     private List<String> visitAttributes;
     private List<String> patientAddresses;
     private List<String> additionalPatientIdentifiers;
+    private String ageGroupName;
 
     public List<String> getExcludeColumns() {
         return excludeColumns;
@@ -57,5 +58,13 @@ public class GenericReportsConfig {
 
     public void setAdditionalPatientIdentifiers(List<String> additionalPatientIdentifiers) {
         this.additionalPatientIdentifiers = additionalPatientIdentifiers;
+    }
+
+    public String getAgeGroupName() {
+        return ageGroupName;
+    }
+
+    public void setAgeGroupName(String ageGroupName) {
+        this.ageGroupName = ageGroupName;
     }
 }

@@ -11,6 +11,7 @@ SET @dateRangeFilter = '#applyDateRangeFor#';
 SET @encounterPerRow = '#selectConceptNamesSql#';
 SET @selectConceptNamesSql = '#selectConceptNamesSql#';
 SET @showProvider = '#showProvider#';
+SET @applyAgeGroup = '#ageGroupName#';
 SET @visitTypesToFilterSql = '#visitTypesToFilter#';
 SET @extraPatientIdentifierTypes = '#extraPatientIdentifierTypes#';
 SET @visitAttributeJoinSql = ' LEFT OUTER JOIN visit_attribute va ON va.visit_id=v.visit_id AND va.voided is false
@@ -35,6 +36,13 @@ SET @providerJoinSql = '  JOIN provider pro ON pro.provider_id=ep.provider_id
   LEFT OUTER JOIN person_name provider_person ON provider_person.person_id = pro.person_id';
 SET @providerSelectSql = 'coalesce(pro.name, concat(provider_person.given_name, " ", provider_person.family_name)) AS "Provider"';
 
+SET @ageGroupJoinSql = 'JOIN reporting_age_group rag ON DATE("#endDate#") BETWEEN (DATE_ADD(
+                     DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(
+                     DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
+                                                       AND rag.report_group_name = "#ageGroupName#"';
+SET @ageGroupSelectSql = 'rag.name AS "Age Group", rag.sort_order AS "Age Group Order"';
+
+
 SET @primaryIdentifierTypeUuid = NULL;
 SELECT property_value FROM global_property WHERE property = 'emr.primaryIdentifierType' into @primaryIdentifierTypeUuid;
 
@@ -52,6 +60,7 @@ SET @sql = CONCAT('SELECT
   ',IF(@patientAddressesSql = '', '', CONCAT(@patientAddressesSql, '')),'
   ',IF(@visitAttributesSql = '', '', CONCAT(@visitAttributesSql, ',')),'
   ',IF(@encounterPerRow = '', '', CONCAT(@selectConceptNamesSql, ',')),'
+  ',IF(@applyAgeGroup = '', '', CONCAT(@ageGroupSelectSql, ',')),'
   l.name                                                        AS "Location name",
   DATE_FORMAT(v.date_started, "%d-%b-%Y")                       AS "Visit Start Date",
   DATE_FORMAT(v.date_stopped, "%d-%b-%Y")                       AS "Visit Stop Date",
@@ -76,6 +85,7 @@ FROM obs o
   JOIN encounter e ON o.encounter_id=e.encounter_id AND e.voided is false
   JOIN encounter_provider ep ON ep.encounter_id=e.encounter_id
   ',IF(@showProvider = '', '', @providerJoinSql),'
+  ',IF(@applyAgeGroup = '', '', @ageGroupJoinSql),'
   JOIN visit v ON v.visit_id=e.visit_id AND v.voided is false
   JOIN visit_type vt ON vt.visit_type_id=v.visit_type_id AND vt.retired is false
   LEFT OUTER JOIN location l ON e.location_id = l.location_id AND l.retired is false

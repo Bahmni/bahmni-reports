@@ -216,5 +216,89 @@
             "showTotalColumn": true,
             "showTotalRow": true
         }
+    },
+    "aggregatedReportForObservationsWithAgeGroup": {
+        "name": "Aggregated report for observations with age group",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "observations",
+                "config": {
+                    "ageGroupName": "Observation Age Group"
+                }
+            },
+            "rowGroups": [
+                "Age Group"
+            ],
+            "columnGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient Identifier"
+            ]
+        }
+    },
+    "AggregatedReportForLabOrdersWithAgeGroup": {
+        "name": "Aggregated report for labOrders with age group",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "labOrders",
+                "config": {
+                    "ageGroupName": "Observation Age Group"
+                }
+            },
+            "rowGroups": [
+                "Age Group"
+            ],
+            "columnGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient Identifier"
+            ]
+        }
+    },
+    "aggregatedReportForVisitsWithAgeGroup": {
+        "name": "Aggregated report for visits with age group",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "visits",
+                "config": {
+                    "ageGroupName": "Observation Age Group"
+                }
+            },
+            "rowGroups": [
+                "Age Group"
+            ],
+            "columnGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient Identifier"
+            ]
+        }
+    },
+    "AggregatedReportForProgramsWithAgeGroup": {
+        "name": "Aggregated report for programs with age group",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "programs",
+                "config": {
+                    "ageGroupName": "Observation Age Group"
+                }
+            },
+            "rowGroups": [
+                "Age Group"
+            ],
+            "columnGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient Identifier"
+            ]
+        }
     }
 }

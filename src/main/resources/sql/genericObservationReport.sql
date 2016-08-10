@@ -11,6 +11,7 @@ SET @dateRangeFilter = '#applyDateRangeFor#';
 SET @showProvider = '#showProvider#';
 SET @visitTypesToFilterSql = '#visitTypesToFilter#';
 SET @extraPatientIdentifierTypes = '#extraPatientIdentifierTypes#';
+SET @applyAgeGroup = '#ageGroupName#';
 SET @visitAttributeJoinSql = ' LEFT OUTER JOIN visit_attribute va ON va.visit_id=v.visit_id AND va.voided is false
   LEFT OUTER JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.retired is false';
 SET @patientAttributeJoinSql = ' LEFT OUTER JOIN person_attribute pa ON p.person_id = pa.person_id AND pa.voided is false
@@ -31,6 +32,11 @@ SET @dateRangeSql = IF(@dateRangeFilter = 'visitStartDate', ' AND cast(v.date_st
 SET @providerJoinSql = '  JOIN provider pro ON pro.provider_id=ep.provider_id
   LEFT OUTER JOIN person_name provider_person ON provider_person.person_id = pro.person_id';
 SET @providerSelectSql = 'coalesce(pro.name, concat(provider_person.given_name, " ", provider_person.family_name)) AS "Provider"';
+SET @ageGroupJoinSql = 'JOIN reporting_age_group rag ON DATE("#endDate#") BETWEEN (DATE_ADD(
+                     DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(
+                     DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
+                                                       AND rag.report_group_name = "#ageGroupName#"';
+SET @ageGroupSelectSql = 'rag.name AS "Age Group", rag.sort_order AS "Age Group Order"';
 
 SET @primaryIdentifierTypeUuid = NULL;
 SELECT property_value FROM global_property WHERE property = 'emr.primaryIdentifierType' into @primaryIdentifierTypeUuid;
@@ -48,6 +54,7 @@ SET @sql = CONCAT('SELECT
   ',IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')),'
   ',IF(@patientAddressesSql = '', '', CONCAT(@patientAddressesSql, '')),'
   ',IF(@visitAttributesSql = '', '', CONCAT(@visitAttributesSql, ',')),'
+  ',IF(@applyAgeGroup = '', '', CONCAT(@ageGroupSelectSql, ',')),'
   l.name                                                        AS "Location name",
   coalesce(obs_scn.name, obs_fscn.name)                         AS "Concept Name",
   coalesce(o.value_numeric, o.value_text, o.value_datetime, coded_scn.name, coded_fscn.name) AS "Value",
@@ -85,6 +92,7 @@ FROM obs o
   JOIN encounter e ON o.encounter_id=e.encounter_id AND e.voided is false
   JOIN encounter_provider ep ON ep.encounter_id=e.encounter_id
   ',IF(@showProvider = '', '', @providerJoinSql),'
+  ',IF(@applyAgeGroup = '', '', @ageGroupJoinSql),'
   JOIN visit v ON v.visit_id=e.visit_id AND v.voided is false
   JOIN visit_type vt ON vt.visit_type_id=v.visit_type_id AND vt.retired is false
   LEFT OUTER JOIN location l ON e.location_id = l.location_id AND l.retired is false

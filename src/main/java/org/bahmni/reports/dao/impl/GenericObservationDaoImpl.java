@@ -50,6 +50,7 @@ public class GenericObservationDaoImpl implements GenericDao {
             sqlTemplate.add("showProvider", report.getConfig().showProvider());
             sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(getVisitTypesToFilter(report.getConfig())));
             sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
+            sqlTemplate.add("ageGroupName", report.getConfig().getAgeGroupName());
         }
         sqlTemplate.add("applyDateRangeFor", getDateRangeFor(report.getConfig()));
 

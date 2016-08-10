@@ -37,6 +37,8 @@ public class GenericProgramDaoImpl implements GenericDao {
             sqlTemplate.add("showAllStates", config.isShowAllStates());
             sqlTemplate.add("programNamesToFilterSql", constructProgramNamesString(getProgramNamesToFilter(config)));
             sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
+            sqlTemplate.add("ageGroupName", report.getConfig().getAgeGroupName());
+
         }
         sqlTemplate.add("applyDateRangeFor", getDateRangeFor(config));
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());

@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseContextSensitiveTest;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -144,7 +145,10 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     protected CsvReport fetchCsvReport(String reportName, String startDate, String endDate, boolean ignoreStatusCheck) throws Exception {
         MvcResult mvcResult = fetchMvcResult(reportName, startDate, endDate, "text/csv", ignoreStatusCheck);
-        String result = mvcResult.getResponse().getContentAsString();
+        String enc = "utf-8";
+        MockHttpServletResponse response = mvcResult.getResponse();
+        response.setCharacterEncoding(enc);
+        String result = response.getContentAsString();
         return CsvReport.getReport(result);
     }
 

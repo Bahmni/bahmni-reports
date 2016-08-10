@@ -36,6 +36,7 @@ public class GenericVisitDaoImpl implements GenericDao {
             sqlTemplate.add("visitAttributes", constructVisitAttributeNamesString(getVisitAttributes(report.getConfig())));
             sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(getVisitTypesToFilter(report.getConfig())));
             sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
+            sqlTemplate.add("ageGroupName", report.getConfig().getAgeGroupName());
         }
         sqlTemplate.add("applyDateRangeFor", getDateRangeFor(report.getConfig()));
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());

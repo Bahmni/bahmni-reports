@@ -36,7 +36,7 @@
 
     <!--Data for prog1-->
     
-    <person person_id="1000" gender="F" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="person-uuid-1000"/>
+    <person person_id="1000" gender="F" dead="false" creator="1" birthdate="2008-08-15" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="person-uuid-1000"/>
     <person_name person_name_id="1000" preferred="true" person_id="1000" prefix="Mr." given_name="Generic" middle_name="" family_name="Program1" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="person-name-uuid-1000"/>
 
     <person_address person_address_id="1000" person_id="1000" preferred="true" city_village="Ramgarh" state_province="Madhya Pradesh" creator="1" date_created="2006-11-24 10:50:16.0" voided="false" void_reason="" county_district="Dindori" address3="Dindori"/>
@@ -105,7 +105,7 @@
 
     <!--Data for prog2-->
 
-    <person person_id="1001" gender="F" dead="false" creator="1" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="person-uuid-1001"/>
+    <person person_id="1001" gender="F" dead="false" creator="1" birthdate="1994-08-15" birthdate_estimated="0" date_created="2008-08-15 15:46:47.0" voided="false" uuid="person-uuid-1001"/>
     <person_name person_name_id="1001" preferred="true" person_id="1001" prefix="Mr." given_name="Generic" middle_name="" family_name="Program2" family_name_suffix="Esq." creator="1" date_created="2005-09-22 00:00:00.0" voided="false" void_reason="" uuid="person-name-uuid-1001"/>
 
     <person_address person_address_id="1001" person_id="1001" preferred="true" city_village="Hyderabad" state_province="Andhra Pradesh" creator="1" date_created="2006-11-24 10:50:16.0" voided="false" void_reason="" county_district="Telangana" address3="Address Three"/>

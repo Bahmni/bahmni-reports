@@ -8,6 +8,8 @@ SET @filterByConceptValues = '#conceptValuesToFilter##numericRangesFilterSql#';
 SET @filterByPrograms = '#programsToFilter#';
 SET @showProvider = '#showProvider#';
 SET @extraPatientIdentifierTypes = '#extraPatientIdentifierTypes#';
+SET @applyAgeGroup = '#ageGroupName#';
+
 SET @visitAttributeJoinSql = ' LEFT JOIN visit_attribute va ON va.visit_id=v.visit_id AND va.voided is false
   LEFT JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.retired is false';
 SET @patientAttributeJoinSql = ' LEFT JOIN person_attribute pa ON p.person_id = pa.person_id AND pa.voided is false
@@ -26,6 +28,11 @@ SET @filterByProgramsSql = '  AND program.name IN (#programsToFilter#)';
 SET @providerJoinSql = '  JOIN provider pro ON pro.provider_id=ep.provider_id
   LEFT JOIN person_name provider_person ON provider_person.person_id = pro.person_id';
 SET @providerSelectSql = 'coalesce(pro.name, concat(provider_person.given_name, " ", provider_person.family_name)) AS "Provider"';
+SET @ageGroupJoinSql = 'JOIN reporting_age_group rag ON DATE("#endDate#") BETWEEN (DATE_ADD(
+                     DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(
+                     DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
+                                                       AND rag.report_group_name = "#ageGroupName#"';
+SET @ageGroupSelectSql = 'rag.name AS "Age Group", rag.sort_order AS "Age Group Order"';
 
 SET @programSelectSql = 'program.name AS "Program Name"';
 
@@ -85,6 +92,7 @@ SET @sql = CONCAT('SELECT * FROM (SELECT
   ', IF(@patientAddressesSql = '', '', CONCAT(@patientAddressesSql, '')), '
   ', IF(@visitAttributesSql = '', '', CONCAT(@visitAttributesSql, ',')), '
   ', IF(@filterByPrograms = '', '', CONCAT(@programSelectSql, ',')), '
+  ',IF(@applyAgeGroup = '', '', CONCAT(@ageGroupSelectSql, ',')),'
   date(ord.date_created)                                        AS "Test Order Date",
   ord.date_created            AS order_date_created,
   coalesce(test_scn.name, test_fscn.name) AS "Test Name",
@@ -121,6 +129,7 @@ FROM (SELECT * FROM orders ord WHERE cast(ord.date_created AS DATE) BETWEEN "#st
   LEFT JOIN concept_name coded_scn on coded_scn.concept_id = o.value_coded AND coded_scn.concept_name_type="SHORT" AND coded_scn.voided is false
   JOIN person p ON p.person_id = ord.patient_id AND p.voided is false
   JOIN patient_identifier pi ON p.person_id = pi.patient_id AND pi.voided is false
+',IF(@applyAgeGroup = '', '', @ageGroupJoinSql),'
   JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id AND pit.retired is false
   JOIN person_name pn ON pn.person_id = p.person_id AND pn.voided is false
   JOIN encounter e ON ord.encounter_id=e.encounter_id AND e.voided is false
