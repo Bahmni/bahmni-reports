@@ -416,5 +416,33 @@
                 "Pan Id"
             ]
         }
+    },
+    "observationReportWithEncounterPerRow": {
+        "name": "Observation report with encounter per row",
+        "type": "observations",
+        "config": {
+            "encounterPerRow": true,
+            "conceptNamesToFilter": [
+                "History"
+            ]
+        }
+    },
+    "observationReportWithDefaultConceptNameDisplayConfig": {
+        "name": "Observation report with default concept name format",
+        "type": "observations"
+    },
+    "observationReportWithFullySpecifiedConceptNameDisplayConfig": {
+        "name": "Observation report with fully specified concept name format",
+        "type": "observations",
+        "config": {
+            "conceptNameDisplayFormat": "fully_specified"
+        }
+    },
+    "observationReportWithShortConceptNameDisplayConfig": {
+        "name": "Observation report with short concept name format",
+        "type": "observations",
+        "config": {
+            "conceptNameDisplayFormat": "short"
+        }
     }
 }

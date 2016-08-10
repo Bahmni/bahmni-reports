@@ -12,6 +12,7 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
     private List<String> conceptNamesToFilter;
     private boolean encounterPerRow = false;
     private List<String> visitTypesToFilter;
+    private String conceptNameDisplayFormat;
 
     public List<String> getVisitTypesToFilter() {
         return visitTypesToFilter;
@@ -84,5 +85,13 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
 
     public void setEncounterPerRow(boolean encounterPerRow) {
         this.encounterPerRow = encounterPerRow;
+    }
+
+    public String getConceptNameDisplayFormat() {
+        return conceptNameDisplayFormat;
+    }
+
+    public void setConceptNameDisplayFormat(String conceptNameDisplayFormat) {
+        this.conceptNameDisplayFormat = conceptNameDisplayFormat;
     }
 }

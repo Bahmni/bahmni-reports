@@ -16,7 +16,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
@@ -175,19 +174,17 @@ public class GenericObservationReportTemplateHelper extends  GenericReportsHelpe
                 jasperReport.columns(patientId, visitId, encounterId);
             } else {
                 TextColumnBuilder<Long> conceptId = col.column("Concept Id", "Concept Id", type.longType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
-                TextColumnBuilder<String> conceptShortName = col.column("Concept Short Name", "Concept Short Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-                TextColumnBuilder<String> conceptFullName = col.column("Concept Full Name", "Concept Full Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
                 TextColumnBuilder<Long> obsId = col.column("Obs Id", "Obs Id", type.longType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
                 TextColumnBuilder<Long> obsGroupId = col.column("Obs Group Id", "Obs Group Id", type.longType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
                 TextColumnBuilder<Long> orderId = col.column("Order Id", "Order Id", type.longType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
-                jasperReport.columns(patientId, visitId, encounterId, obsId, obsGroupId, orderId, conceptId, conceptFullName, conceptShortName);
+                jasperReport.columns(patientId, visitId, encounterId, obsId, obsGroupId, orderId, conceptId);
             }
         }
     }
 
     public static List<String> fetchLeafConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
         List<String> conceptNamesToFilter = getConceptNamesToFilter(report.getConfig());
-        if (CollectionUtils.isEmpty(conceptNamesToFilter) || !report.getConfig().isEncounterPerRow()) {
+        if (CollectionUtils.isEmpty(conceptNamesToFilter)) {
             return new ArrayList<>();
         }
         HttpClient httpClient = report.getHttpClient();
@@ -244,12 +241,15 @@ public class GenericObservationReportTemplateHelper extends  GenericReportsHelpe
 
     public static String constructConceptNamesToFilter(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
         List<String> conceptNamesToFilter = getConceptNamesToFilter(report.getConfig());
-        List<String> childConceptsAsList = fetchChildConceptsAsList(conceptNamesToFilter, report, bahmniReportsProperties);
-        if (CollectionUtils.isEmpty(childConceptsAsList)) {
+        List<String> concepts = fetchChildConceptsAsList(conceptNamesToFilter, report, bahmniReportsProperties);
+        if (report.getConfig().isEncounterPerRow()) {
+            concepts = fetchLeafConceptsAsList(report, bahmniReportsProperties);
+        }
+        if (CollectionUtils.isEmpty(concepts)) {
             return null;
         }
         List<String> conceptNamesWithDoubleQuote = new ArrayList<>();
-        for (String conceptName : childConceptsAsList) {
+        for (String conceptName : concepts) {
             conceptNamesWithDoubleQuote.add("\"" + conceptName.replace("'", "\\'") + "\"");
         }
         return StringUtils.join(conceptNamesWithDoubleQuote, ',');
@@ -291,4 +291,17 @@ public class GenericObservationReportTemplateHelper extends  GenericReportsHelpe
         return StringUtils.join(parts, ',');
     }
 
+    public static String getConceptNameFormatSql(GenericObservationReportConfig config) {
+        String defaultFormat = "CONCAT(coalesce(obs_fscn.name, \"\"), \"(\", coalesce(obs_scn.name, \"\"), \")\")";
+        if (config == null || config.getConceptNameDisplayFormat() == null)
+            return defaultFormat;
+        switch (config.getConceptNameDisplayFormat()) {
+            case "fully_specified":
+                return "obs_fscn.name";
+            case "short":
+                return "obs_scn.name";
+            default:
+                return defaultFormat;
+        }
+    }
 }

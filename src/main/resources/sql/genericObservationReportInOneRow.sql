@@ -88,9 +88,9 @@ FROM obs o
   ',IF(@applyAgeGroup = '', '', @ageGroupJoinSql),'
   JOIN visit v ON v.visit_id=e.visit_id AND v.voided is false
   JOIN visit_type vt ON vt.visit_type_id=v.visit_type_id AND vt.retired is false
-  LEFT OUTER JOIN location l ON e.location_id = l.location_id AND l.retired is false
-  LEFT OUTER JOIN obs parent_obs ON parent_obs.obs_id=o.obs_group_id
-  LEFT OUTER JOIN concept_name parent_cn ON parent_cn.concept_id=parent_obs.concept_id AND parent_cn.concept_name_type="FULLY_SPECIFIED"
+  LEFT JOIN location l ON e.location_id = l.location_id AND l.retired is false
+  LEFT JOIN obs parent_obs ON parent_obs.obs_id=o.obs_group_id
+  LEFT JOIN concept_name parent_cn ON parent_cn.concept_id=parent_obs.concept_id AND parent_cn.concept_name_type="FULLY_SPECIFIED"
   LEFT JOIN concept_name coded_fscn on coded_fscn.concept_id = o.value_coded AND coded_fscn.concept_name_type="FULLY_SPECIFIED" AND coded_fscn.voided is false
   LEFT JOIN concept_name coded_scn on coded_scn.concept_id = o.value_coded AND coded_fscn.concept_name_type="SHORT" AND coded_scn.voided is false
   ',IF(@visitAttributesSql = '', '', @visitAttributeJoinSql),'

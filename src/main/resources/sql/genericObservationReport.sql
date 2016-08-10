@@ -56,7 +56,7 @@ SET @sql = CONCAT('SELECT
   ',IF(@visitAttributesSql = '', '', CONCAT(@visitAttributesSql, ',')),'
   ',IF(@applyAgeGroup = '', '', CONCAT(@ageGroupSelectSql, ',')),'
   l.name                                                        AS "Location name",
-  coalesce(obs_scn.name, obs_fscn.name)                         AS "Concept Name",
+  #concept_name_sql#                         AS "Concept Name",
   coalesce(o.value_numeric, o.value_text, o.value_datetime, coded_scn.name, coded_fscn.name) AS "Value",
   o.obs_datetime                                                AS "Observation Datetime",
   DATE_FORMAT(o.obs_datetime, "%d-%b-%Y")                       AS "Observation Date",
@@ -68,8 +68,6 @@ SET @sql = CONCAT('SELECT
   o.obs_id                                                      AS "Obs Id",
   o.obs_group_id                                                AS "Obs Group Id",
   o.concept_id                                                  AS "Concept Id",
-  obs_fscn.name                                                 AS "Concept Full Name",
-  obs_scn.name                                                  AS "Concept Short Name",
   o.person_id                                                   AS "Patient Id",
   o.encounter_id                                                AS "Encounter Id",
   o.order_id                                                    AS "Order Id",

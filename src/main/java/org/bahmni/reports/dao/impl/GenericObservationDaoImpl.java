@@ -52,6 +52,7 @@ public class GenericObservationDaoImpl implements GenericDao {
             sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
             sqlTemplate.add("ageGroupName", report.getConfig().getAgeGroupName());
         }
+        sqlTemplate.add("concept_name_sql", getConceptNameFormatSql(report.getConfig()));
         sqlTemplate.add("applyDateRangeFor", getDateRangeFor(report.getConfig()));
 
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());
