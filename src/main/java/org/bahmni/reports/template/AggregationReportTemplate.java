@@ -76,14 +76,9 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
             crosstab.columnGroups(columnGroup);
         }
 
-        if(distinctGroups.size()==1) {
+        for (String distinctgroup : distinctGroups) {
             crosstab.measures(
-                    ctab.measure("", distinctGroups.get(0), String.class, Calculation.DISTINCT_COUNT).setTitleStyle(stl.style().setFontSize(0)));
-        } else {
-            for (String distinctgroup : distinctGroups) {
-                crosstab.measures(
-                        ctab.measure(distinctgroup, distinctgroup, String.class, Calculation.DISTINCT_COUNT));
-            }
+                    ctab.measure("", distinctgroup, String.class, Calculation.DISTINCT_COUNT));
         }
 
         GenericDao genericDao = getReportToAggregate(aggregateReport);

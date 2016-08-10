@@ -29,9 +29,9 @@ public class AggregationReportTest extends BaseIntegrationTest {
         CsvReport report = fetchCsvReport(reportName, "2014-08-01", "2016-08-30");
         assertEquals(3, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
+        assertEquals(3, report.rowsCount());
         assertEquals("F M", report.getRowAsString(1, " "));
-        assertEquals("1 1", report.getRowAsString(2, " "));
+        assertEquals("1 1", report.getRowAsString(3, " "));
     }
 
 
@@ -48,9 +48,10 @@ public class AggregationReportTest extends BaseIntegrationTest {
         CsvReport report = fetchCsvReport(reportName, "2014-08-01", "2016-08-30");
         assertEquals(2, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
+        assertEquals(3, report.rowsCount());
         assertEquals("F", report.getRowAsString(1, " "));
-        assertEquals("1", report.getRowAsString(2, " "));
+        assertEquals("", report.getRowAsString(2, " "));
+        assertEquals("1", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -60,10 +61,11 @@ public class AggregationReportTest extends BaseIntegrationTest {
         CsvReport report = fetchCsvReport(reportName, "2014-08-01", "2016-08-30");
         assertEquals(4, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(3, report.rowsCount());
+        assertEquals(4, report.rowsCount());
         assertEquals("F M", report.getRowAsString(1, " "));
-        assertEquals("1000 1 0", report.getRowAsString(2, " "));
-        assertEquals("1001 0 1", report.getRowAsString(3, " "));
+        assertEquals("", report.getRowAsString(2, " "));
+        assertEquals("1000 1 0", report.getRowAsString(3, " "));
+        assertEquals("1001 0 1", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -73,10 +75,11 @@ public class AggregationReportTest extends BaseIntegrationTest {
         CsvReport report = fetchCsvReport(reportName, "2014-08-01", "2016-08-30");
         assertEquals(3, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(3, report.rowsCount());
+        assertEquals(4, report.rowsCount());
         assertEquals("F M", report.getRowAsString(1, " "));
         assertEquals("1000 1001", report.getRowAsString(2, " "));
-        assertEquals("2 1", report.getRowAsString(3, " "));
+        assertEquals("", report.getRowAsString(3, " "));
+        assertEquals("3 2", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -86,10 +89,11 @@ public class AggregationReportTest extends BaseIntegrationTest {
         CsvReport report = fetchCsvReport(reportName, "2014-08-01", "2017-08-30");
         assertEquals(3, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(3, report.rowsCount());
+        assertEquals(4, report.rowsCount());
         assertEquals("F M", report.getRowAsString(1, " "));
-        assertEquals("Initial HIV Clinic Visit 1 1", report.getRowAsString(2, " "));
-        assertEquals("Return TB Clinic Visit 1 0", report.getRowAsString(3, " "));
+        assertEquals("", report.getRowAsString(2, " "));
+        assertEquals("Initial HIV Clinic Visit 1 1", report.getRowAsString(3, " "));
+        assertEquals("Return TB Clinic Visit 1 0", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -100,9 +104,10 @@ public class AggregationReportTest extends BaseIntegrationTest {
         CsvReport report = fetchCsvReport(reportName, "2016-04-20", "2016-05-01");
         assertEquals(2, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
+        assertEquals(3, report.rowsCount());
         assertEquals("F", report.getRowAsString(1, " "));
-        assertEquals("HIV PROGRAM 2", report.getRowAsString(2, " "));
+        assertEquals("", report.getRowAsString(2, " "));
+        assertEquals("HIV PROGRAM 2", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -113,9 +118,10 @@ public class AggregationReportTest extends BaseIntegrationTest {
         CsvReport report = fetchCsvReport(reportName, "2016-04-20", "2016-05-01");
         assertEquals(3, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
+        assertEquals(3, report.rowsCount());
         assertEquals("F Total", report.getRowAsString(1, " "));
-        assertEquals("HIV PROGRAM 2 2", report.getRowAsString(2, " "));
+        assertEquals("", report.getRowAsString(2, " "));
+        assertEquals("HIV PROGRAM 2 2", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -126,10 +132,11 @@ public class AggregationReportTest extends BaseIntegrationTest {
         CsvReport report = fetchCsvReport(reportName, "2016-04-20", "2016-05-01");
         assertEquals(2, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(3, report.rowsCount());
+        assertEquals(4, report.rowsCount());
         assertEquals("F", report.getRowAsString(1, " "));
-        assertEquals("HIV PROGRAM 2", report.getRowAsString(2, " "));
-        assertEquals("Total 2", report.getRowAsString(3, " "));
+        assertEquals("", report.getRowAsString(2, " "));
+        assertEquals("HIV PROGRAM 2", report.getRowAsString(3, " "));
+        assertEquals("Total 2", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -140,10 +147,10 @@ public class AggregationReportTest extends BaseIntegrationTest {
         CsvReport report = fetchCsvReport(reportName, "2016-04-20", "2016-05-01");
         assertEquals(3, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(3, report.rowsCount());
+        assertEquals(4, report.rowsCount());
         assertEquals("F Total", report.getRowAsString(1, " "));
-        assertEquals("HIV PROGRAM 2 2", report.getRowAsString(2, " "));
-        assertEquals("Total 2 2", report.getRowAsString(3, " "));
+        assertEquals("", report.getRowAsString(2, " "));
+        assertEquals("HIV PROGRAM 2 2", report.getRowAsString(3, " "));
+        assertEquals("Total 2 2", report.getRowAsString(4, " "));
     }
-
 }
