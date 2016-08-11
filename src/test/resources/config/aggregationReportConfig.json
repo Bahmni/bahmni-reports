@@ -291,10 +291,10 @@
                 }
             },
             "rowGroups": [
-                "Observation Age Group"
+                "Gender"
             ],
             "columnGroups": [
-                "Gender"
+                "Observation Age Group"
             ],
             "distinctGroups": [
                 "Patient Identifier"

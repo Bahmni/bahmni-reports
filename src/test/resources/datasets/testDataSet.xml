@@ -131,7 +131,7 @@
     <program_workflow_state program_workflow_state_id="4" program_workflow_id="2" concept_id="14" initial="false" terminal="false" creator="1" date_created="2008-08-15 17:04:02.0" retired="false" changed_by="1" date_changed="2008-08-15 17:04:50.0" uuid="0d5f1bb4-2edb-4dd1-8d9f-34489bb4d9ea"/>
     <program_workflow_state program_workflow_state_id="5" program_workflow_id="2" concept_id="17" initial="false" terminal="false" creator="1" date_created="2008-08-15 17:04:50.0" retired="false" uuid="860b3a13-d4b1-4f0a-b526-278652fa1809"/>
     <!--Create Age Group-->
-    <reporting_age_group id="1000" name="≤ 10 Years" report_group_name="Observation Age Group" min_years="0" max_years="10" sort_order="1"/>
-    <reporting_age_group id="1001" name="> 10 Years" report_group_name="Observation Age Group" min_years="11" max_years="200" sort_order="2"/>
+    <reporting_age_group id="1000" name="≤ 10 Years" report_group_name="Observation Age Group" min_years="0" max_years="10" sort_order="2"/>
+    <reporting_age_group id="1001" name="> 10 Years" report_group_name="Observation Age Group" min_years="11" max_years="200" sort_order="1"/>
     <!--End of Create Age Group-->
 </dataset>

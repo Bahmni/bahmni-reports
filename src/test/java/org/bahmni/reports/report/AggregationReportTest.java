@@ -202,11 +202,10 @@ public class AggregationReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(2, report.columnsCount());
+        assertEquals(3, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("F", report.getRowAsString(1, " "));
-        assertEquals("> 10 Years 1", report.getRowAsString(2, " "));
-        assertEquals("≤ 10 Years 1", report.getRowAsString(3, " "));
+        assertEquals("> 10 Years ≤ 10 Years", report.getRowAsString(1, " "));
+        assertEquals("F 1 1", report.getRowAsString(3, " "));
     }
 }

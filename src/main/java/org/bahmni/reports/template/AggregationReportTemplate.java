@@ -5,10 +5,7 @@ import net.sf.dynamicreports.report.builder.crosstab.CrosstabBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabColumnGroupBuilder;
 import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
-import net.sf.dynamicreports.report.constant.Calculation;
-import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import net.sf.dynamicreports.report.constant.PageType;
-import net.sf.dynamicreports.report.constant.WhenNoDataType;
+import net.sf.dynamicreports.report.constant.*;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.dao.GenericDao;
 import org.bahmni.reports.dao.impl.GenericLabOrderDaoImpl;
@@ -16,6 +13,7 @@ import org.bahmni.reports.dao.impl.GenericObservationDaoImpl;
 import org.bahmni.reports.dao.impl.GenericProgramDaoImpl;
 import org.bahmni.reports.dao.impl.GenericVisitDaoImpl;
 import org.bahmni.reports.model.AggregationReportConfig;
+import org.bahmni.reports.model.GenericReportsConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
@@ -64,16 +62,23 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
         for (String row : rowGroups) {
-            CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup(row, String.class)
-                    .setShowTotal(config.getShowTotalRow());
-            crosstab.rowGroups(rowGroup);
-
+            if (applyAgeGroup(row, config)) {
+                createAgeGroupRows(row, config, crosstab);
+            } else {
+                CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup(row, String.class)
+                        .setShowTotal(config.getShowTotalRow());
+                crosstab.rowGroups(rowGroup);
+            }
         }
 
         for (String column : columnGroups) {
-            CrosstabColumnGroupBuilder<String> columnGroup = ctab.columnGroup(column, String.class)
-                    .setShowTotal(config.getShowTotalColumn());
-            crosstab.columnGroups(columnGroup);
+            if (applyAgeGroup(column, config)) {
+                createAgeGroupColumns(column, config, crosstab);
+            } else {
+                CrosstabColumnGroupBuilder<String> columnGroup = ctab.columnGroup(column, String.class)
+                        .setShowTotal(config.getShowTotalColumn());
+                crosstab.columnGroups(columnGroup);
+            }
         }
 
         if(distinctGroups.size()==1) {
@@ -91,7 +96,7 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
 
 
         reportHeading = reportData != null ? "Aggregation report for " + aggregateReport.getName() :
-                                             "Data is not available for this Date Range";
+                "Data is not available for this Date Range";
 
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setFontSize(20);
         jasperReport.addTitle(cmp.horizontalList()
@@ -105,6 +110,34 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
 
         JasperReportBuilder jasperReportBuilder = reportData != null ? jasperReport.setDataSource(reportData).summary(crosstab) : jasperReport;
         return new BahmniReportBuilder(jasperReportBuilder);
+    }
+
+    private void createAgeGroupColumns(String column, AggregationReportConfig config, CrosstabBuilder crosstab) {
+        CrosstabColumnGroupBuilder<Integer> sortOrderGroup = ctab.columnGroup("Age Group Order", Integer.class)
+                .setShowTotal(config.getShowTotalColumn())
+                .setHeaderStyle(stl.style().setFontSize(0))
+                .setOrderType(OrderType.ASCENDING);
+        CrosstabColumnGroupBuilder<String> columnGroup = ctab.columnGroup(column, String.class)
+                .setShowTotal(false);
+        crosstab.columnGroups(sortOrderGroup, columnGroup);
+    }
+
+    private void createAgeGroupRows(String row, AggregationReportConfig config, CrosstabBuilder crosstab) {
+        CrosstabRowGroupBuilder<Integer> sortOrderGroup = ctab.rowGroup("Age Group Order", Integer.class)
+                .setShowTotal(config.getShowTotalRow())
+                .setHeaderWidth(0)
+                .setOrderType(OrderType.ASCENDING);
+        CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup(row, String.class)
+                .setShowTotal(false);
+        crosstab.rowGroups(sortOrderGroup, rowGroup);
+    }
+
+    private boolean applyAgeGroup(String row, AggregationReportConfig config) {
+        if (config.getReport().getConfig() == null) {
+            return false;
+        }
+        GenericReportsConfig genericReportsConfig = (GenericReportsConfig) config.getReport().getConfig();
+        return row.equals(genericReportsConfig.getAgeGroupName());
     }
 
 
