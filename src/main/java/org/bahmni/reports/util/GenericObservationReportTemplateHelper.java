@@ -60,17 +60,6 @@ public class GenericObservationReportTemplateHelper {
         return config.getProgramsToFilter() != null ? config.getProgramsToFilter() : new ArrayList<String>();
     }
 
-    public static String constructPatientAddressesToDisplay(GenericObservationReportConfig config) {
-        List<String> patientAddresses = config.getPatientAddresses();
-        StringBuilder stringBuilder = new StringBuilder();
-        if (patientAddresses != null) {
-            for (String address : patientAddresses) {
-                stringBuilder.append("paddress").append(".").append(address).append(", ");
-            }
-        }
-        return stringBuilder.toString();
-    }
-
     public static String constructLocationTagsToFilter(GenericObservationReportConfig config) {
         List<String> locationTagsToFilter = getLocationTagsToFilter(config);
         List<String> parts = new ArrayList<>();

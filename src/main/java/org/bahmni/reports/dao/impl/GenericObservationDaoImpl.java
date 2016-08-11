@@ -17,12 +17,12 @@ import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.con
 import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructConceptNameSelectSqlIfShowInOneRow;
 import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructConceptNamesToFilter;
 import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructLocationTagsToFilter;
-import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructPatientAddressesToDisplay;
 import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructProgramsString;
 import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructVisitTypesString;
 import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.getConceptNameFormatSql;
 import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.getDateRangeFor;
 import static org.bahmni.reports.util.GenericReportsHelper.constructExtraPatientIdentifiersToFilter;
+import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAddressesToDisplay;
 import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAttributeNamesToDisplay;
 import static org.bahmni.reports.util.GenericReportsHelper.constructVisitAttributeNamesToDisplay;
 

@@ -12,11 +12,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
-import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.constructPatientAddresses;
 import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.constructProgramAttributeNamesString;
 import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.constructProgramNamesString;
 import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.getDateRangeFor;
 import static org.bahmni.reports.util.GenericReportsHelper.constructExtraPatientIdentifiersToFilter;
+import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAddressesToDisplay;
 import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAttributeNamesToDisplay;
 
 public class GenericProgramDaoImpl implements GenericDao {
@@ -36,7 +36,7 @@ public class GenericProgramDaoImpl implements GenericDao {
         GenericProgramReportConfig config = report.getConfig();
         if (config != null) {
             sqlTemplate.add("patientAttributes", constructPatientAttributeNamesToDisplay(config));
-            sqlTemplate.add("patientAddresses", constructPatientAddresses(config.getPatientAddresses()));
+            sqlTemplate.add("patientAddresses", constructPatientAddressesToDisplay(config));
             sqlTemplate.add("programAttributes", constructProgramAttributeNamesString(config.getProgramAttributes()));
             sqlTemplate.add("showAllStates", config.isShowAllStates());
             sqlTemplate.add("programNamesToFilterSql", constructProgramNamesString(config.getProgramNamesToFilter()));

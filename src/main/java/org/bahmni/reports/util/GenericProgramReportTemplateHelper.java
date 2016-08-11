@@ -16,17 +16,6 @@ import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 
 public class GenericProgramReportTemplateHelper {
 
-
-    public static String constructPatientAddresses(List<String> patientAddresses) {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (patientAddresses != null) {
-            for (String address : patientAddresses) {
-                stringBuilder.append("paddress").append(".").append(address).append(", ");
-            }
-        }
-        return stringBuilder.toString();
-    }
-
     public static String constructProgramAttributeNamesString(List<String> programAttributes) {
         List<String> parts = new ArrayList<>();
         String helperString = "GROUP_CONCAT(DISTINCT(IF(prat.name = \\'%s\\', IF(prat.datatype = \\'org.bahmni.module.bahmnicore.customdatatype.datatype.CodedConceptDatatype\\',coalesce(pratsn.name, pratfn.name),ppa.value_reference), NULL))) AS \\'%s\\'";

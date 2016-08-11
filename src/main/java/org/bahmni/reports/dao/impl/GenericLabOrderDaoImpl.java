@@ -16,9 +16,9 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.conceptValuesToFilter;
 import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.constructConceptNamesToFilter;
 import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.constructNumericRangeFilters;
-import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.constructPatientAddressesToDisplay;
 import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.constructProgramsString;
 import static org.bahmni.reports.util.GenericReportsHelper.constructExtraPatientIdentifiersToFilter;
+import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAddressesToDisplay;
 import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAttributeNamesToDisplay;
 import static org.bahmni.reports.util.GenericReportsHelper.constructVisitAttributeNamesToDisplay;
 

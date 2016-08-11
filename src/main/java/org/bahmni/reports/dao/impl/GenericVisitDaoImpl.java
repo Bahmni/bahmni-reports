@@ -13,9 +13,9 @@ import java.util.List;
 
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 import static org.bahmni.reports.util.GenericReportsHelper.constructExtraPatientIdentifiersToFilter;
+import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAddressesToDisplay;
 import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAttributeNamesToDisplay;
 import static org.bahmni.reports.util.GenericReportsHelper.constructVisitAttributeNamesToDisplay;
-import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.constructPatientAddresses;
 import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.constructVisitTypesString;
 import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.getDateRangeFor;
 import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.getVisitTypesToFilter;
@@ -36,7 +36,7 @@ public class GenericVisitDaoImpl implements GenericDao {
         sqlTemplate.add("endDate", endDate);
         if (report.getConfig() != null) {
             sqlTemplate.add("patientAttributes", constructPatientAttributeNamesToDisplay(report.getConfig()));
-            sqlTemplate.add("patientAddresses", constructPatientAddresses(report.getConfig().getPatientAddresses()));
+            sqlTemplate.add("patientAddresses", constructPatientAddressesToDisplay(report.getConfig()));
             sqlTemplate.add("visitAttributes", constructVisitAttributeNamesToDisplay(report.getConfig()));
             sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(getVisitTypesToFilter(report.getConfig())));
             sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));

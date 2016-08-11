@@ -61,16 +61,6 @@ public class GenericVisitReportTemplateHelper {
         jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, patientCreatedDateColumn, visitTypeColumn, dateStartedColumn, dateStoppedColumn, dateOfAdmission, dateOfDischarge);
     }
 
-    public static String constructPatientAddresses(List<String> patientAddresses) {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (patientAddresses != null) {
-            for (String address : patientAddresses) {
-                stringBuilder.append("paddress").append(".").append(address).append(", ");
-            }
-        }
-        return stringBuilder.toString();
-    }
-
     public static String constructVisitTypesString(List<String> visitTypesToFilter) {
         List<String> parts = new ArrayList<>();
         for (String visitType : visitTypesToFilter) {

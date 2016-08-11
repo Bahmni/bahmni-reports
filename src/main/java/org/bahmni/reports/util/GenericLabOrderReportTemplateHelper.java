@@ -53,17 +53,6 @@ public class GenericLabOrderReportTemplateHelper {
         }
     }
 
-    public static String constructPatientAddressesToDisplay(GenericLabOrderReportConfig config) {
-        List<String> patientAddresses = config.getPatientAddresses();
-        StringBuilder stringBuilder = new StringBuilder();
-        if (patientAddresses != null) {
-            for (String address : patientAddresses) {
-                stringBuilder.append("paddress").append(".").append(address).append(", ");
-            }
-        }
-        return stringBuilder.toString();
-    }
-
     public static String constructProgramsString(GenericLabOrderReportConfig config) {
         List<String> programsToFilter = config.getProgramsToFilter();
         List<String> parts = new ArrayList<>();

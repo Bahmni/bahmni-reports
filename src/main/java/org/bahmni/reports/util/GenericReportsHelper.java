@@ -56,4 +56,15 @@ public class GenericReportsHelper {
         return StringUtils.join(parts, ", ");
 
     }
+
+    public static String constructPatientAddressesToDisplay(GenericReportsConfig config) {
+        List<String> patientAddresses = config.getPatientAddresses();
+        StringBuilder stringBuilder = new StringBuilder();
+        if (patientAddresses != null) {
+            for (String address : patientAddresses) {
+                stringBuilder.append("paddress").append(".").append(address).append(", ");
+            }
+        }
+        return stringBuilder.toString();
+    }
 }
