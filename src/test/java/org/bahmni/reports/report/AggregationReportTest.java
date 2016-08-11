@@ -2,7 +2,6 @@ package org.bahmni.reports.report;
 
 import org.bahmni.reports.report.integrationtests.BaseIntegrationTest;
 import org.bahmni.reports.wrapper.CsvReport;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.net.URI;
@@ -10,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 public class AggregationReportTest extends BaseIntegrationTest {
     public AggregationReportTest() {

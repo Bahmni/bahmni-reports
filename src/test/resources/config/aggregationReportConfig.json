@@ -228,7 +228,7 @@
                 }
             },
             "rowGroups": [
-                "Age Group"
+                "Observation Age Group"
             ],
             "columnGroups": [
                 "Gender"
@@ -249,7 +249,7 @@
                 }
             },
             "rowGroups": [
-                "Age Group"
+                "Observation Age Group"
             ],
             "columnGroups": [
                 "Gender"
@@ -270,7 +270,7 @@
                 }
             },
             "rowGroups": [
-                "Age Group"
+                "Observation Age Group"
             ],
             "columnGroups": [
                 "Gender"
@@ -291,7 +291,7 @@
                 }
             },
             "rowGroups": [
-                "Age Group"
+                "Observation Age Group"
             ],
             "columnGroups": [
                 "Gender"
