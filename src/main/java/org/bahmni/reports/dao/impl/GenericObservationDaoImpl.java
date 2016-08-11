@@ -51,6 +51,9 @@ public class GenericObservationDaoImpl implements GenericDao {
             sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(getVisitTypesToFilter(report.getConfig())));
             sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
             sqlTemplate.add("ageGroupName", report.getConfig().getAgeGroupName());
+            if(report.getConfig().isIgnoreEmptyValues()) {
+                sqlTemplate.add("ignoreEmptyValues", "Having Value is not null");
+            }
         }
         sqlTemplate.add("concept_name_sql", getConceptNameFormatSql(report.getConfig()));
         sqlTemplate.add("applyDateRangeFor", getDateRangeFor(report.getConfig()));

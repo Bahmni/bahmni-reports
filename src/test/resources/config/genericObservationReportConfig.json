@@ -417,6 +417,13 @@
             ]
         }
     },
+    "observationReportWithIgnoreEmptyValuesConfig": {
+        "name": "Observation report without empty obs values",
+        "type": "observations",
+        "config": {
+            "ignoreEmptyValues": true
+        }
+    },
     "observationReportWithEncounterPerRow": {
         "name": "Observation report with encounter per row",
         "type": "observations",

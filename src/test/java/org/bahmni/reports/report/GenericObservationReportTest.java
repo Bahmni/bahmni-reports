@@ -665,4 +665,17 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008  180 2016-06-01 10:20:00.0 01-Jun-2016 Vitals", report.getRowAsString(2, " "));
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 weight 80 2016-06-01 10:20:00.0 01-Jun-2016 Vitals", report.getRowAsString(3, " "));
     }
+
+    @Test
+    public void shouldFilterOutEmptyValuesWhenIgnoreEmptyValuesIsTrue() throws Exception {
+        String reportName = "Observation report without empty obs values";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
+
+        assertEquals(15, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(2, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height() 180 2016-06-01 10:20:00.0 01-Jun-2016 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Weight(weight) 80 2016-06-01 10:20:00.0 01-Jun-2016 Vitals", report.getRowAsString(2, " "));
+    }
 }
