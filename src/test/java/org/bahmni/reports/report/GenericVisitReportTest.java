@@ -185,4 +185,15 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  Pan1", report.getRowAsString(1, " "));
     }
 
+    @Test
+    public void shouldFetchAgeGroupColumnIfConfigured() throws Exception {
+        String reportName = "Generic Visit Report With Age Group Name";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
+
+        assertEquals(12, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(1, report.rowsCount());
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  > 10 Years", report.getRowAsString(1, " "));
+    }
 }

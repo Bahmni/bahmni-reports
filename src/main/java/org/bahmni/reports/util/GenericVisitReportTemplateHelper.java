@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.GenericVisitReportConfig;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
@@ -43,6 +42,11 @@ public class GenericVisitReportTemplateHelper {
             jasperReport.addColumn(patientIdColumn);
             jasperReport.addColumn(visitIdColumn);
         }
+    }
+    public static void createAndAddAgeGroupColumn(JasperReportBuilder jasperReport, GenericVisitReportConfig config) {
+        if (StringUtils.isEmpty(config.getAgeGroupName())) return;
+        TextColumnBuilder<String> ageGroupColumn = col.column(config.getAgeGroupName(), config.getAgeGroupName(), type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        jasperReport.addColumn(ageGroupColumn);
     }
 
     public static void createAndAddMandatoryColumns(JasperReportBuilder jasperReport) {

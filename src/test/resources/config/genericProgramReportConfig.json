@@ -194,5 +194,12 @@
                 "Pan Id"
             ]
         }
+    },
+    "programsWithAgeGroupNameConfigured": {
+        "name": "Generic Patient Program Report With Age Group Name",
+        "type": "programs",
+        "config": {
+            "ageGroupName": "Observation Age Group"
+        }
     }
 }

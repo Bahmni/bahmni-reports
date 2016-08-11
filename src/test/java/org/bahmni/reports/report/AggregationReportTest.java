@@ -204,8 +204,8 @@ public class AggregationReportTest extends BaseIntegrationTest {
 
         assertEquals(3, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(3, report.rowsCount());
+        assertEquals(2, report.rowsCount());
         assertEquals("> 10 Years ≤ 10 Years", report.getRowAsString(1, " "));
-        assertEquals("F 1 1", report.getRowAsString(3, " "));
+        assertEquals("F 1 1", report.getRowAsString(2, " "));
     }
 }

@@ -36,7 +36,7 @@ SET @providerJoinSql = '  JOIN provider pro ON pro.provider_id=ep.provider_id
   LEFT OUTER JOIN person_name provider_person ON provider_person.person_id = pro.person_id';
 SET @providerSelectSql = 'coalesce(pro.name, concat(provider_person.given_name, " ", provider_person.family_name)) AS "Provider"';
 
-SET @ageGroupJoinSql = 'JOIN reporting_age_group rag ON DATE("#endDate#") BETWEEN (DATE_ADD(
+SET @ageGroupJoinSql = 'LEFT JOIN reporting_age_group rag ON DATE("#endDate#") BETWEEN (DATE_ADD(
                      DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(
                      DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
                                                        AND rag.report_group_name = "#ageGroupName#"';
@@ -85,9 +85,9 @@ FROM obs o
   JOIN encounter e ON o.encounter_id=e.encounter_id AND e.voided is false
   JOIN encounter_provider ep ON ep.encounter_id=e.encounter_id
   ',IF(@showProvider = '', '', @providerJoinSql),'
-  ',IF(@applyAgeGroup = '', '', @ageGroupJoinSql),'
   JOIN visit v ON v.visit_id=e.visit_id AND v.voided is false
   JOIN visit_type vt ON vt.visit_type_id=v.visit_type_id AND vt.retired is false
+  ',IF(@applyAgeGroup = '', '', @ageGroupJoinSql),'
   LEFT JOIN location l ON e.location_id = l.location_id AND l.retired is false
   LEFT JOIN obs parent_obs ON parent_obs.obs_id=o.obs_group_id
   LEFT JOIN concept_name parent_cn ON parent_cn.concept_id=parent_obs.concept_id AND parent_cn.concept_name_type="FULLY_SPECIFIED"

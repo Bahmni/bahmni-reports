@@ -163,5 +163,12 @@
                 "Pan Id"
             ]
         }
+    },
+    "visitsWithAgeGroupName": {
+        "name": "Generic Visit Report With Age Group Name",
+        "type": "visits",
+        "config": {
+            "ageGroupName": "Observation Age Group"
+        }
     }
 }

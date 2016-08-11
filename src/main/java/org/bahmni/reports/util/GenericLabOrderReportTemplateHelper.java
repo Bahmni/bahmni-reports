@@ -154,6 +154,11 @@ public class GenericLabOrderReportTemplateHelper {
 
         }
     }
+    public static void createAndAddAgeGroupColumn(JasperReportBuilder jasperReport, GenericLabOrderReportConfig config) {
+        if (StringUtils.isEmpty(config.getAgeGroupName())) return;
+        TextColumnBuilder<String> ageGroupColumn = col.column(config.getAgeGroupName(), config.getAgeGroupName(), type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        jasperReport.addColumn(ageGroupColumn);
+    }
 
     public static void showOrderDateTime(JasperReportBuilder jasperReportBuilder, GenericLabOrderReportConfig config) {
         if (config != null && config.isShowOrderDateTime()) {

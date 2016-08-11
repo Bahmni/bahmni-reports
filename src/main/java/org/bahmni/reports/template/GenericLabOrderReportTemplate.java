@@ -1,7 +1,6 @@
 package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.base.column.DRColumn;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.BahmniReportsProperties;
@@ -53,6 +52,7 @@ public class GenericLabOrderReportTemplate extends BaseReportTemplate<GenericLab
             createAndAddVisitInfoColumns(jasperReportBuilder, report.getConfig());
             createAndAddProgramNameColumn(jasperReportBuilder, report.getConfig());
             createAndAddDataAnalysisColumns(jasperReportBuilder, report.getConfig());
+            createAndAddAgeGroupColumn(jasperReportBuilder, report.getConfig());
         }
 
         GenericDao genericObservationDao = new GenericLabOrderDaoImpl(report, bahmniReportsProperties);

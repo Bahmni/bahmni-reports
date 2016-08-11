@@ -1,9 +1,5 @@
 package org.bahmni.reports.template;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
@@ -12,12 +8,16 @@ import org.bahmni.reports.dao.impl.GenericProgramDaoImpl;
 import org.bahmni.reports.model.GenericProgramReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
+import org.bahmni.reports.report.BahmniReportBuilder;
+import org.bahmni.reports.util.CommonComponents;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.*;
 import static org.bahmni.reports.util.GenericReportsHelper.createAndAddExtraPatientIdentifierTypes;
-
-import org.bahmni.reports.report.BahmniReportBuilder;
-import org.bahmni.reports.util.CommonComponents;
 
 @UsingDatasource("openmrs")
 public class GenericProgramTemplate extends BaseReportTemplate<GenericProgramReportConfig> {
@@ -31,7 +31,7 @@ public class GenericProgramTemplate extends BaseReportTemplate<GenericProgramRep
     public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<GenericProgramReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         CommonComponents.addTo(jasperReport, report, pageType);
 
-         jasperReport.setShowColumnTitle(true)
+        jasperReport.setShowColumnTitle(true)
                 .addPageHeader()
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
@@ -43,6 +43,7 @@ public class GenericProgramTemplate extends BaseReportTemplate<GenericProgramRep
             createAndAddProgramAttributeColumns(jasperReport, report.getConfig());
             createAndAddPatientAddressColumns(jasperReport, report.getConfig());
             createAndAddDataAnalysisColumns(jasperReport, report.getConfig());
+            createAndAddAgeGroupColumn(jasperReport, report.getConfig());
         }
 
         GenericProgramDaoImpl genericProgramDao = new GenericProgramDaoImpl(report);

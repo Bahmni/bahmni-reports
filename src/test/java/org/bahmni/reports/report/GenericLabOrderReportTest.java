@@ -472,4 +472,17 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
         assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   Pan2", report.getRowAsString(1, " "));
         assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     Pan2", report.getRowAsString(2, " "));
     }
+
+    @Test
+    public void shouldFetchAgeGroupNameIfConfigured() throws Exception {
+        String reportName = "LabOrder report with age group name";
+
+        CsvReport report = fetchCsvReport(reportName, "2017-02-01", "2017-02-20");
+
+        assertEquals(12, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(2, report.rowsCount());
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   > 10 Years", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     > 10 Years", report.getRowAsString(2, " "));
+    }
 }

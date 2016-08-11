@@ -1,10 +1,8 @@
 package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.base.column.DRColumn;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
-import org.apache.commons.collections.CollectionUtils;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.dao.GenericDao;
 import org.bahmni.reports.dao.impl.GenericObservationDaoImpl;
@@ -13,7 +11,6 @@ import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
-import org.bahmni.reports.util.GenericObservationReportTemplateHelper;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -59,6 +56,7 @@ public class GenericObservationReportTemplate extends BaseReportTemplate<Generic
                 createAndAddConceptColumns(conceptNamesToFilter, jasperReport);
             }
             createAndAddDataAnalysisColumns(jasperReport, report.getConfig());
+            createAndAddAgeGroupColumn(jasperReport, report.getConfig());
         }
 
         GenericDao genericObservationDao = new GenericObservationDaoImpl(report, bahmniReportsProperties);

@@ -1,298 +1,305 @@
 {
-  "LabOrderReportWithoutAnyConfig": {
-    "name": "LabOrder report without any config",
-    "type": "labOrders"
-  },
-  "LabOrderReportWithEmptyConfig": {
-    "name": "LabOrder report with empty config",
-    "type": "labOrders",
-    "config": {}
-  },
-  "LabOrderReportWithProviderInfo": {
-    "name": "LabOrder report with provider info",
-    "type": "labOrders",
-    "config": {
-      "showProvider": true
+    "LabOrderReportWithoutAnyConfig": {
+        "name": "LabOrder report without any config",
+        "type": "labOrders"
+    },
+    "LabOrderReportWithEmptyConfig": {
+        "name": "LabOrder report with empty config",
+        "type": "labOrders",
+        "config": {}
+    },
+    "LabOrderReportWithProviderInfo": {
+        "name": "LabOrder report with provider info",
+        "type": "labOrders",
+        "config": {
+            "showProvider": true
+        }
+    },
+    "LabOrderReportWithVisitInfo": {
+        "name": "LabOrder report with visit info",
+        "type": "labOrders",
+        "config": {
+            "showVisitInfo": true
+        }
+    },
+    "LabOrderReportWithPatientAttributes": {
+        "name": "LabOrder report with patient attributes",
+        "type": "labOrders",
+        "config": {
+            "forDataAnalysis": true,
+            "patientAttributes": [
+                "caste",
+                "education",
+                "primaryContact",
+                "secondaryContact",
+                "class",
+                "cluster"
+            ]
+        }
+    },
+    "LabOrderReportWithVisitAttributes": {
+        "name": "LabOrder report with visit attributes",
+        "type": "labOrders",
+        "config": {
+            "visitAttributes": [
+                "Visit Status",
+                "Admission Status"
+            ]
+        }
+    },
+    "LabOrderReportWithPatientAddress": {
+        "name": "LabOrder report with patient address",
+        "type": "labOrders",
+        "config": {
+            "patientAddresses": [
+                "address1",
+                "address3"
+            ]
+        }
+    },
+    "LabOrderReportWithDataAnalysisColumns": {
+        "name": "LabOrder report with data analysis columns",
+        "type": "labOrders",
+        "config": {
+            "forDataAnalysis": true
+        }
+    },
+    "LabOrderReportFilteredByConceptNames": {
+        "name": "LabOrder report filtered by concept names",
+        "type": "labOrders",
+        "config": {
+            "conceptNamesToFilter": [
+                "BoneOrder"
+            ]
+        }
+    },
+    "LabOrderReportFilteredByMultipleConceptNames": {
+        "name": "LabOrder report filtered by multiple concept names",
+        "type": "labOrders",
+        "config": {
+            "conceptNamesToFilter": [
+                "BoneOrder",
+                "BloodOrder"
+            ]
+        }
+    },
+    "LabOrderReportFilteredByProgramName": {
+        "name": "LabOrder report filtered by program name",
+        "type": "labOrders",
+        "config": {
+            "programsToFilter": [
+                "MDR-TB PROGRAM"
+            ]
+        }
+    },
+    "LabOrderReportFilteredByProgramNameAndConceptNames": {
+        "name": "LabOrder report filtered by program name and concept name",
+        "type": "labOrders",
+        "config": {
+            "programsToFilter": [
+                "MDR-TB PROGRAM"
+            ],
+            "conceptNamesToFilter": [
+                "BoneOrder"
+            ]
+        }
+    },
+    "LabOrderReportWithRangeValues": {
+        "name": "LabOrder report with range values",
+        "type": "labOrders"
+    },
+    "LabOrderReportWithExcludedColumns": {
+        "name": "LabOrder report with excluded columns",
+        "type": "labOrders",
+        "config": {
+            "showVisitInfo": true,
+            "excludeColumns": [
+                "Patient Name",
+                "Visit Type"
+            ]
+        }
+    },
+    "LabOrderReportWithAllExcludedColumns": {
+        "name": "LabOrder report with all excluded columns",
+        "type": "labOrders",
+        "config": {
+            "excludeColumns": [
+                "Patient Name",
+                "Visit Type",
+                "Patient Identifier",
+                "Birthdate",
+                "Gender",
+                "Test Order Date",
+                "Test Name",
+                "Age",
+                "Test Result",
+                "Test Outcome",
+                "Min Range",
+                "Max Range"
+            ]
+        }
+    },
+    "LabOrderReportWithPendingOrders": {
+        "name": "LabOrder report with pending orders",
+        "type": "labOrders"
+    },
+    "LabOrderReportWithTextResultsFiltered": {
+        "name": "LabOrder report with test results filtered",
+        "type": "labOrders",
+        "config": {
+            "conceptValuesToFilter": [
+                "high"
+            ]
+        }
+    },
+    "LabOrderReportWithNumericRangeFilters": {
+        "name": "LabOrder report with numeric range filter",
+        "type": "labOrders",
+        "config": {
+            "conceptValuesToFilter": [
+                "150..300"
+            ]
+        }
+    },
+    "LabOrderReportWithNumericRangeAndTextValueFilters": {
+        "name": "LabOrder report filter by numeric range and text value",
+        "type": "labOrders",
+        "config": {
+            "conceptValuesToFilter": [
+                "high",
+                "150..300"
+            ]
+        }
+    },
+    "LabOrderReportWithMinimumRangeFilter": {
+        "name": "LabOrder report filter by minimum range",
+        "type": "labOrders",
+        "config": {
+            "conceptValuesToFilter": [
+                "..200"
+            ]
+        }
+    },
+    "LabOrderReportWithMaximumRangeFilter": {
+        "name": "LabOrder report filter by maximum range",
+        "type": "labOrders",
+        "config": {
+            "conceptValuesToFilter": [
+                "200.."
+            ]
+        }
+    },
+    "LabOrderReportWithMultiRangesFilter": {
+        "name": "LabOrder report with multi numeric ranges filter",
+        "type": "labOrders",
+        "config": {
+            "conceptValuesToFilter": [
+                "200..300",
+                "1..10"
+            ]
+        }
+    },
+    "LabOrderReportWithMultiRangesAndTextValueFilter": {
+        "name": "LabOrder report filter by multi numeric ranges and text value",
+        "type": "labOrders",
+        "config": {
+            "conceptValuesToFilter": [
+                "high",
+                "200..300",
+                "1..10"
+            ]
+        }
+    },
+    "LabOrderReportWithMinRangeAndTextValueFilter": {
+        "name": "LabOrder report filter by min range and text value",
+        "type": "labOrders",
+        "config": {
+            "conceptValuesToFilter": [
+                "high",
+                "..100"
+            ]
+        }
+    },
+    "LabOrderReportWithMaxRangeAndTextValueFilter": {
+        "name": "LabOrder report filter by max range and text value",
+        "type": "labOrders",
+        "config": {
+            "conceptValuesToFilter": [
+                "high",
+                "200.."
+            ]
+        }
+    },
+    "LabOrderReportWithTestNameAndTestResultFilter": {
+        "name": "LabOrder report filter by test name and result",
+        "type": "labOrders",
+        "config": {
+            "conceptNamesToFilter": [
+                "BP_Level"
+            ],
+            "conceptValuesToFilter": [
+                "high",
+                "200.."
+            ]
+        }
+    },
+    "LabOrderReportWithPanelTest": {
+        "name": "LabOrder report with panel test",
+        "type": "labOrders",
+        "config": {
+            "forDataAnalysis": true
+        }
+    },
+    "LabOrderReportWithPanelTestWithFilledValues": {
+        "name": "LabOrder report with panel test filled values",
+        "type": "labOrders",
+        "config": {
+        }
+    },
+    "LabOrderReportWithPanelTestWithPartialFilledValues": {
+        "name": "LabOrder report with panel test partially filled values",
+        "type": "labOrders",
+        "config": {
+            "forDataAnalysis": true
+        }
+    },
+    "LabOrderReportWithStoppedOrders": {
+        "name": "LabOrder report with stopped orders",
+        "type": "labOrders",
+        "config": {
+        }
+    },
+    "LabOrderReportWithDateTime": {
+        "name": "LabOrder report with order date time",
+        "type": "labOrders",
+        "config": {
+            "showOrderDateTime": true
+        }
+    },
+    "LabOrderReportWithExtraIdentifiers": {
+        "name": "LabOrder report with extra identifiers",
+        "type": "labOrders",
+        "config": {
+            "additionalPatientIdentifiers": [
+                "Aadhaar Id",
+                "Pan Id"
+            ]
+        }
+    },
+    "LabOrderReportWithOneExtraIdentifier": {
+        "name": "LabOrder report with one extra identifier",
+        "type": "labOrders",
+        "config": {
+            "additionalPatientIdentifiers": [
+                "Pan Id"
+            ]
+        }
+    },
+    "LabOrderReportWithAgeGroupName": {
+        "name": "LabOrder report with age group name",
+        "type": "labOrders",
+        "config": {
+            "ageGroupName": "Observation Age Group"
+        }
     }
-  },
-  "LabOrderReportWithVisitInfo": {
-    "name": "LabOrder report with visit info",
-    "type": "labOrders",
-    "config": {
-      "showVisitInfo": true
-    }
-  },
-  "LabOrderReportWithPatientAttributes": {
-    "name": "LabOrder report with patient attributes",
-    "type": "labOrders",
-    "config": {
-      "forDataAnalysis": true,
-      "patientAttributes": [
-        "caste",
-        "education",
-        "primaryContact",
-        "secondaryContact",
-        "class",
-        "cluster"
-      ]
-    }
-  },
-  "LabOrderReportWithVisitAttributes": {
-    "name": "LabOrder report with visit attributes",
-    "type": "labOrders",
-    "config": {
-      "visitAttributes": [
-        "Visit Status",
-        "Admission Status"
-      ]
-    }
-  },
-  "LabOrderReportWithPatientAddress": {
-    "name": "LabOrder report with patient address",
-    "type": "labOrders",
-    "config": {
-      "patientAddresses": [
-        "address1",
-        "address3"
-      ]
-    }
-  },
-  "LabOrderReportWithDataAnalysisColumns": {
-    "name": "LabOrder report with data analysis columns",
-    "type": "labOrders",
-    "config": {
-      "forDataAnalysis": true
-    }
-  },
-  "LabOrderReportFilteredByConceptNames": {
-    "name": "LabOrder report filtered by concept names",
-    "type": "labOrders",
-    "config": {
-      "conceptNamesToFilter": [
-        "BoneOrder"
-      ]
-    }
-  },
-  "LabOrderReportFilteredByMultipleConceptNames": {
-    "name": "LabOrder report filtered by multiple concept names",
-    "type": "labOrders",
-    "config": {
-      "conceptNamesToFilter": [
-        "BoneOrder",
-        "BloodOrder"
-      ]
-    }
-  },
-  "LabOrderReportFilteredByProgramName": {
-    "name": "LabOrder report filtered by program name",
-    "type": "labOrders",
-    "config": {
-      "programsToFilter": [
-        "MDR-TB PROGRAM"
-      ]
-    }
-  },
-  "LabOrderReportFilteredByProgramNameAndConceptNames": {
-    "name": "LabOrder report filtered by program name and concept name",
-    "type": "labOrders",
-    "config": {
-      "programsToFilter": [
-        "MDR-TB PROGRAM"
-      ],
-      "conceptNamesToFilter": [
-        "BoneOrder"
-      ]
-    }
-  },
-  "LabOrderReportWithRangeValues": {
-    "name": "LabOrder report with range values",
-    "type": "labOrders"
-  },
-  "LabOrderReportWithExcludedColumns": {
-    "name": "LabOrder report with excluded columns",
-    "type": "labOrders",
-    "config": {
-      "showVisitInfo": true,
-      "excludeColumns": [
-        "Patient Name",
-        "Visit Type"
-      ]
-    }
-  },
-  "LabOrderReportWithAllExcludedColumns": {
-    "name": "LabOrder report with all excluded columns",
-    "type": "labOrders",
-    "config": {
-      "excludeColumns": [
-        "Patient Name",
-        "Visit Type",
-        "Patient Identifier",
-        "Birthdate",
-        "Gender",
-        "Test Order Date",
-        "Test Name",
-        "Age",
-        "Test Result",
-        "Test Outcome",
-        "Min Range",
-        "Max Range"
-      ]
-    }
-  },
-  "LabOrderReportWithPendingOrders": {
-    "name": "LabOrder report with pending orders",
-    "type": "labOrders"
-  },
-  "LabOrderReportWithTextResultsFiltered": {
-    "name": "LabOrder report with test results filtered",
-    "type": "labOrders",
-    "config": {
-      "conceptValuesToFilter": [
-        "high"
-      ]
-    }
-  },
-  "LabOrderReportWithNumericRangeFilters": {
-    "name": "LabOrder report with numeric range filter",
-    "type": "labOrders",
-    "config": {
-      "conceptValuesToFilter": [
-        "150..300"
-      ]
-    }
-  },
-  "LabOrderReportWithNumericRangeAndTextValueFilters": {
-    "name": "LabOrder report filter by numeric range and text value",
-    "type": "labOrders",
-    "config": {
-      "conceptValuesToFilter": [
-        "high",
-        "150..300"
-      ]
-    }
-  },
-  "LabOrderReportWithMinimumRangeFilter": {
-    "name": "LabOrder report filter by minimum range",
-    "type": "labOrders",
-    "config": {
-      "conceptValuesToFilter": [
-        "..200"
-      ]
-    }
-  },
-  "LabOrderReportWithMaximumRangeFilter": {
-    "name": "LabOrder report filter by maximum range",
-    "type": "labOrders",
-    "config": {
-      "conceptValuesToFilter": [
-        "200.."
-      ]
-    }
-  },
-  "LabOrderReportWithMultiRangesFilter": {
-    "name": "LabOrder report with multi numeric ranges filter",
-    "type": "labOrders",
-    "config": {
-      "conceptValuesToFilter": [
-        "200..300",
-        "1..10"
-      ]
-    }
-  },
-  "LabOrderReportWithMultiRangesAndTextValueFilter": {
-    "name": "LabOrder report filter by multi numeric ranges and text value",
-    "type": "labOrders",
-    "config": {
-      "conceptValuesToFilter": [
-        "high",
-        "200..300",
-        "1..10"
-      ]
-    }
-  },
-  "LabOrderReportWithMinRangeAndTextValueFilter": {
-    "name": "LabOrder report filter by min range and text value",
-    "type": "labOrders",
-    "config": {
-      "conceptValuesToFilter": [
-        "high",
-        "..100"
-      ]
-    }
-  },
-  "LabOrderReportWithMaxRangeAndTextValueFilter": {
-    "name": "LabOrder report filter by max range and text value",
-    "type": "labOrders",
-    "config": {
-      "conceptValuesToFilter": [
-        "high",
-        "200.."
-      ]
-    }
-  },
-  "LabOrderReportWithTestNameAndTestResultFilter": {
-    "name": "LabOrder report filter by test name and result",
-    "type": "labOrders",
-    "config": {
-      "conceptNamesToFilter": [
-        "BP_Level"
-      ],
-      "conceptValuesToFilter": [
-        "high",
-        "200.."
-      ]
-    }
-  },
-  "LabOrderReportWithPanelTest": {
-    "name": "LabOrder report with panel test",
-    "type": "labOrders",
-    "config": {
-      "forDataAnalysis": true
-    }
-  },
-  "LabOrderReportWithPanelTestWithFilledValues": {
-    "name": "LabOrder report with panel test filled values",
-    "type": "labOrders",
-    "config": {
-    }
-  },
-  "LabOrderReportWithPanelTestWithPartialFilledValues": {
-    "name": "LabOrder report with panel test partially filled values",
-    "type": "labOrders",
-    "config": {
-      "forDataAnalysis" : true
-    }
-  },
-  "LabOrderReportWithStoppedOrders": {
-    "name": "LabOrder report with stopped orders",
-    "type": "labOrders",
-    "config": {
-    }
-  },
-  "LabOrderReportWithDateTime": {
-    "name": "LabOrder report with order date time",
-    "type": "labOrders",
-    "config": {
-      "showOrderDateTime" : true
-    }
-  },
-  "LabOrderReportWithExtraIdentifiers": {
-    "name": "LabOrder report with extra identifiers",
-    "type": "labOrders",
-    "config": {
-      "additionalPatientIdentifiers": [
-        "Aadhaar Id",
-        "Pan Id"
-      ]
-    }
-  },
-  "LabOrderReportWithOneExtraIdentifier": {
-    "name": "LabOrder report with one extra identifier",
-    "type": "labOrders",
-    "config": {
-      "additionalPatientIdentifiers": [
-        "Pan Id"
-      ]
-    }
-  }
 }

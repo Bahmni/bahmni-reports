@@ -451,5 +451,12 @@
         "config": {
             "conceptNameDisplayFormat": "short"
         }
+    },
+    "observationReportWithAgeGroupColumn": {
+        "name": "Observation report with age group name",
+        "type": "observations",
+        "config": {
+            "ageGroupName": "Observation Age Group"
+        }
     }
 }

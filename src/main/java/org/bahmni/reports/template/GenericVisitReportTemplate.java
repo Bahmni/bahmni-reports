@@ -16,11 +16,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.bahmni.reports.util.GenericReportsHelper.createAndAddExtraPatientIdentifierTypes;
-import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.createAndAddDataAnalysisColumns;
-import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.createAndAddMandatoryColumns;
-import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.createAndAddPatientAddressColumns;
-import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.createAndAddPatientAttributeColumns;
-import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.createAndAddVisitAttributeColumns;
+import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.*;
 
 @UsingDatasource("openmrs")
 public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitReportConfig> {
@@ -40,6 +36,7 @@ public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitR
             createAndAddPatientAddressColumns(jasperReport, report.getConfig());
             createAndAddVisitAttributeColumns(jasperReport, report.getConfig());
             createAndAddDataAnalysisColumns(jasperReport, report.getConfig());
+            createAndAddAgeGroupColumn(jasperReport,report.getConfig());
         }
 
         GenericVisitDaoImpl genericVisitDao = new GenericVisitDaoImpl(report);

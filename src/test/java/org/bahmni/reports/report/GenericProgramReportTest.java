@@ -2,9 +2,10 @@ package org.bahmni.reports.report;
 
 import org.bahmni.reports.report.integrationtests.BaseIntegrationTest;
 import org.bahmni.reports.wrapper.CsvReport;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class GenericProgramReportTest extends BaseIntegrationTest {
     public GenericProgramReportTest() {
@@ -328,6 +329,21 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         assertEquals("prog1 Generic Program1 7 15-Aug-2008 F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 Pan1", report.getRowAsString(2, " "));
         assertEquals("prog2 Generic Program2 22 15-Aug-1994 F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2 Pan2", report.getRowAsString(3, " "));
         assertEquals("prog2 Generic Program2 22 15-Aug-1994 F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 Pan2", report.getRowAsString(4, " "));
+    }
+
+    @Test
+    public void shouldFetchAgeGroupColumnIfConfigured() throws Exception {
+        String reportName = "Generic Patient Program Report With Age Group Name";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
+
+        assertEquals(11, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(4, report.rowsCount());
+        assertEquals("prog1 Generic Program1 7 15-Aug-2008 F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2 ≤ 10 Years", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1 7 15-Aug-2008 F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1 ≤ 10 Years", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2 22 15-Aug-1994 F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2 > 10 Years", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2 22 15-Aug-1994 F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 > 10 Years", report.getRowAsString(4, " "));
     }
 
 }
