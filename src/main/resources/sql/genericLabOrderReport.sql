@@ -111,6 +111,21 @@ SET @sql = CONCAT('SELECT * FROM (SELECT
   o.value_numeric AS "value_numeric"
 
 FROM (SELECT * FROM orders ord WHERE cast(ord.date_created AS DATE) BETWEEN "#startDate#" AND "#endDate#" and ord.order_type_id = @labOrderType and ord.voided is false and ord.date_stopped is NULL) ord
+  JOIN person p ON p.person_id = ord.patient_id AND p.voided is false
+  JOIN patient_identifier pi ON p.person_id = pi.patient_id AND pi.voided is false
+  JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id AND pit.retired is false
+  JOIN person_name pn ON pn.person_id = p.person_id AND pn.voided is false
+  JOIN encounter e ON ord.encounter_id=e.encounter_id AND e.voided is false
+  JOIN encounter_provider ep ON ep.encounter_id=e.encounter_id and ep.voided is false ',
+  IF(@showProvider = '', '', @providerJoinSql),
+  ' JOIN visit v ON v.visit_id=e.visit_id AND v.voided is false ',
+  ' JOIN visit_type vt ON vt.visit_type_id=v.visit_type_id AND vt.retired is false
+  ', IF(@filterByPrograms != '', @programsJoinSql, ''), '
+  ', IF(@filterByPrograms != '', @filterByProgramsSql, ''),'
+  ', IF(@visitAttributesSql = '', '', @visitAttributeJoinSql), '
+  ', IF(@patientAttributesSql = '', '', @patientAttributeJoinSql), '
+  ', IF(@patientAddressesSql = '', '', @patientAddressJoinSql), '
+  ', IF(@applyAgeGroup = '', '', @ageGroupJoinSql),'
   LEFT JOIN concept_set cs on cs.concept_set = ord.concept_id
   LEFT JOIN concept_name test_fscn on coalesce(cs.concept_id, ord.concept_id)=test_fscn.concept_id AND test_fscn.concept_name_type="FULLY_SPECIFIED" AND test_fscn.voided is false
   LEFT JOIN concept_name test_scn on coalesce(cs.concept_id, ord.concept_id)=test_scn.concept_id AND test_scn.concept_name_type="SHORT" AND test_scn.voided is false
@@ -127,22 +142,7 @@ FROM (SELECT * FROM orders ord WHERE cast(ord.date_created AS DATE) BETWEEN "#st
             ON o.concept_id = coalesce(cs.concept_id, ord.concept_id) AND o.order_id = ord.order_id
   LEFT JOIN concept_name coded_fscn on coded_fscn.concept_id = o.value_coded AND coded_fscn.concept_name_type="FULLY_SPECIFIED" AND coded_fscn.voided is false
   LEFT JOIN concept_name coded_scn on coded_scn.concept_id = o.value_coded AND coded_scn.concept_name_type="SHORT" AND coded_scn.voided is false
-  JOIN person p ON p.person_id = ord.patient_id AND p.voided is false
-  JOIN patient_identifier pi ON p.person_id = pi.patient_id AND pi.voided is false
-',IF(@applyAgeGroup = '', '', @ageGroupJoinSql),'
-  JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id AND pit.retired is false
-  JOIN person_name pn ON pn.person_id = p.person_id AND pn.voided is false
-  JOIN encounter e ON ord.encounter_id=e.encounter_id AND e.voided is false
-  JOIN encounter_provider ep ON ep.encounter_id=e.encounter_id and ep.voided is false ',
-                  IF(@showProvider = '', '', @providerJoinSql),
-                  ' JOIN visit v ON v.visit_id=e.visit_id AND v.voided is false ',
-                  'JOIN visit_type vt ON vt.visit_type_id=v.visit_type_id AND vt.retired is false
-                  ', IF(@visitAttributesSql = '', '', @visitAttributeJoinSql), '
-  ', IF(@patientAttributesSql = '', '', @patientAttributeJoinSql), '
-  ', IF(@patientAddressesSql = '', '', @patientAddressJoinSql), '
-  ', IF(@filterByPrograms != '', @programsJoinSql, ''), '
-  ', IF(@filterByPrograms != '', @filterByProgramsSql, ''),
-                  ' GROUP BY ord.order_id, cs.concept_id, o.concept_id ORDER BY ord.date_created asc, o.obs_id asc) bigTable',
+                   GROUP BY ord.order_id, cs.concept_id, o.concept_id ORDER BY ord.date_created asc, o.obs_id asc) bigTable',
                   IF(@filterByConceptNames != '' OR @filterByConceptValues != '', ' WHERE', ''),
                   IF(@filterByConceptNames = '', '', @conceptNamesToFilterSql), '
    ', IF(@filterByConceptValues = '', '', @filterByConceptValuesSql)
