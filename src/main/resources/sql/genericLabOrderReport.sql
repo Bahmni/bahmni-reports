@@ -123,7 +123,7 @@ FROM (SELECT * FROM orders ord WHERE cast(ord.date_created AS DATE) BETWEEN "#st
                     GROUP_CONCAT(DISTINCT(IF (o.concept_id not in (@labMinNormalConceptId, @labMaxNormalConceptId, @abnormalObsConceptId, @labNotesConceptId), o.obs_id , NULL))) AS "obs_id",
                     GROUP_CONCAT(DISTINCT(IF (o.concept_id not in (@labMinNormalConceptId, @labMaxNormalConceptId, @abnormalObsConceptId, @labNotesConceptId), o.value_numeric , NULL))) AS "value_numeric",
                     GROUP_CONCAT(DISTINCT(o.order_id)) AS order_id
-            from obs o where FIND_IN_SET(o.order_id, @orderIdList) and coalesce(o.value_text, o.value_numeric, o.value_coded) is not null GROUP BY o.obs_group_id) o
+            from obs o where o.voided is false AND FIND_IN_SET(o.order_id, @orderIdList) and coalesce(o.value_text, o.value_numeric, o.value_coded) is not null GROUP BY o.obs_group_id) o
             ON o.concept_id = coalesce(cs.concept_id, ord.concept_id) AND o.order_id = ord.order_id
   LEFT JOIN concept_name coded_fscn on coded_fscn.concept_id = o.value_coded AND coded_fscn.concept_name_type="FULLY_SPECIFIED" AND coded_fscn.voided is false
   LEFT JOIN concept_name coded_scn on coded_scn.concept_id = o.value_coded AND coded_scn.concept_name_type="SHORT" AND coded_scn.voided is false

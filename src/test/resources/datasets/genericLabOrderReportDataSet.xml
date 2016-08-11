@@ -173,6 +173,7 @@
     <obs obs_id="3013" order_id="3005" person_id="3000" concept_id="1009" encounter_id="3000" obs_group_id="3012" obs_datetime="2016-04-21 15:30:31.0" location_id="2" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="111-1ds-123-9285-zdfs"/>
     <obs obs_id="3014" order_id="3005" person_id="3000" concept_id="1009" encounter_id="3000" obs_group_id="3013" obs_datetime="2016-04-21 15:30:31.0" location_id="2" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="zxc-12s-123-9285-zdfs"/>
     <obs obs_id="3015" order_id="3005" person_id="3000" concept_id="1009" obs_group_id="3014" encounter_id="3000" obs_datetime="2016-05-23 15:30:31.0" location_id="2" value_text="high" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="651wl653-1211x-4118-9c83-a371nb82d4ar"/>
+    <obs obs_id="3017" order_id="3005" person_id="3000" concept_id="1009" obs_group_id="3014" encounter_id="3000" obs_datetime="2016-05-23 15:30:31.0" location_id="2" value_text="high Old" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="true" uuid="651wl653-123-4118-9c83-a371nb82d4ar"/>
     <obs obs_id="3016" order_id="3005" person_id="3000" concept_id="1007" obs_group_id="3014" encounter_id="3000" obs_datetime="2016-05-23 15:30:31.0" location_id="2" value_numeric="12" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="1231-zxc-nhsa-9c83-a371nb82d4ar"/>
 
 </dataset>
