@@ -13,8 +13,14 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
-import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.*;
+import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.conceptValuesToFilter;
+import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.constructConceptNamesToFilter;
+import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.constructNumericRangeFilters;
+import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.constructPatientAddressesToDisplay;
+import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.constructProgramsString;
 import static org.bahmni.reports.util.GenericReportsHelper.constructExtraPatientIdentifiersToFilter;
+import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAttributeNamesToDisplay;
+import static org.bahmni.reports.util.GenericReportsHelper.constructVisitAttributeNamesToDisplay;
 
 public class GenericLabOrderDaoImpl implements GenericDao {
 

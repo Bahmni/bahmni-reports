@@ -2,6 +2,8 @@ package org.bahmni.reports.model;
 
 import java.util.List;
 
+import static org.bahmni.reports.util.BahmniReportUtil.emptyListIfNull;
+
 public class GenericVisitReportConfig extends GenericReportsConfig implements Config {
     private String applyDateRangeFor;
     private List<String> visitTypesToFilter;
@@ -17,7 +19,7 @@ public class GenericVisitReportConfig extends GenericReportsConfig implements Co
     }
 
     public List<String> getVisitTypesToFilter() {
-        return visitTypesToFilter;
+        return emptyListIfNull(visitTypesToFilter);
     }
 
     public void setVisitTypesToFilter(List<String> visitTypesToFilter) {
@@ -25,7 +27,7 @@ public class GenericVisitReportConfig extends GenericReportsConfig implements Co
     }
 
     public List<String> getLocationTagsToFilter() {
-        return locationTagsToFilter;
+        return emptyListIfNull(locationTagsToFilter);
     }
 
     public void setLocationTagsToFilter(List<String> locationTagsToFilter) {

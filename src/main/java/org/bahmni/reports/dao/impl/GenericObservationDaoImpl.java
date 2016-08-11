@@ -13,7 +13,18 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
-import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.*;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructConceptClassesToFilter;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructConceptNameSelectSqlIfShowInOneRow;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructConceptNamesToFilter;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructLocationTagsToFilter;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructPatientAddressesToDisplay;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructProgramsString;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructVisitTypesString;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.getConceptNameFormatSql;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.getDateRangeFor;
+import static org.bahmni.reports.util.GenericReportsHelper.constructExtraPatientIdentifiersToFilter;
+import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAttributeNamesToDisplay;
+import static org.bahmni.reports.util.GenericReportsHelper.constructVisitAttributeNamesToDisplay;
 
 public class GenericObservationDaoImpl implements GenericDao {
 
@@ -26,11 +37,10 @@ public class GenericObservationDaoImpl implements GenericDao {
     }
 
     @Override
-    public ResultSet getResultSet(Connection connection,
-                                  String startDate, String endDate, List<String> conceptNamesToFilter)
-            throws SQLException {
+    public ResultSet getResultSet(Connection connection, String startDate, String endDate, List<String> conceptNamesToFilter) throws SQLException {
         String sql;
-        if (report.getConfig() != null && report.getConfig().isEncounterPerRow()) {
+        GenericObservationReportConfig reportConfig = report.getConfig();
+        if (reportConfig != null && reportConfig.isEncounterPerRow()) {
             sql = getFileContent("sql/genericObservationReportInOneRow.sql");
         } else {
             sql = getFileContent("sql/genericObservationReport.sql");
@@ -38,24 +48,28 @@ public class GenericObservationDaoImpl implements GenericDao {
         ST sqlTemplate = new ST(sql, '#', '#');
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
-        if (report.getConfig() != null) {
-            sqlTemplate.add("patientAttributes", constructPatientAttributeNamesToDisplay(report.getConfig()));
-            sqlTemplate.add("patientAddresses", constructPatientAddressesToDisplay(report.getConfig()));
-            sqlTemplate.add("visitAttributes", constructVisitAttributeNamesToDisplay(report.getConfig()));
-            sqlTemplate.add("locationTagsToFilter", constructLocationTagsToFilter(report.getConfig()));
-            sqlTemplate.add("conceptClassesToFilter", constructConceptClassesToFilter(report.getConfig()));
-            sqlTemplate.add("programsToFilter", constructProgramsString(report.getConfig()));
-            sqlTemplate.add("conceptNamesToFilter", constructConceptNamesToFilter(report, bahmniReportsProperties));
-            sqlTemplate.add("selectConceptNamesSql", constructConceptNameSelectSqlIfShowInOneRow(conceptNamesToFilter, report.getConfig()));
-            sqlTemplate.add("showProvider", report.getConfig().showProvider());
-            sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(getVisitTypesToFilter(report.getConfig())));
-            sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
-            sqlTemplate.add("ageGroupName", report.getConfig().getAgeGroupName());
+        if (reportConfig != null) {
+            fillConfigBasedPlaceHolders(conceptNamesToFilter, sqlTemplate);
         }
-        sqlTemplate.add("concept_name_sql", getConceptNameFormatSql(report.getConfig()));
-        sqlTemplate.add("applyDateRangeFor", getDateRangeFor(report.getConfig()));
-
+        sqlTemplate.add("concept_name_sql", getConceptNameFormatSql(reportConfig));
+        sqlTemplate.add("applyDateRangeFor", getDateRangeFor(reportConfig));
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());
+    }
+
+    private void fillConfigBasedPlaceHolders(List<String> conceptNamesToFilter, ST sqlTemplate) {
+        GenericObservationReportConfig reportConfig = report.getConfig();
+        sqlTemplate.add("patientAttributes", constructPatientAttributeNamesToDisplay(reportConfig));
+        sqlTemplate.add("patientAddresses", constructPatientAddressesToDisplay(reportConfig));
+        sqlTemplate.add("visitAttributes", constructVisitAttributeNamesToDisplay(reportConfig));
+        sqlTemplate.add("locationTagsToFilter", constructLocationTagsToFilter(reportConfig));
+        sqlTemplate.add("conceptClassesToFilter", constructConceptClassesToFilter(reportConfig));
+        sqlTemplate.add("programsToFilter", constructProgramsString(reportConfig));
+        sqlTemplate.add("conceptNamesToFilter", constructConceptNamesToFilter(report, bahmniReportsProperties));
+        sqlTemplate.add("selectConceptNamesSql", constructConceptNameSelectSqlIfShowInOneRow(conceptNamesToFilter, reportConfig));
+        sqlTemplate.add("showProvider", reportConfig.showProvider());
+        sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(reportConfig.getVisitTypesToFilter()));
+        sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(reportConfig));
+        sqlTemplate.add("ageGroupName", reportConfig.getAgeGroupName());
     }
 
 }

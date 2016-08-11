@@ -2,6 +2,8 @@ package org.bahmni.reports.model;
 
 import java.util.List;
 
+import static org.bahmni.reports.util.BahmniReportUtil.emptyListIfNull;
+
 public class GenericObservationReportConfig extends GenericReportsConfig implements Config {
     private String applyDateRangeFor;
     private List<String> locationTagsToFilter;
@@ -15,7 +17,7 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
     private String conceptNameDisplayFormat;
 
     public List<String> getVisitTypesToFilter() {
-        return visitTypesToFilter;
+        return emptyListIfNull(visitTypesToFilter);
     }
 
     public void setVisitTypesToFilter(List<String> visitTypesToFilter) {
@@ -32,7 +34,7 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
     }
 
     public List<String> getLocationTagsToFilter() {
-        return locationTagsToFilter;
+        return emptyListIfNull(locationTagsToFilter);
     }
 
     public void setLocationTagsToFilter(List<String> locationTagsToFilter) {
@@ -56,7 +58,7 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
     }
 
     public List<String> getConceptClassesToFilter() {
-        return conceptClassesToFilter;
+        return emptyListIfNull(conceptClassesToFilter);
     }
 
     public void setConceptClassesToFilter(List<String> conceptClassesToFilter) {
@@ -64,7 +66,7 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
     }
 
     public List<String> getProgramsToFilter() {
-        return programsToFilter;
+        return emptyListIfNull(programsToFilter);
     }
 
     public void setProgramsToFilter(List<String> programsToFilter) {
@@ -72,7 +74,7 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
     }
 
     public List<String> getConceptNamesToFilter() {
-        return conceptNamesToFilter;
+        return emptyListIfNull(conceptNamesToFilter);
     }
 
     public void setConceptNamesToFilter(List<String> conceptNamesToFilter) {

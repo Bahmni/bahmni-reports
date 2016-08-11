@@ -1,10 +1,8 @@
 package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.base.column.DRColumn;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
-import org.apache.commons.collections.CollectionUtils;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.dao.GenericDao;
 import org.bahmni.reports.dao.impl.GenericObservationDaoImpl;
@@ -13,7 +11,6 @@ import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
-import org.bahmni.reports.util.GenericObservationReportTemplateHelper;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -21,7 +18,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.*;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.createAndAddConceptColumns;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.createAndAddDataAnalysisColumns;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.createAndAddDefaultColumns;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.createAndAddPatientAddressColumns;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.createAndAddPatientAttributeColumns;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.createAndAddProviderNameColumn;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.createAndAddVisitAttributeColumns;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.createAndAddVisitInfoColumns;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.fetchLeafConceptsAsList;
+import static org.bahmni.reports.util.GenericReportsHelper.createAndAddExtraPatientIdentifierTypes;
 
 @UsingDatasource("openmrs")
 public class GenericObservationReportTemplate extends BaseReportTemplate<GenericObservationReportConfig> {
@@ -33,39 +39,33 @@ public class GenericObservationReportTemplate extends BaseReportTemplate<Generic
     }
 
     @Override
-    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
-                                     Report<GenericObservationReportConfig> report,
-                                     String startDate, String endDate, List<AutoCloseable> resources,
-                                     PageType pageType) throws SQLException {
-        CommonComponents.addTo(jasperReport, report, pageType);
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReportBuilder, Report<GenericObservationReportConfig> report,
+                                     String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
+        CommonComponents.addTo(jasperReportBuilder, report, pageType);
 
-
-        jasperReport.setShowColumnTitle(true)
+        jasperReportBuilder.setShowColumnTitle(true)
                 .addPageHeader()
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
         List<String> conceptNamesToFilter = new ArrayList<>();
-
-        createAndAddDefaultColumns(jasperReport, report.getConfig());
+        createAndAddDefaultColumns(jasperReportBuilder, report.getConfig());
         if (report.getConfig() != null) {
-            createAndAddExtraPatientIdentifierTypes(jasperReport, report.getConfig());
-            createAndAddPatientAttributeColumns(jasperReport, report.getConfig());
-            createAndAddVisitAttributeColumns(jasperReport, report.getConfig());
-            createAndAddPatientAddressColumns(jasperReport, report.getConfig());
-            createAndAddProviderNameColumn(jasperReport, report.getConfig());
-            createAndAddVisitInfoColumns(jasperReport, report.getConfig());
+            createAndAddExtraPatientIdentifierTypes(jasperReportBuilder, report.getConfig());
+            createAndAddPatientAttributeColumns(jasperReportBuilder, report.getConfig());
+            createAndAddVisitAttributeColumns(jasperReportBuilder, report.getConfig());
+            createAndAddPatientAddressColumns(jasperReportBuilder, report.getConfig());
+            createAndAddProviderNameColumn(jasperReportBuilder, report.getConfig());
+            createAndAddVisitInfoColumns(jasperReportBuilder, report.getConfig());
             if (report.getConfig().isEncounterPerRow()) {
                 conceptNamesToFilter = fetchLeafConceptsAsList(report, bahmniReportsProperties);
-                createAndAddConceptColumns(conceptNamesToFilter, jasperReport);
+                createAndAddConceptColumns(conceptNamesToFilter, jasperReportBuilder);
             }
-            createAndAddDataAnalysisColumns(jasperReport, report.getConfig());
+            createAndAddDataAnalysisColumns(jasperReportBuilder, report.getConfig());
         }
 
         GenericDao genericObservationDao = new GenericObservationDaoImpl(report, bahmniReportsProperties);
-
         ResultSet obsResultSet = genericObservationDao.getResultSet(connection, startDate, endDate, conceptNamesToFilter);
-
-        JasperReportBuilder jasperReportBuilder = obsResultSet != null ? jasperReport.setDataSource(obsResultSet) : jasperReport;
+        jasperReportBuilder = obsResultSet != null ? jasperReportBuilder.setDataSource(obsResultSet) : jasperReportBuilder;
         return new BahmniReportBuilder(jasperReportBuilder);
     }
 }

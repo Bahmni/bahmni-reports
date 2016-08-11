@@ -503,6 +503,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Weight(weight) 80 2016-06-01 10:20:00.0 01-Jun-2016 Vitals", report.getRowAsString(3, " "));
 
     }
+
     @Test
     public void shouldExcludePatientAddressColumn() throws Exception {
         String reportName = "Observation report excluding patient address columns";

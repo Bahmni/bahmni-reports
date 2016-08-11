@@ -17,6 +17,7 @@ import org.bahmni.webclients.HttpClient;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.report;
@@ -53,7 +54,7 @@ public class BahmniReportUtil {
         List<DRColumn<?>> columns = report.getColumns();
         List<DRColumn<?>> columnsToAdd = new ArrayList<>();
         for (final DRColumn<?> column : columns) {
-            if (! isExcluded(excludeColumnsList, column)) {
+            if (!isExcluded(excludeColumnsList, column)) {
                 columnsToAdd.add(column);
             }
         }
@@ -68,6 +69,10 @@ public class BahmniReportUtil {
                 return column.getName().equalsIgnoreCase(String.valueOf(o));
             }
         });
-        return countMatches > 0 ;
+        return countMatches > 0;
+    }
+
+    public static <T> List<T> emptyListIfNull(List<T> collection) {
+        return collection == null ? Collections.<T>emptyList() : collection;
     }
 }

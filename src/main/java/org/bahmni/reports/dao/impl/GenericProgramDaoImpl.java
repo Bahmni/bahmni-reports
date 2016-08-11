@@ -12,8 +12,12 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
-import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.*;
+import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.constructPatientAddresses;
+import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.constructProgramAttributeNamesString;
+import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.constructProgramNamesString;
+import static org.bahmni.reports.util.GenericProgramReportTemplateHelper.getDateRangeFor;
 import static org.bahmni.reports.util.GenericReportsHelper.constructExtraPatientIdentifiersToFilter;
+import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAttributeNamesToDisplay;
 
 public class GenericProgramDaoImpl implements GenericDao {
 
@@ -31,13 +35,13 @@ public class GenericProgramDaoImpl implements GenericDao {
         sqlTemplate.add("endDate", endDate);
         GenericProgramReportConfig config = report.getConfig();
         if (config != null) {
-            sqlTemplate.add("patientAttributes", constructPatientAttributeNamesString(getPatientAttributes(config)));
-            sqlTemplate.add("patientAddresses", constructPatientAddresses(getPatientAddresses(config)));
-            sqlTemplate.add("programAttributes", constructProgramAttributeNamesString(getProgramAttributes(config)));
+            sqlTemplate.add("patientAttributes", constructPatientAttributeNamesToDisplay(config));
+            sqlTemplate.add("patientAddresses", constructPatientAddresses(config.getPatientAddresses()));
+            sqlTemplate.add("programAttributes", constructProgramAttributeNamesString(config.getProgramAttributes()));
             sqlTemplate.add("showAllStates", config.isShowAllStates());
-            sqlTemplate.add("programNamesToFilterSql", constructProgramNamesString(getProgramNamesToFilter(config)));
-            sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
-            sqlTemplate.add("ageGroupName", report.getConfig().getAgeGroupName());
+            sqlTemplate.add("programNamesToFilterSql", constructProgramNamesString(config.getProgramNamesToFilter()));
+            sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(config));
+            sqlTemplate.add("ageGroupName", config.getAgeGroupName());
 
         }
         sqlTemplate.add("applyDateRangeFor", getDateRangeFor(config));

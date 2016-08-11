@@ -22,17 +22,17 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 
-public class GenericObservationReportTemplateHelper extends  GenericReportsHelper {
+public class GenericObservationReportTemplateHelper {
 
     public static void createAndAddPatientAttributeColumns(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
-        for (String patientAttribute : getPatientAttributes(config)) {
+        for (String patientAttribute : config.getPatientAttributes()) {
             TextColumnBuilder<String> column = col.column(patientAttribute, patientAttribute, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
             jasperReport.addColumn(column);
         }
     }
 
     public static void createAndAddVisitAttributeColumns(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
-        for (String visitAttribute : getVisitAttributes(config)) {
+        for (String visitAttribute : config.getVisitAttributes()) {
             TextColumnBuilder<String> column = col.column(visitAttribute, visitAttribute, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
             jasperReport.addColumn(column);
         }
@@ -46,34 +46,10 @@ public class GenericObservationReportTemplateHelper extends  GenericReportsHelpe
     }
 
     public static void createAndAddPatientAddressColumns(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
-        for (String address : getPatientAddresses(config)) {
+        for (String address : config.getPatientAddresses()) {
             TextColumnBuilder<String> column = col.column(address, address, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
             jasperReport.addColumn(column);
         }
-    }
-
-    public static String constructPatientAttributeNamesToDisplay(GenericObservationReportConfig config) {
-        List<String> patientAttributes = getPatientAttributes(config);
-        List<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(pat.name = \\'%s\\', IF(pat.format = \\'org.openmrs.Concept\\',coalesce(scn.name, fscn.name),pa.value), NULL))) AS \\'%s\\'";
-
-        for (String patientAttribute : patientAttributes) {
-            parts.add(String.format(helperString, patientAttribute.replace("'", "\\\\\\\'"), patientAttribute.replace("'", "\\\\\\\'")));
-        }
-
-        return StringUtils.join(parts, ", ");
-    }
-
-    private static List<String> getPatientAttributes(GenericObservationReportConfig config) {
-        return config.getPatientAttributes() != null ? config.getPatientAttributes() : new ArrayList<String>();
-    }
-
-    private static List<String> getVisitAttributes(GenericObservationReportConfig config) {
-        return config.getVisitAttributes() != null ? config.getVisitAttributes() : new ArrayList<String>();
-    }
-
-    private static List<String> getPatientAddresses(GenericObservationReportConfig config) {
-        return config.getPatientAddresses() != null ? config.getPatientAddresses() : new ArrayList<String>();
     }
 
     private static List<String> getLocationTagsToFilter(GenericObservationReportConfig config) {
@@ -85,7 +61,7 @@ public class GenericObservationReportTemplateHelper extends  GenericReportsHelpe
     }
 
     public static String constructPatientAddressesToDisplay(GenericObservationReportConfig config) {
-        List<String> patientAddresses = getPatientAddresses(config);
+        List<String> patientAddresses = config.getPatientAddresses();
         StringBuilder stringBuilder = new StringBuilder();
         if (patientAddresses != null) {
             for (String address : patientAddresses) {
@@ -93,19 +69,6 @@ public class GenericObservationReportTemplateHelper extends  GenericReportsHelpe
             }
         }
         return stringBuilder.toString();
-    }
-
-    public static String constructVisitAttributeNamesToDisplay(GenericObservationReportConfig config) {
-        List<String> visitAttributes = getVisitAttributes(config);
-        List<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(vat.name = \\'%s\\', va.value_reference, NULL))) AS \\'%s\\'";
-
-        for (String visitAttribute : visitAttributes) {
-            parts.add(String.format(helperString, visitAttribute.replace("'", "\\\\\\\'"), visitAttribute.replace("'", "\\\\\\\'")));
-        }
-
-        return StringUtils.join(parts, ", ");
-
     }
 
     public static String constructLocationTagsToFilter(GenericObservationReportConfig config) {
@@ -183,7 +146,7 @@ public class GenericObservationReportTemplateHelper extends  GenericReportsHelpe
     }
 
     public static List<String> fetchLeafConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
-        List<String> conceptNamesToFilter = getConceptNamesToFilter(report.getConfig());
+        List<String> conceptNamesToFilter = report.getConfig().getConceptNamesToFilter();
         if (CollectionUtils.isEmpty(conceptNamesToFilter)) {
             return new ArrayList<>();
         }
@@ -240,7 +203,7 @@ public class GenericObservationReportTemplateHelper extends  GenericReportsHelpe
     }
 
     public static String constructConceptNamesToFilter(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
-        List<String> conceptNamesToFilter = getConceptNamesToFilter(report.getConfig());
+        List<String> conceptNamesToFilter = report.getConfig().getConceptNamesToFilter();
         List<String> concepts = fetchChildConceptsAsList(conceptNamesToFilter, report, bahmniReportsProperties);
         if (report.getConfig().isEncounterPerRow()) {
             concepts = fetchLeafConceptsAsList(report, bahmniReportsProperties);
@@ -256,7 +219,7 @@ public class GenericObservationReportTemplateHelper extends  GenericReportsHelpe
     }
 
     public static String constructConceptClassesToFilter(GenericObservationReportConfig config) {
-        List<String> conceptClassesToFilter = getConceptClassesToFilter(config);
+        List<String> conceptClassesToFilter = config.getConceptClassesToFilter();
         List<String> conceptClassesWithDoubleQuote = new ArrayList<>();
         for (String conceptClass : conceptClassesToFilter) {
             conceptClassesWithDoubleQuote.add("\"" + conceptClass + "\"");
@@ -269,18 +232,6 @@ public class GenericObservationReportTemplateHelper extends  GenericReportsHelpe
             return config.getApplyDateRangeFor();
         }
         return "obsDateTime";
-    }
-
-    private static List<String> getConceptNamesToFilter(GenericObservationReportConfig config) {
-        return config.getConceptNamesToFilter() != null ? config.getConceptNamesToFilter() : new ArrayList<String>();
-    }
-
-    private static List<String> getConceptClassesToFilter(GenericObservationReportConfig config) {
-        return config.getConceptClassesToFilter() != null ? config.getConceptClassesToFilter() : new ArrayList<String>();
-    }
-
-    public static List<String> getVisitTypesToFilter(GenericObservationReportConfig config) {
-        return config.getVisitTypesToFilter() != null ? config.getVisitTypesToFilter() : new ArrayList<String>();
     }
 
     public static String constructVisitTypesString(List<String> visitTypesToFilter) {

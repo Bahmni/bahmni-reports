@@ -1,9 +1,10 @@
 package org.bahmni.reports.model;
 
 import java.util.List;
-import java.util.Map;
 
-public class GenericLabOrderReportConfig extends  GenericReportsConfig implements Config {
+import static org.bahmni.reports.util.BahmniReportUtil.emptyListIfNull;
+
+public class GenericLabOrderReportConfig extends GenericReportsConfig implements Config {
     private Boolean showProvider = false;
     private boolean showVisitInfo = false;
     private List<String> programsToFilter;
@@ -28,7 +29,7 @@ public class GenericLabOrderReportConfig extends  GenericReportsConfig implement
     }
 
     public List<String> getProgramsToFilter() {
-        return programsToFilter;
+        return emptyListIfNull(programsToFilter);
     }
 
     public void setProgramsToFilter(List<String> programsToFilter) {

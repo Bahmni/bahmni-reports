@@ -3,7 +3,9 @@ package org.bahmni.reports.model;
 
 import java.util.List;
 
-public class GenericProgramReportConfig extends GenericReportsConfig implements Config{
+import static org.bahmni.reports.util.BahmniReportUtil.emptyListIfNull;
+
+public class GenericProgramReportConfig extends GenericReportsConfig implements Config {
 
     private boolean showAllStates = false;
     private List<String> programAttributes;
@@ -21,7 +23,7 @@ public class GenericProgramReportConfig extends GenericReportsConfig implements 
 
 
     public List<String> getProgramAttributes() {
-        return programAttributes;
+        return emptyListIfNull(programAttributes);
     }
 
     public void setProgramAttributes(List<String> programAttributes) {
@@ -29,7 +31,7 @@ public class GenericProgramReportConfig extends GenericReportsConfig implements 
     }
 
     public List<String> getProgramNamesToFilter() {
-        return programNamesToFilter;
+        return emptyListIfNull(programNamesToFilter);
     }
 
     public void setProgramNamesToFilter(List<String> programNamesToFilter) {

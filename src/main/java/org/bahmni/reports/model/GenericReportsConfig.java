@@ -3,6 +3,8 @@ package org.bahmni.reports.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.bahmni.reports.util.BahmniReportUtil.emptyListIfNull;
+
 public class GenericReportsConfig {
     private List<String> excludeColumns = new ArrayList<>();
     private boolean forDataAnalysis = false;
@@ -13,7 +15,7 @@ public class GenericReportsConfig {
     private String ageGroupName;
 
     public List<String> getExcludeColumns() {
-        return excludeColumns;
+        return emptyListIfNull(excludeColumns);
     }
 
     public void setExcludeColumns(List<String> excludeColumns) {
@@ -29,7 +31,7 @@ public class GenericReportsConfig {
     }
 
     public List<String> getPatientAttributes() {
-        return patientAttributes;
+        return emptyListIfNull(patientAttributes);
     }
 
     public void setPatientAttributes(List<String> patientAttributes) {
@@ -37,7 +39,7 @@ public class GenericReportsConfig {
     }
 
     public List<String> getVisitAttributes() {
-        return visitAttributes;
+        return emptyListIfNull(visitAttributes);
     }
 
     public void setVisitAttributes(List<String> visitAttributes) {
@@ -45,7 +47,7 @@ public class GenericReportsConfig {
     }
 
     public List<String> getPatientAddresses() {
-        return patientAddresses;
+        return emptyListIfNull(patientAddresses);
     }
 
     public void setPatientAddresses(List<String> patientAddresses) {
@@ -53,7 +55,7 @@ public class GenericReportsConfig {
     }
 
     public List<String> getAdditionalPatientIdentifiers() {
-        return additionalPatientIdentifiers;
+        return emptyListIfNull(additionalPatientIdentifiers);
     }
 
     public void setAdditionalPatientIdentifiers(List<String> additionalPatientIdentifiers) {
