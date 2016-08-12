@@ -62,7 +62,7 @@ SET @sql = CONCAT('SELECT
                        JOIN (select encounter_id from obs
                                             where concept_id = (select concept_id from concept_view where concept_full_name = \'#templateName#\') and voided is false) e1
                        ON e.encounter_id = e1.encounter_id
-                       JOIN patient_identifier pi ON pi.patient_id = ob.person_id
+                       JOIN patient_identifier pi ON pi.patient_id = ob.person_id and pi.preferred = 1
                        JOIN person ON person.person_id = pi.patient_id ',
                        IF(@patientAttributesSql = '', '', @patientAttributesJoin),
                        ' JOIN person_name pat_name ON pat_name.person_id = person.person_id
