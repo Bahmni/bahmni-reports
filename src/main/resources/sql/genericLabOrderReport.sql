@@ -28,7 +28,7 @@ SET @filterByProgramsSql = '  AND program.name IN (#programsToFilter#)';
 SET @providerJoinSql = '  JOIN provider pro ON pro.provider_id=ep.provider_id
   LEFT JOIN person_name provider_person ON provider_person.person_id = pro.person_id';
 SET @providerSelectSql = 'coalesce(pro.name, concat(provider_person.given_name, " ", provider_person.family_name)) AS "Provider"';
-SET @ageGroupJoinSql = 'LEFT JOIN reporting_age_group rag ON DATE("#endDate#") BETWEEN (DATE_ADD(
+SET @ageGroupJoinSql = 'LEFT JOIN reporting_age_group rag ON DATE(ord.date_activated) BETWEEN (DATE_ADD(
                      DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(
                      DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
                                                        AND rag.report_group_name = "#ageGroupName#"';
@@ -73,7 +73,7 @@ WHERE name = 'LAB_NOTES' AND concept_name_type = 'FULLY_SPECIFIED'
 INTO @labNotesConceptId;
 
 SET @orderIdList = NULL;
-SELECT GROUP_CONCAT(DISTINCT(ord.order_id)) FROM orders ord WHERE cast(ord.date_created AS DATE) BETWEEN "#startDate#" AND "#endDate#" and ord.order_type_id = @labOrderType and ord.voided is false INTO @orderIdList;
+SELECT GROUP_CONCAT(DISTINCT(ord.order_id)) FROM orders ord WHERE cast(ord.date_activated AS DATE) BETWEEN "#startDate#" AND "#endDate#" and ord.order_type_id = @labOrderType and ord.voided is false INTO @orderIdList;
 
 SET @primaryIdentifierTypeUuid = NULL;
 SELECT property_value FROM global_property WHERE property = 'emr.primaryIdentifierType' into @primaryIdentifierTypeUuid;
@@ -85,7 +85,7 @@ SET @sql = CONCAT('SELECT * FROM (SELECT
   GROUP_CONCAT(DISTINCT(IF(pit.name = @primaryIdentifierTypeName, pi.identifier, NULL)))     AS "Patient Identifier",
   ',IF(@extraPatientIdentifierTypes = '', '', CONCAT(@extraPatientIdentifierTypes, ',')),'
   concat(pn.given_name, " ", pn.family_name)                    AS "Patient Name",
-  floor(DATEDIFF(DATE(ord.date_created), p.birthdate) / 365)      AS "Age",
+  floor(DATEDIFF(DATE(ord.date_activated), p.birthdate) / 365)      AS "Age",
   p.birthdate                                                   AS "Birthdate",
   p.gender                                                      AS "Gender",
   ', IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')), '
@@ -93,8 +93,8 @@ SET @sql = CONCAT('SELECT * FROM (SELECT
   ', IF(@visitAttributesSql = '', '', CONCAT(@visitAttributesSql, ',')), '
   ', IF(@filterByPrograms = '', '', CONCAT(@programSelectSql, ',')), '
   ',IF(@applyAgeGroup = '', '', CONCAT(@ageGroupSelectSql, ',')),'
-  date(ord.date_created)                                        AS "Test Order Date",
-  ord.date_created            AS order_date_created,
+  date(ord.date_activated)                                        AS "Test Order Date",
+  ord.date_activated            AS order_date_created,
   coalesce(test_scn.name, test_fscn.name) AS "Test Name",
   IF (o.`Test Result` is not NULL, o.`Test Result`, CONCAT(coded_fscn.name, "(", IF (coded_scn.name is NULL, "", coded_scn.name), ")")) AS "Test Result",
   IF (o.abnormal_coded = @trueConceptId, "Abnormal", IF (coalesce(o.`Test Result`, coded_scn.name, coded_fscn.name) is not null, "Normal", "")) as "Test Outcome",'
@@ -110,7 +110,7 @@ SET @sql = CONCAT('SELECT * FROM (SELECT
   o.`Max Range` AS "Max Range",
   o.value_numeric AS "value_numeric"
 
-FROM (SELECT * FROM orders ord WHERE cast(ord.date_created AS DATE) BETWEEN "#startDate#" AND "#endDate#" and ord.order_type_id = @labOrderType and ord.voided is false and ord.date_stopped is NULL) ord
+FROM (SELECT * FROM orders ord WHERE cast(ord.date_activated AS DATE) BETWEEN "#startDate#" AND "#endDate#" and ord.order_type_id = @labOrderType and ord.voided is false and ord.date_stopped is NULL) ord
   JOIN person p ON p.person_id = ord.patient_id AND p.voided is false
   JOIN patient_identifier pi ON p.person_id = pi.patient_id AND pi.voided is false
   JOIN patient_identifier_type pit ON pi.identifier_type = pit.patient_identifier_type_id AND pit.retired is false
@@ -142,7 +142,7 @@ FROM (SELECT * FROM orders ord WHERE cast(ord.date_created AS DATE) BETWEEN "#st
             ON o.concept_id = coalesce(cs.concept_id, ord.concept_id) AND o.order_id = ord.order_id
   LEFT JOIN concept_name coded_fscn on coded_fscn.concept_id = o.value_coded AND coded_fscn.concept_name_type="FULLY_SPECIFIED" AND coded_fscn.voided is false
   LEFT JOIN concept_name coded_scn on coded_scn.concept_id = o.value_coded AND coded_scn.concept_name_type="SHORT" AND coded_scn.voided is false
-                   GROUP BY ord.order_id, cs.concept_id, o.concept_id ORDER BY ord.date_created asc, o.obs_id asc) bigTable',
+                   GROUP BY ord.order_id, cs.concept_id, o.concept_id ORDER BY ord.date_activated asc, o.obs_id asc) bigTable',
                   IF(@filterByConceptNames != '' OR @filterByConceptValues != '', ' WHERE', ''),
                   IF(@filterByConceptNames = '', '', @conceptNamesToFilterSql), '
    ', IF(@filterByConceptValues = '', '', @filterByConceptValuesSql)

@@ -14,7 +14,7 @@ SET @patientAttributeJoinSql = ' LEFT OUTER JOIN person_attribute pa ON p.person
   LEFT OUTER JOIN concept_name fscn ON pat.format = "org.openmrs.Concept" AND pa.value = fscn.concept_id AND fscn.concept_name_type = "FULLY_SPECIFIED" AND fscn.voided is false ';
 SET @patientAddressJoinSql = ' LEFT OUTER JOIN person_address paddress ON p.person_id = paddress.person_id AND paddress.voided is false ';
 
-SET @ageGroupJoinSql = 'LEFT JOIN reporting_age_group rag ON DATE("#endDate#") BETWEEN (DATE_ADD(
+SET @ageGroupJoinSql = 'LEFT JOIN reporting_age_group rag ON DATE(v.date_started) BETWEEN (DATE_ADD(
                      DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(
                      DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
                                                        AND rag.report_group_name = "#ageGroupName#"';

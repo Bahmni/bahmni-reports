@@ -97,11 +97,11 @@
     <order_type order_type_id="1000" name="Lab Order" java_class_name="org.openmrs.Order" description="Lab order" creator="1" date_created="2008-08-15 15:49:04.0" retired="0" uuid="de3fb1d0-ae06-11e3-a5e2-0800200c9a77"/>
     <order_type order_type_id="1001" name="Drug Order" java_class_name="org.openmrs.DrugOrder" description="Drug order" creator="1" date_created="2008-08-15 15:49:04.0" retired="0" uuid="dsdfb1d0-ae06-11e3-a5e2-0800200c9a77"/>
 
-    <orders order_id="999" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1000" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-16 12:34:31.0" date_stopped="2016-01-17 12:34:31.0" creator="1"
+    <orders order_id="999" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1000" orderer="1" date_activated="2016-01-16 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-16 12:34:31.0" date_stopped="2016-01-17 12:34:31.0" creator="1"
             date_created="2016-01-16 12:34:31.0" voided="0" patient_id="1000" uuid="4d673b17-12-11e5-9fec-0800274a5156" care_setting="1" encounter_id="1000"/>
-    <orders order_id="1000" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1000" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
+    <orders order_id="1000" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1000" orderer="1" date_activated="2016-01-17 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
             date_created="2016-01-17 12:34:31.0" voided="0" patient_id="1000" uuid="4d673b17-d63d-11e5-9fec-0800274a5156" care_setting="1" encounter_id="1000"/>
-    <orders order_id="1001" order_type_id="1000" order_number="ORD-1sd9" urgency="ROUTINE" order_action="NEW" concept_id="1001" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
+    <orders order_id="1001" order_type_id="1000" order_number="ORD-1sd9" urgency="ROUTINE" order_action="NEW" concept_id="1001" orderer="1" date_activated="2016-01-29 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
             date_created="2016-01-29 12:34:31.0" voided="0" patient_id="1000" uuid="4d673b17-1234-11e5-9fec-0800274a5156" care_setting="1" encounter_id="1001"/>
 
     <obs obs_id="1000"  order_id="1000" person_id="1000" concept_id="1000" encounter_id="1000" obs_datetime="2016-04-21 15:30:31.0" location_id="2" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="12333-e80a-4056-9285-bd798e213c63"/>
@@ -115,11 +115,11 @@
     <encounter encounter_id="2000" encounter_type="2" patient_id="2000" visit_id="2000" location_id="2" encounter_datetime="2016-05-23 00:00:00.0" creator="1" date_created="2016-04-21 00:00:00.0" voided="false" uuid="6519d653-393b-4118-9c83-a371nb82d4ar"/>
     <encounter_provider encounter_provider_id="2000" encounter_id="2000" provider_id="1" encounter_role_id="1" creator="1" date_created="2016-05-23 00:00:00.0" voided="false" uuid="19e0aae8-20ee-46b7-ade6-9e68l197b7a4" />
 
-    <orders order_id="2000" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1000" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
+    <orders order_id="2000" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1000" orderer="1" date_activated="2017-02-17 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
             date_created="2017-02-17 12:34:31.0" voided="0" patient_id="2000" uuid="4e673b17-d63d-11e5-9fec-0800274a5156" care_setting="1" encounter_id="2000"/>
-    <orders order_id="2001" order_type_id="1000" order_number="ORD-19929" urgency="ROUTINE" order_action="NEW" concept_id="1001" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
+    <orders order_id="2001" order_type_id="1000" order_number="ORD-19929" urgency="ROUTINE" order_action="NEW" concept_id="1001" orderer="1" date_activated="2017-02-18 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
             date_created="2017-02-18 12:34:31.0" voided="0" patient_id="2000" uuid="4e673b17-d63d-asdd-9fec-0800274a5156" care_setting="1" encounter_id="2000"/>
-    <orders order_id="2002" order_type_id="1000" order_number="ORD-dasfas" urgency="ROUTINE" order_action="NEW" concept_id="1006" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
+    <orders order_id="2002" order_type_id="1000" order_number="ORD-dasfas" urgency="ROUTINE" order_action="NEW" concept_id="1006" orderer="1" date_activated="2017-03-18 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
             date_created="2017-03-18 12:34:31.0" voided="0" patient_id="2000" uuid="adf122-d63d-asdd-9fec-0800274a5156" care_setting="1" encounter_id="2000"/>
 
     <obs obs_id="2000" order_id="2000" person_id="2000" concept_id="1000" encounter_id="2000" obs_datetime="2016-05-23 15:30:31.0" location_id="2" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="6519d653-393b-4118-9c83-a371nb82d4ar"/>
@@ -139,17 +139,17 @@
     <encounter encounter_id="3000" encounter_type="2" patient_id="3000" visit_id="3000" location_id="2" encounter_datetime="2016-04-21 00:00:00.0" creator="1" date_created="2016-04-21 00:00:00.0" voided="false" uuid="6519d653-xzd-4118-9c83-a371nb82d4ac"/>
     <encounter_provider encounter_provider_id="3000" encounter_id="3000" provider_id="1" encounter_role_id="1" creator="1" date_created="2016-04-21 00:00:00.0" voided="false" uuid="19e0aae8-12cc-46b7-ade6-9e68l197b7a9" />
 
-    <orders order_id="3000" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1000" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
+    <orders order_id="3000" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1000" orderer="1" date_activated="2020-01-15 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
             date_created="2020-01-15 12:34:31.0" voided="0" patient_id="3000" uuid="1232-d63d-11e5-9fec-0800274a5156" care_setting="1" encounter_id="3000"/>
-    <orders order_id="3001" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1001" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-18 12:34:31.0" creator="1"
+    <orders order_id="3001" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1001" orderer="1" date_activated="2020-01-16 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-18 12:34:31.0" creator="1"
             date_created="2020-01-16 12:34:31.0" voided="0" patient_id="3000" uuid="sdf-d63d-11e5-9fec-0800274a5156" care_setting="1" encounter_id="3000"/>
-    <orders order_id="3002" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1009" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-18 12:34:31.0" creator="1"
+    <orders order_id="3002" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1009" orderer="1" date_activated="2020-01-16 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-18 12:34:31.0" creator="1"
             date_created="2020-01-16 12:34:32.0" voided="0" patient_id="3000" uuid="sdf-d63d-11e5-9fec-08op274a5156" care_setting="1" encounter_id="3000"/>
-    <orders order_id="3003" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1010" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-18 12:34:31.0" creator="1"
+    <orders order_id="3003" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1010" orderer="1" date_activated="2022-01-16 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-18 12:34:31.0" creator="1"
             date_created="2022-01-16 12:34:31.0" voided="0" patient_id="3000" uuid="as-d612-9fec-08op274a5156" care_setting="1" encounter_id="3000"/>
-    <orders order_id="3004" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1010" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-18 12:34:31.0" creator="1"
+    <orders order_id="3004" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1010" orderer="1" date_activated="2022-02-16 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-18 12:34:31.0" creator="1"
             date_created="2022-02-16 12:34:31.0" voided="0" patient_id="3000" uuid="as-123-9fec-08op274a5156" care_setting="1" encounter_id="3000"/>
-    <orders order_id="3005" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1010" orderer="1" date_activated="2016-01-15 00:00:00.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-18 12:34:31.0" creator="1"
+    <orders order_id="3005" order_type_id="1000" order_number="ORD-1999" urgency="ROUTINE" order_action="NEW" concept_id="1010" orderer="1" date_activated="2022-03-16 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-18 12:34:31.0" creator="1"
             date_created="2022-03-16 12:34:31.0" voided="0" patient_id="3000" uuid="as-12x-9fec-08op274a5156" care_setting="1" encounter_id="3000"/>
 
     <obs obs_id="3000" order_id="3002" person_id="3000" concept_id="1009" encounter_id="3000" obs_datetime="2016-04-21 15:30:31.0" location_id="2" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="12333-sfd-123-9285-bd798e2lpc63"/>

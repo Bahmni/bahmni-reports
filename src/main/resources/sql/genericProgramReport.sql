@@ -19,7 +19,7 @@ SET @programAttributesJoinSql = '  LEFT OUTER JOIN patient_program_attribute ppa
   LEFT OUTER JOIN concept_name pratfn ON prat.datatype like "%Concept%" AND ppa.value_reference = pratfn.concept_id AND pratfn.concept_name_type = "FULLY_SPECIFIED" AND pratfn.voided is false ';
 SET @patientAddressJoinSql = ' LEFT OUTER JOIN person_address paddress ON p.person_id = paddress.person_id AND paddress.voided is false ';
 SET @selectAllStatesSql = 'DATE_FORMAT(ps.start_date, "%d-%b-%Y") AS "Start Date", DATE_FORMAT(ps.end_date, "%d-%b-%Y") AS "End Date"';
-SET @ageGroupJoinSql = 'LEFT JOIN reporting_age_group rag ON DATE("#endDate#") BETWEEN (DATE_ADD(
+SET @ageGroupJoinSql = 'LEFT JOIN reporting_age_group rag ON DATE(pprog.date_enrolled) BETWEEN (DATE_ADD(
                      DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(
                      DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
                                                        AND rag.report_group_name = "#ageGroupName#"';
@@ -35,7 +35,7 @@ SET @sql = CONCAT('SELECT
        GROUP_CONCAT(DISTINCT(IF(pit.name = @primaryIdentifierTypeName, pi.identifier, NULL)))     AS "Patient Identifier",
        ',IF(@extraPatientIdentifierTypes = '', '', CONCAT(@extraPatientIdentifierTypes, ',')),'
        CONCAT(pn.given_name, " ", pn.family_name)  AS "Patient Name",
-       FLOOR(DATEDIFF(DATE(CURDATE()), p.birthdate) / 365)      AS "Age",
+       FLOOR(DATEDIFF(DATE(pprog.date_enrolled), p.birthdate) / 365)      AS "Age",
         DATE_FORMAT(p.birthdate, "%d-%b-%Y")                             AS "Birthdate",
        p.gender AS "Gender",
        ', IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')), '
