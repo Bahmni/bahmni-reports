@@ -53,7 +53,7 @@ SET @sql = CONCAT('SELECT
         FROM  person p
        JOIN patient pa ON p.person_id = pa.patient_id and cast(pa.date_created AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'
        JOIN person_name pn ON p.person_id = pn.person_id
-       JOIN patient_identifier pi ON pa.patient_id = pi.patient_id
+       JOIN patient_identifier pi ON pa.patient_id = pi.patient_id AND pi.preferred = 1
        LEFT OUTER JOIN person_address addr ON p.person_id = addr.person_id
        LEFT OUTER JOIN person_attribute attr ON p.person_id = attr.person_id and attr.voided = false
        LEFT OUTER JOIN person_attribute_type attr_type ON attr.person_attribute_type_id = attr_type.person_attribute_type_id

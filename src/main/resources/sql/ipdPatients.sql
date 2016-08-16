@@ -26,7 +26,7 @@ SET @sql = CONCAT('SELECT
     INNER JOIN visit v
       ON v.visit_id = visit_attribute.visit_id
     INNER JOIN visit_type vt on v.visit_type_id = vt.visit_type_id
-    INNER JOIN patient_identifier pi ON pi.patient_id = v.patient_id
+    INNER JOIN patient_identifier pi ON pi.patient_id = v.patient_id AND pi.preferred = 1
     INNER JOIN person p ON p.person_id = v.patient_id
     INNER JOIN person_name pn ON pn.person_id = v.patient_id
     LEFT JOIN person_address pa ON pa.person_id = v.patient_id

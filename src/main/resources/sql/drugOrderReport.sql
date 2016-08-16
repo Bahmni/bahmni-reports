@@ -40,7 +40,7 @@ FROM
      LEFT JOIN concept_view fre ON order_frequency.concept_id = fre.concept_id
      LEFT JOIN person_name ON person_name.person_id = orders.patient_id
      LEFT JOIN person ON person.person_id = orders.patient_id
-     LEFT JOIN patient_identifier ON patient_identifier.patient_id = orders.patient_id
+     LEFT JOIN patient_identifier ON patient_identifier.patient_id = orders.patient_id AND patient_identifier.preferred = 1
      LEFT JOIN encounter_provider ON encounter_provider.encounter_id = orders.encounter_id
      LEFT JOIN provider ON provider.provider_id = encounter_provider.provider_id
      LEFT JOIN person_name pro ON pro.person_id = provider.person_id

@@ -12,7 +12,7 @@ SELECT
 FROM orders o
   INNER JOIN concept_name cn ON o.concept_id = cn.concept_id AND cn.concept_name_type = 'FULLY_SPECIFIED'
   INNER JOIN order_type ot ON ot.order_type_id = o.order_type_id
-  INNER JOIN patient_identifier pt ON pt.patient_id = o.patient_id
+  INNER JOIN patient_identifier pt ON pt.patient_id = o.patient_id AND pt.preferred = 1
   INNER JOIN person_name pn ON pn.person_id = pt.patient_id
   INNER JOIN person p ON p.person_id = pn.person_id
   LEFT JOIN (select o2.order_id

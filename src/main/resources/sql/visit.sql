@@ -23,7 +23,7 @@ SET @sql = CONCAT('SELECT pi.identifier, CONCAT(pn.given_name, " ", pn.family_na
   inner join person p on p.person_id=v.patient_id
   inner join patient pa ON p.person_id = pa.patient_id
   inner join person_name pn ON p.person_id = pn.person_id
-  inner join patient_identifier pi ON pa.patient_id = pi.patient_id
+  inner join patient_identifier pi ON pa.patient_id = pi.patient_id  AND pi.preferred = 1
   left outer join visit_attribute on visit_attribute.visit_id=v.visit_id
   left outer JOIN visit_attribute_type on visit_attribute_type.visit_attribute_type_id = visit_attribute.attribute_type_id
   left outer join person_attribute on p.person_id = person_attribute.person_id and person_attribute.voided is false

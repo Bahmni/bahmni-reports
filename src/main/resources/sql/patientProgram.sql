@@ -14,7 +14,7 @@ from program prog
   join patient_program pp on prog.program_id = pp.program_id and date(pp.date_enrolled) between '#startDate#' and '#endDate#'
   join patient_state ps on pp.patient_program_id = ps.patient_program_id and pws.program_workflow_state_id = ps.state and ps.voided=0
   join person p on pp.patient_id = p.person_id
-  join patient_identifier pi on pp.patient_id = pi.patient_id
+  join patient_identifier pi on pp.patient_id = pi.patient_id AND pi.preferred = 1
   join person_name pn ON pp.patient_id = pn.person_id
   left join concept_name cn2 on pp.outcome_concept_id = cn2.concept_id and cn2.concept_name_type='FULLY_SPECIFIED'
   left join concept_name cn_short_name on pp.outcome_concept_id = cn_short_name.concept_id and cn_short_name.concept_name_type='SHORT'
