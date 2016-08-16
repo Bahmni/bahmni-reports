@@ -82,7 +82,7 @@ SET @sql = CONCAT('SELECT
                         IF (@addressAttributesInInnerQuery = '', '', @addressAttributesJoin),
                         IF(@patientAttributesSql = '', '', @patientAttributesJoin),
                         IF(@programAttributesSql = '', '', @programAttributesJoin),
-                        ' INNER JOIN patient_identifier pi ON pi.patient_id = o.person_id
+                        ' INNER JOIN patient_identifier pi ON pi.patient_id = o.person_id and pi.preferred = 1
                         LEFT JOIN encounter_provider ON encounter_provider.encounter_id = o.encounter_id
                         LEFT JOIN provider ON provider.provider_id = encounter_provider.provider_id
                         LEFT JOIN person_name pn ON pn.person_id = provider.person_id
