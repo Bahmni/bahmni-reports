@@ -300,5 +300,39 @@
                 "Patient Identifier"
             ]
         }
+    },
+    "AggregatedReportWithoutRowGroup": {
+        "name": "Aggregated report without rowGroup",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "programs",
+                "config": {
+                    "ageGroupName": "Observation Age Group"
+                }
+            },
+            "columnGroups": [
+                "Observation Age Group"
+            ],
+            "distinctGroups": [
+                "Patient Identifier"
+            ]
+        }
+    },
+    "AggregatedReportWithoutColumnGroup": {
+        "name": "Aggregated report without columnGroup",
+        "type": "aggregation",
+        "config": {
+            "report": {
+                "type": "programs"
+            },
+            "rowGroups": [
+                "Gender"
+            ],
+            "distinctGroups": [
+                "Patient Identifier"
+            ],
+            "showTotalRow": true
+        }
     }
 }

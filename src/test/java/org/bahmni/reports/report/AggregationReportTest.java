@@ -208,4 +208,30 @@ public class AggregationReportTest extends BaseIntegrationTest {
         assertEquals("> 10 Years ≤ 10 Years", report.getRowAsString(1, " "));
         assertEquals("F 1 1", report.getRowAsString(2, " "));
     }
+
+    @Test
+    public void shouldThrowExceptionWhenRowGroupIsNotConfigured() throws Exception {
+
+        String reportName = "Aggregated report without rowGroup";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30",true);
+
+        assertEquals("<h2>Incorrect Configuration</h2><h3>You have not configured rowGroups.</h3>", report.getReportName());
+    }
+
+    @Test
+    public void shouldApplyOnlyRowGroupsWhenColumnGroupIsNotConfigured() throws Exception {
+        executeDataSet("datasets/genericProgramReportDataSet.xml");
+
+        String reportName = "Aggregated report without columnGroup";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
+
+        assertEquals(2, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(3, report.rowsCount());
+        assertEquals("F 2", report.getRowAsString(2, " "));
+        assertEquals("Total 2", report.getRowAsString(3, " "));
+    }
+
 }
