@@ -6,7 +6,7 @@ FROM
 		INNER JOIN concept_view cv ON o.concept_id = cv.concept_id
         INNER JOIN person p on o.person_id = p.person_id
         INNER JOIN person_name pn ON o.person_id = pn.person_id
-		INNER JOIN patient_identifier pi on o.person_id = pi.patient_id
+		INNER JOIN patient_identifier pi on o.person_id = pi.patient_id and pi.preferred = 1
 		AND cv.concept_full_name = '#templateName#') t1
 
 	INNER JOIN
