@@ -83,7 +83,7 @@ SET @sql = CONCAT('SELECT
                        JOIN person p ON pp.patient_id = p.person_id
                        JOIN person_name pn ON p.person_id = pn.person_id
                        JOIN patient pt ON pp.patient_id = pt.patient_id
-                       JOIN patient_identifier pi ON pt.patient_id = pi.patient_id',
+                       JOIN patient_identifier pi ON pt.patient_id = pi.patient_id and pi.preferred = 1',
                          IF(@patientAttributesSql = '', '', @patientAttributesJoinSql),
                          IF(@programAttributesSql = '', '', @programAttributesJoinSql),'
 
