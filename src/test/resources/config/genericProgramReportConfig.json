@@ -201,5 +201,12 @@
         "config": {
             "ageGroupName": "Observation Age Group"
         }
+    },
+    "programsWithSortColumns": {
+        "name": "Generic Patient Program Report With sortColumns",
+        "type": "programs",
+        "config": {
+            "sortColumns":["Patient Identifier"]
+        }
     }
 }

@@ -346,4 +346,19 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         assertEquals("prog2 Generic Program2 21 15-Aug-1994 F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 > 10 Years", report.getRowAsString(4, " "));
     }
 
+    @Test
+    public void shouldSortConfiguredColumnInAscendingOrder() throws Exception {
+        String reportName = "Generic Patient Program Report With sortColumns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
+
+        assertEquals(10, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(4, report.rowsCount());
+        assertEquals("prog1 Generic Program1 7 15-Aug-2008 F 15-Aug-2008 HIV PROGRAM 20-Apr-2016 30-Apr-2016 State 2", report.getRowAsString(1, " "));
+        assertEquals("prog1 Generic Program1 7 15-Aug-2008 F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 30-Apr-2016 State 1", report.getRowAsString(2, " "));
+        assertEquals("prog2 Generic Program2 21 15-Aug-1994 F 15-Aug-2008 HIV PROGRAM 19-Apr-2016  State 2", report.getRowAsString(3, " "));
+        assertEquals("prog2 Generic Program2 21 15-Aug-1994 F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2", report.getRowAsString(4, " "));
+    }
+
 }

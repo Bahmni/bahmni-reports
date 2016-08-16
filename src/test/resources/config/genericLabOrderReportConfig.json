@@ -301,5 +301,15 @@
         "config": {
             "ageGroupName": "Observation Age Group"
         }
+    },
+    "LabOrderReportWithSortColumns": {
+        "name": "LabOrder report with sortColumns",
+        "type": "labOrders",
+        "config": {
+            "conceptValuesToFilter": [
+                "150..300"
+            ],
+            "sortColumns":["Test Name"]
+        }
     }
 }

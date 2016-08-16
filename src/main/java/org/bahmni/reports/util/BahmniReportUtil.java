@@ -2,8 +2,11 @@ package org.bahmni.reports.util;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.base.DRReport;
+import net.sf.dynamicreports.report.base.DRSort;
 import net.sf.dynamicreports.report.base.column.DRColumn;
+import net.sf.dynamicreports.report.constant.OrderType;
 import net.sf.dynamicreports.report.constant.PageType;
+import net.sf.dynamicreports.report.definition.expression.DRIExpression;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.bahmni.reports.BahmniReportsProperties;
@@ -33,7 +36,28 @@ public class BahmniReportUtil {
         reportBuilder = new ReportHeader().add(reportBuilder, report.getName(), startDate, endDate);
         BahmniReportBuilder build = reportTemplate.build(connection, reportBuilder, report, startDate, endDate, resources, pageType);
         excludeColumns(report.getConfig(), reportBuilder);
+        sortColumns(report.getConfig(), reportBuilder);
         return build;
+    }
+
+    private static void sortColumns(Config config, JasperReportBuilder reportBuilder) {
+        if (config instanceof GenericReportsConfig) {
+            GenericReportsConfig genericReportsConfig = (GenericReportsConfig) config;
+            List<String> sortColumnsList = genericReportsConfig.getSortColumns();
+            DRReport report = reportBuilder.getReport();
+            for (DRColumn<?> column : report.getColumns()) {
+                sortIfConfigured(sortColumnsList, report, column);
+            }
+        }
+    }
+
+    private static void sortIfConfigured(List<String> sortColumnsList, DRReport report, DRColumn<?> column) {
+        if (contains(sortColumnsList, column)) {
+            DRSort drSort = new DRSort();
+            drSort.setExpression((DRIExpression<?>) column);
+            drSort.setOrderType(OrderType.ASCENDING);
+            report.addSort(drSort);
+        }
     }
 
     private static void excludeColumns(Config config, JasperReportBuilder reportBuilder) {
@@ -53,16 +77,16 @@ public class BahmniReportUtil {
         List<DRColumn<?>> columns = report.getColumns();
         List<DRColumn<?>> columnsToAdd = new ArrayList<>();
         for (final DRColumn<?> column : columns) {
-            if (! isExcluded(excludeColumnsList, column)) {
+            if (!contains(excludeColumnsList, column)) {
                 columnsToAdd.add(column);
             }
         }
         report.setColumns(columnsToAdd);
     }
 
-    private static boolean isExcluded(List<String> excludeColumnsList, final DRColumn<?> column) {
+    private static boolean contains(List<String> columnsList, final DRColumn<?> column) {
 
-        int countMatches = CollectionUtils.countMatches(excludeColumnsList, new Predicate() {
+        int countMatches = CollectionUtils.countMatches(columnsList, new Predicate() {
             @Override
             public boolean evaluate(Object o) {
                 return column.getName().equalsIgnoreCase(String.valueOf(o));

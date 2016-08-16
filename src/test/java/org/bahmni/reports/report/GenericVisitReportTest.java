@@ -196,4 +196,18 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         assertEquals(1, report.rowsCount());
         assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  > 10 Years", report.getRowAsString(1, " "));
     }
+    @Test
+    public void shouldSortConfiguredColumnInAscendingOrder() throws Exception {
+        String reportName = "Generic Visit Report With SortColumn";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2017-04-30");
+
+        assertEquals(11, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(3, report.rowsCount());
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2017 21-May-2017 01-Jan-2005 01-Jan-2005", report.getRowAsString(2, " "));
+        assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2017 21-May-2017", report.getRowAsString(3, " "));
+
+    }
 }
