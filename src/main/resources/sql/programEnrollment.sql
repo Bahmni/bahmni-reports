@@ -40,13 +40,13 @@ SET @sql = CONCAT('SELECT
         FROM  patient_program pp
         JOIN program prog ON pp.program_id = prog.program_id and pp.voided = 0
         and(
-            (cast(pp.date_enrolled AS DATE) <=  \'#endDate#\')
-             AND (cast(pp.date_completed AS DATE) >= \'#startDate#\' OR  pp.date_completed is NULL)
+            (cast(pp.date_enrolled AS DATE) <=  "#endDate#")
+             AND (cast(pp.date_completed AS DATE) >= "#startDate#" OR  pp.date_completed is NULL)
           )
        JOIN person p ON pp.patient_id = p.person_id
        JOIN person_name pn ON p.person_id = pn.person_id
        JOIN patient pa ON pp.patient_id = pa.patient_id
-       JOIN patient_identifier pi ON pa.patient_id = pi.patient_id
+       JOIN patient_identifier pi ON pa.patient_id = pi.patient_id and pi.preferred = 1
        LEFT OUTER JOIN patient_program_attribute attr ON pp.patient_program_id = attr.patient_program_id
        LEFT OUTER JOIN program_attribute_type attr_type ON attr.attribute_type_id = attr_type.program_attribute_type_id
        LEFT OUTER JOIN concept_name cn ON cn.concept_id = attr.value_reference
