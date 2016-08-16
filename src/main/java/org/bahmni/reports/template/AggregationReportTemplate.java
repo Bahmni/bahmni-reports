@@ -102,7 +102,7 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
             if (applyAgeGroup(row, config)) {
                 createAgeGroupRows(row, config, crosstab);
             } else {
-                CrosstabRowGroupBuilder<String> rowGroup = ctab.rowGroup(row, String.class)
+                CrosstabRowGroupBuilder rowGroup = ctab.rowGroup(row, Object.class)
                         .setShowTotal(config.getShowTotalRow());
                 crosstab.rowGroups(rowGroup);
             }
@@ -119,7 +119,7 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
             if (applyAgeGroup(column, config)) {
                 createAgeGroupColumns(column, config, crosstab);
             } else {
-                CrosstabColumnGroupBuilder<String> columnGroup = ctab.columnGroup(column, String.class)
+                CrosstabColumnGroupBuilder columnGroup = ctab.columnGroup(column, Object.class)
                         .setShowTotal(config.getShowTotalColumn());
                 crosstab.columnGroups(columnGroup);
             }

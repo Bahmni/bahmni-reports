@@ -27,8 +27,8 @@ public class AggregationReportTest extends BaseIntegrationTest {
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
         assertEquals("F M", report.getRowAsString(1, " "));
-        assertEquals("11 1 0", report.getRowAsString(2, " "));
-        assertEquals("5 0 1", report.getRowAsString(3, " "));
+        assertEquals("5 0 1", report.getRowAsString(2, " "));
+        assertEquals("11 1 0", report.getRowAsString(3, " "));
     }
 
 
@@ -63,8 +63,8 @@ public class AggregationReportTest extends BaseIntegrationTest {
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
         assertEquals("F M", report.getRowAsString(1, " "));
-        assertEquals("11 1000 1 0", report.getRowAsString(2, " "));
-        assertEquals("5 1001 0 1", report.getRowAsString(3, " "));
+        assertEquals("5 1001 0 1", report.getRowAsString(2, " "));
+        assertEquals("11 1000 1 0", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -79,8 +79,8 @@ public class AggregationReportTest extends BaseIntegrationTest {
         assertEquals(4, report.rowsCount());
         assertEquals("F M", report.getRowAsString(1, " "));
         assertEquals("1000 1001", report.getRowAsString(2, " "));
-        assertEquals("11 3 0", report.getRowAsString(3, " "));
-        assertEquals("5 0 2", report.getRowAsString(4, " "));
+        assertEquals("5 0 2", report.getRowAsString(3, " "));
+        assertEquals("11 3 0", report.getRowAsString(4, " "));
     }
 
     @Test
