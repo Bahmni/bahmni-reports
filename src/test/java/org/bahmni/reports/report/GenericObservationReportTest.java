@@ -691,21 +691,4 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height() 170 2016-04-21 15:30:31.0 21-Apr-2016  > 10 Years", report.getRowAsString(1, " "));
     }
 
-    @Test
-    public void shouldSortConfiguredColumnInAscendingOrder() throws Exception {
-        String reportName = "Observation report with sortColumns";
-
-        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
-
-        assertEquals(15, report.columnsCount());
-        assertEquals(reportName, report.getReportName());
-        assertEquals(6, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Vitals()  2016-08-02 00:00:00.0 02-Aug-2016", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Height() 170 2016-08-02 00:00:00.0 02-Aug-2016 Vitals", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Weight(weight) 70 2016-08-02 00:00:00.0 02-Aug-2016 Vitals", report.getRowAsString(3, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Vitals()  2016-08-01 10:20:00.0 01-Aug-2016", report.getRowAsString(4, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Height() 180 2016-08-01 10:20:00.0 01-Aug-2016 Vitals", report.getRowAsString(5, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Weight(weight) 80 2016-08-01 10:20:00.0 01-Aug-2016 Vitals", report.getRowAsString(6, " "));
-      }
-
 }

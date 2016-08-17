@@ -170,12 +170,5 @@
         "config": {
             "ageGroupName": "Observation Age Group"
         }
-    },
-    "visitsWithSortColumns": {
-        "name": "Generic Visit Report With SortColumn",
-        "type": "visits",
-        "config": {
-            "sortColumns": ["Age"]
-        }
     }
 }

@@ -10,7 +10,6 @@ public class GenericReportsConfig {
     private List<String> visitAttributes;
     private List<String> patientAddresses;
     private List<String> additionalPatientIdentifiers;
-    private List<String> sortColumns = new ArrayList<>();
     private String ageGroupName;
 
     public List<String> getExcludeColumns() {
@@ -67,13 +66,5 @@ public class GenericReportsConfig {
 
     public void setAgeGroupName(String ageGroupName) {
         this.ageGroupName = ageGroupName;
-    }
-
-    public List<String> getSortColumns() {
-        return sortColumns;
-    }
-
-    public void setSortColumns(List<String> sortColumns) {
-        this.sortColumns = sortColumns;
     }
 }

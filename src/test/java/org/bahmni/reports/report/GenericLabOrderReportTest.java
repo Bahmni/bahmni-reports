@@ -485,16 +485,4 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
         assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   > 10 Years", report.getRowAsString(1, " "));
         assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     > 10 Years", report.getRowAsString(2, " "));
     }
-    @Test
-    public void shouldSortConfiguredColumnInAscendingOrder() throws Exception {
-        String reportName = "LabOrder report with sortColumns";
-
-        CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2021-01-16");
-
-        assertEquals(11, report.columnsCount());
-        assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal", report.getRowAsString(2, " "));
-    }
 }

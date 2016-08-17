@@ -458,12 +458,5 @@
         "config": {
             "ageGroupName": "Observation Age Group"
         }
-    },
-    "observationReportWithSortColumns": {
-        "name": "Observation report with sortColumns",
-        "type": "observations",
-        "config": {
-            "sortColumns": ["Location Name"]
-        }
     }
 }
