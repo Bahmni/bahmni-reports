@@ -13,28 +13,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 
-public class GenericVisitReportTemplateHelper {
-    public static void createAndAddVisitAttributeColumns(JasperReportBuilder jasperReport, GenericVisitReportConfig config) {
-        for (String visitAttribute : getVisitAttributes(config)) {
-            TextColumnBuilder<String> column = col.column(visitAttribute, visitAttribute, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReport.addColumn(column);
-        }
-    }
-
-    public static void createAndAddPatientAddressColumns(JasperReportBuilder jasperReport, GenericVisitReportConfig config) {
-        for (String address : getPatientAddresses(config)) {
-            TextColumnBuilder<String> column = col.column(address, address, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReport.addColumn(column);
-        }
-    }
-
-    public static void createAndAddPatientAttributeColumns(JasperReportBuilder jasperReport, GenericVisitReportConfig config) {
-        for (String patientAttribute : getPatientAttributes(config)) {
-            TextColumnBuilder<String> column = col.column(patientAttribute, patientAttribute, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReport.addColumn(column);
-        }
-    }
-
+public class GenericVisitReportTemplateHelper extends GenericReportsHelper {
     public static void createAndAddDataAnalysisColumns(JasperReportBuilder jasperReport, GenericVisitReportConfig config) {
         if (config.isForDataAnalysis()) {
             TextColumnBuilder<Integer> patientIdColumn = col.column("Patient Id", "Patient Id", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
@@ -42,11 +21,6 @@ public class GenericVisitReportTemplateHelper {
             jasperReport.addColumn(patientIdColumn);
             jasperReport.addColumn(visitIdColumn);
         }
-    }
-    public static void createAndAddAgeGroupColumn(JasperReportBuilder jasperReport, GenericVisitReportConfig config) {
-        if (StringUtils.isEmpty(config.getAgeGroupName())) return;
-        TextColumnBuilder<String> ageGroupColumn = col.column(config.getAgeGroupName(), config.getAgeGroupName(), type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        jasperReport.addColumn(ageGroupColumn);
     }
 
     public static void createAndAddMandatoryColumns(JasperReportBuilder jasperReport) {
@@ -64,50 +38,6 @@ public class GenericVisitReportTemplateHelper {
         TextColumnBuilder<String> dateOfDischarge = col.column("Date Of Discharge", "Date Of Discharge", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
 
         jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, patientCreatedDateColumn, visitTypeColumn, dateStartedColumn, dateStoppedColumn, dateOfAdmission, dateOfDischarge);
-    }
-
-    public static List<String> getPatientAttributes(GenericVisitReportConfig config) {
-        return config.getPatientAttributes() != null ? config.getPatientAttributes() : new ArrayList<String>();
-    }
-
-    public static List<String> getVisitAttributes(GenericVisitReportConfig config) {
-        return config.getVisitAttributes() != null ? config.getVisitAttributes() : new ArrayList<String>();
-    }
-
-    public static List<String> getPatientAddresses(GenericVisitReportConfig config) {
-        return config.getPatientAddresses() != null ? config.getPatientAddresses() : new ArrayList<String>();
-    }
-
-    public static String constructPatientAttributeNamesString(List<String> patientAttributes) {
-        List<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(pat.name = \\'%s\\', IF(pat.format = \\'org.openmrs.Concept\\',coalesce(scn.name, fscn.name),pa.value), NULL))) AS \\'%s\\'";
-
-        for (String patientAttribute : patientAttributes) {
-            parts.add(String.format(helperString, patientAttribute, patientAttribute));
-        }
-
-        return StringUtils.join(parts, ", ");
-    }
-
-    public static String constructPatientAddresses(List<String> patientAddresses) {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (patientAddresses != null) {
-            for (String address : patientAddresses) {
-                stringBuilder.append("paddress").append(".").append(address).append(", ");
-            }
-        }
-        return stringBuilder.toString();
-    }
-
-    public static String constructVisitAttributeNamesString(List<String> visitAttributes) {
-        List<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(vat.name = \\'%s\\', va.value_reference, NULL))) AS \\'%s\\'";
-
-        for (String visitAttribute : visitAttributes) {
-            parts.add(String.format(helperString, visitAttribute, visitAttribute));
-        }
-
-        return StringUtils.join(parts, ", ");
     }
 
     public static String constructVisitTypesString(List<String> visitTypesToFilter) {

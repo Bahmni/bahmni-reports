@@ -36,4 +36,79 @@ public class GenericReportsHelper {
         }
         return StringUtils.join(parts, ", ");
     }
+
+    public static void createAndAddPatientAttributeColumns(JasperReportBuilder jasperReport, GenericReportsConfig config) {
+        for (String patientAttribute : getPatientAttributes(config)) {
+            TextColumnBuilder<String> column = col.column(patientAttribute, patientAttribute, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            jasperReport.addColumn(column);
+        }
+    }
+
+    public static void createAndAddVisitAttributeColumns(JasperReportBuilder jasperReport, GenericReportsConfig config) {
+        for (String visitAttribute : getVisitAttributes(config)) {
+            TextColumnBuilder<String> column = col.column(visitAttribute, visitAttribute, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            jasperReport.addColumn(column);
+        }
+    }
+
+    private static List<String> getPatientAttributes(GenericReportsConfig config) {
+        return config.getPatientAttributes() != null ? config.getPatientAttributes() : new ArrayList<String>();
+    }
+
+    private static List<String> getVisitAttributes(GenericReportsConfig config) {
+        return config.getVisitAttributes() != null ? config.getVisitAttributes() : new ArrayList<String>();
+    }
+
+    public static void createAndAddPatientAddressColumns(JasperReportBuilder jasperReport, GenericReportsConfig config) {
+        for (String address : getPatientAddresses(config)) {
+            TextColumnBuilder<String> column = col.column(address, address, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            jasperReport.addColumn(column);
+        }
+    }
+
+    public static String constructPatientAttributeNamesToDisplay(GenericReportsConfig config) {
+        List<String> patientAttributes = getPatientAttributes(config);
+        List<String> parts = new ArrayList<>();
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(pat.name = \\'%s\\', IF(pat.format = \\'org.openmrs.Concept\\',coalesce(scn.name, fscn.name),pa.value), NULL))) AS \\'%s\\'";
+
+        for (String patientAttribute : patientAttributes) {
+            parts.add(String.format(helperString, patientAttribute.replace("'", "\\\\\\\'"), patientAttribute.replace("'", "\\\\\\\'")));
+        }
+
+        return StringUtils.join(parts, ", ");
+    }
+
+    private static List<String> getPatientAddresses(GenericReportsConfig config) {
+        return config.getPatientAddresses() != null ? config.getPatientAddresses() : new ArrayList<String>();
+    }
+
+    public static String constructPatientAddressesToDisplay(GenericReportsConfig config) {
+        List<String> patientAddresses = getPatientAddresses(config);
+        StringBuilder stringBuilder = new StringBuilder();
+        if (patientAddresses != null) {
+            for (String address : patientAddresses) {
+                stringBuilder.append("paddress").append(".").append(address).append(", ");
+            }
+        }
+        return stringBuilder.toString();
+    }
+
+    public static String constructVisitAttributeNamesToDisplay(GenericReportsConfig config) {
+        List<String> visitAttributes = getVisitAttributes(config);
+        List<String> parts = new ArrayList<>();
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(vat.name = \\'%s\\', va.value_reference, NULL))) AS \\'%s\\'";
+
+        for (String visitAttribute : visitAttributes) {
+            parts.add(String.format(helperString, visitAttribute.replace("'", "\\\\\\\'"), visitAttribute.replace("'", "\\\\\\\'")));
+        }
+
+        return StringUtils.join(parts, ", ");
+
+    }
+
+    public static void createAndAddAgeGroupColumn(JasperReportBuilder jasperReport, GenericReportsConfig config) {
+        if (StringUtils.isEmpty(config.getAgeGroupName())) return;
+        TextColumnBuilder<String> ageGroupColumn = col.column(config.getAgeGroupName(), config.getAgeGroupName(), type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        jasperReport.addColumn(ageGroupColumn);
+    }
 }

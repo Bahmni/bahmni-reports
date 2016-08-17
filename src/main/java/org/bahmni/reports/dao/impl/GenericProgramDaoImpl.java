@@ -31,8 +31,8 @@ public class GenericProgramDaoImpl implements GenericDao {
         sqlTemplate.add("endDate", endDate);
         GenericProgramReportConfig config = report.getConfig();
         if (config != null) {
-            sqlTemplate.add("patientAttributes", constructPatientAttributeNamesString(getPatientAttributes(config)));
-            sqlTemplate.add("patientAddresses", constructPatientAddresses(getPatientAddresses(config)));
+            sqlTemplate.add("patientAttributes", constructPatientAttributeNamesToDisplay(config));
+            sqlTemplate.add("patientAddresses", constructPatientAddressesToDisplay(config));
             sqlTemplate.add("programAttributes", constructProgramAttributeNamesString(getProgramAttributes(config)));
             sqlTemplate.add("showAllStates", config.isShowAllStates());
             sqlTemplate.add("programNamesToFilterSql", constructProgramNamesString(getProgramNamesToFilter(config)));

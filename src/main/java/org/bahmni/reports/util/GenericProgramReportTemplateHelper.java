@@ -14,29 +14,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 
-public class GenericProgramReportTemplateHelper {
-
-
-    public static String constructPatientAttributeNamesString(List<String> patientAttributes) {
-        List<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(pat.name = \\'%s\\', IF(pat.format = \\'org.openmrs.Concept\\',coalesce(scn.name, fscn.name),pa.value), NULL))) AS \\'%s\\'";
-
-        for (String patientAttribute : patientAttributes) {
-            parts.add(String.format(helperString, patientAttribute, patientAttribute));
-        }
-
-        return StringUtils.join(parts, ", ");
-    }
-
-    public static String constructPatientAddresses(List<String> patientAddresses) {
-        StringBuilder stringBuilder = new StringBuilder();
-        if (patientAddresses != null) {
-            for (String address : patientAddresses) {
-                stringBuilder.append("paddress").append(".").append(address).append(", ");
-            }
-        }
-        return stringBuilder.toString();
-    }
+public class GenericProgramReportTemplateHelper extends GenericReportsHelper{
 
     public static  String constructProgramAttributeNamesString(List<String> programAttributes) {
         List<String> parts = new ArrayList<>();
@@ -56,23 +34,8 @@ public class GenericProgramReportTemplateHelper {
         return StringUtils.join(parts, ',');
     }
 
-    public static void createAndAddAgeGroupColumn(JasperReportBuilder jasperReport, GenericProgramReportConfig config) {
-        if (StringUtils.isEmpty(config.getAgeGroupName())) return;
-        TextColumnBuilder<String> ageGroupColumn = col.column(config.getAgeGroupName(), config.getAgeGroupName(), type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        jasperReport.addColumn(ageGroupColumn);
-    }
-
-    public static List<String> getPatientAttributes(GenericProgramReportConfig config) {
-        return config.getPatientAttributes() != null ? config.getPatientAttributes() : new ArrayList<String>();
-    }
-
-
     public static List<String> getProgramAttributes(GenericProgramReportConfig config) {
         return config.getProgramAttributes() != null ? config.getProgramAttributes() : new ArrayList<String>();
-    }
-
-    public static List<String> getPatientAddresses(GenericProgramReportConfig config) {
-        return config.getPatientAddresses() != null ? config.getPatientAddresses() : new ArrayList<String>();
     }
 
     public static List<String> getProgramNamesToFilter(GenericProgramReportConfig config) {
@@ -86,22 +49,6 @@ public class GenericProgramReportTemplateHelper {
         }
         return "v.date_started";
     }
-
-    public static void createAndAddPatientAttributeColumns(JasperReportBuilder jasperReport, GenericProgramReportConfig config) {
-        for (String patientAttribute : getPatientAttributes(config)) {
-            TextColumnBuilder<String> column = col.column(patientAttribute, patientAttribute, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReport.addColumn(column);
-        }
-    }
-
-
-    public  static  void createAndAddPatientAddressColumns(JasperReportBuilder jasperReport, GenericProgramReportConfig config) {
-        for (String address : getPatientAddresses(config)) {
-            TextColumnBuilder<String> column = col.column(address, address, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReport.addColumn(column);
-        }
-    }
-
 
     public static void createAndAddProgramAttributeColumns(JasperReportBuilder jasperReport, GenericProgramReportConfig config) {
         for (String programAttribute : getProgramAttributes(config)) {
@@ -150,5 +97,4 @@ public class GenericProgramReportTemplateHelper {
             jasperReport.addColumn(currentStateColumn);
         }
     }
-
 }

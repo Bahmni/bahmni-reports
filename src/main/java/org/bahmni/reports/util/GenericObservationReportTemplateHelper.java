@@ -24,56 +24,11 @@ import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 
 public class GenericObservationReportTemplateHelper extends GenericReportsHelper {
 
-    public static void createAndAddPatientAttributeColumns(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
-        for (String patientAttribute : getPatientAttributes(config)) {
-            TextColumnBuilder<String> column = col.column(patientAttribute, patientAttribute, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReport.addColumn(column);
-        }
-    }
-
-    public static void createAndAddVisitAttributeColumns(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
-        for (String visitAttribute : getVisitAttributes(config)) {
-            TextColumnBuilder<String> column = col.column(visitAttribute, visitAttribute, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReport.addColumn(column);
-        }
-    }
-
     public static void createAndAddProviderNameColumn(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
         if (config.showProvider()) {
             TextColumnBuilder<String> providerColumn = col.column("Provider", "Provider", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
             jasperReport.addColumn(providerColumn);
         }
-    }
-
-    public static void createAndAddPatientAddressColumns(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
-        for (String address : getPatientAddresses(config)) {
-            TextColumnBuilder<String> column = col.column(address, address, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReport.addColumn(column);
-        }
-    }
-
-    public static String constructPatientAttributeNamesToDisplay(GenericObservationReportConfig config) {
-        List<String> patientAttributes = getPatientAttributes(config);
-        List<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(pat.name = \\'%s\\', IF(pat.format = \\'org.openmrs.Concept\\',coalesce(scn.name, fscn.name),pa.value), NULL))) AS \\'%s\\'";
-
-        for (String patientAttribute : patientAttributes) {
-            parts.add(String.format(helperString, patientAttribute.replace("'", "\\\\\\\'"), patientAttribute.replace("'", "\\\\\\\'")));
-        }
-
-        return StringUtils.join(parts, ", ");
-    }
-
-    private static List<String> getPatientAttributes(GenericObservationReportConfig config) {
-        return config.getPatientAttributes() != null ? config.getPatientAttributes() : new ArrayList<String>();
-    }
-
-    private static List<String> getVisitAttributes(GenericObservationReportConfig config) {
-        return config.getVisitAttributes() != null ? config.getVisitAttributes() : new ArrayList<String>();
-    }
-
-    private static List<String> getPatientAddresses(GenericObservationReportConfig config) {
-        return config.getPatientAddresses() != null ? config.getPatientAddresses() : new ArrayList<String>();
     }
 
     private static List<String> getLocationTagsToFilter(GenericObservationReportConfig config) {
@@ -82,30 +37,6 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
 
     private static List<String> getProgramsToFilter(GenericObservationReportConfig config) {
         return config.getProgramsToFilter() != null ? config.getProgramsToFilter() : new ArrayList<String>();
-    }
-
-    public static String constructPatientAddressesToDisplay(GenericObservationReportConfig config) {
-        List<String> patientAddresses = getPatientAddresses(config);
-        StringBuilder stringBuilder = new StringBuilder();
-        if (patientAddresses != null) {
-            for (String address : patientAddresses) {
-                stringBuilder.append("paddress").append(".").append(address).append(", ");
-            }
-        }
-        return stringBuilder.toString();
-    }
-
-    public static String constructVisitAttributeNamesToDisplay(GenericObservationReportConfig config) {
-        List<String> visitAttributes = getVisitAttributes(config);
-        List<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(vat.name = \\'%s\\', va.value_reference, NULL))) AS \\'%s\\'";
-
-        for (String visitAttribute : visitAttributes) {
-            parts.add(String.format(helperString, visitAttribute.replace("'", "\\\\\\\'"), visitAttribute.replace("'", "\\\\\\\'")));
-        }
-
-        return StringUtils.join(parts, ", ");
-
     }
 
     public static String constructLocationTagsToFilter(GenericObservationReportConfig config) {
@@ -180,12 +111,6 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
                 jasperReport.columns(patientId, visitId, encounterId, obsId, obsGroupId, orderId, conceptId);
             }
         }
-    }
-
-    public static void createAndAddAgeGroupColumn(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
-        if (StringUtils.isEmpty(config.getAgeGroupName())) return;
-        TextColumnBuilder<String> ageGroupColumn = col.column(config.getAgeGroupName(), config.getAgeGroupName(), type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        jasperReport.addColumn(ageGroupColumn);
     }
 
     public static List<String> fetchLeafConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {

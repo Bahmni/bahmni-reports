@@ -23,21 +23,7 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 
-public class GenericLabOrderReportTemplateHelper {
-
-    public static void createAndAddPatientAttributeColumns(JasperReportBuilder jasperReportBuilder, GenericLabOrderReportConfig config) {
-        for (String patientAttribute : getPatientAttributes(config)) {
-            TextColumnBuilder<String> column = col.column(patientAttribute, patientAttribute, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReportBuilder.addColumn(column);
-        }
-    }
-
-    public static void createAndAddVisitAttributeColumns(JasperReportBuilder jasperReportBuilder, GenericLabOrderReportConfig config) {
-        for (String visitAttribute : getVisitAttributes(config)) {
-            TextColumnBuilder<String> column = col.column(visitAttribute, visitAttribute, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReportBuilder.addColumn(column);
-        }
-    }
+public class GenericLabOrderReportTemplateHelper extends GenericReportsHelper{
 
     public static void createAndAddProviderNameColumn(JasperReportBuilder jasperReportBuilder, GenericLabOrderReportConfig config) {
         if (config.showProvider()) {
@@ -46,62 +32,8 @@ public class GenericLabOrderReportTemplateHelper {
         }
     }
 
-    public static void createAndAddPatientAddressColumns(JasperReportBuilder jasperReportBuilder, GenericLabOrderReportConfig config) {
-        for (String address : getPatientAddresses(config)) {
-            TextColumnBuilder<String> column = col.column(address, address, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReportBuilder.addColumn(column);
-        }
-    }
-
-    public static String constructPatientAttributeNamesToDisplay(GenericLabOrderReportConfig config) {
-        List<String> patientAttributes = getPatientAttributes(config);
-        List<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(pat.name = \\'%s\\', IF(pat.format = \\'org.openmrs.Concept\\',coalesce(scn.name, fscn.name),pa.value), NULL))) AS \\'%s\\'";
-
-        for (String patientAttribute : patientAttributes) {
-            parts.add(String.format(helperString, patientAttribute.replace("'", "\\\\\\\'"), patientAttribute.replace("'", "\\\\\\\'")));
-        }
-
-        return StringUtils.join(parts, ", ");
-    }
-
-    private static List<String> getPatientAttributes(GenericLabOrderReportConfig config) {
-        return config.getPatientAttributes() != null ? config.getPatientAttributes() : new ArrayList<String>();
-    }
-
-    private static List<String> getVisitAttributes(GenericLabOrderReportConfig config) {
-        return config.getVisitAttributes() != null ? config.getVisitAttributes() : new ArrayList<String>();
-    }
-
-    private static List<String> getPatientAddresses(GenericLabOrderReportConfig config) {
-        return config.getPatientAddresses() != null ? config.getPatientAddresses() : new ArrayList<String>();
-    }
-
     private static List<String> getProgramsToFilter(GenericLabOrderReportConfig config) {
         return config.getProgramsToFilter() != null ? config.getProgramsToFilter() : new ArrayList<String>();
-    }
-
-    public static String constructPatientAddressesToDisplay(GenericLabOrderReportConfig config) {
-        List<String> patientAddresses = getPatientAddresses(config);
-        StringBuilder stringBuilder = new StringBuilder();
-        if (patientAddresses != null) {
-            for (String address : patientAddresses) {
-                stringBuilder.append("paddress").append(".").append(address).append(", ");
-            }
-        }
-        return stringBuilder.toString();
-    }
-
-    public static String constructVisitAttributeNamesToDisplay(GenericLabOrderReportConfig config) {
-        List<String> visitAttributes = getVisitAttributes(config);
-        List<String> parts = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(vat.name = \\'%s\\', va.value_reference, NULL))) AS \\'%s\\'";
-
-        for (String visitAttribute : visitAttributes) {
-            parts.add(String.format(helperString, visitAttribute.replace("'", "\\\\\\\'"), visitAttribute.replace("'", "\\\\\\\'")));
-        }
-
-        return StringUtils.join(parts, ", ");
     }
 
     public static String constructProgramsString(GenericLabOrderReportConfig config) {
@@ -153,11 +85,6 @@ public class GenericLabOrderReportTemplateHelper {
             jasperReportBuilder.columns(patientId, conceptId, obsId, orderId);
 
         }
-    }
-    public static void createAndAddAgeGroupColumn(JasperReportBuilder jasperReport, GenericLabOrderReportConfig config) {
-        if (StringUtils.isEmpty(config.getAgeGroupName())) return;
-        TextColumnBuilder<String> ageGroupColumn = col.column(config.getAgeGroupName(), config.getAgeGroupName(), type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        jasperReport.addColumn(ageGroupColumn);
     }
 
     public static void showOrderDateTime(JasperReportBuilder jasperReportBuilder, GenericLabOrderReportConfig config) {
