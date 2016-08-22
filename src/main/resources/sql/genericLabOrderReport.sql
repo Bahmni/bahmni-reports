@@ -94,7 +94,7 @@ SET @sql = CONCAT('SELECT * FROM (SELECT
   ', IF(@filterByPrograms = '', '', CONCAT(@programSelectSql, ',')), '
   ',IF(@applyAgeGroup = '', '', CONCAT(@ageGroupSelectSql, ',')),'
   date(ord.date_activated)                                        AS "Test Order Date",
-  ord.date_activated            AS order_date_created,
+  ord.date_activated            AS "Order DateTime",
   coalesce(test_scn.name, test_fscn.name) AS "Test Name",
   IF (o.`Test Result` is not NULL, o.`Test Result`, CONCAT(coded_fscn.name, "(", IF (coded_scn.name is NULL, "", coded_scn.name), ")")) AS "Test Result",
   IF (o.abnormal_coded = @trueConceptId, "Abnormal", IF (coalesce(o.`Test Result`, coded_scn.name, coded_fscn.name) is not null, "Normal", "")) as "Test Outcome",'

@@ -89,7 +89,7 @@ public class GenericLabOrderReportTemplateHelper extends GenericReportsHelper{
 
     public static void showOrderDateTime(JasperReportBuilder jasperReportBuilder, GenericLabOrderReportConfig config) {
         if (config != null && config.isShowOrderDateTime()) {
-            TextColumnBuilder<String> orderDateTime = col.column("Order DateTime", "order_date_created", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            TextColumnBuilder<String> orderDateTime = col.column("Order DateTime", "Order DateTime", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
             jasperReportBuilder.addColumn(orderDateTime);
         }
     }
