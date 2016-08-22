@@ -445,6 +445,38 @@
             "conceptNameDisplayFormat": "fully_specified"
         }
     },
+    "observationReportWithFullySpecifiedConceptNameDisplayConfigInEncounterPerRow": {
+        "name": "Observation report with fully specified concept name format in encounter per row",
+        "type": "observations",
+        "config": {
+            "conceptNameDisplayFormat": "fully_specified",
+            "encounterPerRow": true,
+            "conceptNamesToFilter": [
+                "Vitals"
+            ]
+        }
+    },
+    "observationReportWithShortConceptNameDisplayConfigInEncounterPerRow": {
+        "name": "Observation report with short concept name format in encounter per row",
+        "type": "observations",
+        "config": {
+            "conceptNameDisplayFormat": "short",
+            "encounterPerRow": true,
+            "conceptNamesToFilter": [
+                "Vitals"
+            ]
+        }
+    },
+    "observationReportWithFullySpecifiedAndShortConceptNameDisplayConfigInEncounterPerRow": {
+        "name": "Observation report with fully specified and short concept name format in encounter per row",
+        "type": "observations",
+        "config": {
+            "encounterPerRow": true,
+            "conceptNamesToFilter": [
+                "Vitals"
+            ]
+        }
+    },
     "observationReportWithShortConceptNameDisplayConfig": {
         "name": "Observation report with short concept name format",
         "type": "observations",

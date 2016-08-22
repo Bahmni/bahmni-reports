@@ -13,7 +13,22 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
-import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.*;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructConceptClassesToFilter;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructConceptNameSelectSqlIfShowInOneRow;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructConceptNamesToFilter;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructExtraPatientIdentifiersToFilter;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructLocationTagsToFilter;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructPatientAddressesToDisplay;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructPatientAttributeNamesToDisplay;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructProgramsString;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructVisitAttributeNamesToDisplay;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.constructVisitTypesString;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.fetchChildConceptsAsList;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.fetchLeafConceptsAsList;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.getConceptNameFormatSql;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.getDateRangeFor;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.getListOfFullySpecifiedNames;
+import static org.bahmni.reports.util.GenericObservationReportTemplateHelper.getVisitTypesToFilter;
 
 public class GenericObservationDaoImpl implements GenericDao {
 
@@ -45,7 +60,8 @@ public class GenericObservationDaoImpl implements GenericDao {
             sqlTemplate.add("locationTagsToFilter", constructLocationTagsToFilter(report.getConfig()));
             sqlTemplate.add("conceptClassesToFilter", constructConceptClassesToFilter(report.getConfig()));
             sqlTemplate.add("programsToFilter", constructProgramsString(report.getConfig()));
-            sqlTemplate.add("conceptNamesToFilter", constructConceptNamesToFilter(report, bahmniReportsProperties));
+            List<String> conceptNames = report.getConfig().isEncounterPerRow() ? getListOfFullySpecifiedNames(fetchLeafConceptsAsList(report, bahmniReportsProperties)) : fetchChildConceptsAsList(report, bahmniReportsProperties);
+            sqlTemplate.add("conceptNamesToFilter", constructConceptNamesToFilter(conceptNames));
             sqlTemplate.add("selectConceptNamesSql", constructConceptNameSelectSqlIfShowInOneRow(conceptNamesToFilter, report.getConfig()));
             sqlTemplate.add("showProvider", report.getConfig().showProvider());
             sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(getVisitTypesToFilter(report.getConfig())));

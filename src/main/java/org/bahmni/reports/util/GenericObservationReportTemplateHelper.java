@@ -6,6 +6,7 @@ import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.BahmniReportsProperties;
+import org.bahmni.reports.model.ConceptName;
 import org.bahmni.reports.model.GenericObservationReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.webclients.HttpClient;
@@ -89,10 +90,33 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         }
     }
 
-    public static void createAndAddConceptColumns(List<String> conceptNames, JasperReportBuilder jasperReport) {
-        for (String conceptName : conceptNames) {
-            TextColumnBuilder<String> column = col.column(conceptName, conceptName, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+    public static void createAndAddConceptColumns(List<ConceptName> conceptNames, JasperReportBuilder jasperReport, String conceptNameDisplayFormat) {
+        for (ConceptName conceptName : conceptNames) {
+            TextColumnBuilder<String> column = col.column(getConceptInDisplayFormat(conceptName, conceptNameDisplayFormat), conceptName.getFullySpecifiedName(), type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
             jasperReport.addColumn(column);
+        }
+    }
+
+    private static String getConceptInDisplayFormat(ConceptName conceptName, String conceptNameDisplayFormat) {
+        if (conceptNameDisplayFormat == null) {
+            return getDefaultConceptNameDisplayFormat(conceptName);
+        }
+
+        switch (conceptNameDisplayFormat) {
+            case "short":
+                return conceptName.getShortName();
+            case "fully_specified":
+                return conceptName.getFullySpecifiedName();
+            default:
+                return getDefaultConceptNameDisplayFormat(conceptName);
+        }
+    }
+
+    private static String getDefaultConceptNameDisplayFormat(ConceptName conceptName) {
+        if (conceptName.getShortName() == null) {
+            return conceptName.getFullySpecifiedName();
+        } else {
+            return conceptName.getFullySpecifiedName() + "(" + conceptName.getShortName() + ")";
         }
     }
 
@@ -113,7 +137,7 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         }
     }
 
-    public static List<String> fetchLeafConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
+    public static List<ConceptName> fetchLeafConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
         List<String> conceptNamesToFilter = getConceptNamesToFilter(report.getConfig());
         if (CollectionUtils.isEmpty(conceptNamesToFilter)) {
             return new ArrayList<>();
@@ -122,7 +146,7 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         try {
             String url = bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/leafConceptNames?" + getConceptNamesParameter(conceptNamesToFilter);
             String response = httpClient.get(new URI(url));
-            return new ObjectMapper().readValue(response, new TypeReference<List<String>>() {
+            return new ObjectMapper().readValue(response, new TypeReference<List<ConceptName>>() {
             });
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,7 +154,8 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         return null;
     }
 
-    private static List<String> fetchChildConceptsAsList(List<String> conceptNamesToFilter, Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
+    public static List<String> fetchChildConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
+        List<String> conceptNamesToFilter = getConceptNamesToFilter(report.getConfig());
         if (CollectionUtils.isEmpty(conceptNamesToFilter) || report.getConfig().isEncounterPerRow()) {
             return new ArrayList<>();
         }
@@ -159,6 +184,13 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         return StringUtils.join(parameters, '&');
     }
 
+    public static List<String> getListOfFullySpecifiedNames(List<ConceptName> conceptNames) {
+        List<String> fullySpecifiedNames = new ArrayList<>();
+        for (ConceptName conceptName : conceptNames)
+            fullySpecifiedNames.add(conceptName.getFullySpecifiedName());
+        return fullySpecifiedNames;
+    }
+
     public static String constructConceptNameSelectSqlIfShowInOneRow(List<String> conceptNamesToFilter, GenericObservationReportConfig config) {
         List<String> conceptNamesWithDoubleQuote = new ArrayList<>();
         if (config.isEncounterPerRow()) {
@@ -170,17 +202,12 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         return StringUtils.join(conceptNamesWithDoubleQuote, ',');
     }
 
-    public static String constructConceptNamesToFilter(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
-        List<String> conceptNamesToFilter = getConceptNamesToFilter(report.getConfig());
-        List<String> concepts = fetchChildConceptsAsList(conceptNamesToFilter, report, bahmniReportsProperties);
-        if (report.getConfig().isEncounterPerRow()) {
-            concepts = fetchLeafConceptsAsList(report, bahmniReportsProperties);
-        }
-        if (CollectionUtils.isEmpty(concepts)) {
+    public static String constructConceptNamesToFilter(List<String> conceptNames) {
+        if (CollectionUtils.isEmpty(conceptNames)) {
             return null;
         }
         List<String> conceptNamesWithDoubleQuote = new ArrayList<>();
-        for (String conceptName : concepts) {
+        for (String conceptName : conceptNames) {
             conceptNamesWithDoubleQuote.add("\"" + conceptName.replace("'", "\\'") + "\"");
         }
         return StringUtils.join(conceptNamesWithDoubleQuote, ',');
@@ -223,7 +250,7 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
     }
 
     public static String getConceptNameFormatSql(GenericObservationReportConfig config) {
-        String defaultFormat = "CONCAT(coalesce(obs_fscn.name, \"\"), \"(\", coalesce(obs_scn.name, \"\"), \")\")";
+        String defaultFormat = "CONCAT(coalesce(obs_fscn.name, \"\"), IF(obs_scn.name IS NULL, \"\", CONCAT(\"(\", obs_scn.name, \")\")))";
         if (config == null || config.getConceptNameDisplayFormat() == null)
             return defaultFormat;
         switch (config.getConceptNameDisplayFormat()) {

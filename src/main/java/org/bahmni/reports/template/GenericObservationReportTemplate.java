@@ -6,11 +6,13 @@ import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.dao.GenericDao;
 import org.bahmni.reports.dao.impl.GenericObservationDaoImpl;
+import org.bahmni.reports.model.ConceptName;
 import org.bahmni.reports.model.GenericObservationReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
+import org.bahmni.reports.util.GenericObservationReportTemplateHelper;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -52,8 +54,9 @@ public class GenericObservationReportTemplate extends BaseReportTemplate<Generic
             createAndAddProviderNameColumn(jasperReport, report.getConfig());
             createAndAddVisitInfoColumns(jasperReport, report.getConfig());
             if (report.getConfig().isEncounterPerRow()) {
-                conceptNamesToFilter = fetchLeafConceptsAsList(report, bahmniReportsProperties);
-                createAndAddConceptColumns(conceptNamesToFilter, jasperReport);
+                List<ConceptName> leafConceptNames = fetchLeafConceptsAsList(report, bahmniReportsProperties);
+                createAndAddConceptColumns(leafConceptNames, jasperReport, report.getConfig().getConceptNameDisplayFormat());
+                conceptNamesToFilter = getListOfFullySpecifiedNames(leafConceptNames);
             }
             createAndAddDataAnalysisColumns(jasperReport, report.getConfig());
             createAndAddAgeGroupColumn(jasperReport, report.getConfig());
