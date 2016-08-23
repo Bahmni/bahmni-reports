@@ -86,21 +86,21 @@ SET @sql = CONCAT('SELECT * FROM (SELECT
   ',IF(@extraPatientIdentifierTypes = '', '', CONCAT(@extraPatientIdentifierTypes, ',')),'
   concat(pn.given_name, " ", pn.family_name)                    AS "Patient Name",
   floor(DATEDIFF(DATE(ord.date_activated), p.birthdate) / 365)      AS "Age",
-  p.birthdate                                                   AS "Birthdate",
+  DATE_FORMAT(p.birthdate, "%d-%b-%Y")                                                   AS "Birthdate",
   p.gender                                                      AS "Gender",
   ', IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')), '
   ', IF(@patientAddressesSql = '', '', CONCAT(@patientAddressesSql, '')), '
   ', IF(@visitAttributesSql = '', '', CONCAT(@visitAttributesSql, ',')), '
   ', IF(@filterByPrograms = '', '', CONCAT(@programSelectSql, ',')), '
   ',IF(@applyAgeGroup = '', '', CONCAT(@ageGroupSelectSql, ',')),'
-  date(ord.date_activated)                                        AS "Test Order Date",
+  DATE_FORMAT(date(ord.date_activated), "%d-%b-%Y")                                        AS "Test Order Date",
   ord.date_activated            AS "Order DateTime",
   coalesce(test_scn.name, test_fscn.name) AS "Test Name",
   IF (o.`Test Result` is not NULL, o.`Test Result`, CONCAT(coded_fscn.name, "(", IF (coded_scn.name is NULL, "", coded_scn.name), ")")) AS "Test Result",
   IF (o.abnormal_coded = @trueConceptId, "Abnormal", IF (coalesce(o.`Test Result`, coded_scn.name, coded_fscn.name) is not null, "Normal", "")) as "Test Outcome",'
 , IF(@showProvider = '', '', CONCAT(@providerSelectSql, ',')), '
-  v.date_started                                                AS "Visit Start Date",
-  v.date_stopped                                                AS "Visit Stop Date",
+  DATE_FORMAT(v.date_started, "%d-%b-%Y")                                                AS "Visit Start Date",
+  DATE_FORMAT(v.date_stopped, "%d-%b-%Y")                                                AS "Visit Stop Date",
   vt.name                                                       AS "Visit Type",
   o.obs_id                                     AS "Obs Id",
   coalesce(o.concept_id, cs.concept_id, ord.concept_id) AS "Concept Id",
