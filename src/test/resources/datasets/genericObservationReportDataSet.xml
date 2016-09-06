@@ -121,7 +121,7 @@
     <visit visit_id="1202" patient_id="1001" visit_type_id="1" date_started="2020-08-01 00:00:00.0" date_stopped="2020-08-30 00:00:00.0" location_id="2" creator="1" date_created="2020-06-01 00:00:00.0" voided="false" uuid="12331-6b78-11e0-933c-d8alp5emlacd"/>
 
     <encounter encounter_id="2202" encounter_type="2" patient_id="1001" visit_id="1202" location_id="3" encounter_datetime="2020-08-02 00:00:00.0" creator="1" date_created="2020-08-02 00:00:00.0" voided="false" uuid="zxcvwds-393b-4198-9c83-a371nbalq4ac"/>
-    <encounter_provider encounter_provider_id="2201" encounter_id="2202" provider_id="1" encounter_role_id="1" creator="1" date_created="2015-08-01 00:00:00.0" voided="false" uuid="asdfsf-20ee-46b7-ade6-9e68l12pl7a9" />
+    <encounter_provider encounter_provider_id="2202" encounter_id="2202" provider_id="1" encounter_role_id="1" creator="1" date_created="2020-08-01 00:00:00.0" voided="false" uuid="asdfsf-20ee-46b7-ade6-9e68l12pl7a9" />
 
     <obs obs_id="2205" person_id="1001" concept_id="1002" encounter_id="2202" obs_datetime="2020-08-02 00:00:00.0" location_id="3" comments="" creator="1" date_created="2020-08-02 00:00:00.0" voided="false" uuid="39fb7f47-asdf-ls56-9285-bd79nq76et63"/>
     <obs obs_id="2206" person_id="1001" concept_id="1000" encounter_id="2202" obs_datetime="2020-08-02 00:00:00.0" location_id="3" obs_group_id="2205" value_numeric="170" comments="" creator="1" date_created="2020-08-02 10:20:00.0" voided="false" uuid="3dfb7f47-pl0a-l256-zxcv-bd79pl21et63"/>
