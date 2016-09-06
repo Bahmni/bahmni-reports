@@ -28,8 +28,10 @@ SET @programsJoinSql = ' JOIN episode_encounter ee ON e.encounter_id = ee.encoun
   JOIN program program ON pp.program_id = program.program_id';
 SET @filterByProgramsSql = '  AND program.name IN (#programsToFilter#)';
 SET @dateRangeSql = IF(@dateRangeFilter = 'visitStartDate', ' AND cast(v.date_started AS DATE) BETWEEN "#startDate#" AND "#endDate#"',
-                    IF(@dateRangeFilter = 'programDatetime', ' AND cast(pp.date_enrolled AS DATE) <= "#endDate#"  AND (cast(pp.date_completed AS DATE) >= "#startDate#" or  pp.date_completed is NULL)',
-                    IF(@dateRangeFilter = 'visitStopDate', ' AND cast(v.date_stopped AS DATE) BETWEEN "#startDate#" AND "#endDate#"', ' AND cast(o.obs_datetime AS DATE) BETWEEN "#startDate#" AND "#endDate#"')));
+                    IF(@dateRangeFilter = 'programDate', ' AND cast(pp.date_enrolled AS DATE) <= "#endDate#"  AND (cast(pp.date_completed AS DATE) >= "#startDate#" or  pp.date_completed is NULL)',
+                    IF(@dateRangeFilter = 'visitStopDate', ' AND cast(v.date_stopped AS DATE) BETWEEN "#startDate#" AND "#endDate#"',
+                    IF(@dateRangeFilter = 'obsCreatedDate', ' AND cast(o.date_created AS DATE) BETWEEN "#startDate#" AND "#endDate#"', ' AND cast(o.obs_datetime AS DATE) BETWEEN "#startDate#" AND "#endDate#"'))));
+
 SET @providerJoinSql = '  JOIN provider pro ON pro.provider_id=ep.provider_id
   LEFT OUTER JOIN person_name provider_person ON provider_person.person_id = pro.person_id';
 SET @providerSelectSql = 'coalesce(pro.name, concat(provider_person.given_name, " ", provider_person.family_name)) AS "Provider"';
@@ -61,6 +63,7 @@ SET @sql = CONCAT('SELECT
   coalesce(o.value_numeric, o.value_text, o.value_datetime, coded_scn.name, coded_fscn.name) AS "Value",
   o.obs_datetime                                                AS "Observation Datetime",
   DATE_FORMAT(o.obs_datetime, "%d-%b-%Y")                       AS "Observation Date",
+  DATE_FORMAT(o.date_created, "%d-%b-%Y")                       AS "Observation Created Date",
   parent_cn.name                                                AS "Parent Concept",
   ',IF(@showProvider = '', '', CONCAT(@providerSelectSql, ',')),'
   DATE_FORMAT(v.date_started, "%d-%b-%Y")                       AS "Visit Start Date",
@@ -102,7 +105,7 @@ FROM obs o
   ',IF(@visitAttributesSql = '', '', @visitAttributeJoinSql),'
   ',IF(@patientAttributesSql = '', '', @patientAttributeJoinSql),'
   ',IF(@patientAddressesSql = '', '', @patientAddressJoinSql),'
-  ',IF(@filterByPrograms != '' OR @dateRangeFilter = 'programDatetime', @programsJoinSql, 'LEFT JOIN episode_encounter ee ON e.encounter_id = ee.encounter_id
+  ',IF(@filterByPrograms != '' OR @dateRangeFilter = 'programDate', @programsJoinSql, 'LEFT JOIN episode_encounter ee ON e.encounter_id = ee.encounter_id
   LEFT JOIN episode_patient_program epp ON ee.episode_id=epp.episode_id
   LEFT JOIN patient_program pp ON epp.patient_program_id = pp.patient_program_id
   LEFT JOIN program program ON pp.program_id = program.program_id'),'

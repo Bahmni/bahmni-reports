@@ -77,7 +77,8 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
             TextColumnBuilder<String> parentConcept = col.column("Parent Concept", "Parent Concept", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
             TextColumnBuilder<String> obsDatetime = col.column("Observation Datetime", "Observation Datetime", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
             TextColumnBuilder<String> obsDate = col.column("Observation Date", "Observation Date", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReport.columns(conceptNameColumn, valueColumn, obsDatetime, obsDate, parentConcept);
+            TextColumnBuilder<String> obsCreatedDate = col.column("Observation Created Date", "Observation Created Date", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            jasperReport.columns(conceptNameColumn, valueColumn, obsDatetime, obsDate, obsCreatedDate, parentConcept);
         }
     }
 

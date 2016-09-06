@@ -393,6 +393,7 @@
                 "Value",
                 "Observation Datetime",
                 "Observation Date",
+                "Observation Created Date",
                 "Parent Concept"
             ]
         }
@@ -489,6 +490,13 @@
         "type": "observations",
         "config": {
             "ageGroupName": "Observation Age Group"
+        }
+    },
+    "shouldApplyDateRangeFilterForObsCreatedDate": {
+        "name": "Observation report apply date range for Obs Created date",
+        "type": "observations",
+        "config": {
+            "applyDateRangeFor": "obsCreatedDate"
         }
     }
 }
