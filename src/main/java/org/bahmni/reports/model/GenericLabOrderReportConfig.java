@@ -1,11 +1,11 @@
 package org.bahmni.reports.model;
 
 import java.util.List;
-import java.util.Map;
 
 public class GenericLabOrderReportConfig extends  GenericReportsConfig implements Config {
     private Boolean showProvider = false;
     private boolean showVisitInfo = false;
+    private boolean showReferredOutTests = true;
     private List<String> programsToFilter;
     private List<String> conceptNamesToFilter;
     private List<String> conceptValuesToFilter;
@@ -57,5 +57,13 @@ public class GenericLabOrderReportConfig extends  GenericReportsConfig implement
 
     public void setShowOrderDateTime(boolean showOrderDateTime) {
         this.showOrderDateTime = showOrderDateTime;
+    }
+
+    public boolean showReferredOutTests() {
+        return showReferredOutTests;
+    }
+
+    public void setShowReferredOutTests(boolean showReferredOutTests) {
+        this.showReferredOutTests = showReferredOutTests;
     }
 }

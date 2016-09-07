@@ -135,7 +135,9 @@
                 "Test Result",
                 "Test Outcome",
                 "Min Range",
-                "Max Range"
+                "Max Range",
+                "Referred Out",
+                "File Uploaded"
             ]
         }
     },
@@ -300,6 +302,13 @@
         "type": "labOrders",
         "config": {
             "ageGroupName": "Observation Age Group"
+        }
+    },
+    "LabOrderReportWithReferredOutFilter": {
+        "name": "LabOrder report with referred out filter",
+        "type": "labOrders",
+        "config": {
+            "showReferredOutTests":false
         }
     }
 }

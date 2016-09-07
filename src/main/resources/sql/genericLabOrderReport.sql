@@ -9,6 +9,7 @@ SET @filterByPrograms = '#programsToFilter#';
 SET @showProvider = '#showProvider#';
 SET @extraPatientIdentifierTypes = '#extraPatientIdentifierTypes#';
 SET @applyAgeGroup = '#ageGroupName#';
+SET @showReferredOutTests = '#showReferredOutTests#';
 
 SET @visitAttributeJoinSql = ' LEFT JOIN visit_attribute va ON va.visit_id=v.visit_id AND va.voided is false
   LEFT JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.retired is false';
@@ -35,6 +36,8 @@ SET @ageGroupJoinSql = 'LEFT JOIN reporting_age_group rag ON DATE(ord.date_activ
 SET @ageGroupSelectSql = 'rag.name AS "#ageGroupName#", rag.sort_order AS "Age Group Order"';
 
 SET @programSelectSql = 'program.name AS "Program Name"';
+
+SET @referredOutFilter = '`Referred Out` = "No"';
 
 SET @labOrderType = NULL;
 SELECT order_type_id
@@ -72,8 +75,35 @@ FROM concept_name
 WHERE name = 'LAB_NOTES' AND concept_name_type = 'FULLY_SPECIFIED'
 INTO @labNotesConceptId;
 
+SET @labReportFileConceptId = NULL;
+SELECT concept_id
+FROM concept_name
+WHERE name = 'LAB_REPORT' AND concept_name_type = 'FULLY_SPECIFIED'
+INTO @labReportFileConceptId;
+
 SET @orderIdList = NULL;
 SELECT GROUP_CONCAT(DISTINCT(ord.order_id)) FROM orders ord WHERE cast(ord.date_activated AS DATE) BETWEEN "#startDate#" AND "#endDate#" and ord.order_type_id = @labOrderType and ord.voided is false INTO @orderIdList;
+
+SET @labReferredOutObsGroupIds = NULL;
+SELECT group_concat(o.obs_group_id)
+FROM obs o
+  join concept_name cn
+    on o.concept_id = cn.concept_id and cn.name='REFERRED_OUT' AND cn.concept_name_type = 'FULLY_SPECIFIED'
+  join orders ord on o.order_id = ord.order_id and FIND_IN_SET(o.order_id, @orderIdList)
+INTO @labReferredOutObsGroupIds;
+
+SET @labReportFileObsGroupIds = NULL;
+SELECT group_concat(parent_obs.obs_id)
+FROM obs parent_obs
+  JOIN (
+         SELECT o.obs_group_id
+         FROM obs o
+           JOIN orders ord ON o.order_id = ord.order_id AND FIND_IN_SET(o.order_id, @orderIdList)
+                              AND o.concept_id = @labReportFileConceptId) upload_file_obs
+    ON upload_file_obs.obs_group_id = parent_obs.obs_id
+  LEFT JOIN obs child_value_obs ON parent_obs.obs_id = child_value_obs.obs_group_id and parent_obs.concept_id = child_value_obs.concept_id
+where coalesce(child_value_obs.value_coded, child_value_obs.value_text, child_value_obs.value_numeric) is null or child_value_obs.obs_id is null
+INTO @labReportFileObsGroupIds;
 
 SET @primaryIdentifierTypeUuid = NULL;
 SELECT property_value FROM global_property WHERE property = 'emr.primaryIdentifierType' into @primaryIdentifierTypeUuid;
@@ -108,6 +138,8 @@ SET @sql = CONCAT('SELECT * FROM (SELECT
   ord.order_id                                                    AS "Order Id",
   o.`Min Range` AS "Min Range",
   o.`Max Range` AS "Max Range",
+  coalesce(o.referred_out,"No") AS "Referred Out",
+  coalesce(o.file_uploaded,"No") AS "File Uploaded",
   o.value_numeric AS "value_numeric"
 
 FROM (SELECT * FROM orders ord WHERE cast(ord.date_activated AS DATE) BETWEEN "#startDate#" AND "#endDate#" and ord.order_type_id = @labOrderType and ord.voided is false and ord.date_stopped is NULL) ord
@@ -132,20 +164,28 @@ FROM (SELECT * FROM orders ord WHERE cast(ord.date_activated AS DATE) BETWEEN "#
   LEFT JOIN (select GROUP_CONCAT(DISTINCT(IF (o.concept_id = @labMinNormalConceptId, o.value_numeric, NULL))) AS "Min Range",
                     GROUP_CONCAT(DISTINCT(IF (o.concept_id = @labMaxNormalConceptId, o.value_numeric, NULL))) AS "Max Range",
                     GROUP_CONCAT(DISTINCT(IF (o.concept_id = @abnormalObsConceptId,  o.value_coded, NULL))) AS "abnormal_coded",
-                    GROUP_CONCAT(DISTINCT(IF (o.concept_id not in (@labMinNormalConceptId, @labMaxNormalConceptId, @abnormalObsConceptId, @labNotesConceptId), coalesce(o.value_text, o.value_numeric), NULL))) AS "Test Result",
-                    GROUP_CONCAT(DISTINCT(IF (o.concept_id not in (@labMinNormalConceptId, @labMaxNormalConceptId, @abnormalObsConceptId, @labNotesConceptId), o.value_coded , NULL))) AS "value_coded",
-                    GROUP_CONCAT(DISTINCT(IF (o.concept_id not in (@labMinNormalConceptId, @labMaxNormalConceptId, @abnormalObsConceptId, @labNotesConceptId), o.concept_id , NULL))) AS "concept_id",
-                    GROUP_CONCAT(DISTINCT(IF (o.concept_id not in (@labMinNormalConceptId, @labMaxNormalConceptId, @abnormalObsConceptId, @labNotesConceptId), o.obs_id , NULL))) AS "obs_id",
-                    GROUP_CONCAT(DISTINCT(IF (o.concept_id not in (@labMinNormalConceptId, @labMaxNormalConceptId, @abnormalObsConceptId, @labNotesConceptId), o.value_numeric , NULL))) AS "value_numeric",
+                    GROUP_CONCAT(DISTINCT(IF (FIND_IN_SET(o.obs_id,@labReferredOutObsGroupIds),  "Yes", "No"))) AS "referred_out",
+                    GROUP_CONCAT(DISTINCT(IF (o.concept_id = @labReportFileConceptId or FIND_IN_SET(o.obs_id,@labReportFileObsGroupIds),  "Yes", NULL))) AS "file_uploaded",
+                    GROUP_CONCAT(DISTINCT(IF (o.concept_id not in (@labMinNormalConceptId, @labMaxNormalConceptId, @abnormalObsConceptId, @labNotesConceptId, @labReportFileConceptId), coalesce(o.value_text, o.value_numeric), NULL))) AS "Test Result",
+                    GROUP_CONCAT(DISTINCT(IF (o.concept_id not in (@labMinNormalConceptId, @labMaxNormalConceptId, @abnormalObsConceptId, @labNotesConceptId, @labReportFileConceptId), o.value_coded , NULL))) AS "value_coded",
+                    GROUP_CONCAT(DISTINCT(IF (o.concept_id not in (@labMinNormalConceptId, @labMaxNormalConceptId, @abnormalObsConceptId, @labNotesConceptId, @labReportFileConceptId), o.concept_id , NULL))) AS "concept_id",
+                    GROUP_CONCAT(DISTINCT(IF (o.concept_id not in (@labMinNormalConceptId, @labMaxNormalConceptId, @abnormalObsConceptId, @labNotesConceptId, @labReportFileConceptId), o.obs_id , NULL))) AS "obs_id",
+                    GROUP_CONCAT(DISTINCT(IF (o.concept_id not in (@labMinNormalConceptId, @labMaxNormalConceptId, @abnormalObsConceptId, @labNotesConceptId, @labReportFileConceptId), o.value_numeric , NULL))) AS "value_numeric",
                     GROUP_CONCAT(DISTINCT(o.order_id)) AS order_id
-            from obs o where o.voided is false AND FIND_IN_SET(o.order_id, @orderIdList) and coalesce(o.value_text, o.value_numeric, o.value_coded) is not null GROUP BY o.obs_group_id) o
+            from obs o where o.voided is false AND FIND_IN_SET(o.order_id, @orderIdList)
+                      and (coalesce(o.value_text, o.value_numeric, o.value_coded) is not null
+                            OR FIND_IN_SET(o.obs_id,@labReportFileObsGroupIds)
+                            OR FIND_IN_SET(o.obs_id,@labReferredOutObsGroupIds))
+                      GROUP BY o.obs_group_id) o
             ON o.concept_id = coalesce(cs.concept_id, ord.concept_id) AND o.order_id = ord.order_id
   LEFT JOIN concept_name coded_fscn on coded_fscn.concept_id = o.value_coded AND coded_fscn.concept_name_type="FULLY_SPECIFIED" AND coded_fscn.voided is false
   LEFT JOIN concept_name coded_scn on coded_scn.concept_id = o.value_coded AND coded_scn.concept_name_type="SHORT" AND coded_scn.voided is false
                    GROUP BY ord.order_id, cs.concept_id, o.concept_id ORDER BY ord.date_activated asc, o.obs_id asc) bigTable',
-                  IF(@filterByConceptNames != '' OR @filterByConceptValues != '', ' WHERE', ''),
+                  IF(@filterByConceptNames != '' OR @filterByConceptValues != '' OR @showReferredOutTests ='false' , ' WHERE', ''),
                   IF(@filterByConceptNames = '', '', @conceptNamesToFilterSql), '
-   ', IF(@filterByConceptValues = '', '', @filterByConceptValuesSql)
+   ', IF(@filterByConceptValues = '', '', @filterByConceptValuesSql),'
+   ',If(@showReferredOutTests = 'false' ,@referredOutFilter,'')
+
 );
 
 PREPARE stmt FROM @sql;

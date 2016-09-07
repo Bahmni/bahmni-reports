@@ -41,7 +41,7 @@ public class GenericLabOrderReportTemplate extends BaseReportTemplate<GenericLab
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
         List<String> conceptNamesToFilter = new ArrayList<>();
-        GenericLabOrderReportTemplateHelper.createAndAddMandatoryColumns(jasperReportBuilder, report.getConfig());
+        GenericLabOrderReportTemplateHelper.createAndAddDefaultColumns(jasperReportBuilder, report.getConfig());
         showOrderDateTime(jasperReportBuilder, report.getConfig());
         if (report.getConfig() != null) {
             createAndAddExtraPatientIdentifierTypes(jasperReportBuilder, report.getConfig());

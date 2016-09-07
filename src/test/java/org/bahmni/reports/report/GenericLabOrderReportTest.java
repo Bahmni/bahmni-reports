@@ -24,16 +24,18 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void shouldFetchMandatoryColumnsIfNoConfigSpecified() throws Exception {
+    public void shouldFetchDefaultColumnsIfNoConfigSpecified() throws Exception {
         String reportName = "LabOrder report without any config";
 
         CsvReport report = fetchCsvReport(reportName, "2017-02-01", "2017-02-20");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder", report.getRowAsString(2, " "));
+        assertEquals(4, report.rowsCount());
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     No No", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder 8 Normal   No Yes", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 Hg 78 Normal   Yes No", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -42,11 +44,11 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2016-01-30");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -55,24 +57,27 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2017-02-18", "2017-03-30");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 26 04-Mar-1991 M 18-Mar-2017 Hg 8 Normal", report.getRowAsString(2, " "));
+        assertEquals(4, report.rowsCount());
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder 8 Normal   No Yes", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 Hg 78 Normal   Yes No", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 26 04-Mar-1991 M 18-Mar-2017 Hg 8 Normal   No No", report.getRowAsString(4, " "));
+
     }
 
 
     @Test
-    public void shouldFetchMandatoryColumnsIfEmptyConfigSpecified() throws Exception {
+    public void shouldFetchDefaultColumnsIfEmptyConfigSpecified() throws Exception {
         String reportName = "LabOrder report with empty config";
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2016-01-20");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -81,11 +86,11 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2016-01-30");
 
-        assertEquals(14, report.columnsCount());
+        assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   Initial HIV Clinic Visit 20-Apr-2016 21-May-2016", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   Return TB Clinic Visit 20-Apr-2016 21-May-2016", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No Initial HIV Clinic Visit 20-Apr-2016 21-May-2016", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No Return TB Clinic Visit 20-Apr-2016 21-May-2016", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -94,10 +99,10 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2017-02-01", "2017-02-17");
 
-        assertEquals(12, report.columnsCount());
+        assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   Clinical Provider", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   No No Clinical Provider", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -106,12 +111,12 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2017-02-17");
 
-        assertEquals(21, report.columnsCount());
+        assertEquals(23, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   human 10th pass  8763245677 General  1000 1000 1001 1000", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   human 10th pass  8763245677 General  1000 1001 1003 1001", report.getRowAsString(2, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal    11th pass  5763245677 General  2000 1000 2001 2000", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No human 10th pass  8763245677 General  1000 1000 1001 1000", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No human 10th pass  8763245677 General  1000 1001 1003 1001", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   No No  11th pass  5763245677 General  2000 1000 2001 2000", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -120,11 +125,11 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2016-01-30");
 
-        assertEquals(13, report.columnsCount());
+        assertEquals(15, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   IPD Admitted", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   PDP Discharged", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No IPD Admitted", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No PDP Discharged", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -133,12 +138,12 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2017-02-17");
 
-        assertEquals(13, report.columnsCount());
+        assertEquals(15, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   address1_1 Dindori", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   address1_1 Dindori", report.getRowAsString(2, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   address1_2 Dindori", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No address1_1 Dindori", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No address1_1 Dindori", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   No No address1_2 Dindori", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -147,11 +152,11 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2016-01-30");
 
-        assertEquals(15, report.columnsCount());
+        assertEquals(17, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   1000 1000 1001 1000", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   1000 1001 1003 1001", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No 1000 1000 1001 1000", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No 1000 1001 1003 1001", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -165,11 +170,11 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2017-02-28");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   No No", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -183,13 +188,15 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2017-02-28");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(4, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal", report.getRowAsString(2, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal", report.getRowAsString(3, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder", report.getRowAsString(4, " "));
+        assertEquals(5, report.rowsCount());
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   No No", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     No No", report.getRowAsString(4, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder 8 Normal   No Yes", report.getRowAsString(5, " "));
+
     }
 
     @Test
@@ -198,11 +205,14 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2017-02-30");
 
-        assertEquals(12, report.columnsCount());
+        assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   MDR-TB PROGRAM", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     MDR-TB PROGRAM", report.getRowAsString(2, " "));
+        assertEquals(4, report.rowsCount());
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   No No MDR-TB PROGRAM", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     No No MDR-TB PROGRAM", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder 8 Normal   No Yes MDR-TB PROGRAM", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 Hg 78 Normal   Yes No MDR-TB PROGRAM", report.getRowAsString(4, " "));
+
     }
 
     @Test
@@ -216,10 +226,10 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2017-02-28");
 
-        assertEquals(12, report.columnsCount());
+        assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   MDR-TB PROGRAM", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   No No MDR-TB PROGRAM", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -228,11 +238,11 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2016-01-30");
 
-        assertEquals(12, report.columnsCount());
+        assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   20-Apr-2016 21-May-2016", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   20-Apr-2016 21-May-2016", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No 20-Apr-2016 21-May-2016", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No 20-Apr-2016 21-May-2016", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -251,12 +261,12 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2020-01-01", "2020-01-30");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 15-Jan-2020 BoneOrder", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BloodOrder", report.getRowAsString(2, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 15-Jan-2020 BoneOrder     No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BloodOrder     No No", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180 No No", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -265,10 +275,10 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2021-01-16");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180 No No", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -277,11 +287,11 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2021-01-16");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -290,12 +300,12 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2021-01-16");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal", report.getRowAsString(2, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180 No No", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -304,11 +314,14 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2021-01-16");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 26 04-Mar-1991 M 18-Mar-2017 Hg 8 Normal", report.getRowAsString(2, " "));
+        assertEquals(4, report.rowsCount());
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 17-Jan-2016 BoneOrder 170 Normal   No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder 8 Normal   No Yes", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 Hg 78 Normal   Yes No", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 26 04-Mar-1991 M 18-Mar-2017 Hg 8 Normal   No No", report.getRowAsString(4, " "));
+
     }
 
     @Test
@@ -317,10 +330,10 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2021-01-16");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -329,11 +342,12 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2021-01-16");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 26 04-Mar-1991 M 18-Mar-2017 Hg 8 Normal", report.getRowAsString(2, " "));
+        assertEquals(3, report.rowsCount());
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder 8 Normal   No Yes", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 26 04-Mar-1991 M 18-Mar-2017 Hg 8 Normal   No No", report.getRowAsString(3, " "));
     }
 
     @Test
@@ -342,12 +356,13 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2021-01-16");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(3, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 26 04-Mar-1991 M 18-Mar-2017 Hg 8 Normal", report.getRowAsString(2, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180", report.getRowAsString(3, " "));
+        assertEquals(4, report.rowsCount());
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder 8 Normal   No Yes", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 26 04-Mar-1991 M 18-Mar-2017 Hg 8 Normal   No No", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180 No No", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -356,11 +371,13 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2021-01-16");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 26 04-Mar-1991 M 18-Mar-2017 Hg 8 Normal", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180", report.getRowAsString(2, " "));
+        assertEquals(4, report.rowsCount());
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder 8 Normal   No Yes", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 Hg 78 Normal   Yes No", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 26 04-Mar-1991 M 18-Mar-2017 Hg 8 Normal   No No", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180 No No", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -369,11 +386,11 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2021-01-16");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier1 PatientName1 familyname1 21 05-Feb-1994 F 29-Jan-2016 BloodOrder 290 Normal   No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180 No No", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -386,10 +403,10 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
         when(httpClient.get(URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=BP_Level"))).thenReturn(objectList.toString());
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2021-01-16");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180 No No", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -398,13 +415,13 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2020-01-16", "2022-01-16");
 
-        assertEquals(15, report.columnsCount());
+        assertEquals(17, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(4, report.rowsCount());
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BloodOrder     3000 1001  3001", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180 3000 1009 3001 3002", report.getRowAsString(2, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 30 04-Mar-1991 M 16-Jan-2022 Hg     3000 1006  3003", report.getRowAsString(3, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 30 04-Mar-1991 M 16-Jan-2022 BP_Level     3000 1009  3003", report.getRowAsString(4, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BloodOrder     No No 3000 1001  3001", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 28 04-Mar-1991 M 16-Jan-2020 BP_Level high Normal  180 No No 3000 1009 3001 3002", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 30 04-Mar-1991 M 16-Jan-2022 Hg     No No 3000 1006  3003", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 30 04-Mar-1991 M 16-Jan-2022 BP_Level     No No 3000 1009  3003", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -413,11 +430,11 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2022-02-01", "2022-02-16");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 30 04-Mar-1991 M 16-Feb-2022 BP_Level high Normal 12", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 30 04-Mar-1991 M 16-Feb-2022 Hg 290 Normal 123", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 30 04-Mar-1991 M 16-Feb-2022 BP_Level high Normal 12  No No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 30 04-Mar-1991 M 16-Feb-2022 Hg 290 Normal 123  No No", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -426,11 +443,11 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2022-03-01", "2022-03-16");
 
-        assertEquals(15, report.columnsCount());
+        assertEquals(17, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 Hg     3000 1006  3005", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 BP_Level high Normal 12  3000 1009 3015 3005", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 Hg     No No 3000 1006  3005", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 BP_Level high Normal 12  No No 3000 1009 3015 3005", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -439,11 +456,11 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2022-03-01", "2022-03-16");
 
-        assertEquals(12, report.columnsCount());
+        assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 Hg     2022-03-16 12:34:31.0", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 BP_Level high Normal 12  2022-03-16 12:34:31.0", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 Hg     No No 2022-03-16 12:34:31.0", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 BP_Level high Normal 12  No No 2022-03-16 12:34:31.0", report.getRowAsString(2, " "));
     }
 
 
@@ -453,11 +470,14 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2017-02-01", "2017-02-20");
 
-        assertEquals(13, report.columnsCount());
+        assertEquals(15, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   Aadhar2 Pan2", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     Aadhar2 Pan2", report.getRowAsString(2, " "));
+        assertEquals(4, report.rowsCount());
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   No No Aadhar2 Pan2", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     No No Aadhar2 Pan2", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder 8 Normal   No Yes Aadhar2 Pan2", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 Hg 78 Normal   Yes No Aadhar2 Pan2", report.getRowAsString(4, " "));
+
     }
 
     @Test
@@ -466,11 +486,13 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2017-02-01", "2017-02-20");
 
-        assertEquals(12, report.columnsCount());
+        assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   Pan2", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     Pan2", report.getRowAsString(2, " "));
+        assertEquals(4, report.rowsCount());
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   No No Pan2", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     No No Pan2", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder 8 Normal   No Yes Pan2", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 Hg 78 Normal   Yes No Pan2", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -479,10 +501,27 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2017-02-01", "2017-02-20");
 
+        assertEquals(14, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(4, report.rowsCount());
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   No No > 10 Years", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     No No > 10 Years", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder 8 Normal   No Yes > 10 Years", report.getRowAsString(3, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 Hg 78 Normal   Yes No > 10 Years", report.getRowAsString(4, " "));
+
+    }
+
+    @Test
+    public void shouldFilterOutReferredOutTest() throws Exception {
+        String reportName = "LabOrder report with referred out filter";
+
+        CsvReport report = fetchCsvReport(reportName, "2017-02-01", "2017-02-20");
+
         assertEquals(12, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   > 10 Years", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     > 10 Years", report.getRowAsString(2, " "));
+        assertEquals(3, report.rowsCount());
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 17-Feb-2017 BoneOrder LowBoneMarrowFull(LowBoneMarrowShort) Abnormal   No", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     No", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 Hg 78 Normal   Yes", report.getRowAsString(3, " "));
     }
 }

@@ -49,6 +49,7 @@ public class GenericLabOrderDaoImpl implements GenericDao {
             sqlTemplate.add("numericRangesFilterSql", constructNumericRangeFilters(report.getConfig()));
             sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
             sqlTemplate.add("ageGroupName", report.getConfig().getAgeGroupName());
+            sqlTemplate.add("showReferredOutTests", report.getConfig().showReferredOutTests());
         }
 
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());

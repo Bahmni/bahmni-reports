@@ -44,7 +44,7 @@ public class GenericLabOrderReportTemplateHelper extends GenericReportsHelper{
         return StringUtils.join(parts, ',');
     }
 
-    public static void createAndAddMandatoryColumns(JasperReportBuilder jasperReportBuilder, GenericLabOrderReportConfig config) {
+    public static void createAndAddDefaultColumns(JasperReportBuilder jasperReportBuilder, GenericLabOrderReportConfig config) {
         TextColumnBuilder<String> patientIdentifierColumn = col.column("Patient Identifier", "Patient Identifier", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "Patient Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<Integer> ageColumn = col.column("Age", "Age", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
@@ -56,7 +56,9 @@ public class GenericLabOrderReportTemplateHelper extends GenericReportsHelper{
         TextColumnBuilder<String> testOutcome = col.column("Test Outcome", "Test Outcome", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> minRange = col.column("Min Range", "Min Range", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> maxRange = col.column("Max Range", "Max Range", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        jasperReportBuilder.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, testOrderDate, testName, testResult, testOutcome, minRange, maxRange);
+        TextColumnBuilder<String> fileUploaded = col.column("File Uploaded", "File Uploaded", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        jasperReportBuilder.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, testOrderDate, testName, testResult, testOutcome, minRange, maxRange,fileUploaded);
+        createAndAddReferredOutColumn(jasperReportBuilder,config);
     }
 
     public static void createAndAddVisitInfoColumns(JasperReportBuilder jasperReportBuilder, GenericLabOrderReportConfig config) {
@@ -93,6 +95,12 @@ public class GenericLabOrderReportTemplateHelper extends GenericReportsHelper{
         }
     }
 
+    private static void createAndAddReferredOutColumn(JasperReportBuilder jasperReport, GenericLabOrderReportConfig config) {
+        if (config == null || config.showReferredOutTests()) {
+            TextColumnBuilder<String> referredOutColumn = col.column("Referred Out", "Referred Out", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            jasperReport.addColumn(referredOutColumn);
+        }
+    }
     private static List<String> fetchChildConceptsAsList(List<String> conceptNamesToFilter, Report<GenericLabOrderReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
         if (CollectionUtils.isEmpty(conceptNamesToFilter)) {
             return new ArrayList<>();

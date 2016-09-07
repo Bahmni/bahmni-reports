@@ -77,6 +77,12 @@
     <concept concept_id="1011" retired="false" datatype_id="3" class_id="2" creator="1" is_set="false" date_created="2008-08-15 15:27:51.0" version="" uuid="axz-cd5f-4f46-9459-261t6w265ab"/>
     <concept_name concept_id="1011" concept_name_id="1012" name="LAB_NOTES" locale="en" creator="1" date_created="2008-08-15 15:27:51.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="123-e6d0-sdf-xcvz-3895e42qms5b"/>
 
+    <concept concept_id="1012" retired="false" datatype_id="4" class_id="12" creator="1" is_set="false" date_created="2008-08-15 15:27:51.0" version="" uuid="axz-cd5f-4f46-9459-261t6w26567"/>
+    <concept_name concept_id="1012" concept_name_id="1013" name="REFERRED_OUT" locale="en" creator="1" date_created="2008-08-15 15:27:51.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="123-e6d0-sdf-xcvz-3895e42qms89"/>
+
+    <concept concept_id="1013" retired="false" datatype_id="3" class_id="2" creator="1" is_set="false" date_created="2008-08-15 15:27:51.0" version="" uuid="asdf-cd5f-4f46-9459-2612exw26587"/>
+    <concept_name concept_id="1013" concept_name_id="1014" name="LAB_REPORT" locale="en" creator="1" date_created="2008-08-15 15:27:51.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="12-e6d0-1231-8ed3-3895e4b6ms65"/>
+
     <concept_set concept_set_id="1" concept_id="1009" concept_set="1010" creator="1" date_created="2008-08-15 15:27:51.0" uuid="ladjsf-ladsjf-adsf"/>
     <concept_set concept_set_id="2" concept_id="1006" concept_set="1010" creator="1" date_created="2008-08-15 15:27:51.0" uuid="sadf-ladsjf-adsf"/>
 
@@ -121,6 +127,10 @@
             date_created="2017-02-18 12:34:31.0" voided="0" patient_id="2000" uuid="4e673b17-d63d-asdd-9fec-0800274a5156" care_setting="1" encounter_id="2000"/>
     <orders order_id="2002" order_type_id="1000" order_number="ORD-dasfas" urgency="ROUTINE" order_action="NEW" concept_id="1006" orderer="1" date_activated="2017-03-18 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
             date_created="2017-03-18 12:34:31.0" voided="0" patient_id="2000" uuid="adf122-d63d-asdd-9fec-0800274a5156" care_setting="1" encounter_id="2000"/>
+    <orders order_id="2003" order_type_id="1000" order_number="ORD-dasfes" urgency="ROUTINE" order_action="NEW" concept_id="1001" orderer="1" date_activated="2017-02-18 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
+            date_created="2017-02-18 12:34:31.0" voided="0" patient_id="2000" uuid="adf122-d63d-asdd-9fec-0800274a5178" care_setting="1" encounter_id="2000"/>
+    <orders order_id="2004" order_type_id="1000" order_number="ORD-Uploaded-file" urgency="ROUTINE" order_action="NEW" concept_id="1006" orderer="1" date_activated="2017-02-18 12:34:31.0" auto_expire_date="2016-01-19 12:34:30.0" scheduled_date="2016-01-17 12:34:31.0" creator="1"
+            date_created="2017-02-18 12:34:31.0" voided="0" patient_id="2000" uuid="adf122-d63d-asdd-9fec-0800274a6248" care_setting="1" encounter_id="2000"/>
 
     <obs obs_id="2000" order_id="2000" person_id="2000" concept_id="1000" encounter_id="2000" obs_datetime="2016-05-23 15:30:31.0" location_id="2" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="6519d653-393b-4118-9c83-a371nb82d4ar"/>
     <obs obs_id="2001" order_id="2000" person_id="2000" concept_id="1000" obs_group_id="2000" encounter_id="2000" obs_datetime="2016-05-23 15:30:31.0" location_id="2" value_coded="1003" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="1239d653-393b-4118-9c83-a371nb82d4ar"/>
@@ -128,6 +138,13 @@
 
     <obs obs_id="2003"  order_id="2002" person_id="2000" concept_id="1006" encounter_id="2000" obs_datetime="2016-04-21 15:30:31.0" location_id="2" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="12333-sfd-123-9285-bd798e213c63"/>
     <obs obs_id="2004" order_id="2002" person_id="2000" concept_id="1006" obs_group_id="2003" encounter_id="2000" obs_datetime="2016-05-23 15:30:31.0" location_id="2" value_numeric="8" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="6519d653-1231-4118-9c83-a371nb82d4ar"/>
+    <!--REFERRED OUT TEST-->
+    <obs obs_id="2005" order_id="2003" person_id="2000" concept_id="1001"  encounter_id="2000" obs_datetime="2016-05-23 15:30:31.0" location_id="2" value_numeric="8" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="6519d653-1231-4118-9c83-a371nb82d478"/>
+    <obs obs_id="2006" order_id="2003" person_id="2000" concept_id="1012" obs_group_id="2005" encounter_id="2000" obs_datetime="2016-05-23 15:30:31.0" location_id="2"  comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="6519d653-1231-4118-9c83-a371nb82d489"/>
+    <!--TEST WITH UPLOADED FILE-->
+    <obs obs_id="2007" order_id="2004" person_id="2000" concept_id="1006" encounter_id="2000" obs_datetime="2016-05-23 15:30:31.0" location_id="2"  comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="6519d653-1231-4118-9c83-a371nb82dD590"/>
+    <obs obs_id="2008" order_id="2004" person_id="2000" concept_id="1006" obs_group_id="2007" encounter_id="2000" value_numeric="78" obs_datetime="2016-05-23 15:30:31.0" location_id="2"  comments="" creator="1" date_created="2016-04-21 15:30:31.0"  voided="false" uuid="6519d653-1231-4118-9c83-a371nb823590"/>
+    <obs obs_id="2009" order_id="2004" person_id="2000" concept_id="1013" obs_group_id="2007" encounter_id="2000" obs_datetime="2016-05-23 15:30:31.0" location_id="2"  value_text="file.txt" comments="" creator="1" date_created="2016-04-21 15:30:31.0" voided="false" uuid="6519d653-1S231-4118-9c83-a371nb82d591"/>
 
     <patient_program patient_program_id="2000" patient_id="2000" program_id="2" date_enrolled="2016-04-20 00:00:00.0" date_completed="2016-06-30 00:00:00.0" creator="1" date_created="2008-08-18 11:40:48.0" changed_by="1" date_changed="2008-08-18 12:29:29.0" voided="false" uuid="patient-program-1000"/>
     <episode episode_id="2000" creator="1" date_created="2016-04-20 00:00:00.0" voided="false" uuid="episode-1000"/>
