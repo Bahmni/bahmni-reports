@@ -498,5 +498,106 @@
         "config": {
             "applyDateRangeFor": "obsCreatedDate"
         }
+    },
+    "observationReportWithNumericRangeFilters": {
+        "name": "Observation report with numeric range filter",
+        "type": "observations",
+        "config": {
+            "conceptValuesToFilter": [
+                "150..300"
+            ]
+        }
+    },
+    "observationReportWithMinimumRangeFilter": {
+        "name": "Observation report filter by minimum range",
+        "type": "observations",
+        "config": {
+            "conceptValuesToFilter": [
+                "..100"
+            ]
+        }
+    },
+    "observationReportWithMaximumRangeFilter": {
+        "name": "Observation report filter by maximum range",
+        "type": "observations",
+        "config": {
+            "conceptValuesToFilter": [
+                "175.."
+            ]
+        }
+    },
+    "observationReportWithMultiRangesFilter": {
+        "name": "Observation report with multi numeric ranges filter",
+        "type": "observations",
+        "config": {
+            "conceptValuesToFilter": [
+                "175..300",
+                "1..80"
+            ]
+        }
+    },
+    "observationReportWithTextResultsFiltered": {
+        "name": "Observation report with test results filtered",
+        "type": "observations",
+        "config": {
+            "conceptValuesToFilter": [
+                "high"
+            ]
+        }
+    },
+    "observationReportWithNumericRangeAndTextValueFilters": {
+        "name": "Observation report filter by numeric range and text value",
+        "type": "observations",
+        "config": {
+            "conceptValuesToFilter": [
+                "high",
+                "150..300"
+            ]
+        }
+    },
+    "observationReportWithMultiRangesAndTextValueFilter": {
+        "name": "Observation report filter by multi numeric ranges and text value",
+        "type": "observations",
+        "config": {
+            "conceptValuesToFilter": [
+                "high",
+                "175..300",
+                "1..80"
+            ]
+        }
+    },
+    "observationReportWithMinRangeAndTextValueFilter": {
+        "name": "Observation report filter by min range and text value",
+        "type": "observations",
+        "config": {
+            "conceptValuesToFilter": [
+                "high",
+                "..100"
+            ]
+        }
+    },
+    "observationReportWithMaxRangeAndTextValueFilter": {
+        "name": "Observation report filter by max range and text value",
+        "type": "observations",
+        "config": {
+            "conceptValuesToFilter": [
+                "high",
+                "175.."
+            ]
+        }
+    },
+    "observationReportWithTestNameAndTestResultFilter": {
+        "name": "Observation report filter by test name and result",
+        "type": "observations",
+        "config": {
+            "conceptNamesToFilter": [
+                "HIV PROGRAM"
+            ],
+            "conceptValuesToFilter": [
+                "high",
+                "175..",
+                "..70"
+            ]
+        }
     }
 }
