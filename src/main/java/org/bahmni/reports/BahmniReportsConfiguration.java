@@ -56,6 +56,19 @@ public class BahmniReportsConfiguration {
     }
 
     @Bean
+    public ComboPooledDataSource bahmniReportsDataSource() throws PropertyVetoException {
+        ComboPooledDataSourceBuilder comboPooledDataSourceBuilder = new ComboPooledDataSourceBuilder();
+        ComboPooledDataSource dataSource = comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getBahmniReportsDbUrl())
+                .withUser(bahmniReportsProperties.getOpenmrsUser())
+                .withPassword(bahmniReportsProperties.getOpenmrsPassword())
+                .withDriver(com.mysql.jdbc.Driver.class).build();
+
+        dataSource.setIdleConnectionTestPeriod(IDLE_CONNECTION_TEST_TIME);
+        dataSource.setPreferredTestQuery("SELECT 1;");
+        return dataSource;
+    }
+
+    @Bean
     public CommonsMultipartResolver multipartResolver() {
         CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
         commonsMultipartResolver.setDefaultEncoding("utf-8");

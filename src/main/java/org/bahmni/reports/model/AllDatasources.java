@@ -19,6 +19,9 @@ public class AllDatasources {
     @Autowired
     private DataSource openelisDataSource;
 
+    @Autowired
+    private DataSource bahmniReportsDataSource;
+
     public Connection getConnectionFromDatasource(Object object) {
         Connection connection = null;
         try {
@@ -42,7 +45,7 @@ public class AllDatasources {
         return null;
     }
 
-    private DataSource dataSourceFor(String value) {
+    public DataSource dataSourceFor(String value) {
         switch (value) {
             case "openelis":
                 return openelisDataSource;
@@ -50,6 +53,8 @@ public class AllDatasources {
                 return openmrsDataSource;
             case "openerp":
                 return openerpDataSource;
+            case "bahmniReports":
+                return bahmniReportsDataSource;
             default:
                 throw new RuntimeException("No datasource found for " + value + ". Verify value of UsingDatasource annotation. ");
         }

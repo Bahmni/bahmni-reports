@@ -15,6 +15,8 @@ import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.reports.web.ReportHeader;
 import org.bahmni.webclients.HttpClient;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -69,5 +71,11 @@ public class BahmniReportUtil {
             }
         });
         return countMatches > 0 ;
+    }
+
+    public static String getStackTrace(Throwable throwable) {
+        StringWriter stringWriter = new StringWriter();
+        throwable.printStackTrace(new PrintWriter(stringWriter));
+        return stringWriter.toString();
     }
 }

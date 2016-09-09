@@ -63,6 +63,10 @@ public class BahmniReportsProperties {
         return props.getProperty("openmrs.url");
     }
 
+    public String getBahmniReportsDbUrl() {
+        return props.getProperty("bahmnireports.db.url");
+    }
+
     public String getOpenmrsUser() {
         return props.getProperty("openmrs.username");
     }
@@ -97,5 +101,9 @@ public class BahmniReportsProperties {
 
     public String getBahmniLoginUrl() {
         return props.getProperty("bahmni.login.url");
+    }
+
+    public String getReportsSaveDirectory() {
+        return props.getProperty("reports.save.directory");
     }
 }
