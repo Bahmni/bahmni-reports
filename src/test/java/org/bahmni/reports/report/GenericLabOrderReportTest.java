@@ -524,4 +524,17 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
         assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 BloodOrder     No", report.getRowAsString(2, " "));
         assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 18-Feb-2017 Hg 78 Normal   Yes", report.getRowAsString(3, " "));
     }
+
+    @Test
+    public void shouldGetReferredOutTestWithObsValue() throws Exception {
+        String reportName = "LabOrder report without any config";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-9", "2016-09-10");
+
+        assertEquals(13, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(1, report.rowsCount());
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 09-Sep-2016 BloodOrder 40 Normal   No Yes", report.getRowAsString(1, " "));
+
+    }
 }
