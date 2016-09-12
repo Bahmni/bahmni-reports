@@ -529,12 +529,13 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
     public void shouldGetReferredOutTestWithObsValue() throws Exception {
         String reportName = "LabOrder report without any config";
 
-        CsvReport report = fetchCsvReport(reportName, "2016-08-9", "2016-09-10");
+        CsvReport report = fetchCsvReport(reportName, "2014-08-9", "2014-09-10");
 
         assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("PatientIdentifier2 PatientName2 familyname2 25 04-Mar-1991 M 09-Sep-2016 BloodOrder 40 Normal   No Yes", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier2 PatientName2 familyname2 23 04-Mar-1991 M 09-Sep-2014 BloodOrder 40 Normal   No Yes", report.getRowAsString(1, " "));
 
     }
+
 }
