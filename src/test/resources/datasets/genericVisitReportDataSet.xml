@@ -53,6 +53,13 @@
            date_stopped="2017-05-21 00:00:00.0" location_id="5" creator="1" date_created="2005-01-01 00:00:00.0"
            voided="false" uuid="1e5d5da8-6b78-11e0-933c-18aad4ad4412"/>
 
+    <visit visit_id="9" patient_id="2" visit_type_id="1" date_started="2008-08-15 20:57:09.0"
+           date_stopped="2008-10-1 00:00:00.0" location_id="5" creator="1" date_created="2008-08-15 15:57:09.0"
+           voided="false" uuid="1e5d5da8-6b78-11e0-953c-09aad4ad4412"/>
+
     <visit_attribute visit_attribute_id="1" visit_id="2" attribute_type_id="3" value_reference="Admitted" creator="1" date_created="2005-01-01 00:00:00.0" date_changed="2005-01-01 00:00:00.0" voided="0" uuid="8770f6d6-7673-11e0-8f03-001e378eb6e7"/>
     <visit_attribute visit_attribute_id="2" visit_id="7" attribute_type_id="3" value_reference="Discharged" creator="1" date_created="2005-01-01 00:00:00.0" date_changed="2005-01-01 00:00:00.0" voided="0" uuid="8770f6d6-7673-11e0-8f03-001e3cseb6e7"/>
+
+    <visit_attribute visit_attribute_id="3" visit_id="3" attribute_type_id="3" value_reference="Admitted" creator="1" date_created="2017-01-01 00:00:00.0" date_changed="2017-01-01 00:00:00.0" voided="0" uuid="8770f6d6-7673-11e0-8f03-001e378ewee7"/>
+    <visit_attribute visit_attribute_id="4" visit_id="8" attribute_type_id="3" value_reference="Discharged" creator="1" date_created="2017-04-01 00:00:00.0" date_changed="2017-04-01 00:00:00.0" voided="0" uuid="8770f6d6-7673-11e0-8f03-001e3cs126e7"/>
 </dataset>

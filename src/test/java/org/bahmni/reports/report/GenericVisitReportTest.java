@@ -23,10 +23,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(12, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -35,10 +35,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(13, report.columnsCount());
+        assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  2 2", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No 2 2", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -47,10 +47,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(17, report.columnsCount());
+        assertEquals(18, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005   10th pass   General", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No  10th pass   General", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -59,10 +59,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(13, report.columnsCount());
+        assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005   Admitted", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No  Admitted", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -71,10 +71,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(13, report.columnsCount());
+        assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005   Dindori", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No  Dindori", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -83,11 +83,36 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(12, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Return TB Clinic Visit 20-Mar-2016 21-Apr-2016", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Return TB Clinic Visit 20-Mar-2016 21-Apr-2016 01-Jan-2017  No", report.getRowAsString(1, " "));
     }
+
+    @Test
+    public void shouldConsiderDateOfAdmissionInDateRangeIfSpecified() throws Exception {
+        String reportName = "Generic Visit Report With Date Of Admission For Date Range";
+
+        CsvReport report = fetchCsvReport(reportName, "2017-01-01", "2017-03-30");
+
+        assertEquals(12, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(1, report.rowsCount());
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Return TB Clinic Visit 20-Mar-2016 21-Apr-2016 01-Jan-2017  No", report.getRowAsString(1, " "));
+    }
+
+    @Test
+    public void shouldConsiderDateOfDischargeInDateRangeIfSpecified() throws Exception {
+        String reportName = "Generic Visit Report With Date Of Discharge For Date Range";
+
+        CsvReport report = fetchCsvReport(reportName, "2017-01-01", "2017-04-30");
+
+        assertEquals(12, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(1, report.rowsCount());
+        assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2017 21-May-2017 01-Apr-2017 01-Apr-2017 No", report.getRowAsString(1, " "));
+    }
+
 
     @Test
     public void shouldConsiderVisitStartDateInDateRangeIfSpecified() throws Exception {
@@ -95,10 +120,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(12, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -107,10 +132,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-03-01", "2016-04-30");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(12, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -119,11 +144,11 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-05-30");
 
-        assertEquals(22, report.columnsCount());
+        assertEquals(23, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005   General 10th pass   Dindori Ramgarh  Admitted 2 2", report.getRowAsString(1, " "));
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Return TB Clinic Visit 20-Mar-2016 21-Apr-2016    General 10th pass   Dindori Ramgarh   2 3", report.getRowAsString(2, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No  General 10th pass   Dindori Ramgarh  Admitted 2 2", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Return TB Clinic Visit 20-Mar-2016 21-Apr-2016 01-Jan-2017  No  General 10th pass   Dindori Ramgarh  Admitted 2 3", report.getRowAsString(2, " "));
     }
 
     @Test
@@ -132,23 +157,23 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2017-04-01", "2017-05-30");
 
-        assertEquals(11, report.columnsCount());
+        assertEquals(12, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2017 21-May-2017 01-Jan-2005 01-Jan-2005", report.getRowAsString(1, " "));
-        assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2017 21-May-2017", report.getRowAsString(2, " "));
+        assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2017 21-May-2017 01-Jan-2005 01-Jan-2005 No", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 23 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2017 21-May-2017 01-Apr-2017 01-Apr-2017 No", report.getRowAsString(2, " "));
     }
 
     @Test
-    public void shouldExcludeColumnsSpecifedInTheConfig() throws Exception {
+    public void shouldExcludeColumnsSpecifiedInTheConfig() throws Exception {
         String reportName = "Generic Visit Report With Excluded Column";
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-05-30");
 
-        assertEquals(10, report.columnsCount());
+        assertEquals(11, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -167,10 +192,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(13, report.columnsCount());
+        assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  Adhar1 Pan1", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No Adhar1 Pan1", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -179,10 +204,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
-        assertEquals(12, report.columnsCount());
+        assertEquals(13, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  Pan1", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No Pan1", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -191,9 +216,23 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30");
 
+        assertEquals(13, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(1, report.rowsCount());
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No > 10 Years", report.getRowAsString(1, " "));
+    }
+
+    @Test
+    public void shouldShowNewPatientVisitAsYesForThePatientsFirstVisit() throws Exception {
+        String reportName = "Generic Visit Report Without Config";
+
+        CsvReport report = fetchCsvReport(reportName, "2008-08-10", "2008-09-15");
+
         assertEquals(12, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  > 10 Years", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 14 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 15-Aug-2008 01-Oct-2008   Yes", report.getRowAsString(1, " "));
+
     }
+
 }

@@ -11,6 +11,7 @@ import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+import static org.bahmni.reports.model.GenericVisitReportConfig.DateRange.visitStartDate;
 import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 
 public class GenericVisitReportTemplateHelper extends GenericReportsHelper {
@@ -36,8 +37,9 @@ public class GenericVisitReportTemplateHelper extends GenericReportsHelper {
         TextColumnBuilder<String> dateStoppedColumn = col.column("Date stopped", "Date stopped", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> dateOfAdmission = col.column("Date Of Admission", "Date Of Admission", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         TextColumnBuilder<String> dateOfDischarge = col.column("Date Of Discharge", "Date Of Discharge", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        TextColumnBuilder<String> newPatientVisit = col.column("New patient visit", "New patient visit", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
 
-        jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, patientCreatedDateColumn, visitTypeColumn, dateStartedColumn, dateStoppedColumn, dateOfAdmission, dateOfDischarge);
+        jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, patientCreatedDateColumn, visitTypeColumn, dateStartedColumn, dateStoppedColumn, dateOfAdmission, dateOfDischarge,newPatientVisit);
     }
 
     public static String constructVisitTypesString(List<String> visitTypesToFilter) {
@@ -53,10 +55,10 @@ public class GenericVisitReportTemplateHelper extends GenericReportsHelper {
     }
 
     public static String getDateRangeFor(GenericVisitReportConfig config) {
-        if (config != null && "visitStopDate".equals(config.getApplyDateRangeFor())) {
-            return "v.date_stopped";
+        if (config != null && config.getApplyDateRangeFor()!= null) {
+            return config.getApplyDateRangeFor().getColumnName();
         }
-        return "v.date_started";
+            return visitStartDate.getColumnName();
     }
 
 }

@@ -44,7 +44,8 @@ SET @sql = CONCAT('SELECT
   p.person_id                                                   AS "Patient Id",
   DATE_FORMAT(p.date_created, "%d-%b-%Y")                       AS "Patient Created Date",
   DATE_FORMAT(admission_details.admission_date, "%d-%b-%Y")     AS "Date Of Admission",
-  DATE_FORMAT(admission_details.discharge_date, "%d-%b-%Y")     AS "Date Of Discharge"
+  DATE_FORMAT(admission_details.discharge_date, "%d-%b-%Y")     AS "Date Of Discharge",
+  IF(DATE(v.date_started) = DATE(p.date_created),"Yes","No")                AS "New patient visit"
 FROM visit v
   JOIN visit_type vt ON v.visit_type_id = vt.visit_type_id
   JOIN person p ON p.person_id = v.patient_id AND p.voided is false

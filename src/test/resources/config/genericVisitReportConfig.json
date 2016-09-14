@@ -51,6 +51,20 @@
             "applyDateRangeFor": "visitStopDate"
         }
     },
+    "visitsWithDateOfAdmissionForDateRange": {
+        "name": "Generic Visit Report With Date Of Admission For Date Range",
+        "type": "visits",
+        "config": {
+            "applyDateRangeFor": "dateOfAdmission"
+        }
+    },
+    "visitsWithDateOfDischargeForDateRange": {
+        "name": "Generic Visit Report With Date Of Discharge For Date Range",
+        "type": "visits",
+        "config": {
+            "applyDateRangeFor": "dateOfDischarge"
+        }
+    },
     "visitsWithVisitStartDateForDateRange": {
         "name": "Generic Visit Report With Visit Start Date For Date Range",
         "type": "visits",
@@ -141,7 +155,8 @@
                 "Date started",
                 "Date stopped",
                 "Date Of Admission",
-                "Date Of Discharge"
+                "Date Of Discharge",
+                "New patient visit"
             ]
         }
     },
