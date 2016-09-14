@@ -104,13 +104,18 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         }
 
         switch (conceptNameDisplayFormat) {
-            case "short":
-                return conceptName.getShortName();
-            case "fully_specified":
+            case "shortNamePreferred":
+                return preferShortConceptName(conceptName);
+            case "fullySpecifiedName":
                 return conceptName.getFullySpecifiedName();
             default:
                 return getDefaultConceptNameDisplayFormat(conceptName);
         }
+    }
+
+    private static String preferShortConceptName(ConceptName conceptName) {
+        return StringUtils.isEmpty(conceptName.getShortName()) ?
+                conceptName.getFullySpecifiedName() : conceptName.getShortName();
     }
 
     private static String getDefaultConceptNameDisplayFormat(ConceptName conceptName) {
@@ -255,10 +260,10 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         if (config == null || config.getConceptNameDisplayFormat() == null)
             return defaultFormat;
         switch (config.getConceptNameDisplayFormat()) {
-            case "fully_specified":
+            case "fullySpecifiedName":
                 return "obs_fscn.name";
-            case "short":
-                return "obs_scn.name";
+            case "shortNamePreferred":
+                return "IF(obs_scn.name IS NULL,obs_fscn.name,obs_scn.name)";
             default:
                 return defaultFormat;
         }

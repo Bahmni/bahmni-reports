@@ -656,19 +656,32 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     }
 
     @Test
-    public void shouldShowShortNameOfConceptIfConfigured() throws Exception {
-        String reportName = "Observation report with short concept name format";
+    public void shouldShowFullySpecifiedNameWhenConceptDoesntHaveShortNameIfConfigured() throws Exception {
+        String reportName = "Observation report with short concept name preferred format";
 
         CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
 
         assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008   2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008  180 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Vitals  2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(2, " "));
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 weight 80 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(3, " "));
     }
 
+    @Test
+    public void shouldShowFullySpecifiedNameAndShortNameIfConfigured() throws Exception {
+        String reportName = "Observation report with fullySpecified and shortName format";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-06-01", "2016-06-30");
+
+        assertEquals(16, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(3, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Vitals  2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Weight(weight) 80 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(3, " "));
+    }
     @Test
     public void shouldShowFullySpecifiedNameOfConceptIfConfiguredInEncounterPerRow() throws Exception {
         String reportName = "Observation report with fully specified concept name format in encounter per row";
@@ -696,7 +709,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
     @Test
     public void shouldShowShortNameOfConceptIfConfiguredInEncounterPerRow() throws Exception {
-        String reportName = "Observation report with short concept name format in encounter per row";
+        String reportName = "Observation report with short concept name preferred format in encounter per row";
 
         List<ConceptName> objectList = new ArrayList<>();
         objectList.add(new ConceptName("Height", "HeightShort"));
@@ -714,7 +727,7 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
         assertThat(report.getColumnHeaderAtIndex(10), is("HeightShort"));
-        assertThat(report.getColumnHeaderAtIndex(11), is(""));
+        assertThat(report.getColumnHeaderAtIndex(11), is("Weight"));
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 180 80", report.getRowAsString(1, " "));
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 170 70", report.getRowAsString(2, " "));
     }

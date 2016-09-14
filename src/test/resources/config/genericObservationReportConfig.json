@@ -443,14 +443,14 @@
         "name": "Observation report with fully specified concept name format",
         "type": "observations",
         "config": {
-            "conceptNameDisplayFormat": "fully_specified"
+            "conceptNameDisplayFormat": "fullySpecifiedName"
         }
     },
     "observationReportWithFullySpecifiedConceptNameDisplayConfigInEncounterPerRow": {
         "name": "Observation report with fully specified concept name format in encounter per row",
         "type": "observations",
         "config": {
-            "conceptNameDisplayFormat": "fully_specified",
+            "conceptNameDisplayFormat": "fullySpecifiedName",
             "encounterPerRow": true,
             "conceptNamesToFilter": [
                 "Vitals"
@@ -458,10 +458,10 @@
         }
     },
     "observationReportWithShortConceptNameDisplayConfigInEncounterPerRow": {
-        "name": "Observation report with short concept name format in encounter per row",
+        "name": "Observation report with short concept name preferred format in encounter per row",
         "type": "observations",
         "config": {
-            "conceptNameDisplayFormat": "short",
+            "conceptNameDisplayFormat": "shortNamePreferred",
             "encounterPerRow": true,
             "conceptNamesToFilter": [
                 "Vitals"
@@ -479,10 +479,17 @@
         }
     },
     "observationReportWithShortConceptNameDisplayConfig": {
-        "name": "Observation report with short concept name format",
+        "name": "Observation report with short concept name preferred format",
         "type": "observations",
         "config": {
-            "conceptNameDisplayFormat": "short"
+            "conceptNameDisplayFormat": "shortNamePreferred"
+        }
+    },
+    "observationReportWithFullySpecifiedAndShortNameConceptNameDisplayConfig": {
+        "name": "Observation report with fullySpecified and shortName format",
+        "type": "observations",
+        "config": {
+            "conceptNameDisplayFormat": "fullySpecifiedName(shortName)"
         }
     },
     "observationReportWithAgeGroupColumn": {
