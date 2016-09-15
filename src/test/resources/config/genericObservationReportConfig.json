@@ -606,6 +606,13 @@
         "config": {
             "conceptValuesToFilter": [""]
         }
+    },
+    "observationReportWithEmptyValue,TextAndRangeValueFilter": {
+        "name": "Observation report filter by empty value,range and text value",
+        "type": "observations",
+        "config": {
+            "conceptValuesToFilter": ["","175..200","High"]
+        }
     }
 
 }
