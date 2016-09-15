@@ -12,6 +12,9 @@
     <concept concept_id="1002" retired="false" datatype_id="4" class_id="2" is_set="true" creator="1" date_created="2008-08-15 15:27:51.0" version="" uuid="0cbeqwd3-cd5f-4f46-9459-2612exw265ab"/>
     <concept_name concept_id="1002" concept_name_id="1003" name="Vitals" locale="en" creator="1" date_created="2008-08-15 15:27:51.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="74qec3d3-e6d0-407d-8ed3-3895e4b6ms5b"/>
 
+    <concept concept_id="1003" retired="false" datatype_id="4" class_id="2" is_set="true" creator="1" date_created="2008-08-15 15:27:51.0" version="" uuid="0lpwo9-cd5f-4f46-9459-2612exw265ab"/>
+    <concept_name concept_id="1003" concept_name_id="1004" name="BP_Level" locale="en" creator="1" date_created="2008-08-15 15:27:51.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="74qjk3d3-e6d0-407d-8ed3-3895e4b6ms5b"/>
+
     <concept_set concept_set_id="1" concept_id="1000" concept_set="1002" sort_weight="0.0" creator="1" date_created="2008-08-18 12:38:58.0" uuid="1a1va827-639f-4cb4-961f-1e025bf88d90"/>
     <concept_set concept_set_id="1" concept_id="1001" concept_set="1002" sort_weight="0.0" creator="1" date_created="2008-08-18 12:38:58.0" uuid="1a561827-639f-4cb4-961f-1e025bf88d90"/>
     <!--End of create concepts-->
@@ -128,6 +131,7 @@
     <obs obs_id="2207" person_id="1001" concept_id="1002" encounter_id="2202" obs_datetime="2020-08-02 00:00:00.0" location_id="3" comments="" creator="1" date_created="2020-08-02 00:00:00.0" voided="false" uuid="b7f47-e1asdf80a-la56-9285-bd79nq76et63"/>
     <obs obs_id="2208" person_id="1001" concept_id="1000" encounter_id="2202" obs_datetime="2020-08-02 00:00:00.0" location_id="3" obs_group_id="2207" value_numeric="170" comments="" creator="1" date_created="2020-08-02 10:20:00.0" voided="false" uuid="kjcxhz-pl0a-l256-9285-bd79pl21et63"/>
     <obs obs_id="2209" person_id="1001" concept_id="1001" encounter_id="2202" obs_datetime="2020-08-02 00:00:00.0" location_id="3" obs_group_id="2207" value_numeric="70" comments="" creator="1" date_created="2020-08-02 10:20:00.0" voided="false" uuid="zxcvlhkkr-emqa-l256-9285-bd798qk1av63"/>
+    <obs obs_id="22010" person_id="1001" concept_id="1003" encounter_id="2202" obs_datetime="2020-08-02 00:00:00.0" location_id="3" obs_group_id="2207" value_text="High" comments="" creator="1" date_created="2020-08-02 10:20:00.0" voided="false" uuid="zxcvlhyur-emqa-l256-9285-bd798qk1av63"/>
     <!--Patient Data-->
 
 </dataset>

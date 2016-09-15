@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.ConceptName;
+import org.bahmni.reports.model.GenericLabOrderReportConfig;
 import org.bahmni.reports.model.GenericObservationReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.webclients.HttpClient;
@@ -160,7 +161,7 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         return null;
     }
 
-    public static List<String> fetchChildConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
+   public static List<String> fetchChildConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
         List<String> conceptNamesToFilter = getConceptNamesToFilter(report.getConfig());
         if (CollectionUtils.isEmpty(conceptNamesToFilter) || report.getConfig().isEncounterPerRow()) {
             return new ArrayList<>();
@@ -219,6 +220,17 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         return StringUtils.join(conceptNamesWithDoubleQuote, ',');
     }
 
+    public static String constructConceptValuesToFilter(List<String> conceptValues) {
+        if (CollectionUtils.isEmpty(conceptValues)) {
+            return null;
+        }
+        List<String> conceptNamesWithDoubleQuote = new ArrayList<>();
+        for (String conceptName : conceptValues) {
+            conceptNamesWithDoubleQuote.add("\"" + conceptName.replace("'", "\\'") + "\"");
+        }
+        return StringUtils.join(conceptNamesWithDoubleQuote, ',');
+    }
+
     public static String constructConceptClassesToFilter(GenericObservationReportConfig config) {
         List<String> conceptClassesToFilter = getConceptClassesToFilter(config);
         List<String> conceptClassesWithDoubleQuote = new ArrayList<>();
@@ -268,4 +280,41 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
                 return defaultFormat;
         }
     }
+
+    public static String conceptValuesToFilter(GenericObservationReportConfig config) {
+        List<String> listOfConfig = getConceptValuesToFilter(config);
+        List<String> parts = new ArrayList<>();
+        for (String value : listOfConfig) {
+            if (!isNumericRange(value))
+                parts.add("\"" + value.replace("'", "\\\\\\\'") + "\"");
+        }
+        return StringUtils.join(parts, ',');
+    }
+
+    private static boolean isNumericRange(String value) {
+        return value.contains("..");
+    }
+
+    private static List<String> getConceptValuesToFilter(GenericObservationReportConfig config) {
+        return config.getConceptValuesToFilter() != null ? config.getConceptValuesToFilter() : new ArrayList<String>();
+    }
+
+    public static String constructNumericRangeFilters(GenericObservationReportConfig config) {
+        List<String> listOfConfig = getConceptValuesToFilter(config);
+        StringBuilder stringBuilder = new StringBuilder();
+        for (String value : listOfConfig) {
+            if (isNumericRange(value)) {
+                if (value.startsWith("..")) {
+                    stringBuilder.append(String.format(" OR (o.value_numeric <= %s)", StringUtils.strip(value, "..")));
+                } else if (value.endsWith("..")) {
+                    stringBuilder.append(String.format(" OR (o.value_numeric >= %s)", StringUtils.strip(value, "..")));
+                } else {
+                    String[] range = value.split("\\.\\.");
+                    stringBuilder.append(String.format(" OR (o.value_numeric BETWEEN %s AND %s)", range[0], range[1]));
+                }
+            }
+        }
+        return stringBuilder.toString();
+    }
+
 }

@@ -10,6 +10,7 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
     private List<String> conceptClassesToFilter;
     private List<String> programsToFilter;
     private List<String> conceptNamesToFilter;
+    private List<String> conceptValuesToFilter;
     private boolean encounterPerRow = false;
     private boolean ignoreEmptyValues = false;
     private List<String> visitTypesToFilter;
@@ -103,5 +104,13 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
 
     public void setConceptNameDisplayFormat(String conceptNameDisplayFormat) {
         this.conceptNameDisplayFormat = conceptNameDisplayFormat;
+    }
+
+    public List<String> getConceptValuesToFilter() {
+        return conceptValuesToFilter;
+    }
+
+    public void setConceptValuesToFilter(List<String> conceptValuesToFilter) {
+        this.conceptValuesToFilter = conceptValuesToFilter;
     }
 }
