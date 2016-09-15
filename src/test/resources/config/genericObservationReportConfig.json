@@ -541,7 +541,7 @@
         "type": "observations",
         "config": {
             "conceptValuesToFilter": [
-                "high"
+                "High"
             ]
         }
     },
@@ -550,7 +550,7 @@
         "type": "observations",
         "config": {
             "conceptValuesToFilter": [
-                "high",
+                "High",
                 "150..300"
             ]
         }
@@ -560,7 +560,7 @@
         "type": "observations",
         "config": {
             "conceptValuesToFilter": [
-                "high",
+                "High",
                 "175..300",
                 "1..80"
             ]
@@ -571,7 +571,7 @@
         "type": "observations",
         "config": {
             "conceptValuesToFilter": [
-                "high",
+                "High",
                 "..100"
             ]
         }
@@ -581,7 +581,7 @@
         "type": "observations",
         "config": {
             "conceptValuesToFilter": [
-                "high",
+                "High",
                 "175.."
             ]
         }
@@ -594,10 +594,18 @@
                 "HIV PROGRAM"
             ],
             "conceptValuesToFilter": [
-                "high",
+                "High",
                 "175..",
                 "..70"
             ]
         }
+    },
+    "observationReportWithEmptyValueFilter": {
+        "name": "Observation report filter by empty result",
+        "type": "observations",
+        "config": {
+            "conceptValuesToFilter": [""]
+        }
     }
+
 }

@@ -8,6 +8,7 @@ SET @locationTagsToFilterSql = '#locationTagsToFilter#';
 SET @filterByConceptClass = '#conceptClassesToFilter#';
 SET @filterByConceptNames = '#conceptNamesToFilter#';
 SET @filterByConceptValues = '#conceptValuesToFilter##numericRangesFilterSql#';
+SET @filterByEmptyValues='#nullIncludedFilter#';
 SET @filterByPrograms = '#programsToFilter#';
 SET @dateRangeFilter = '#applyDateRangeFor#';
 SET @showProvider = '#showProvider#';
@@ -23,12 +24,24 @@ SET @patientAttributeJoinSql = ' LEFT OUTER JOIN person_attribute pa ON p.person
 SET @patientAddressJoinSql = ' LEFT OUTER JOIN person_address paddress ON p.person_id = paddress.person_id AND paddress.voided is false ';
 SET @conceptClassesToFilterSql = ' JOIN concept_class class ON class.concept_class_id=obs_concept.class_id AND class.name in (#conceptClassesToFilter#)';
 SET @conceptNamesToFilterSql = ' AND obs_fscn.name IN (#conceptNamesToFilter#)';
-SET @filterByConceptValuesSql = IF(@filterByConceptValues='','',' AND
-                                      (o.value_numeric IN (#noValueFilter##conceptValuesToFilter#) OR
+SET @filterByConceptValuesSql = IF(@filterByConceptValues='','', IF(@filterByEmptyValues='',' AND
+                                      ((o.value_numeric IN (#noValueFilter##conceptValuesToFilter#) OR
                                        o.value_text IN (#noValueFilter##conceptValuesToFilter#) OR
                                        o.value_datetime IN (#noValueFilter##conceptValuesToFilter#) OR
                                        coded_scn.name IN (#noValueFilter##conceptValuesToFilter#) OR
-                                       coded_fscn.name IN (#noValueFilter##conceptValuesToFilter#)) #numericRangesFilterSql#');
+                                       coded_fscn.name IN (#noValueFilter##conceptValuesToFilter#)) #numericRangesFilterSql#)',
+                                                                    ' AND
+                                                                    ((o.value_numeric IS NULL AND
+                                                                     o.value_text IS NULL AND
+                                                                     o.value_datetime IS NULL AND
+                                                                     coded_scn.name IS NULL AND
+                                                                     coded_fscn.name IS NULL) OR
+                                       (o.value_numeric IN (#noValueFilter##conceptValuesToFilter#) OR
+                                       o.value_text IN (#noValueFilter##conceptValuesToFilter#) OR
+                                       o.value_datetime IN (#noValueFilter##conceptValuesToFilter#) OR
+                                       coded_scn.name IN (#noValueFilter##conceptValuesToFilter#) OR
+                                       coded_fscn.name IN (#noValueFilter##conceptValuesToFilter#)) #numericRangesFilterSql#)'));
+
 SET @programsJoinSql = ' JOIN episode_encounter ee ON e.encounter_id = ee.encounter_id
   JOIN episode_patient_program epp ON ee.episode_id=epp.episode_id
   JOIN patient_program pp ON epp.patient_program_id = pp.patient_program_id
@@ -38,7 +51,6 @@ SET @dateRangeSql = IF(@dateRangeFilter = 'visitStartDate', ' AND cast(v.date_st
                     IF(@dateRangeFilter = 'programDate', ' AND cast(pp.date_enrolled AS DATE) <= "#endDate#"  AND (cast(pp.date_completed AS DATE) >= "#startDate#" or  pp.date_completed is NULL)',
                     IF(@dateRangeFilter = 'visitStopDate', ' AND cast(v.date_stopped AS DATE) BETWEEN "#startDate#" AND "#endDate#"',
                     IF(@dateRangeFilter = 'obsCreatedDate', ' AND cast(o.date_created AS DATE) BETWEEN "#startDate#" AND "#endDate#"', ' AND cast(o.obs_datetime AS DATE) BETWEEN "#startDate#" AND "#endDate#"'))));
-
 SET @providerJoinSql = '  JOIN provider pro ON pro.provider_id=ep.provider_id
   LEFT OUTER JOIN person_name provider_person ON provider_person.person_id = pro.person_id';
 SET @providerSelectSql = 'coalesce(pro.name, concat(provider_person.given_name, " ", provider_person.family_name)) AS "Provider"';
@@ -50,10 +62,8 @@ SET @ageGroupSelectSql = 'rag.name AS "#ageGroupName#", rag.sort_order AS "Age G
 
 SET @primaryIdentifierTypeUuid = NULL;
 SELECT property_value FROM global_property WHERE property = 'emr.primaryIdentifierType' into @primaryIdentifierTypeUuid;
-
 SET @primaryIdentifierTypeName = NULL;
 SELECT name FROM patient_identifier_type WHERE uuid = @primaryIdentifierTypeUuid INTO @primaryIdentifierTypeName;
-
 SET @sql = CONCAT('SELECT
   GROUP_CONCAT(DISTINCT(IF(pit.name = @primaryIdentifierTypeName, pi.identifier, NULL)))     AS "Patient Identifier",
   ',IF(@extraPatientIdentifierTypes = '', '', CONCAT(@extraPatientIdentifierTypes, ',')),'
@@ -121,9 +131,14 @@ WHERE o.voided is false
   ',IF(@locationTagsToFilterSql = '', '', 'AND l.location_id in (SELECT ltm.location_id from location_tag_map ltm JOIN location_tag lt
   ON ltm.location_tag_id=lt.location_tag_id AND lt.retired is false AND lt.name in (#locationTagsToFilter#))'),'
   ',@dateRangeSql,IF(@visitTypesToFilterSql = '', '', 'AND vt.name in (#visitTypesToFilter#)'),
-   IF(@filterByConceptValues = '', '', @filterByConceptValuesSql),
-   ' GROUP BY o.obs_id ',IF(@ignoreEmptyValues = '', '', @ignoreEmptyValues),';');
+  IF(@filterByConceptValues = '', '', @filterByConceptValuesSql),
+                  ' GROUP BY o.obs_id ',IF(@ignoreEmptyValues = '', '', @ignoreEmptyValues),';');
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 DEALLOCATE PREPARE stmt;
+
+
+
+
+

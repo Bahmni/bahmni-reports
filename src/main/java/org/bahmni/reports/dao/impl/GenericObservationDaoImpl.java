@@ -49,12 +49,16 @@ public class GenericObservationDaoImpl implements GenericDao {
             sqlTemplate.add("conceptNamesToFilter", constructConceptNamesToFilter(conceptNames));
 
             String conceptValuesToFilter = conceptValuesToFilter(report.getConfig());
-            if (conceptValuesToFilter.isEmpty()) {
+            if (conceptValuesToFilter.isEmpty()){
                 sqlTemplate.add("noValueFilter", "NULL");
             }
+
+            if (conceptValuesToFilter.contains("\"\"")){
+                sqlTemplate.add("nullIncludedFilter", "NULL");
+            }
+
             sqlTemplate.add("conceptValuesToFilter", conceptValuesToFilter);
             sqlTemplate.add("numericRangesFilterSql", constructNumericRangeFilters(report.getConfig()));
-
             sqlTemplate.add("selectConceptNamesSql", constructConceptNameSelectSqlIfShowInOneRow(conceptNamesToFilter, report.getConfig()));
             sqlTemplate.add("showProvider", report.getConfig().showProvider());
             sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(getVisitTypesToFilter(report.getConfig())));

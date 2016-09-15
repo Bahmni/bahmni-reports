@@ -791,64 +791,57 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldFilterObservationWithRangeFilter() throws Exception {
         String reportName = "Observation report with numeric range filter";
 
-        CsvReport report = fetchCsvReport(reportName, "2020-08-01", "2020-08-03");
+        CsvReport report = fetchCsvReport(reportName, "20216-03-01", "2019-08-03");
 
         assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(8, report.rowsCount());
+        assertEquals(6, report.rowsCount());
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 170 2016-04-21 15:30:31.0 21-Apr-2016 21-Apr-2016", report.getRowAsString(1, " "));
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Height 170 2016-05-23 15:30:31.0 23-May-2016 21-Apr-2016", report.getRowAsString(2, " "));
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(3, " "));
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Height 180 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(4, " "));
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Height 170 2016-08-02 00:00:00.0 02-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(5, " "));
         assertEquals("OBS2 Generic1 Observation2 5 15-Aug-2009 M Chithari    15-Aug-2008 Height 170 2015-07-02 00:00:00.0 02-Jul-2015 01-Aug-2015 Vitals", report.getRowAsString(6, " "));
-        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Height 170 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(7, " "));
-        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Height 170 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(8, " "));
     }
 
     @Test
     public void shouldFilterObservationReportWithMiniumRangeFilter() throws Exception {
         String reportName = "Observation report filter by minimum range";
 
-        CsvReport report = fetchCsvReport(reportName, "2020-08-01", "2020-08-03");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2018-08-03");
 
         assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(4, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Weight(weight) 80 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Weight(weight) 80 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Weight(weight) 70 2016-08-02 00:00:00.0 02-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(3, " "));
-        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Weight(weight) 70 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(4, " "));
+        assertEquals(2, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Weight(weight) 80 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Weight(weight) 70 2016-08-02 00:00:00.0 02-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(2, " "));
     }
 
     @Test
     public void shouldFilterObservationReportWithMaximumRangeFilter() throws Exception {
         String reportName = "Observation report filter by maximum range";
 
-        CsvReport report = fetchCsvReport(reportName, "2020-08-01", "2020-08-03");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2018-08-03");
 
         assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(2, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Height 180 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(2, " "));
+        assertEquals(1, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Height 180 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(1, " "));
     }
 
     @Test
     public void shouldFilterObservationReportWithMultiRangesFilter() throws Exception {
         String reportName = "Observation report with multi numeric ranges filter";
 
-        CsvReport report = fetchCsvReport(reportName, "2020-08-01", "2020-08-03");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
 
         assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(6, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Weight(weight) 80 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Height 180 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(3, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Weight(weight) 80 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(4, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Weight(weight) 70 2016-08-02 00:00:00.0 02-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(5, " "));
-        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Weight(weight) 70 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(6, " "));
+        assertEquals(4, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Height 180 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Weight(weight) 80 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Weight(weight) 70 2016-08-02 00:00:00.0 02-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(3, " "));
+        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Weight(weight) 70 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -871,50 +864,41 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(9, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 170 2016-04-21 15:30:31.0 21-Apr-2016 21-Apr-2016", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Height 170 2016-05-23 15:30:31.0 23-May-2016 21-Apr-2016", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(3, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Height 180 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(4, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Height 170 2016-08-02 00:00:00.0 02-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(5, " "));
-        assertEquals("OBS2 Generic1 Observation2 5 15-Aug-2009 M Chithari    15-Aug-2008 Height 170 2015-07-02 00:00:00.0 02-Jul-2015 01-Aug-2015 Vitals", report.getRowAsString(6, " "));
-        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Height 170 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(7, " "));
-        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Height 170 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(8, " "));
-        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 BP_Level High 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(9, " "));
+        assertEquals(3, report.rowsCount());
+        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Height 170 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Height 170 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 BP_Level High 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(3, " "));
     }
 
     @Test
     public void shouldFilterObservationReportWithMultiRangesAndTextFilter() throws Exception {
         String reportName = "Observation report filter by multi numeric ranges and text value";
 
-        CsvReport report = fetchCsvReport(reportName, "2020-08-01", "2020-08-03");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
 
         assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(7, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Weight(weight) 80 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Height 180 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(3, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Weight(weight) 80 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(4, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Weight(weight) 70 2016-08-02 00:00:00.0 02-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(5, " "));
-        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Weight(weight) 70 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(6, " "));
-        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 BP_Level High 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(7, " "));
+        assertEquals(5, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Height 180 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Weight(weight) 80 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Weight(weight) 70 2016-08-02 00:00:00.0 02-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(3, " "));
+        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Weight(weight) 70 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(4, " "));
+        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 BP_Level High 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(5, " "));
     }
 
     @Test
     public void shouldFilterObservationReportWithMiniumRangeAndTextFilter() throws Exception {
         String reportName = "Observation report filter by min range and text value";
 
-        CsvReport report = fetchCsvReport(reportName, "2020-08-01", "2020-08-03");
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
 
         assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(5, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Weight(weight) 80 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Weight(weight) 80 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(2, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Weight(weight) 70 2016-08-02 00:00:00.0 02-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(3, " "));
-        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Weight(weight) 70 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(4, " "));
-        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 BP_Level High 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(5, " "));
+        assertEquals(4, report.rowsCount());
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Weight(weight) 80 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Weight(weight) 70 2016-08-02 00:00:00.0 02-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(2, " "));
+        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Weight(weight) 70 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(3, " "));
+        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 BP_Level High 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(4, " "));
     }
 
     @Test
@@ -925,17 +909,15 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
 
         assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
-        assertEquals(3, report.rowsCount());
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari HIV PROGRAM 20-Apr-2016 30-Jun-2016 15-Aug-2008 Height 180 2016-06-01 10:20:00.0 01-Jun-2016 21-Apr-2016 Vitals", report.getRowAsString(1, " "));
-        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari MDR-TB PROGRAM 01-Aug-2016  15-Aug-2008 Height 180 2016-08-01 10:20:00.0 01-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(2, " "));
-        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 BP_Level High 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(3, " "));
+        assertEquals(1, report.rowsCount());
+        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 BP_Level High 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(1, " "));
     }
 
     @Test
     public void shouldFilterObservationReportWithTestNameAndResultFilter() throws Exception {
         String reportName = "Observation report filter by test name and result";
 
-        CsvReport report = fetchCsvReport(reportName, "2020-08-01", "2020-08-03");
+        CsvReport report = fetchCsvReport(reportName, "2015-08-01", "2020-08-03");
 
         assertEquals(16, report.columnsCount());
         assertEquals(reportName, report.getReportName());
@@ -945,6 +927,19 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari    15-Aug-2008 Weight(weight) 70 2016-08-02 00:00:00.0 02-Aug-2016 01-Aug-2016 Vitals", report.getRowAsString(3, " "));
         assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Weight(weight) 70 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(4, " "));
         assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 BP_Level High 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(5, " "));
+    }
+
+    @Test
+    public void shouldFilterObservationReportWithEmptyFilter() throws Exception {
+        String reportName = "Observation report filter by empty result";
+
+        CsvReport report = fetchCsvReport(reportName, "2020-08-01", "2020-08-03");
+
+        assertEquals(16, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(2, report.rowsCount());
+        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Vitals  2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020", report.getRowAsString(1, " "));
+        assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 Vitals  2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020", report.getRowAsString(2, " "));
     }
 
 }
