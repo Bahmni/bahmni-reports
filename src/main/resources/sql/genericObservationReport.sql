@@ -25,7 +25,7 @@ SET @patientAddressJoinSql = ' LEFT OUTER JOIN person_address paddress ON p.pers
 SET @conceptClassesToFilterSql = ' JOIN concept_class class ON class.concept_class_id=obs_concept.class_id AND class.name in (#conceptClassesToFilter#)';
 SET @conceptNamesToFilterSql = ' AND obs_fscn.name IN (#conceptNamesToFilter#)';
 SET @filterByConceptValuesSql = IF(@filterByConceptValues='','', IF(@filterByEmptyValues='',' AND
-                                      ((o.value_numeric IN (#noValueFilter##conceptValuesToFilter#) OR
+                                      ((binary o.value_numeric IN (#noValueFilter##conceptValuesToFilter#) OR
                                        o.value_text IN (#noValueFilter##conceptValuesToFilter#) OR
                                        o.value_datetime IN (#noValueFilter##conceptValuesToFilter#) OR
                                        coded_scn.name IN (#noValueFilter##conceptValuesToFilter#) OR
@@ -36,7 +36,7 @@ SET @filterByConceptValuesSql = IF(@filterByConceptValues='','', IF(@filterByEmp
                                                                      o.value_datetime IS NULL AND
                                                                      coded_scn.name IS NULL AND
                                                                      coded_fscn.name IS NULL) OR
-                                       (o.value_numeric IN (#noValueFilter##conceptValuesToFilter#) OR
+                                       (binary o.value_numeric IN (#noValueFilter##conceptValuesToFilter#) OR
                                        o.value_text IN (#noValueFilter##conceptValuesToFilter#) OR
                                        o.value_datetime IN (#noValueFilter##conceptValuesToFilter#) OR
                                        coded_scn.name IN (#noValueFilter##conceptValuesToFilter#) OR
