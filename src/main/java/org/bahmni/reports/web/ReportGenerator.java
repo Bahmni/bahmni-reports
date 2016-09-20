@@ -46,7 +46,7 @@ public class ReportGenerator {
             validateResponseTypeSupportedFor(report, reportParams.getResponseType());
             BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
             Connection connection = allDatasources.getConnectionFromDatasource(reportTemplate);
-            BahmniReportBuilder reportBuilder = BahmniReportUtil.build(report, connection, reportParams.getStartDate(),
+            BahmniReportBuilder reportBuilder = BahmniReportUtil.build(report, httpClient, connection, reportParams.getStartDate(),
                     reportParams.getEndDate(), resources, reportParams.getPaperSize(), bahmniReportsProperties);
             List<JasperReportBuilder> reports = reportBuilder.getReportBuilders();
             JasperConcatenatedReportBuilder concatenatedReportBuilder = concatenatedReport().concatenate(reports.toArray(new JasperReportBuilder[reports.size()]));
