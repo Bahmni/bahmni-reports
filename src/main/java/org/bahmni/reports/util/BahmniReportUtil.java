@@ -25,11 +25,10 @@ import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 
 public class BahmniReportUtil {
 
-    public static BahmniReportBuilder build(Report report, HttpClient httpClient, Connection connection,
+    public static BahmniReportBuilder build(Report report, Connection connection,
                                             String startDate, String endDate,
                                             List<AutoCloseable> resources, PageType pageType,
                                             BahmniReportsProperties bahmniReportsProperties) throws Exception {
-        report.setHttpClient(httpClient);
         BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
         JasperReportBuilder reportBuilder = report();
         reportBuilder = new ReportHeader().add(reportBuilder, report.getName(), startDate, endDate);
