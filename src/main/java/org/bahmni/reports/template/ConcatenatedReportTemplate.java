@@ -31,11 +31,10 @@ public class ConcatenatedReportTemplate extends BaseReportTemplate<ConcatenatedR
                                      PageType pageType) throws Exception {
 
         List<Report> subReports = concatenatedReport.getConfig().getReports();
-        HttpClient httpClient = concatenatedReport.getHttpClient();
         List<JasperReportBuilder> reportBuilders = new ArrayList<>();
 
         for (Report subReport : subReports) {
-            BahmniReportBuilder reportBuilder = BahmniReportUtil.build(subReport, httpClient, connection,
+            BahmniReportBuilder reportBuilder = BahmniReportUtil.build(subReport, connection,
                     startDate, endDate, resources, pageType, bahmniReportsProperties);
             reportBuilders.addAll(reportBuilder.getReportBuilders());
         }
