@@ -930,6 +930,11 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
     public void shouldFilterObservationReportWithTestNameAndResultFilter() throws Exception {
         String reportName = "Observation report filter by test name and result";
 
+        List<ConceptName> objectList = new ArrayList<>();
+
+        URI getChildConceptsUri = URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/getChildConcepts?conceptNames=HIV+PROGRAM");
+        when(httpClient.get(getChildConceptsUri)).thenReturn(new ObjectMapper().writeValueAsString(objectList));
+
         CsvReport report = fetchCsvReport(reportName, "2015-08-01", "2020-08-03");
 
         assertEquals(16, report.columnsCount());

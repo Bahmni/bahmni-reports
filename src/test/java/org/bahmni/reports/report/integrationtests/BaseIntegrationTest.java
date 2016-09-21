@@ -25,7 +25,6 @@ import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseContextSensitiveTest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -94,7 +93,6 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     @Before
     public void beforeBaseIntegrationTest() throws Exception {
-        MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
         when(bahmniReportsProperties.getConfigFilePath()).thenReturn(configFilePath);
         when(bahmniReportsProperties.getOpenmrsRootUrl()).thenReturn(dbProperties.getOpenmrsRootUrl());
