@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.quartz.JobBuilder;
@@ -24,6 +25,7 @@ import static org.springframework.test.util.MatcherAssertionErrors.assertThat;
 
 @Ignore
 @RunWith(PowerMockRunner.class)
+@PowerMockIgnore({"org.hibernate.*", "org.springframework.*"})
 @PrepareForTest(JobBuilder.class)
 public class ReportsSchedulerTest {
     @Mock
