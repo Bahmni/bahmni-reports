@@ -26,17 +26,27 @@
                 <version>1.4.0</version>
                 <executions>
                     <execution>
-                        <id>add-openmrs-schemas</id>
+                        <id>generate-config</id>
                         <phase>test-compile</phase>
                         <goals>
                             <goal>exec</goal>
                         </goals>
+                        <configuration>
+                            <skip>${skipDump}</skip>
+                            <executable>${basedir}/scripts/create_configuration.sh</executable>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-db-schemas</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                        <configuration>
+                            <executable>${basedir}/src/test/resources/create_db.sh</executable>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <skip>${skipDump}</skip>
-                    <executable>${basedir}/src/test/resources/create_db.sh</executable>
-                </configuration>
             </plugin>
         </plugins>
         <pluginManagement>
