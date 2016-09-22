@@ -35,8 +35,7 @@ public class ReportsScheduler {
         JobDetail job = newJob(ReportsJob.class).build();
         job.getJobDataMap().put("reportParams", reportParams);
 
-        Trigger trigger;
-        trigger = newTrigger().startNow().build();
+        Trigger trigger = newTrigger().startNow().build();
 
         scheduler.scheduleJob(job, trigger);
 
