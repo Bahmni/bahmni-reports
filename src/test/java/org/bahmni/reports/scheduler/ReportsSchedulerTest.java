@@ -23,7 +23,6 @@ import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.springframework.test.util.MatcherAssertionErrors.assertThat;
 
-@Ignore
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({"org.hibernate.*", "org.springframework.*"})
 @PrepareForTest(JobBuilder.class)
