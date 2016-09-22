@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-TARGET_DIR=$HOME/.bahmni-reports/
+TARGET_DIR=$HOME/.bahmni-reports
 
-mkdir $TARGET_DIR
+mkdir -p $TARGET_DIR/reports/
 
 echo """openelis.url=jdbc:postgresql://localhost:5432/clinlims
 openelis.username=clinlims
@@ -19,7 +19,9 @@ openmrs.service.user=admin
 openmrs.service.password=test
 openmrs.connectionTimeoutInMilliseconds=30000
 openmrs.replyTimeoutInMilliseconds=120000
-macrotemplates.temp.directory=/tmp/""" > $TARGET_DIR/bahmni-reports.properties
+macrotemplates.temp.directory=/tmp/
+bahmnireports.db.url=jdbc:mysql://localhost:3306/bahmni_reports?allowMultiQueries=true
+reports.save.directory=$TARGET_DIR/reports""" > $TARGET_DIR/bahmni-reports.properties
 
 echo """openelis.url=jdbc:postgresql://localhost:5432/clinlims
 openelis.username=clinlims
@@ -36,6 +38,8 @@ openmrs.service.user=admin
 openmrs.service.password=test
 openmrs.connectionTimeoutInMilliseconds=30000
 openmrs.replyTimeoutInMilliseconds=120000
-macrotemplates.temp.directory=/tmp/""" > $TARGET_DIR/bahmni-reports-test.properties
+macrotemplates.temp.directory=/tmp/
+bahmnireports.db.url=jdbc:mysql://localhost:3306/bahmni_reports?allowMultiQueries=true
+reports.save.directory=$TARGET_DIR/reports""" > $TARGET_DIR/bahmni-reports-test.properties
 
 echo "Copied configruation files to $TARGET_DIR"
