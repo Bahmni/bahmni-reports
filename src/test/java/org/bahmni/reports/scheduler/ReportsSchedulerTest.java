@@ -1,5 +1,6 @@
 package org.bahmni.reports.scheduler;
 
+import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.persistence.ScheduledReportRepository;
 import org.bahmni.reports.web.ReportParams;
@@ -21,19 +22,24 @@ import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 
-import java.text.SimpleDateFormat;
+import java.io.File;
 
+import static org.bahmni.reports.scheduler.ReportStatus.COMPLETED;
+import static org.bahmni.reports.scheduler.ReportStatus.ERROR;
+import static org.bahmni.reports.scheduler.ReportStatus.QUEUED;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 import static org.springframework.test.util.MatcherAssertionErrors.assertThat;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({"org.hibernate.*", "org.springframework.*"})
-@PrepareForTest({JobBuilder.class, TriggerBuilder.class})
+@PrepareForTest({JobBuilder.class, TriggerBuilder.class, ReportsScheduler.class})
 public class ReportsSchedulerTest {
     @Mock
     private Scheduler scheduler;
@@ -43,6 +49,9 @@ public class ReportsSchedulerTest {
 
     @Mock
     private JobBuilder jobBuilder;
+
+    @Mock
+    private BahmniReportsProperties bahmniReportsProperties;
 
     @InjectMocks
     private ReportsScheduler reportsScheduler;
@@ -95,5 +104,48 @@ public class ReportsSchedulerTest {
         when(triggerBuilder.build()).thenReturn(trigger);
 
         reportsScheduler.schedule(reportParams);
+    }
+
+    @Test
+    public void shouldDeleteQueuedReportsJob() throws Exception {
+        ScheduledReport scheduledReport = new ScheduledReport();
+        scheduledReport.setFileName("reportName");
+        scheduledReport.setStatus(QUEUED);
+        when(scheduledReportRepository.findScheduledReportById("id")).thenReturn(scheduledReport);
+
+        reportsScheduler.deleteScheduledReport("id");
+
+        verify(scheduler,times(1)).deleteJob(JobKey.jobKey("id"));
+        verify(scheduledReportRepository, times(1)).delete(scheduledReport);
+    }
+
+    @Test
+    public void shouldDeleteTheFileOfCompletedJob() throws Exception {
+        ScheduledReport scheduledReport = new ScheduledReport();
+        scheduledReport.setStatus(COMPLETED);
+        scheduledReport.setFileName("fileName");
+        when(scheduledReportRepository.findScheduledReportById("id")).thenReturn(scheduledReport);
+        when(bahmniReportsProperties.getReportsSaveDirectory()).thenReturn("/home/bahmni/");
+        File mockFile = mock(File.class);
+        whenNew(File.class).withArguments("/home/bahmni//fileName").thenReturn(mockFile);
+
+        reportsScheduler.deleteScheduledReport("id");
+
+        verify(mockFile, times(1)).delete();
+        verify(scheduledReportRepository, times(1)).delete(scheduledReport);
+    }
+
+    @Test
+    public void shouldNotDeleteIfFileNameIsNull() throws  Exception {
+        ScheduledReport scheduledReport = new ScheduledReport();
+        scheduledReport.setStatus(ERROR);
+        when(scheduledReportRepository.findScheduledReportById("id")).thenReturn(scheduledReport);
+        File mockFile = mock(File.class);
+
+        reportsScheduler.deleteScheduledReport("id");
+
+        verify(mockFile, never()).delete();
+        verify(bahmniReportsProperties, never()).getReportsSaveDirectory();
+        verify(scheduledReportRepository, times(1)).delete(scheduledReport);
     }
 }

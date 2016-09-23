@@ -1,5 +1,6 @@
 package org.bahmni.reports.scheduler;
 
+import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
@@ -17,16 +18,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.sql.Connection;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 
-public class ReportsJob implements Job {
+import static org.bahmni.reports.scheduler.ReportStatus.COMPLETED;
+import static org.bahmni.reports.scheduler.ReportStatus.ERROR;
+import static org.bahmni.reports.scheduler.ReportStatus.PROCESSING;
 
-    public static final String PROCESSING = "Processing";
-    public static final String COMPLETED = "Completed";
-    public static final String ERROR = "Error";
+public class ReportsJob implements Job {
+    private static final Logger logger = Logger.getLogger(ReportsJob.class);
+
     private ReportParams reportParams;
 
     @Autowired
@@ -46,25 +47,31 @@ public class ReportsJob implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+        String reportId = null;
         try {
+            reportId = jobExecutionContext.getJobDetail().getKey().getName();
+            logger.info("Running report " + reportId);
             final String fileName = generateFileName();
-
-            ScheduledReport scheduledReport = scheduledReportRepository.findScheduledReportById(jobExecutionContext.getJobDetail().getKey().getName());
+            ScheduledReport scheduledReport = scheduledReportRepository.findScheduledReportById(reportId);
             scheduledReport.setFileName(fileName);
             scheduledReport.setStatus(PROCESSING);
-            scheduledReportRepository.save(scheduledReport);
 
             File file = new File(bahmniReportsProperties.getReportsSaveDirectory(), fileName);
             file.createNewFile();
             FileOutputStream outputStream = new FileOutputStream(file);
+
+            scheduledReportRepository.save(scheduledReport);
+
 
             ReportGenerator reportGenerator = new ReportGenerator(reportParams, outputStream, allDatasources, bahmniReportsProperties, httpClient, jasperResponseConverter);
             reportGenerator.invoke();
 
             scheduledReport.setStatus(COMPLETED);
             scheduledReportRepository.save(scheduledReport);
+            logger.info("Successfully ran report " + reportId);
         } catch (Throwable throwable) {
-            ScheduledReport scheduledReport = scheduledReportRepository.findScheduledReportById(jobExecutionContext.getJobDetail().getKey().getName());
+            logger.error("Error in running report " + reportId, throwable);
+            ScheduledReport scheduledReport = scheduledReportRepository.findScheduledReportById(reportId);
             scheduledReport.setStatus(ERROR);
             scheduledReport.setErrorMessage(BahmniReportUtil.getStackTrace(throwable));
             scheduledReportRepository.save(scheduledReport);

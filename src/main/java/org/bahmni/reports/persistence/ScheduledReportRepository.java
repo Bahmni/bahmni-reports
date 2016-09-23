@@ -17,4 +17,6 @@ public interface ScheduledReportRepository extends JpaRepository<ScheduledReport
     List<ScheduledReport> findByRequestDateTime(@Param("requestDatetime") Date requestDatetime);
 
     void delete(ScheduledReport report);
+
+    List<ScheduledReport> findScheduledReportsByUser(@Param("user") String user);
 }

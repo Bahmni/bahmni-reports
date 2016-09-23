@@ -48,7 +48,7 @@ public class ScheduledReport {
 
     public ScheduledReport(String id, String name, String user, String fileName, Date startDate, Date endDate, String status, String format, Date requestDatetime) {
         this.id = id;
-        this.name=name;
+        this.name = name;
         this.user = user;
         this.fileName = fileName;
         this.startDate = startDate;
@@ -58,13 +58,9 @@ public class ScheduledReport {
         this.requestDatetime = requestDatetime;
     }
 
-    public String getId() {  return id;  }
-
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-
-    public String getFileName() { return fileName;    }
 
     public void setStatus(String status) {
         this.status = status;
@@ -77,4 +73,45 @@ public class ScheduledReport {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public Date getStartDate() {
+        return startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public Date getRequestDatetime() {
+        return requestDatetime;
+    }
+
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
 }

@@ -4,20 +4,26 @@ import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
+import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.scheduler.ReportsScheduler;
 import org.bahmni.webclients.HttpClient;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
+import java.util.List;
 
-@Controller
+@RestController
 public class MainReportController {
 
     private static final Logger logger = Logger.getLogger(MainReportController.class);
@@ -56,8 +62,33 @@ public class MainReportController {
         } catch (ParseException | UnsupportedEncodingException e) {
             catchBlock(response, e);
         } catch (SchedulerException e) {
+            logger.error("Scheduling report failed", e);
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @RequestMapping(value = "/getReports", method = RequestMethod.GET)
+    public List<ScheduledReport> getReports(@RequestParam(name = "user") String user) {
+        return reportsScheduler.getReports(user);
+    }
+
+    @RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
+    @ResponseBody
+    public FileSystemResource getScheduledReport(@PathVariable("id") String id, HttpServletResponse httpServletResponse) {
+        ScheduledReport scheduledReport = reportsScheduler.getReportById(id);
+        converter.applyHttpHeaders(scheduledReport.getFormat(), httpServletResponse, scheduledReport.getFileName());
+        return new FileSystemResource(reportsScheduler.getFilePath(scheduledReport));
+    }
+
+    @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
+    public void delete(@PathVariable("id") String id, HttpServletResponse httpServletResponse) {
+        try {
+            reportsScheduler.deleteScheduledReport(id);
+            httpServletResponse.setStatus(200);
+        } catch (Throwable e) {
+            logger.error("Deleting report failed", e);
+            httpServletResponse.setStatus(500);
         }
     }
 
