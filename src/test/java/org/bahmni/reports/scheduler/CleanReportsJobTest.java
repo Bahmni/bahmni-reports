@@ -38,9 +38,6 @@ public class CleanReportsJobTest {
     @Mock
     private JobExecutionContext jobExecutionContext;
 
-    @Rule
-    private ExpectedException expectedEx = ExpectedException.none();
-
     @InjectMocks
     private CleanReportsJob cleanReportsJob;
 
@@ -88,11 +85,9 @@ public class CleanReportsJobTest {
         verify(scheduledReportRepository).delete(scheduledReports.get(0));
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionsWhenDaysAreNegetive() throws JobExecutionException {
         when(bahmniReportsProperties.getDaysForHistoryReportsCleanup()).thenReturn("-60");
-        expectedEx.expect(IllegalArgumentException.class);
-        expectedEx.expectMessage("Days must be positive");
         cleanReportsJob.execute(jobExecutionContext);
     }
 
