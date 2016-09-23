@@ -24,8 +24,8 @@ import java.util.Date;
 
 public class ReportsJob implements Job {
 
-    public static final String RUNNING = "Running";
-    public static final String FINISHED = "Finished";
+    public static final String PROCESSING = "Processing";
+    public static final String COMPLETED = "Completed";
     public static final String ERROR = "Error";
     private ReportParams reportParams;
 
@@ -51,7 +51,7 @@ public class ReportsJob implements Job {
 
             ScheduledReport scheduledReport = scheduledReportRepository.findScheduledReportById(jobExecutionContext.getJobDetail().getKey().getName());
             scheduledReport.setFileName(fileName);
-            scheduledReport.setStatus(RUNNING);
+            scheduledReport.setStatus(PROCESSING);
             scheduledReportRepository.save(scheduledReport);
 
             File file = new File(bahmniReportsProperties.getReportsSaveDirectory(), fileName);
@@ -61,7 +61,7 @@ public class ReportsJob implements Job {
             ReportGenerator reportGenerator = new ReportGenerator(reportParams, outputStream, allDatasources, bahmniReportsProperties, httpClient, jasperResponseConverter);
             reportGenerator.invoke();
 
-            scheduledReport.setStatus(FINISHED);
+            scheduledReport.setStatus(COMPLETED);
             scheduledReportRepository.save(scheduledReport);
         } catch (Throwable throwable) {
             ScheduledReport scheduledReport = scheduledReportRepository.findScheduledReportById(jobExecutionContext.getJobDetail().getKey().getName());

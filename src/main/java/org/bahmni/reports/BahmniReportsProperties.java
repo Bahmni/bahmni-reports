@@ -106,4 +106,12 @@ public class BahmniReportsProperties {
     public String getReportsSaveDirectory() {
         return props.getProperty("reports.save.directory");
     }
+
+    public String getDaysForHistoryReportsCleanup() {
+        return props.getProperty("reports.cleanup.keepItForNDays");
+    }
+
+    public String getCleanupJobTriggerTime() {
+        return props.getProperty("reports.cleanup.triggerTime");
+    }
 }

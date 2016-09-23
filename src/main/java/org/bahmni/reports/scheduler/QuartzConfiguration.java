@@ -20,6 +20,7 @@ public class QuartzConfiguration {
     @Autowired
     private AllDatasources allDatasources;
 
+
     @Bean
     public SchedulerFactoryBean scheduler() {
         SchedulerFactoryBean quartzScheduler = new SchedulerFactoryBean();
@@ -29,6 +30,7 @@ public class QuartzConfiguration {
         quartzScheduler.setDataSource(allDatasources.dataSourceFor("bahmniReports"));
         try {
             quartzScheduler.afterPropertiesSet();
+            ReportsScheduler.scheduleCrons(quartzScheduler);
         } catch (Exception e) {
             logger.error("Cannot start scheduler", e);
             throw new RuntimeException("Cannot start scheduler:-", e);

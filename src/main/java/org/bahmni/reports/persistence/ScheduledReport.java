@@ -20,6 +20,7 @@ public class ScheduledReport {
     @Column(name = "user")
     private String user;
 
+
     @Column(name = "file_name")
     private String fileName;
 
@@ -57,9 +58,13 @@ public class ScheduledReport {
         this.requestDatetime = requestDatetime;
     }
 
+    public String getId() {  return id;  }
+
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
+    public String getFileName() { return fileName;    }
 
     public void setStatus(String status) {
         this.status = status;
