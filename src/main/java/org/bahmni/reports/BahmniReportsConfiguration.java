@@ -1,6 +1,8 @@
 package org.bahmni.reports;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.bahmni.reports.builder.ComboPooledDataSourceBuilder;
 import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
@@ -22,10 +24,12 @@ public class BahmniReportsConfiguration {
 
     @Bean
     public HttpClient httpClient() {
+        PoolingClientConnectionManager connectionManager = new PoolingClientConnectionManager();
+        connectionManager.setDefaultMaxPerRoute(10);
         ConnectionDetails connectionDetails = new ConnectionDetails(bahmniReportsProperties.getOpenmrsRootUrl() + "/session",
                 bahmniReportsProperties.getOpenmrsServiceUser(),
                 bahmniReportsProperties.getOpenmrsServicePassword(), bahmniReportsProperties.getOpenmrsConnectionTimeout(),
-                bahmniReportsProperties.getOpenmrsReplyTimeout());
+                bahmniReportsProperties.getOpenmrsReplyTimeout(), connectionManager);
         return new HttpClient(connectionDetails, new OpenMRSLoginAuthenticator(connectionDetails));
     }
 
