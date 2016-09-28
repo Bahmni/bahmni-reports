@@ -47,6 +47,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -239,9 +240,9 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     private IDatabaseConnection setupDatabaseConnection(Connection connection) throws DatabaseUnitException {
         DatabaseConnection dbUnitConn = new DatabaseConnection(connection);
         DatabaseConfig config = dbUnitConn.getConfig();
-        config.setProperty(
-                "http://www.dbunit.org/properties/primaryKeyFilter",
-                new EpisodePatientProgramPrimaryKeyFilter("episode_patient_program", "episode_id"));
+        HashMap<String, String> tablePsuedoKeys = new HashMap<>();
+        tablePsuedoKeys.put("episode_patient_program", "episode_id");
+        config.setProperty("http://www.dbunit.org/properties/primaryKeyFilter", new PrimaryKeyFilter(tablePsuedoKeys));
         if (this.useInMemoryDatabase().booleanValue()) {
             config.setProperty("http://www.dbunit.org/properties/datatypeFactory", new H2DataTypeFactory());
         }
