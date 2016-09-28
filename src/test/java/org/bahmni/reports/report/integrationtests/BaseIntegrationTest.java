@@ -27,6 +27,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseContextSensitiveTest;
+import org.openmrs.test.SkipBaseSetup;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -60,11 +61,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 @Transactional
 @TransactionConfiguration(defaultRollback = false)
+@SkipBaseSetup
 public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     protected MockMvc mockMvc;
-
-    private static boolean isBaseSetup;
 
     @Mock
     protected HttpClient httpClient;
@@ -213,7 +213,6 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         this.turnOnDBConstraints(connection);
         connection.commit();
         this.updateSearchIndex();
-        isBaseSetup = false;
     }
 
     private void turnOffDBConstraints(Connection connection) throws SQLException {

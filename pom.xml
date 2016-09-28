@@ -15,7 +15,7 @@
         <jackson.version>2.5.1</jackson.version>
         <skipDump>false</skipDump>
         <skipConfig>false</skipConfig>
-        <openMRSVersion>1.12.0</openMRSVersion>
+        <openMRSVersion>2.0.0</openMRSVersion>
     </properties>
 
     <build>
@@ -58,8 +58,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.1</version>
                     <configuration>
-                        <target>1.7</target>
-                        <source>1.7</source>
+                        <target>1.8</target>
+                        <source>1.8</source>
 
                     </configuration>
                 </plugin>
@@ -291,12 +291,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
-            <version>3.2.7.RELEASE</version>
+            <version>4.3.2.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
-            <version>4.2.0.Final</version>
+            <version>4.3.9.Final</version>
             <scope>runtime</scope>
             <exclusions>
                 <exclusion>
