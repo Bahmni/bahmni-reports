@@ -41,7 +41,7 @@ public class ReportGenerator {
     public void invoke() throws Exception {
         ArrayList<AutoCloseable> resources = new ArrayList<>();
         try {
-            Report report = Reports.find(reportParams.getName(), getConfigFilePath(reportParams.getAppName()));
+            Report report = Reports.find(reportParams.getName(), bahmniReportsProperties.getConfigFileUrl());
             report.setHttpClient(httpClient);
             validateResponseTypeSupportedFor(report, reportParams.getResponseType());
             BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
@@ -68,11 +68,6 @@ public class ReportGenerator {
                 logger.error("Could not close resource", e);
             }
         }
-    }
-
-    private String getConfigFilePath(String appName) {
-        return (appName != null) ? "/var/www/bahmni_config/openmrs/apps/" + appName +
-                "/reports.json" : bahmniReportsProperties.getConfigFilePath();
     }
 
     private void validateResponseTypeSupportedFor(Report report, String responseType) {

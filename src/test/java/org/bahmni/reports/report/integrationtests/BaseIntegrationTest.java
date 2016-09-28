@@ -82,10 +82,10 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     @InjectMocks
     private MainReportController controller;
-    private String configFilePath = "src/test/resources/config/reports.json";
+    private String configFileUrl = "src/test/resources/config/reports.json";
 
     public BaseIntegrationTest(String configFilePath) {
-        this.configFilePath = configFilePath;
+        this.configFileUrl = configFilePath;
     }
 
     public BaseIntegrationTest() {
@@ -94,7 +94,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     @Before
     public void beforeBaseIntegrationTest() throws Exception {
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
-        when(bahmniReportsProperties.getConfigFilePath()).thenReturn(configFilePath);
+        when(bahmniReportsProperties.getConfigFileUrl()).thenReturn(configFileUrl);
         when(bahmniReportsProperties.getOpenmrsRootUrl()).thenReturn(dbProperties.getOpenmrsRootUrl());
         when(bahmniReportsProperties.getOpenmrsServiceUser()).thenReturn(dbProperties.getOpenmrsServiceUser());
         when(bahmniReportsProperties.getOpenmrsServicePassword()).thenReturn(dbProperties.getOpenmrsServicePassword());

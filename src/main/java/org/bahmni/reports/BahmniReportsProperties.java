@@ -31,8 +31,8 @@ public class BahmniReportsProperties {
         }
     }
 
-    public String getConfigFilePath() {
-        return props.getProperty("config.file.path");
+    public String getConfigFileUrl() {
+        return props.getProperty("reports.config.url");
     }
 
     public String getOpenelisUrl() {
