@@ -59,8 +59,8 @@ public class BahmniReportsConfiguration {
     public ComboPooledDataSource bahmniReportsDataSource() throws PropertyVetoException {
         ComboPooledDataSourceBuilder comboPooledDataSourceBuilder = new ComboPooledDataSourceBuilder();
         ComboPooledDataSource dataSource = comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getBahmniReportsDbUrl())
-                .withUser(bahmniReportsProperties.getOpenmrsUser())
-                .withPassword(bahmniReportsProperties.getOpenmrsPassword())
+                .withUser(bahmniReportsProperties.getReportsUser())
+                .withPassword(bahmniReportsProperties.getReportsPassword())
                 .withDriver(com.mysql.jdbc.Driver.class).build();
 
         dataSource.setIdleConnectionTestPeriod(IDLE_CONNECTION_TEST_TIME);
