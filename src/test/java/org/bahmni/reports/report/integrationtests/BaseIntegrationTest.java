@@ -17,6 +17,7 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.DefaultDataSet;
 import org.dbunit.dataset.DefaultTable;
+import org.dbunit.dataset.IDataSet;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
@@ -228,10 +229,20 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         ps.close();
     }
 
+    @Override
+    public void executeDataSet(IDataSet dataset) throws Exception {
+        Connection connection = this.getConnection();
+        IDatabaseConnection dbUnitConn = this.setupDatabaseConnection(connection);
+        DatabaseOperation.REFRESH.execute(dbUnitConn, dataset);
+    }
+
     private IDatabaseConnection setupDatabaseConnection(Connection connection) throws DatabaseUnitException {
         DatabaseConnection dbUnitConn = new DatabaseConnection(connection);
+        DatabaseConfig config = dbUnitConn.getConfig();
+        config.setProperty(
+                "http://www.dbunit.org/properties/primaryKeyFilter",
+                new EpisodePatientProgramPrimaryKeyFilter("episode_patient_program", "episode_id"));
         if (this.useInMemoryDatabase().booleanValue()) {
-            DatabaseConfig config = dbUnitConn.getConfig();
             config.setProperty("http://www.dbunit.org/properties/datatypeFactory", new H2DataTypeFactory());
         }
 
