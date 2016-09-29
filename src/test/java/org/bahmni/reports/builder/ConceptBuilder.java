@@ -4,9 +4,12 @@ import org.openmrs.Concept;
 import org.openmrs.ConceptClass;
 import org.openmrs.ConceptDatatype;
 import org.openmrs.ConceptName;
+import org.openmrs.ConceptDescription;
 import org.openmrs.api.ConceptNameType;
 import org.openmrs.api.context.Context;
 
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Locale;
 
 public class ConceptBuilder {
@@ -44,6 +47,14 @@ public class ConceptBuilder {
 
     public ConceptBuilder withClassId(int classId) {
         concept.setConceptClass(new ConceptClass(classId));
+        return this;
+    }
+
+    public ConceptBuilder withDescription(String description) {
+        Collection<ConceptDescription> conceptDescriptions = new HashSet<>();
+        ConceptDescription conceptDescription = new ConceptDescription(description, Locale.ENGLISH);
+        conceptDescriptions.add(conceptDescription);
+        concept.setDescriptions(conceptDescriptions);
         return this;
     }
 }

@@ -46,11 +46,5 @@ public class SqlReportTemplateTest extends BaseIntegrationTest {
 		field1 = drColumn.getComponent();
 		assertTrue(field1 instanceof DRITextField);
 		assertTrue(((DRITextField)field1).getDataType() instanceof StringType);
-
-		//value_boolean
-		drColumn = reportBuilder.getReport().getColumns().get(3);
-		field1 = drColumn.getComponent();
-		assertTrue(field1 instanceof DRITextField);
-		assertTrue(((DRITextField)field1).getDataType() instanceof IntegerType);
 	}
 }
