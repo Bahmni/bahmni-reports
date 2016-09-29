@@ -2,6 +2,7 @@ package org.bahmni.reports.report.integrationtests;
 
 import net.sf.dynamicreports.jasper.builder.JasperConcatenatedReportBuilder;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import org.apache.commons.io.FileUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
@@ -39,12 +40,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.OutputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.net.URI;
+import java.sql.*;
 import java.util.List;
 import java.util.Properties;
 
@@ -82,6 +81,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     @InjectMocks
     private MainReportController controller;
+
     private String configFileUrl = "src/test/resources/config/reports.json";
 
     public BaseIntegrationTest(String configFilePath) {
@@ -103,6 +103,8 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         when(bahmniReportsProperties.getMacroTemplatesTempDirectory()).thenReturn("/tmp");
         when(allDatasources.getConnectionFromDatasource(any(BaseReportTemplate.class))).thenReturn(getDatabaseConnection());
 
+        String fileData=FileUtils.readFileToString(new File(configFileUrl));
+        when(httpClient.get(any(URI.class))).thenReturn(fileData);
         setUpTestData();
         Context.authenticate("admin", "test");
     }
