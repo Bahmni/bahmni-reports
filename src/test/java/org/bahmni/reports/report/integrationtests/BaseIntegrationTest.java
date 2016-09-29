@@ -17,7 +17,6 @@ import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.DefaultDataSet;
 import org.dbunit.dataset.DefaultTable;
-import org.dbunit.dataset.IDataSet;
 import org.dbunit.ext.h2.H2DataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
@@ -47,7 +46,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
@@ -230,20 +228,10 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         ps.close();
     }
 
-    @Override
-    public void executeDataSet(IDataSet dataset) throws Exception {
-        Connection connection = this.getConnection();
-        IDatabaseConnection dbUnitConn = this.setupDatabaseConnection(connection);
-        DatabaseOperation.REFRESH.execute(dbUnitConn, dataset);
-    }
-
     private IDatabaseConnection setupDatabaseConnection(Connection connection) throws DatabaseUnitException {
         DatabaseConnection dbUnitConn = new DatabaseConnection(connection);
-        DatabaseConfig config = dbUnitConn.getConfig();
-        HashMap<String, String> tablePsuedoKeys = new HashMap<>();
-        tablePsuedoKeys.put("episode_patient_program", "episode_id");
-        config.setProperty("http://www.dbunit.org/properties/primaryKeyFilter", new PrimaryKeyFilter(tablePsuedoKeys));
         if (this.useInMemoryDatabase().booleanValue()) {
+            DatabaseConfig config = dbUnitConn.getConfig();
             config.setProperty("http://www.dbunit.org/properties/datatypeFactory", new H2DataTypeFactory());
         }
 
