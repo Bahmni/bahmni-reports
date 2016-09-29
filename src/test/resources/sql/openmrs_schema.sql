@@ -1733,6 +1733,7 @@ DROP TABLE IF EXISTS `episode_encounter`;
 CREATE TABLE `episode_encounter` (
   `episode_id` int(11) NOT NULL,
   `encounter_id` int(11) NOT NULL,
+  PRIMARY KEY (`episode_id`,`encounter_id`),
   KEY `episode_encounter_encounter_id` (`encounter_id`),
   KEY `episode_encounter_episode_index` (`episode_id`),
   CONSTRAINT `episode_encounter_encounter_id` FOREIGN KEY (`encounter_id`) REFERENCES `encounter` (`encounter_id`),
@@ -1750,6 +1751,7 @@ DROP TABLE IF EXISTS `episode_patient_program`;
 CREATE TABLE `episode_patient_program` (
   `episode_id` int(11) NOT NULL,
   `patient_program_id` int(11) NOT NULL,
+  PRIMARY KEY (`episode_id`,`patient_program_id`),
   KEY `episode_patient_program_patient_program_id` (`patient_program_id`),
   KEY `episode_patient_program_episode_index` (`episode_id`),
   CONSTRAINT `episode_patient_program_episode_id` FOREIGN KEY (`episode_id`) REFERENCES `episode` (`episode_id`),
