@@ -163,7 +163,7 @@ public class AggregationReportTest extends BaseIntegrationTest {
         assertEquals(3, report.rowsCount());
         assertEquals("F M", report.getRowAsString(1, " "));
         assertEquals("> 10 Years 1 0", report.getRowAsString(2, " "));
-        assertEquals("≤ 10 Years 0 1", report.getRowAsString(3, " "));
+        assertEquals("? 10 Years 0 1", report.getRowAsString(3, " "));
 
     }
     @Test
@@ -205,7 +205,7 @@ public class AggregationReportTest extends BaseIntegrationTest {
         assertEquals(3, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("> 10 Years ≤ 10 Years", report.getRowAsString(1, " "));
+        assertEquals("> 10 Years ? 10 Years", report.getRowAsString(1, " "));
         assertEquals("F 1 1", report.getRowAsString(2, " "));
     }
 
