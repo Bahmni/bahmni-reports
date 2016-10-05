@@ -41,7 +41,7 @@ public class ReportGenerator {
     public void invoke() throws Exception {
         ArrayList<AutoCloseable> resources = new ArrayList<>();
         try {
-            Report report = Reports.find(reportParams.getName(), bahmniReportsProperties.getConfigFileUrl());
+            Report report = Reports.find(reportParams.getName(), bahmniReportsProperties.getConfigFileUrl(),httpClient);
             report.setHttpClient(httpClient);
             validateResponseTypeSupportedFor(report, reportParams.getResponseType());
             BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
