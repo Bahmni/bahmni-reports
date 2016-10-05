@@ -5,6 +5,7 @@ import org.bahmni.reports.dao.GenericDao;
 import org.bahmni.reports.model.GenericObservationReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.util.SqlUtil;
+import org.bahmni.webclients.WebClientsException;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -28,7 +29,7 @@ public class GenericObservationDaoImpl implements GenericDao {
     @Override
     public ResultSet getResultSet(Connection connection,
                                   String startDate, String endDate, List<String> conceptNamesToFilter)
-            throws SQLException {
+            throws SQLException,WebClientsException {
         String sql;
         if (report.getConfig() != null && report.getConfig().isEncounterPerRow()) {
             sql = getFileContent("sql/genericObservationReportInOneRow.sql");
