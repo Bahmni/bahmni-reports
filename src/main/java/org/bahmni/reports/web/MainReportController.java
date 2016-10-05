@@ -7,6 +7,7 @@ import org.bahmni.reports.model.AllDatasources;
 import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.scheduler.ReportsScheduler;
 import org.bahmni.webclients.HttpClient;
+import org.bahmni.webclients.WebClientsException;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -99,6 +100,9 @@ public class MainReportController {
         try {
             String errorMessage = e.getMessage();
             String content = "<h2>Incorrect Configuration</h2><h3>" + errorMessage + "</h3>";
+            if( e instanceof WebClientsException) {
+                content = "<h3>" + errorMessage + "</h3>";
+            }
             response.setContentLength(content.length());
             response.setContentType("text/html");
             response.getOutputStream().write(content.getBytes());
