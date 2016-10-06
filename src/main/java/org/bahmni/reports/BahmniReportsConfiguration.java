@@ -1,9 +1,15 @@
 package org.bahmni.reports;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLInitializationException;
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.bahmni.reports.builder.ComboPooledDataSourceBuilder;
+import org.bahmni.webclients.AllTrustedSSLSocketFactory;
 import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
 import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
@@ -13,24 +19,54 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.net.ssl.SSLContext;
 import java.beans.PropertyVetoException;
+import java.security.KeyStore;
 
 @Configuration
 public class BahmniReportsConfiguration {
 
-    @Autowired
-    private BahmniReportsProperties bahmniReportsProperties;
+
     private static int IDLE_CONNECTION_TEST_TIME = 300; //in seconds
 
+    private BahmniReportsProperties bahmniReportsProperties;
+
+    @Autowired
+    public BahmniReportsConfiguration(BahmniReportsProperties bahmniReportsProperties){
+        this.bahmniReportsProperties = bahmniReportsProperties;
+    }
+
     @Bean
-    public HttpClient httpClient() {
-        PoolingClientConnectionManager connectionManager = new PoolingClientConnectionManager();
+    public HttpClient httpClient(SchemeRegistry schemeRegistry) {
+        PoolingClientConnectionManager connectionManager = new PoolingClientConnectionManager(schemeRegistry);
         connectionManager.setDefaultMaxPerRoute(10);
         ConnectionDetails connectionDetails = new ConnectionDetails(bahmniReportsProperties.getOpenmrsRootUrl() + "/session",
                 bahmniReportsProperties.getOpenmrsServiceUser(),
                 bahmniReportsProperties.getOpenmrsServicePassword(), bahmniReportsProperties.getOpenmrsConnectionTimeout(),
                 bahmniReportsProperties.getOpenmrsReplyTimeout(), connectionManager);
         return new HttpClient(connectionDetails, new OpenMRSLoginAuthenticator(connectionDetails));
+    }
+
+
+    @Bean
+    public SchemeRegistry schemeRegistry(SSLSocketFactory allTrustSSLSocketFactory){
+
+        if(!"true".equals(bahmniReportsProperties.getTrustSSLConnection())){
+            return SchemeRegistryFactory.createDefault();
+        }
+
+        SchemeRegistry registry = new SchemeRegistry();
+        registry.register(
+                new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
+        registry.register(
+                new Scheme("https", 443, allTrustSSLSocketFactory));
+
+        return registry;
+    }
+
+    @Bean
+    public SSLSocketFactory allTrustSSLSocketFactory(){
+        return new AllTrustedSSLSocketFactory().getSSLSocketFactory();
     }
 
     @Bean
