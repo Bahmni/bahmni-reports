@@ -7,7 +7,9 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLInitializationException;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.bahmni.reports.builder.ComboPooledDataSourceBuilder;
+import org.bahmni.webclients.AllTrustedSSLSocketFactory;
 import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
 import org.bahmni.webclients.openmrs.OpenMRSLoginAuthenticator;
@@ -17,17 +19,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
-import javax.net.ssl.SSLContext;
 import java.beans.PropertyVetoException;
-
-import static org.apache.http.conn.ssl.SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+import java.security.KeyStore;
 
 @Configuration
 public class BahmniReportsConfiguration {
 
-    @Autowired
-    private BahmniReportsProperties bahmniReportsProperties;
+
     private static int IDLE_CONNECTION_TEST_TIME = 300; //in seconds
+
+    private BahmniReportsProperties bahmniReportsProperties;
+
+    @Autowired
+    public BahmniReportsConfiguration(BahmniReportsProperties bahmniReportsProperties){
+        this.bahmniReportsProperties = bahmniReportsProperties;
+    }
 
     @Bean
     public HttpClient httpClient(SchemeRegistry schemeRegistry) {
@@ -42,31 +48,36 @@ public class BahmniReportsConfiguration {
 
 
     @Bean
-    public SchemeRegistry schemeRegistry(SSLSocketFactory sslSocketFactory){
+    public SchemeRegistry schemeRegistry(SSLSocketFactory allTrustSSLSocketFactory){
+
+        if(!"true".equals(bahmniReportsProperties.getTrustSSLConnection())){
+            return SchemeRegistryFactory.createDefault();
+        }
+
         SchemeRegistry registry = new SchemeRegistry();
         registry.register(
                 new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
         registry.register(
-                new Scheme("https", 443, sslSocketFactory));
+                new Scheme("https", 443, allTrustSSLSocketFactory));
+
         return registry;
     }
 
     @Bean
-    public SSLSocketFactory sslSocketFactory(){
-        SSLSocketFactory socketFactory = null;
+    public SSLSocketFactory allTrustSSLSocketFactory(){
+        AllTrustedSSLSocketFactory sslSocketFactory = null;
         try{
-            SSLContext sslcontext = SSLContext.getInstance("TLS");
-            sslcontext.init(null, null, null);
+            KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+            trustStore.load(null, null);
 
-            socketFactory = new SSLSocketFactory(
-                    sslcontext,
-                    ALLOW_ALL_HOSTNAME_VERIFIER);
+            sslSocketFactory = new AllTrustedSSLSocketFactory(trustStore);
+            sslSocketFactory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 
         }catch(Exception ex){
             throw new SSLInitializationException(ex.getMessage(), ex);
         }
 
-        return socketFactory;
+        return sslSocketFactory;
     }
 
     @Bean

@@ -123,4 +123,8 @@ public class BahmniReportsProperties {
     public String getCleanupJobTriggerTime() {
         return props.getProperty("reports.cleanup.triggerTime");
     }
+
+    public String getTrustSSLConnection() {
+        return props.getProperty("reports.trust.ssl.connections","true");
+    }
 }
