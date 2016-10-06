@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
+import javax.net.ssl.SSLContext;
 import java.beans.PropertyVetoException;
 import java.security.KeyStore;
 
@@ -65,19 +66,7 @@ public class BahmniReportsConfiguration {
 
     @Bean
     public SSLSocketFactory allTrustSSLSocketFactory(){
-        AllTrustedSSLSocketFactory sslSocketFactory = null;
-        try{
-            KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            trustStore.load(null, null);
-
-            sslSocketFactory = new AllTrustedSSLSocketFactory(trustStore);
-            sslSocketFactory.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-
-        }catch(Exception ex){
-            throw new SSLInitializationException(ex.getMessage(), ex);
-        }
-
-        return sslSocketFactory;
+        return new AllTrustedSSLSocketFactory().getSSLSocketFactory();
     }
 
     @Bean
