@@ -73,7 +73,7 @@ public class ReportsJob implements Job {
             logger.error("Error in running report " + reportId, throwable);
             ScheduledReport scheduledReport = scheduledReportRepository.findScheduledReportById(reportId);
             scheduledReport.setStatus(ERROR);
-            scheduledReport.setErrorMessage(BahmniReportUtil.getStackTrace(throwable));
+            scheduledReport.setErrorMessage(throwable.getCause().getMessage());
             scheduledReportRepository.save(scheduledReport);
         }
     }
