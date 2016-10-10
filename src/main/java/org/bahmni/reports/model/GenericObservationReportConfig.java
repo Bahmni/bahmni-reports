@@ -15,6 +15,7 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
     private boolean ignoreEmptyValues = false;
     private List<String> visitTypesToFilter;
     private String conceptNameDisplayFormat;
+    private List<String> columnsOrder;
 
     public boolean isIgnoreEmptyValues() {
         return ignoreEmptyValues;
@@ -112,5 +113,13 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
 
     public void setConceptValuesToFilter(List<String> conceptValuesToFilter) {
         this.conceptValuesToFilter = conceptValuesToFilter;
+    }
+
+    public List<String> getColumnsOrder() {
+        return columnsOrder;
+    }
+
+    public void setColumnsOrder(List<String> columnsOrder) {
+        this.columnsOrder = columnsOrder;
     }
 }

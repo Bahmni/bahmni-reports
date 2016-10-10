@@ -18,18 +18,21 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Collections;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 
 public class GenericObservationReportTemplateHelper extends GenericReportsHelper {
+    private static HashMap<String,String> conceptNameAndFullySpecifiedName=new HashMap<>();
 
-    public static void createAndAddProviderNameColumn(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
+    public static void createAndAddProviderNameColumn(List<String> allColumns, GenericObservationReportConfig config) {
         if (config.showProvider()) {
-            TextColumnBuilder<String> providerColumn = col.column("Provider", "Provider", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReport.addColumn(providerColumn);
+            allColumns.add("Provider");
         }
     }
 
@@ -59,43 +62,48 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         return StringUtils.join(parts, ',');
     }
 
-    public static void createAndAddDefaultColumns(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
-        TextColumnBuilder<String> patientIdentifierColumn = col.column("Patient Identifier", "Patient Identifier", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<String> patientNameColumn = col.column("Patient Name", "Patient Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<Integer> ageColumn = col.column("Age", "Age", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<String> birthdateColumn = col.column("Birthdate", "Birthdate", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<String> genderColumn = col.column("Gender", "Gender", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<String> locationNameColumn = col.column("Location Name", "Location Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<String> programNameColumn = col.column("Program Name", "Program Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<String> programEnrollmentDateColumn = col.column("Program Enrollment Date", "Program Enrollment Date", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<String> programEndDateColumn = col.column("Program End Date", "Program End Date", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<String> patientCreatedDateColumn = col.column("Patient Created Date", "Patient Created Date", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        jasperReport.columns(patientIdentifierColumn, patientNameColumn, ageColumn, birthdateColumn, genderColumn, locationNameColumn, programNameColumn, programEnrollmentDateColumn, programEndDateColumn, patientCreatedDateColumn);
-
-        if (config == null || !config.isEncounterPerRow()) {
-            TextColumnBuilder<String> conceptNameColumn = col.column("Concept Name", "Concept Name", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            TextColumnBuilder<String> valueColumn = col.column("Value", "Value", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            TextColumnBuilder<String> parentConcept = col.column("Parent Concept", "Parent Concept", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            TextColumnBuilder<String> obsDatetime = col.column("Observation Datetime", "Observation Datetime", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            TextColumnBuilder<String> obsDate = col.column("Observation Date", "Observation Date", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            TextColumnBuilder<String> obsCreatedDate = col.column("Observation Created Date", "Observation Created Date", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReport.columns(conceptNameColumn, valueColumn, obsDatetime, obsDate, obsCreatedDate, parentConcept);
+    public static void addColumnsToReport(JasperReportBuilder jasperReport, List<String> patientColumns, GenericObservationReportConfig config) {
+        if (config != null && config.getColumnsOrder() != null) {
+            Collections.reverse(config.getColumnsOrder());
+            for (String column : config.getColumnsOrder()) {
+                if (patientColumns.contains(column)) {
+                    patientColumns.remove(column);
+                    patientColumns.add(0, column);
+                }
+            }
         }
-    }
-
-    public static void createAndAddVisitInfoColumns(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
-        if (config.showVisitInfo()) {
-            TextColumnBuilder<String> visitTypeColumn = col.column("Visit Type", "Visit Type", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            TextColumnBuilder<String> visitStartDateColumn = col.column("Visit Start Date", "Visit Start Date", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            TextColumnBuilder<String> visitStopDateColumn = col.column("Visit Stop Date", "Visit Stop Date", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            jasperReport.columns(visitTypeColumn, visitStartDateColumn, visitStopDateColumn);
-        }
-    }
-
-    public static void createAndAddConceptColumns(List<ConceptName> conceptNames, JasperReportBuilder jasperReport, String conceptNameDisplayFormat) {
-        for (ConceptName conceptName : conceptNames) {
-            TextColumnBuilder<String> column = col.column(getConceptInDisplayFormat(conceptName, conceptNameDisplayFormat), conceptName.getFullySpecifiedName(), type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        List<String> conceptNames = new ArrayList<>(conceptNameAndFullySpecifiedName.keySet());
+        for (String columnHeader : patientColumns) {
+            TextColumnBuilder<String> column;
+            if (conceptNames.contains(columnHeader)) {
+                column = col.column(columnHeader, conceptNameAndFullySpecifiedName.get(columnHeader), type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            } else {
+                column = col.column(columnHeader, columnHeader, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            }
             jasperReport.addColumn(column);
+        }
+
+    }
+
+    public static void createAndAddDefaultColumns(List<String> allTheColumns, GenericObservationReportConfig config) {
+        List<String> patientColumnHeaders =  new ArrayList<>(Arrays.asList("Patient Identifier","Patient Name","Age","Birthdate", "Gender", "Location Name", "Program Name","Program Enrollment Date","Program End Date","Patient Created Date"));
+        allTheColumns.addAll(patientColumnHeaders);
+        if (config == null || !config.isEncounterPerRow()) {
+            List<String> columnHeadersForEncounterPerRowIsFalse = new ArrayList<>(Arrays.asList("Concept Name", "Value", "Observation Datetime", "Observation Date", "Observation Created Date", "Parent Concept"));
+            allTheColumns.addAll(columnHeadersForEncounterPerRowIsFalse);
+        }
+    }
+
+    public static void createAndAddVisitInfoColumns(List<String> allTheColumns, GenericObservationReportConfig config) {
+        if (config.showVisitInfo()) {
+            allTheColumns.addAll(Arrays.asList("Visit Type","Visit Start Date", "Visit Stop Date"));
+        }
+    }
+
+    public static void createAndAddConceptColumns(List<String> allTheColumns, List<ConceptName> conceptNames, String conceptNameDisplayFormat) {
+        for (ConceptName conceptName : conceptNames) {
+            allTheColumns.add(getConceptInDisplayFormat(conceptName, conceptNameDisplayFormat));
+            conceptNameAndFullySpecifiedName.put(getConceptInDisplayFormat(conceptName, conceptNameDisplayFormat),conceptName.getFullySpecifiedName());
         }
     }
 
@@ -127,19 +135,12 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         }
     }
 
-    public static void createAndAddDataAnalysisColumns(JasperReportBuilder jasperReport, GenericObservationReportConfig config) {
+    public static void createAndAddDataAnalysisColumns( List<String> allTheConceptNames, GenericObservationReportConfig config) {
         if (config.isForDataAnalysis()) {
-            TextColumnBuilder<Long> patientId = col.column("Patient Id", "Patient Id", type.longType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
-            TextColumnBuilder<Long> encounterId = col.column("Encounter Id", "Encounter Id", type.longType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
-            TextColumnBuilder<Long> visitId = col.column("Visit Id", "Visit Id", type.longType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
             if (config.isEncounterPerRow()) {
-                jasperReport.columns(patientId, visitId, encounterId);
+                allTheConceptNames.addAll(Arrays.asList("Patient Id", "Encounter Id", "Visit Id"));
             } else {
-                TextColumnBuilder<Long> conceptId = col.column("Concept Id", "Concept Id", type.longType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
-                TextColumnBuilder<Long> obsId = col.column("Obs Id", "Obs Id", type.longType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
-                TextColumnBuilder<Long> obsGroupId = col.column("Obs Group Id", "Obs Group Id", type.longType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
-                TextColumnBuilder<Long> orderId = col.column("Order Id", "Order Id", type.longType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER).setPattern("#");
-                jasperReport.columns(patientId, visitId, encounterId, obsId, obsGroupId, orderId, conceptId);
+                allTheConceptNames.addAll(Arrays.asList("Patient Id","Visit Id","Encounter Id", "Obs Id","Obs Group Id","Order Id","Concept Id"));
             }
         }
     }

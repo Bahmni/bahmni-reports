@@ -620,6 +620,50 @@
         "config": {
             "conceptValuesToFilter": ["","175..200","High"]
         }
-    }
+    },
+    "observationReportWithOrderOfColumnsConfigured" : {
+        "name": "Observation report with order of columns configured",
+        "type": "observations",
+        "config": {
+            "columnsOrder": ["Patient Name", "Birthdate", "Age", "Patient Identifier"]
+        }
+    },
+    "observationReportWithPatientAttributesConfiguredInOrderOfColumns": {
+        "name": "Observation report which have patient attributes configured in order of columns",
+        "type": "observations",
+        "config": {
+            "patientAttributes": [
+                "secondaryContact",
+                "class",
+                "cluster"
+            ],
+            "columnsOrder": [
+                "class",
+                "cluster",
+                "Patient Name",
+                "Birthdate",
+                "Age",
+                "Patient Identifier"
+            ]
+        }
+    },
 
+    "observationReportWithInValidColumnsConfiguredInOrderOfColumns": {
+        "name": "Observation report with invalid columns configured in order of columns",
+        "type": "observations",
+        "config": {
+            "patientAttributes": [
+                "secondaryContact",
+                "class",
+                "cluster"
+            ],
+            "columnsOrder": [
+                "classabc",
+                "def",
+                "cluster",
+                "Patient Name",
+                "jkl"
+            ]
+        }
+    }
 }

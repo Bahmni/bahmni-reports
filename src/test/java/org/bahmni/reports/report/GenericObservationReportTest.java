@@ -977,4 +977,45 @@ public class GenericObservationReportTest extends BaseIntegrationTest {
         assertEquals("OBS2 Generic1 Observation2 10 15-Aug-2009 M Chithari    15-Aug-2008 BP_Level High 2020-08-02 00:00:00.0 02-Aug-2020 02-Aug-2020 Vitals", report.getRowAsString(6, " "));
     }
 
+    @Test
+    public void shouldHaveColumnsProvidedInTheOrderThatTheyHaveConfigured() throws Exception {
+        String reportName = "Observation report with order of columns configured";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(16, report.columnsCount());
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(0));
+        assertEquals("Birthdate", report.getColumnHeaderAtIndex(1));
+        assertEquals("Age", report.getColumnHeaderAtIndex(2));
+        assertEquals("Patient Identifier", report.getColumnHeaderAtIndex(3));
+    }
+
+    @Test
+    public void shouldHaveColumnsProvidedInTheOrderThatTheyHaveConfiguredFromDiffrentGroups() throws Exception {
+        String reportName = "Observation report which have patient attributes configured in order of columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(19, report.columnsCount());
+        assertEquals("class", report.getColumnHeaderAtIndex(0));
+        assertEquals("cluster", report.getColumnHeaderAtIndex(1));
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(2));
+        assertEquals("Birthdate", report.getColumnHeaderAtIndex(3));
+        assertEquals("Age", report.getColumnHeaderAtIndex(4));
+        assertEquals("Patient Identifier", report.getColumnHeaderAtIndex(5));
+
+    }
+
+    @Test
+    public void shouldIgnoreTheColumnsWhichAreNotPresentInReport() throws Exception {
+        String reportName = "Observation report with invalid columns configured in order of columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(19, report.columnsCount());
+        assertEquals("cluster", report.getColumnHeaderAtIndex(0));
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(1));
+        assertEquals("Patient Identifier", report.getColumnHeaderAtIndex(2));
+        assertEquals("Age", report.getColumnHeaderAtIndex(3));
+    }
 }

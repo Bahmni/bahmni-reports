@@ -23,7 +23,7 @@ public class GenericReportsHelper {
         }
     }
 
-    private static List<String> getExtraPatientIdentifierTypes(GenericReportsConfig reportsConfig) {
+    public static List<String> getExtraPatientIdentifierTypes(GenericReportsConfig reportsConfig) {
         return reportsConfig.getAdditionalPatientIdentifiers() != null ? reportsConfig.getAdditionalPatientIdentifiers() : Arrays.<String>asList();
     }
 
@@ -51,11 +51,11 @@ public class GenericReportsHelper {
         }
     }
 
-    private static List<String> getPatientAttributes(GenericReportsConfig config) {
+    public static List<String> getPatientAttributes(GenericReportsConfig config) {
         return config.getPatientAttributes() != null ? config.getPatientAttributes() : new ArrayList<String>();
     }
 
-    private static List<String> getVisitAttributes(GenericReportsConfig config) {
+    public static List<String> getVisitAttributes(GenericReportsConfig config) {
         return config.getVisitAttributes() != null ? config.getVisitAttributes() : new ArrayList<String>();
     }
 
@@ -78,7 +78,7 @@ public class GenericReportsHelper {
         return StringUtils.join(parts, ", ");
     }
 
-    private static List<String> getPatientAddresses(GenericReportsConfig config) {
+    public static List<String> getPatientAddresses(GenericReportsConfig config) {
         return config.getPatientAddresses() != null ? config.getPatientAddresses() : new ArrayList<String>();
     }
 
@@ -106,9 +106,9 @@ public class GenericReportsHelper {
 
     }
 
-    public static void createAndAddAgeGroupColumn(JasperReportBuilder jasperReport, GenericReportsConfig config) {
-        if (StringUtils.isEmpty(config.getAgeGroupName())) return;
-        TextColumnBuilder<String> ageGroupColumn = col.column(config.getAgeGroupName(), config.getAgeGroupName(), type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-        jasperReport.addColumn(ageGroupColumn);
+    public static void createAndAddAgeGroupColumn(List<String> allTheConceptNames, GenericReportsConfig config) {
+        if (StringUtils.isNotEmpty(config.getAgeGroupName())){
+            allTheConceptNames.add(config.getAgeGroupName());
+        }
     }
 }

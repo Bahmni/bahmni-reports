@@ -44,23 +44,26 @@ public class GenericObservationReportTemplate extends BaseReportTemplate<Generic
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
         List<String> conceptNamesToFilter = new ArrayList<>();
+        List<String> allTheColumnsForReport = new ArrayList<>();
 
-        createAndAddDefaultColumns(jasperReport, report.getConfig());
+        createAndAddDefaultColumns(allTheColumnsForReport,report.getConfig());
         if (report.getConfig() != null) {
-            createAndAddExtraPatientIdentifierTypes(jasperReport, report.getConfig());
-            createAndAddPatientAttributeColumns(jasperReport, report.getConfig());
-            createAndAddVisitAttributeColumns(jasperReport, report.getConfig());
-            createAndAddPatientAddressColumns(jasperReport, report.getConfig());
-            createAndAddProviderNameColumn(jasperReport, report.getConfig());
-            createAndAddVisitInfoColumns(jasperReport, report.getConfig());
+            allTheColumnsForReport.addAll(getExtraPatientIdentifierTypes(report.getConfig()));
+            allTheColumnsForReport.addAll(getPatientAttributes(report.getConfig()));
+            allTheColumnsForReport.addAll(getVisitAttributes(report.getConfig()));
+            allTheColumnsForReport.addAll(getPatientAddresses(report.getConfig()));
+            createAndAddProviderNameColumn(allTheColumnsForReport, report.getConfig());
+            createAndAddDataAnalysisColumns(allTheColumnsForReport, report.getConfig());
             if (report.getConfig().isEncounterPerRow()) {
                 List<ConceptName> leafConceptNames = fetchLeafConceptsAsList(report, bahmniReportsProperties);
-                createAndAddConceptColumns(leafConceptNames, jasperReport, report.getConfig().getConceptNameDisplayFormat());
+                createAndAddConceptColumns(allTheColumnsForReport,leafConceptNames, report.getConfig().getConceptNameDisplayFormat());
                 conceptNamesToFilter = getListOfFullySpecifiedNames(leafConceptNames);
             }
-            createAndAddDataAnalysisColumns(jasperReport, report.getConfig());
-            createAndAddAgeGroupColumn(jasperReport, report.getConfig());
+
+            createAndAddAgeGroupColumn(allTheColumnsForReport, report.getConfig());
+            createAndAddVisitInfoColumns(allTheColumnsForReport, report.getConfig());
         }
+        addColumnsToReport(jasperReport, allTheColumnsForReport, report.getConfig());
 
         GenericDao genericObservationDao = new GenericObservationDaoImpl(report, bahmniReportsProperties);
 
