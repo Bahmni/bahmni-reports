@@ -51,7 +51,7 @@ public class ReportGenerator {
             List<JasperReportBuilder> reports = reportBuilder.getReportBuilders();
             JasperConcatenatedReportBuilder concatenatedReportBuilder = concatenatedReport().concatenate(reports.toArray(new JasperReportBuilder[reports.size()]));
             converter.applyReportTemplates(reports, reportParams.getResponseType());
-            converter.convertToResponseType(reportParams, reportParams.getMacroTemplateLocation(), outputStream, concatenatedReportBuilder);
+            converter.convertToResponseType(reportParams, bahmniReportsProperties.getMacroTemplatesTempDirectory(), outputStream, concatenatedReportBuilder);
             resources.add(connection);
         } finally {
             closeResources(resources);
