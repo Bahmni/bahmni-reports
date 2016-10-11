@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.bahmni.reports.util.GenericLabOrderReportTemplateHelper.*;
-import static org.bahmni.reports.util.GenericReportsHelper.createAndAddExtraPatientIdentifierTypes;
 
 @UsingDatasource("openmrs")
 public class GenericLabOrderReportTemplate extends BaseReportTemplate<GenericLabOrderReportConfig> {
@@ -41,20 +40,25 @@ public class GenericLabOrderReportTemplate extends BaseReportTemplate<GenericLab
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
 
         List<String> conceptNamesToFilter = new ArrayList<>();
-        GenericLabOrderReportTemplateHelper.createAndAddDefaultColumns(jasperReportBuilder, report.getConfig());
-        showOrderDateTime(jasperReportBuilder, report.getConfig());
+        List<String> allColumnNamesForTheReport = new ArrayList<>();
+        GenericLabOrderReportTemplateHelper.createAndAddDefaultColumns(allColumnNamesForTheReport, report.getConfig());
+        showOrderDateTime(allColumnNamesForTheReport, report.getConfig());
         if (report.getConfig() != null) {
-            createAndAddExtraPatientIdentifierTypes(jasperReportBuilder, report.getConfig());
-            createAndAddPatientAttributeColumns(jasperReportBuilder, report.getConfig());
-            createAndAddVisitAttributeColumns(jasperReportBuilder, report.getConfig());
-            createAndAddPatientAddressColumns(jasperReportBuilder, report.getConfig());
-            createAndAddProviderNameColumn(jasperReportBuilder, report.getConfig());
-            createAndAddVisitInfoColumns(jasperReportBuilder, report.getConfig());
-            createAndAddProgramNameColumn(jasperReportBuilder, report.getConfig());
-            createAndAddDataAnalysisColumns(jasperReportBuilder, report.getConfig());
-            createAndAddAgeGroupColumn(jasperReportBuilder, report.getConfig());
+            allColumnNamesForTheReport.addAll(getExtraPatientIdentifierTypes(report.getConfig()));
+//            createAndAddExtraPatientIdentifierTypes(jasperReportBuilder, report.getConfig());
+            allColumnNamesForTheReport.addAll(getPatientAttributes(report.getConfig()));
+//            createAndAddPatientAttributeColumns(jasperReportBuilder, report.getConfig());
+            allColumnNamesForTheReport.addAll(getVisitAttributes(report.getConfig()));
+//            createAndAddVisitAttributeColumns(jasperReportBuilder, report.getConfig());
+            allColumnNamesForTheReport.addAll(getPatientAddresses(report.getConfig()));
+//            createAndAddPatientAddressColumns(jasperReportBuilder, report.getConfig());
+            createAndAddProviderNameColumn(allColumnNamesForTheReport, report.getConfig());
+            createAndAddVisitInfoColumns(allColumnNamesForTheReport, report.getConfig());
+            createAndAddProgramNameColumn(allColumnNamesForTheReport, report.getConfig());
+            createAndAddDataAnalysisColumns(allColumnNamesForTheReport, report.getConfig());
+            createAndAddAgeGroupColumn(allColumnNamesForTheReport, report.getConfig());
         }
-
+        addColumnsToReport(jasperReportBuilder, allColumnNamesForTheReport);
         GenericDao genericObservationDao = new GenericLabOrderDaoImpl(report, bahmniReportsProperties);
         ResultSet obsResultSet = genericObservationDao.getResultSet(connection, startDate, endDate, conceptNamesToFilter);
         jasperReportBuilder = obsResultSet != null ? jasperReportBuilder.setDataSource(obsResultSet) : jasperReportBuilder;
