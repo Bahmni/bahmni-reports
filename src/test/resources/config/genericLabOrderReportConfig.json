@@ -310,5 +310,50 @@
         "config": {
             "showReferredOutTests":false
         }
+    },
+    "LabOrderReportWithOrderOfColumnsConfigured": {
+        "name": "LabOrder report with order of columns configured",
+        "type": "labOrders",
+        "config": {
+            "columnsOrder" : ["Birthdate","Test Order Date","File Uploaded","Min Range"]
+        }
+    },
+    "LabOrderReportWithOrderOfColumnsConfiguredBelongToTwoDifferentSections": {
+        "name": "LabOrder report with order of columns configured belong to two different sections",
+        "type": "labOrders",
+        "config": {
+            "forDataAnalysis" : true,
+            "showVisitInfo" : true,
+            "visitAttributes": [
+                "Visit Status",
+                "Admission Status"
+            ],
+            "columnsOrder" : ["Visit Status","Patient Name","Admission Status","Visit Start Date"]
+        }
+    },
+    "LabOrderReportWithInvalidColumnsConfiguredInOrderOfColumns": {
+        "name": "LabOrder report with invalid columns configured in order of columns",
+        "type": "labOrders",
+        "config": {
+            "forDataAnalysis" : true,
+            "visitAttributes": [
+                "Visit Status",
+                "Admission Status"
+            ],
+            "columnsOrder" : ["def","Visit Status","Admission Status","abc","Patient Id","Concept Id"]
+        }
+    },
+    "LabOrderReportWithExcludeColumnsConfiguredInOrderOfColumns": {
+        "name": "LabOrder report with excluded columns configured in order of columns",
+        "type": "labOrders",
+        "config": {
+            "forDataAnalysis" : true,
+            "showVisitInfo" : true,
+            "excludeColumns": [
+                "Patient Name",
+                "Visit Type"
+            ],
+            "columnsOrder" : ["Visit Type","Patient Name","Patient Id","Concept Id"]
+        }
     }
 }

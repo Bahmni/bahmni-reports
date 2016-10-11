@@ -10,6 +10,7 @@ public class GenericLabOrderReportConfig extends  GenericReportsConfig implement
     private List<String> conceptNamesToFilter;
     private List<String> conceptValuesToFilter;
     private boolean showOrderDateTime;
+    private List<String> columnsOrder;
 
     public Boolean showProvider() {
         return showProvider;
@@ -65,5 +66,13 @@ public class GenericLabOrderReportConfig extends  GenericReportsConfig implement
 
     public void setShowReferredOutTests(boolean showReferredOutTests) {
         this.showReferredOutTests = showReferredOutTests;
+    }
+
+    public List<String> getColumnsOrder() {
+        return columnsOrder;
+    }
+
+    public void setColumnsOrder(List<String> columnsOrder) {
+        this.columnsOrder = columnsOrder;
     }
 }

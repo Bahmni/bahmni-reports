@@ -45,20 +45,16 @@ public class GenericLabOrderReportTemplate extends BaseReportTemplate<GenericLab
         showOrderDateTime(allColumnNamesForTheReport, report.getConfig());
         if (report.getConfig() != null) {
             allColumnNamesForTheReport.addAll(getExtraPatientIdentifierTypes(report.getConfig()));
-//            createAndAddExtraPatientIdentifierTypes(jasperReportBuilder, report.getConfig());
             allColumnNamesForTheReport.addAll(getPatientAttributes(report.getConfig()));
-//            createAndAddPatientAttributeColumns(jasperReportBuilder, report.getConfig());
             allColumnNamesForTheReport.addAll(getVisitAttributes(report.getConfig()));
-//            createAndAddVisitAttributeColumns(jasperReportBuilder, report.getConfig());
             allColumnNamesForTheReport.addAll(getPatientAddresses(report.getConfig()));
-//            createAndAddPatientAddressColumns(jasperReportBuilder, report.getConfig());
             createAndAddProviderNameColumn(allColumnNamesForTheReport, report.getConfig());
             createAndAddVisitInfoColumns(allColumnNamesForTheReport, report.getConfig());
             createAndAddProgramNameColumn(allColumnNamesForTheReport, report.getConfig());
             createAndAddDataAnalysisColumns(allColumnNamesForTheReport, report.getConfig());
             createAndAddAgeGroupColumn(allColumnNamesForTheReport, report.getConfig());
         }
-        addColumnsToReport(jasperReportBuilder, allColumnNamesForTheReport);
+        addColumnsToReport(jasperReportBuilder, allColumnNamesForTheReport,report.getConfig());
         GenericDao genericObservationDao = new GenericLabOrderDaoImpl(report, bahmniReportsProperties);
         ResultSet obsResultSet = genericObservationDao.getResultSet(connection, startDate, endDate, conceptNamesToFilter);
         jasperReportBuilder = obsResultSet != null ? jasperReportBuilder.setDataSource(obsResultSet) : jasperReportBuilder;

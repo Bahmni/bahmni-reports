@@ -17,6 +17,7 @@ import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
@@ -160,7 +161,16 @@ public class GenericLabOrderReportTemplateHelper extends GenericReportsHelper{
         return stringBuilder.toString();
     }
 
-    public static void addColumnsToReport(JasperReportBuilder jasperReport, List<String> patientColumns) {
+    public static void addColumnsToReport(JasperReportBuilder jasperReport, List<String> patientColumns, GenericLabOrderReportConfig config) {
+        if (config != null && config.getColumnsOrder() != null) {
+            Collections.reverse(config.getColumnsOrder());
+            for (String column : config.getColumnsOrder()) {
+                if (patientColumns.contains(column)) {
+                    patientColumns.remove(column);
+                    patientColumns.add(0, column);
+                }
+            }
+        }
         for (String columnHeader : patientColumns) {
             TextColumnBuilder<String> column;
             column = col.column(columnHeader, columnHeader, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
