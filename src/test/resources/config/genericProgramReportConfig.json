@@ -201,5 +201,38 @@
         "config": {
             "ageGroupName": "Observation Age Group"
         }
+    },
+    "programReportWithOrderOfColumnsConfigured" : {
+        "name": "program report with order of columns configured",
+        "type": "programs",
+        "config": {
+            "preferredColumns": ["Patient Name", "Age", "Patient Identifier","Program Name"]
+        }
+    },
+    "programReportWithPatientAttributesConfiguredInOrderOfColumns": {
+        "name": "program report which have patient attributes configured in order of columns",
+        "type": "programs",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "programAttributes" : [ "Registration Id", "High Risk Reasons"],
+            "forDataAnalysis": true,
+            "preferredColumns": ["class", "Registration Id","Patient Name","High Risk Reasons","OutCome"]
+        }
+    },
+    "programReportWithInValidColumnsConfiguredInOrderOfColumns": {
+        "name": "program report with invalid columns configured in order of columns",
+        "type": "programs",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "preferredColumns": ["classabc","def","jkl","Completed Date"]
+        }
+    },
+    "programReportWithExcludedColumnsConfiguredInOrderOfColumns": {
+        "name": "program report with excluded columns configured in order of columns",
+        "type": "programs",
+        "config": {
+            "excludeColumns": ["Gender","Completed Date","EnrolledDate"],
+            "preferredColumns": ["Gender","Birthdate","Age","Completed Date"]
+        }
     }
 }

@@ -11,6 +11,7 @@ public class GenericReportsConfig {
     private List<String> patientAddresses;
     private List<String> additionalPatientIdentifiers;
     private String ageGroupName;
+    private List<String> preferredColumns;
 
     public List<String> getExcludeColumns() {
         return excludeColumns;
@@ -66,5 +67,13 @@ public class GenericReportsConfig {
 
     public void setAgeGroupName(String ageGroupName) {
         this.ageGroupName = ageGroupName;
+    }
+
+    public List<String> getPreferredColumns() {
+        return preferredColumns;
+    }
+
+    public void setPreferredColumns(List<String> preferredColumns) {
+        this.preferredColumns = preferredColumns;
     }
 }

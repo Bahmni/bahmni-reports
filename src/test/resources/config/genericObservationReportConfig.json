@@ -620,6 +620,37 @@
         "config": {
             "conceptValuesToFilter": ["","175..200","High"]
         }
+    },
+    "observationReportWithOrderOfColumnsConfigured" : {
+        "name": "Observation report with order of columns configured",
+        "type": "observations",
+        "config": {
+            "preferredColumns": ["Patient Name", "Birthdate", "Age", "Patient Identifier"]
+        }
+    },
+    "observationReportWithPatientAttributesConfiguredInOrderOfColumns": {
+        "name": "Observation report which have patient attributes configured in order of columns",
+        "type": "observations",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "preferredColumns": ["class", "cluster","Patient Name","Birthdate","Age","Patient Identifier"]
+        }
+    },
+    "observationReportWithInValidColumnsConfiguredInOrderOfColumns": {
+        "name": "Observation report with invalid columns configured in order of columns",
+        "type": "observations",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "preferredColumns": ["classabc","def","cluster","Patient Name","jkl"]
+        }
+    },
+    "observationReportWithExcludedColumnsConfiguredInOrderOfColumns": {
+        "name": "Observation report with excluded columns configured in order of columns",
+        "type": "observations",
+        "config": {
+            "excludeColumns": ["Concept Id","Order Id"],
+            "preferredColumns": ["Concept Id", "Order Id","Patient Name","Birthdate","Age","Patient Identifier"]
+        }
     }
 
 }

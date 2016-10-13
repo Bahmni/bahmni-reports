@@ -13,7 +13,6 @@ import org.bahmni.reports.model.Report;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.reports.web.ReportHeader;
-import org.bahmni.webclients.HttpClient;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -34,9 +33,51 @@ public class BahmniReportUtil {
         reportBuilder = new ReportHeader().add(reportBuilder, report.getName(), startDate, endDate);
         BahmniReportBuilder build = reportTemplate.build(connection, reportBuilder, report, startDate, endDate, resources, pageType);
         excludeColumns(report.getConfig(), reportBuilder);
+        orderColumns(report.getConfig(), reportBuilder);
         return build;
     }
 
+    private static boolean contains(List<String> columns, String searchColumn) {
+        for (String column : columns) {
+            if (column.equalsIgnoreCase(searchColumn)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void orderColumns(Config config, JasperReportBuilder reportBuilder){
+        if (config instanceof GenericReportsConfig) {
+            List<String> columns = ((GenericReportsConfig) config).getPreferredColumns();
+            List<String> excludeColumns = ((GenericReportsConfig) config).getExcludeColumns();
+            if (columns != null && columns.size() > 0) {
+                DRReport drReport = reportBuilder.getReport();
+                List<DRColumn<?>> jasperReportColumns = drReport.getColumns();
+                List<DRColumn<?>> orderedColumns = new ArrayList<>(jasperReportColumns.size());
+                List<String> reportColumns = getColumnsList(jasperReportColumns);
+                for (int index = 0; index < columns.size(); index++) {
+                    if ((excludeColumns != null && contains(excludeColumns, columns.get(index))) || !reportColumns.contains(columns.get(index).toLowerCase())) {
+                        columns.remove(index);
+                        index--;
+                    }
+                }
+                for (String column : columns) {
+                    orderedColumns.add(columns.indexOf(column),jasperReportColumns.get(reportColumns.indexOf(column.toLowerCase())));
+                }
+                jasperReportColumns.removeAll(orderedColumns);
+                orderedColumns.addAll(orderedColumns.size(), jasperReportColumns);
+                drReport.setColumns(orderedColumns);
+            }
+        }
+    }
+
+    private static List<String> getColumnsList(List<DRColumn<?>> jasperReportColumns) {
+        List<String> reportColumns = new ArrayList<>();
+        for (DRColumn col :jasperReportColumns) {
+            reportColumns.add(col.getName().toLowerCase());
+        }
+        return reportColumns;
+    }
     private static void excludeColumns(Config config, JasperReportBuilder reportBuilder) {
         if (config instanceof GenericReportsConfig) {
             GenericReportsConfig genericReportsConfig = (GenericReportsConfig) config;
