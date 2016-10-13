@@ -125,6 +125,6 @@ public class BahmniReportsProperties {
     }
 
     public String getTrustSSLConnection() {
-        return props.getProperty("reports.trust.ssl.connections","true");
+        return props.getProperty("reports.json.ssl.accept-untrusted-certificates","true");
     }
 }
