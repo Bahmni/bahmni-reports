@@ -26,7 +26,6 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportTemplateConfig> {
 
-    private static final String PROGRAM_ENROLLMENT = "ProgramEnrollment";
     private BahmniReportsProperties bahmniReportsProperties;
     private ObsCannedReportTemplateConfig obsCannedReportTemplateConfig;
 

@@ -5,7 +5,6 @@ import java.util.List;
 public class MultipleCodedObsByCodedObsReportConfig implements Config {
 
     private String ageGroupName;
-    private List<String> concepts;
     private List<String> rowsGroupBy;
     private List<String> columnsGroupBy;
 

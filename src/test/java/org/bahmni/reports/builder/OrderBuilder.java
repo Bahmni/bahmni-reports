@@ -14,7 +14,6 @@ import java.util.Locale;
 
 public class OrderBuilder {
     private Order order;
-    private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
 
     public OrderBuilder() {
         this.order = new Order();

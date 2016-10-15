@@ -28,16 +28,7 @@ public class ConceptUtilTest {
             "            }\n" +
             "        ]\n" +
             "    }}";
-    private static String responseCoded = "{\"datatype\": {\n" +
-            "        \"uuid\": \"8d4a5cca-c2cc-11de-8d13-0010eee44f\",\n" +
-            "        \"display\": \"Coded\",\n" +
-            "        \"links\": [\n" +
-            "            {\n" +
-            "                \"uri\": \"NEED-TO-CONFIGURE/ws/rest/v1/conceptdatatype/8d4a5cca-c2cc-11de-8d13-0010c6dffd0f\",\n" +
-            "                \"rel\": \"self\"\n" +
-            "            }\n" +
-            "        ]\n" +
-            "    }}";
+
 
     private String openmrsRootUrl = "http://localhost:8080/openmrs/ws/rest/v1";
 

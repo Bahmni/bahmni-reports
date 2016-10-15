@@ -9,7 +9,6 @@ import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.BahmniReportUtil;
-import org.bahmni.webclients.HttpClient;
 
 import java.sql.Connection;
 import java.util.ArrayList;

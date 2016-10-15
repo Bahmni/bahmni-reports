@@ -6,7 +6,7 @@ import org.openmrs.ConceptSource;
 import java.util.Date;
 
 public class ConceptReferenceSourceBuilder {
-    private final org.openmrs.ConceptSource conceptSource;
+    private final ConceptSource conceptSource;
 
     public ConceptReferenceSourceBuilder() {
         conceptSource = new ConceptSource();

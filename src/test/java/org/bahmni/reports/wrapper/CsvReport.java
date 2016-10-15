@@ -41,7 +41,7 @@ public class CsvReport {
         String[] row;
         reportName = joinStringArray(csvReader.readNext(), "");
         dateHeader = joinStringArray(csvReader.readNext(), "");
-        String reportRanDatetime = joinStringArray(csvReader.readNext(), "");
+        joinStringArray(csvReader.readNext(), "");
         columnHeaders = csvReader.readNext();
         if (columnHeaders != null)
             columnMap = buildIndexMap(columnHeaders);
@@ -81,22 +81,11 @@ public class CsvReport {
         return getRow(rowNumber)[columnMap.get(columnName)];
     }
 
-    public String[] getRowHavingColumnValue(String columnName, String value) {
-        int indexOfColumn = columnMap.get(columnName);
-        for (String[] row : rows) {
-            if (row[indexOfColumn].equals(value))
-                return row;
-        }
-        return null;
-    }
 
     public int columnsCount() {
         return columnHeaders.length;
     }
 
-    public String[] getColumnHeaders() {
-        return columnHeaders;
-    }
 
     public String getColumnHeaderAtIndex(int index) {
         return columnHeaders[index];
