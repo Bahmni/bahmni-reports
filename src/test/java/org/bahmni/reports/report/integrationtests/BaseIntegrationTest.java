@@ -63,7 +63,6 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     protected MockMvc mockMvc;
 
-    private static boolean isBaseSetup;
 
     @Mock
     protected HttpClient httpClient;
@@ -215,7 +214,6 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         this.turnOnDBConstraints(connection);
         connection.commit();
         this.updateSearchIndex();
-        isBaseSetup = false;
     }
 
     private void turnOffDBConstraints(Connection connection) throws SQLException {

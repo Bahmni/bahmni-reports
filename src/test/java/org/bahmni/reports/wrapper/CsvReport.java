@@ -14,7 +14,6 @@ public class CsvReport {
 
     private CSVReader csvReader;
     private String reportName;
-    private String dateHeader;
     private String[] columnHeaders;
     private Map<String, Integer> columnMap;
     private List<String> footers;
@@ -40,7 +39,7 @@ public class CsvReport {
     private void process() throws IOException {
         String[] row;
         reportName = joinStringArray(csvReader.readNext(), "");
-        dateHeader = joinStringArray(csvReader.readNext(), "");
+        joinStringArray(csvReader.readNext(), "");
         joinStringArray(csvReader.readNext(), "");
         columnHeaders = csvReader.readNext();
         if (columnHeaders != null)

@@ -43,8 +43,6 @@ public class ReportsScheduler {
     @Autowired
     private BahmniReportsProperties bahmniReportsProperties;
 
-    public ReportsScheduler() {
-    }
 
     public void schedule(ReportParams reportParams) throws ParseException, SchedulerException, UnsupportedEncodingException {
         logger.info("Starting to schedule report " + reportParams.getName());

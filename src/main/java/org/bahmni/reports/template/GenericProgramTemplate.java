@@ -21,11 +21,6 @@ import static org.bahmni.reports.util.GenericReportsHelper.createAndAddExtraPati
 
 @UsingDatasource("openmrs")
 public class GenericProgramTemplate extends BaseReportTemplate<GenericProgramReportConfig> {
-    private BahmniReportsProperties bahmniReportsProperties;
-
-    public GenericProgramTemplate(BahmniReportsProperties bahmniReportsProperties) {
-        this.bahmniReportsProperties = bahmniReportsProperties;
-    }
 
     @Override
     public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<GenericProgramReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {

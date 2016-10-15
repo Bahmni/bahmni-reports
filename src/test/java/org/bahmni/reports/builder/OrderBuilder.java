@@ -8,10 +8,6 @@ import org.openmrs.Patient;
 import org.openmrs.Provider;
 import org.openmrs.api.context.Context;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
 public class OrderBuilder {
     private Order order;
 

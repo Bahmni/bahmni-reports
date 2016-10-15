@@ -9,6 +9,6 @@ import org.bahmni.reports.template.ObsCannedReportTemplate;
 public class ObsCannedReport extends Report<ObsCannedReportTemplateConfig> {
     @Override
     public BaseReportTemplate getTemplate(BahmniReportsProperties bahmniReportsProperties) {
-        return new ObsCannedReportTemplate(bahmniReportsProperties);
+        return new ObsCannedReportTemplate();
     }
 }

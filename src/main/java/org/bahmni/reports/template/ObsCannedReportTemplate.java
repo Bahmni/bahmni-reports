@@ -26,41 +26,33 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class ObsCannedReportTemplate extends BaseReportTemplate<ObsCannedReportTemplateConfig> {
 
-    private BahmniReportsProperties bahmniReportsProperties;
-    private ObsCannedReportTemplateConfig obsCannedReportTemplateConfig;
-
-    public ObsCannedReportTemplate(BahmniReportsProperties bahmniReportsProperties) {
-        this.bahmniReportsProperties = bahmniReportsProperties;
-    }
-
     @Override
     public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCannedReportTemplateConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         CommonComponents.addTo(jasperReport, report, pageType);
-        this.obsCannedReportTemplateConfig = report.getConfig();
+        ObsCannedReportTemplateConfig obsCannedReportTemplateConfig = report.getConfig();
 
-        String templateName = report.getConfig().getTemplateName();
-        List<String> patientAttributes = report.getConfig().getPatientAttributes();
+        List<String> patientAttributes = obsCannedReportTemplateConfig.getPatientAttributes();
         if (patientAttributes == null) {
             patientAttributes = new ArrayList<>();
         }
-        List<String> addressAttributes = report.getConfig().getAddressAttributes();
+        List<String> addressAttributes = obsCannedReportTemplateConfig.getAddressAttributes();
         if (addressAttributes == null) {
             addressAttributes = new ArrayList<>();
         }
 
-        List<String> conceptDetails = report.getConfig().getConceptNames();
+        List<String> conceptDetails = obsCannedReportTemplateConfig.getConceptNames();
         if (conceptDetails == null) {
             conceptDetails = new ArrayList<>();
         }
-        List<String> viConceptDetails = report.getConfig().getVisitIndependentConcept();
+        List<String> viConceptDetails = obsCannedReportTemplateConfig.getVisitIndependentConcept();
         if (viConceptDetails == null) {
             viConceptDetails = new ArrayList<>();
         }
         String conceptNameInClause =  constructInClause(conceptDetails);
         String patientAttributesInClause = constructInClause(patientAttributes);
         String addressAttributesInClause = constructInClause(addressAttributes);
-        String sql = getFormattedSql(getFileContent("sql/obsCannedReport.sql"), report.getConfig(), conceptNameInClause,
+        String sql = getFormattedSql(getFileContent("sql/obsCannedReport.sql"), obsCannedReportTemplateConfig, conceptNameInClause,
                 patientAttributesInClause, startDate, endDate,addressAttributesInClause );buildColumns(jasperReport, patientAttributes, conceptDetails,viConceptDetails, addressAttributes);
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
