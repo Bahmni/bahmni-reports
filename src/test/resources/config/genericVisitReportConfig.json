@@ -185,5 +185,53 @@
         "config": {
             "ageGroupName": "Observation Age Group"
         }
+    },
+    "visitReportWithOrderOfColumnsConfigured" : {
+        "name": "visit report with order of columns configured",
+        "type": "visits",
+        "config": {
+            "preferredColumns": ["Patient Name", "Visit Type", "Age", "Patient Identifier","New patient visit"]
+        }
+    },
+    "visitReportWithPatientAttributesConfiguredInOrderOfColumns": {
+        "name": "visit report which have patient attributes configured in order of columns",
+        "type": "visits",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "visitAttributes" : [ "Visit Status", "Admission Status"],
+            "forDataAnalysis": true,
+            "preferredColumns": ["class", "cluster","Patient Name","Visit Status","Patient Id"]
+        }
+    },
+    "visitReportWithInValidColumnsConfiguredInOrderOfColumns": {
+        "name": "visit report with invalid columns configured in order of columns",
+        "type": "visits",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "preferredColumns": ["classabc","def","jkl","Date Of Admission"]
+        }
+    },
+    "visitReportWithExcludedColumnsConfiguredInOrderOfColumns": {
+        "name": "visit report with excluded columns configured in order of columns",
+        "type": "visits",
+        "config": {
+            "excludeColumns": ["Date of Discharge","Visit Type","New patient visit"],
+            "preferredColumns": ["New patient visit", "Date of Discharge","Patient Name","Birthdate","Age","Visit Type"]
+        }
+    },
+    "visitReportWithChangeCaseColumnsConfiguredInOrderOfColumns": {
+        "name": "visit report with change case columns configured in order of columns",
+        "type": "visits",
+        "config": {
+            "preferredColumns": ["Date of Discharge","Patient name","Birthdate","Age","Visit Type"]
+        }
+    },
+    "visitReportWithOrderOfColumnsAndExcludeColumnsWithCaseInsensitivity": {
+        "name": "visit report with excluded columns configured and order of columns with case insensitivity",
+        "type": "visits",
+        "config": {
+            "excludeColumns": ["Date of Discharge","Visit Type","New patient visit"],
+            "preferredColumns": ["new patient visit", "date of discharge","Patient name","Birthdate","Age","visit Type"]
+        }
     }
 }

@@ -10,10 +10,6 @@ public class ConceptDetails {
     private Double hiNormal;
     private Double lowNormal;
     private Map<String, Object> attributes = new HashMap<>();
-
-    public ConceptDetails() {
-    }
-
     public String getName() {
         return name;
     }
@@ -37,9 +33,8 @@ public class ConceptDetails {
 
         ConceptDetails that = (ConceptDetails) o;
 
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        return name != null ? name.equals(that.name) : that.name == null;
 
-        return true;
     }
 
     @Override

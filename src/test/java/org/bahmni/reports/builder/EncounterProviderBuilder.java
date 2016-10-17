@@ -7,7 +7,7 @@ import org.openmrs.EncounterRole;
 import org.openmrs.Provider;
 
 public class EncounterProviderBuilder {
-    private final org.openmrs.EncounterProvider encounterProvider;
+    private final EncounterProvider encounterProvider;
 
     public EncounterProviderBuilder() {
         encounterProvider = new EncounterProvider();

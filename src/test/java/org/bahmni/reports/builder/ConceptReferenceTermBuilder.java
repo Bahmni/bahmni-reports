@@ -7,7 +7,7 @@ import org.openmrs.ConceptSource;
 import java.util.Date;
 
 public class ConceptReferenceTermBuilder {
-    private final org.openmrs.ConceptReferenceTerm conceptReferenceTerm;
+    private final ConceptReferenceTerm conceptReferenceTerm;
 
     public ConceptReferenceTermBuilder() {
         conceptReferenceTerm = new ConceptReferenceTerm();

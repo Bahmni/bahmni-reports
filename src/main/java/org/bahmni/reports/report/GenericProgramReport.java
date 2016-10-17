@@ -9,6 +9,6 @@ import org.bahmni.reports.template.GenericProgramTemplate;
 public class GenericProgramReport extends Report<GenericProgramReportConfig> {
     @Override
     public BaseReportTemplate getTemplate(BahmniReportsProperties bahmniReportsProperties) {
-        return new GenericProgramTemplate(bahmniReportsProperties);
+        return new GenericProgramTemplate();
     }
 }

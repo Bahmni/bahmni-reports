@@ -538,4 +538,57 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
 
     }
 
+    @Test
+    public void shouldReturnTheColumnsInSpecifiedOrder() throws Exception {
+        String reportName = "LabOrder report with order of columns configured";
+        CsvReport report = fetchCsvReport(reportName, "2014-08-9", "2014-09-10");
+        assertEquals(13, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals("Birthdate", report.getColumnHeaderAtIndex(0));
+        assertEquals("Test Order Date", report.getColumnHeaderAtIndex(1));
+        assertEquals("File Uploaded", report.getColumnHeaderAtIndex(2));
+        assertEquals("Min Range", report.getColumnHeaderAtIndex(3));
+    }
+
+    @Test
+    public void shouldReturnTheColumnsInSpecifiedOrderWhenTheyBelongToDifferentConfigs() throws Exception {
+        String reportName = "LabOrder report with order of columns configured belong to two different sections";
+
+        CsvReport report = fetchCsvReport(reportName, "2014-08-9", "2014-09-10");
+
+        assertEquals(22, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals("Visit Status", report.getColumnHeaderAtIndex(0));
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(1));
+        assertEquals("Admission Status", report.getColumnHeaderAtIndex(2));
+        assertEquals("Visit Start Date", report.getColumnHeaderAtIndex(3));
+    }
+
+    @Test
+    public void shouldIgnoreInValidColumnConfiguredInOrderOfColumns() throws Exception {
+        String reportName = "LabOrder report with invalid columns configured in order of columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2014-08-9", "2014-09-10");
+
+        assertEquals(19, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals("Visit Status", report.getColumnHeaderAtIndex(0));
+        assertEquals("Admission Status", report.getColumnHeaderAtIndex(1));
+        assertEquals("Patient Id", report.getColumnHeaderAtIndex(2));
+        assertEquals("Concept Id", report.getColumnHeaderAtIndex(3));
+    }
+
+    @Test
+    public void shouldExcludeTheColumnConfiguredInExcludeColumnsEvenThoughItIsConfiguredInColumnOrder() throws Exception {
+        String reportName = "LabOrder report with excluded columns configured in order of columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2014-08-9", "2014-09-10");
+
+        assertEquals(18, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals("Patient Id", report.getColumnHeaderAtIndex(0));
+        assertEquals("Concept Id", report.getColumnHeaderAtIndex(1));
+
+    }
+
 }

@@ -1,7 +1,6 @@
 package org.bahmni.reports.report;
 
 import org.bahmni.reports.BahmniReportsProperties;
-import org.bahmni.reports.model.ProgramConfig;
 import org.bahmni.reports.model.ProgramEnrollmentConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.template.BaseReportTemplate;

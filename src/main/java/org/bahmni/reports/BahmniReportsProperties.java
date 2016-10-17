@@ -31,8 +31,8 @@ public class BahmniReportsProperties {
         }
     }
 
-    public String getConfigFilePath() {
-        return props.getProperty("config.file.path");
+    public String getConfigFileUrl() {
+        return props.getProperty("reports.config.url");
     }
 
     public String getOpenelisUrl() {
@@ -67,6 +67,14 @@ public class BahmniReportsProperties {
         return props.getProperty("bahmnireports.db.url");
     }
 
+    public String getReportsUser() {
+        return props.getProperty("reports.username");
+    }
+
+    public String getReportsPassword() {
+        return props.getProperty("reports.password");
+    }
+
     public String getOpenmrsUser() {
         return props.getProperty("openmrs.username");
     }
@@ -74,6 +82,7 @@ public class BahmniReportsProperties {
     public String getOpenmrsPassword() {
         return props.getProperty("openmrs.password");
     }
+
 
     public String getOpenmrsRootUrl() {
         return props.getProperty("openmrs.service.rootUrl");
@@ -113,5 +122,9 @@ public class BahmniReportsProperties {
 
     public String getCleanupJobTriggerTime() {
         return props.getProperty("reports.cleanup.triggerTime");
+    }
+
+    public String getTrustSSLConnection() {
+        return props.getProperty("reports.json.ssl.accept-untrusted-certificates","true");
     }
 }

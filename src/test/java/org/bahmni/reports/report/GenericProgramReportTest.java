@@ -346,4 +346,52 @@ public class GenericProgramReportTest extends BaseIntegrationTest {
         assertEquals("prog2 Generic Program2 21 15-Aug-1994 F 15-Aug-2008 MDR-TB PROGRAM 19-Apr-2016 19-Apr-2016 State 2 > 10 Years", report.getRowAsString(4, " "));
     }
 
+    @Test
+    public void shouldHaveColumnsProvidedInTheOrderThatTheyHaveConfigured() throws Exception {
+        String reportName = "program report with order of columns configured";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(10, report.columnsCount());
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(0));
+        assertEquals("Age", report.getColumnHeaderAtIndex(1));
+        assertEquals("Patient Identifier", report.getColumnHeaderAtIndex(2));
+        assertEquals("Program Name", report.getColumnHeaderAtIndex(3));
+    }
+
+    @Test
+    public void shouldHaveColumnsProvidedInTheOrderThatTheyHaveConfiguredFromDifferentGroups() throws Exception {
+        String reportName = "program report which have patient attributes configured in order of columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(18, report.columnsCount());
+        assertEquals("class", report.getColumnHeaderAtIndex(0));
+        assertEquals("Registration Id", report.getColumnHeaderAtIndex(1));
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(2));
+        assertEquals("High Risk Reasons", report.getColumnHeaderAtIndex(3));
+        assertEquals("OutCome", report.getColumnHeaderAtIndex(4));
+    }
+
+    @Test
+    public void shouldIgnoreTheColumnsWhichAreNotPresentInReport() throws Exception {
+        String reportName = "program report with invalid columns configured in order of columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(13, report.columnsCount());
+        assertEquals("Completed Date", report.getColumnHeaderAtIndex(0));
+    }
+
+    @Test
+    public void shouldNotIncludeExcludedColumnsEvenThoughTheyAreConfiguredInColumnsOrder() throws Exception {
+        String reportName = "program report with excluded columns configured in order of columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(8, report.columnsCount());
+        assertEquals("Birthdate", report.getColumnHeaderAtIndex(0));
+        assertEquals("Age", report.getColumnHeaderAtIndex(1));
+    }
+
 }

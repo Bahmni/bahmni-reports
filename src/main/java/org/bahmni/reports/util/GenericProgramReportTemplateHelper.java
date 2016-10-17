@@ -76,7 +76,7 @@ public class GenericProgramReportTemplateHelper extends GenericReportsHelper{
         if (config.isForDataAnalysis()) {
             TextColumnBuilder<Integer> patientIdColumn = col.column("Patient Id", "Patient Id", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
             TextColumnBuilder<Integer> visitIdColumn = col.column("Program Id", "Program Id", type.integerType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
-            TextColumnBuilder<String> outcomeColumn = col.column("OutCome", "Outcome", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            TextColumnBuilder<String> outcomeColumn = col.column("OutCome", "OutCome", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
             jasperReport.addColumn(patientIdColumn);
             jasperReport.addColumn(visitIdColumn);
             jasperReport.addColumn(outcomeColumn);

@@ -6,7 +6,6 @@ import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
 import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.persistence.ScheduledReportRepository;
-import org.bahmni.reports.util.BahmniReportUtil;
 import org.bahmni.reports.web.ReportGenerator;
 import org.bahmni.reports.web.ReportParams;
 import org.bahmni.webclients.HttpClient;
@@ -73,7 +72,7 @@ public class ReportsJob implements Job {
             logger.error("Error in running report " + reportId, throwable);
             ScheduledReport scheduledReport = scheduledReportRepository.findScheduledReportById(reportId);
             scheduledReport.setStatus(ERROR);
-            scheduledReport.setErrorMessage(BahmniReportUtil.getStackTrace(throwable));
+            scheduledReport.setErrorMessage(throwable.getCause().getMessage());
             scheduledReportRepository.save(scheduledReport);
         }
     }

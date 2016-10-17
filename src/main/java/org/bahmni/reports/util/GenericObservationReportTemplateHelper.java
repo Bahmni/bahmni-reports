@@ -7,10 +7,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.ConceptName;
-import org.bahmni.reports.model.GenericLabOrderReportConfig;
 import org.bahmni.reports.model.GenericObservationReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.webclients.HttpClient;
+import org.bahmni.webclients.WebClientsException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
@@ -144,7 +144,7 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         }
     }
 
-    public static List<ConceptName> fetchLeafConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
+    public static List<ConceptName> fetchLeafConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) throws WebClientsException {
         List<String> conceptNamesToFilter = getConceptNamesToFilter(report.getConfig());
         if (CollectionUtils.isEmpty(conceptNamesToFilter)) {
             return new ArrayList<>();
@@ -155,13 +155,15 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
             String response = httpClient.get(new URI(url));
             return new ObjectMapper().readValue(response, new TypeReference<List<ConceptName>>() {
             });
+        } catch (WebClientsException e) {
+            throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
 
-   public static List<String> fetchChildConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) {
+   public static List<String> fetchChildConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) throws WebClientsException {
         List<String> conceptNamesToFilter = getConceptNamesToFilter(report.getConfig());
         if (CollectionUtils.isEmpty(conceptNamesToFilter) || report.getConfig().isEncounterPerRow()) {
             return new ArrayList<>();
@@ -172,6 +174,8 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
             String response = httpClient.get(new URI(url));
             return new ObjectMapper().readValue(response, new TypeReference<List<String>>() {
             });
+        } catch (WebClientsException e) {
+                throw e;
         } catch (Exception e) {
             e.printStackTrace();
         }

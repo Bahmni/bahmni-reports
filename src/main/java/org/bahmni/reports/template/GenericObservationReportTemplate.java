@@ -12,7 +12,7 @@ import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
-import org.bahmni.reports.util.GenericObservationReportTemplateHelper;
+import org.bahmni.webclients.WebClientsException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -35,7 +35,7 @@ public class GenericObservationReportTemplate extends BaseReportTemplate<Generic
     public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport,
                                      Report<GenericObservationReportConfig> report,
                                      String startDate, String endDate, List<AutoCloseable> resources,
-                                     PageType pageType) throws SQLException {
+                                     PageType pageType) throws SQLException,WebClientsException {
         CommonComponents.addTo(jasperReport, report, pageType);
 
 

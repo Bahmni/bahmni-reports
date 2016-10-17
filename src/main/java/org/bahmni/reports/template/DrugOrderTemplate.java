@@ -131,7 +131,6 @@ public class DrugOrderTemplate extends BaseReportTemplate<Config> {
         private String dose;
         private String doseUnits;
 
-        public VariableDosageFormatter() {}
 
         public String getDoseUnits() {
             return doseUnits;

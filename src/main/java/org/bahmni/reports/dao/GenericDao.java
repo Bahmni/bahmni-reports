@@ -1,6 +1,8 @@
 package org.bahmni.reports.dao;
 
 
+import org.bahmni.webclients.WebClientsException;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,5 +12,5 @@ public interface GenericDao {
     ResultSet getResultSet(Connection connection,
                            String startDate, String endDate,
                            List<String> conceptNamesToFilter)
-            throws SQLException;
+            throws SQLException, WebClientsException;
 }

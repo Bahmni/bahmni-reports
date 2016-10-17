@@ -31,9 +31,8 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class ProgramDrugOrderTemplate extends BaseReportTemplate<ProgramDrugOrderTemplateConfig> {
 
-    private ProgramDrugOrderTemplateConfig programDrugOrderTemplateConfig;
 
-    private String getFormattedSql(String fileContent, ProgramDrugOrderTemplateConfig config, List<String> patientAttributes, List<String> programAttributes, List<String> programs, String startDate, String endDate) {
+    private String getFormattedSql(String fileContent, List<String> patientAttributes, List<String> programAttributes, List<String> programs, String startDate, String endDate) {
         ST sqlTemplate = new ST(fileContent, '#', '#');
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
@@ -51,33 +50,32 @@ public class ProgramDrugOrderTemplate extends BaseReportTemplate<ProgramDrugOrde
     @Override
     public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ProgramDrugOrderTemplateConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
         CommonComponents.addTo(jasperReport, report, pageType);
-        this.programDrugOrderTemplateConfig = report.getConfig();
+        ProgramDrugOrderTemplateConfig programDrugOrderTemplateConfig = report.getConfig();
 
-        String templateName = report.getConfig().getTemplateName();
-        List<String> patientAttributes = report.getConfig().getPatientAttributes();
+        List<String> patientAttributes = programDrugOrderTemplateConfig.getPatientAttributes();
         if (patientAttributes == null) {
             patientAttributes = new ArrayList<>();
         }
-        List<String> programAttributes = report.getConfig().getProgramAttributes();
+        List<String> programAttributes = programDrugOrderTemplateConfig.getProgramAttributes();
         if (programAttributes == null) {
             programAttributes = new ArrayList<>();
         }
 
-        List<String> programs = report.getConfig().getPrograms();
+        List<String> programs = programDrugOrderTemplateConfig.getPrograms();
         if (programs == null) {
             programs = new ArrayList<>();
         }
 
-            String sql = getFormattedSql(getFileContent("sql/programDrugOrder.sql"), report.getConfig(),patientAttributes ,programAttributes,
+            String sql = getFormattedSql(getFileContent("sql/programDrugOrder.sql"),patientAttributes ,programAttributes,
                programs, startDate, endDate );
-        buildColumns(jasperReport, patientAttributes, programAttributes, programs);
+        buildColumns(jasperReport, patientAttributes, programAttributes);
 
         jasperReport.setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
         JasperReportBuilder jasperReportBuilder = SqlUtil.executeReportWithStoredProc(jasperReport, connection, sql);
         return new BahmniReportBuilder(jasperReportBuilder);
     }
 
-    private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<String> programAttributes, List<String> programs) {
+    private void buildColumns(JasperReportBuilder jasperReport, List<String> patientAttributes, List<String> programAttributes) {
         TextColumnBuilder<String> drugName = col.column("Drug Name", "drugName", type.stringType())
                 .setStyle(columnStyle);
 
@@ -178,7 +176,6 @@ public class ProgramDrugOrderTemplate extends BaseReportTemplate<ProgramDrugOrde
         private String additionalInstructions;
 
 
-        public VariableDosageFormatter() {}
 
         public String getMorningDose() {
             return morningDose;

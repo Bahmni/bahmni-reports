@@ -235,4 +235,77 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
     }
 
+    @Test
+    public void shouldHaveColumnsProvidedInTheOrderThatTheyHaveConfigured() throws Exception {
+        String reportName = "visit report with order of columns configured";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(12, report.columnsCount());
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(0));
+        assertEquals("Visit Type", report.getColumnHeaderAtIndex(1));
+        assertEquals("Age", report.getColumnHeaderAtIndex(2));
+        assertEquals("Patient Identifier", report.getColumnHeaderAtIndex(3));
+        assertEquals("New patient visit", report.getColumnHeaderAtIndex(4));
+    }
+
+    @Test
+    public void shouldHaveColumnsProvidedInTheOrderThatTheyHaveConfiguredFromDifferentGroups() throws Exception {
+        String reportName = "visit report which have patient attributes configured in order of columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(19, report.columnsCount());
+        assertEquals("class", report.getColumnHeaderAtIndex(0));
+        assertEquals("cluster", report.getColumnHeaderAtIndex(1));
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(2));
+        assertEquals("Visit Status", report.getColumnHeaderAtIndex(3));
+        assertEquals("Patient Id", report.getColumnHeaderAtIndex(4));
+    }
+
+    @Test
+    public void shouldIgnoreTheColumnsWhichAreNotPresentInReport() throws Exception {
+        String reportName = "visit report with invalid columns configured in order of columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(15, report.columnsCount());
+        assertEquals("Date Of Admission", report.getColumnHeaderAtIndex(0));
+    }
+
+    @Test
+    public void shouldNotIncludeExcludedColumnsEvenThoughTheyAreConfiguredInColumnsOrder() throws Exception {
+        String reportName = "visit report with excluded columns configured in order of columns";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(9, report.columnsCount());
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(0));
+        assertEquals("Birthdate", report.getColumnHeaderAtIndex(1));
+        assertEquals("Age", report.getColumnHeaderAtIndex(2));
+    }
+
+    @Test
+    public void shouldBeCaseInsensitiveForConfiguredColumnsOrder() throws Exception {
+        String reportName = "visit report with change case columns configured in order of columns";
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(12, report.columnsCount());
+        assertEquals("Date Of Discharge", report.getColumnHeaderAtIndex(0));
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(1));
+        assertEquals("Birthdate", report.getColumnHeaderAtIndex(2));
+        assertEquals("Age", report.getColumnHeaderAtIndex(3));
+    }
+
+    @Test
+    public void shouldBeCaseInsensitiveForConfiguredColumnsOrderAndExcludeColumns() throws Exception {
+        String reportName = "visit report with excluded columns configured and order of columns with case insensitivity";
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(9, report.columnsCount());
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(0));
+        assertEquals("Birthdate", report.getColumnHeaderAtIndex(1));
+        assertEquals("Age", report.getColumnHeaderAtIndex(2));
+    }
+
 }
