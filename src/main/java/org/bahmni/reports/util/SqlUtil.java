@@ -3,8 +3,10 @@ package org.bahmni.reports.util;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.quartz.impl.jdbcjobstore.InvalidConfigurationException;
 
 import java.sql.Connection;
+import java.sql.SQLSyntaxErrorException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -57,7 +59,7 @@ public class SqlUtil {
 
         return jasperReport;
     }
-    public static ResultSet executeSqlWithStoredProc(Connection connection, String formattedSql) throws SQLException {
+    public static ResultSet executeSqlWithStoredProc(Connection connection, String formattedSql) throws SQLException, InvalidConfigurationException {
         Statement stmt;
         ResultSet rs;
         try {
@@ -73,7 +75,10 @@ public class SqlUtil {
                 }
                 hasMoreResultSets = stmt.getMoreResults(); //true if it is a resultset
             }
-        } catch (SQLException e) {
+        }catch (SQLSyntaxErrorException e){
+            throw new InvalidConfigurationException("Column that you have configured in sortBy is either not present in output of the report or it is invaid column");
+        }
+        catch (SQLException e) {
             e.printStackTrace();
             throw e;
         }

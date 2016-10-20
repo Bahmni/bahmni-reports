@@ -243,5 +243,51 @@
             "forDataAnalysis": true,
             "preferredColumns": ["class", "cluster","Patient Name","Visit Status","Patient Id", "class"]
         }
+    },
+    "visitReportWithSortByColumns": {
+        "name": "visit report with sort by columns configured",
+        "type": "visits",
+        "config": {
+            "sortBy": [{"column": "Visit Type", "sortOrder": "desc"}]
+        }
+    },
+    "visitReportWithOnlyColumnConfiguredSortByColumns": {
+        "name": "visit report with only column configured in  sort by columns",
+        "type": "visits",
+        "config": {
+            "visitAttributes": [ "Admission Status"],
+            "sortBy": [{"column": "Admission Status"},{"column" : "Visit Type","sortOrder":"desc"}]
+        }
+    },
+    "visitReportWithOnlySortByConfiguredSortByColumns": {
+        "name": "visit report with only sort by configured in  sort by columns",
+        "type": "visits",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "sortBy": [{"sortOrder":"asc"},{"sortOrder":"desc"}]
+        }
+    },
+    "visitReportWithInvalidColumnConfiguredSortByColumns": {
+        "name": "visit report with invalid column configured in  sort by columns",
+        "type": "visits",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "sortBy": [{"column" : "random", "sortOrder":"asc"},{"column":"class","sortOrder":"desc"}]
+        }
+    },
+    "visitReportWithInvalidSortOrderIsConfiguredSortByColumns": {
+        "name": "visit report with invalid sortOrder configured in  sort by columns",
+        "type": "visits",
+        "config": {
+            "sortBy": [{"column" : "Location Name", "sortOrder":"ascending"},{"column":"class","sortOrder":"descending"}]
+        }
+    },
+    "visitReportWithCaseInsensitivityColumnNameIsConfiguredSortByColumns": {
+        "name": "visit report with case insensitive column name and sort order configured in  sort by columns",
+        "type": "visits",
+        "config": {
+            "forDataAnalysis": true,
+            "sortBy": [{"column" : "paTient Id", "sortOrder":"aSc"},{"column" : "vIsIt Id","sortOrder":"dEsc"}]
+        }
     }
 }

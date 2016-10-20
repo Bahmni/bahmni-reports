@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 public class GenericLabOrderReportTest extends BaseIntegrationTest {
@@ -601,6 +602,60 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
         assertEquals("Patient Id", report.getColumnHeaderAtIndex(0));
         assertEquals("Concept Id", report.getColumnHeaderAtIndex(1));
 
+    }
+
+    @Test
+    public void shouldSortTheColumnsBasedOnTheConfiguration() throws Exception {
+        String reportName = "LabOrder report with sort by columns configured";
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(13, report.columnsCount());
+        assertTrue(report.getRowAsString(1, " ").contains("PatientIdentifier2"));
+    }
+
+    @Test
+    public void shouldSortInAscendingOrderByDefaultIfSortOrderIsNotMentionedInConfig() throws Exception {
+        String reportName = "LabOrder report with only column configured in  sort by columns";
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(15, report.columnsCount());
+        assertTrue(report.getRowAsString(1, " ").contains("BloodOrder"));
+        assertTrue(report.getRowAsString(1, " ").contains("28"));
+    }
+
+    @Test
+    public void shouldThrowExceptionIfOnlySortByIsConfiguredInConfig() throws Exception {
+        String reportName = "LabOrder report with only sort by configured in  sort by columns";
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03", true);
+
+        assertEquals("<h2>Incorrect Configuration</h2><h3>Column is not configured in sortBy</h3>", report.getReportName());
+    }
+
+    @Test
+    public void shouldThrowExceptionIfInvalidColumnIsConfigured() throws Exception {
+        String reportName = "LabOrder report with invalid column configured in  sort by columns";
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03", true);
+
+        assertEquals("<h2>Incorrect Configuration</h2><h3>Column that you have configured in sortBy is either not present in output of the report or it is invaid column</h3>", report.getReportName());
+
+    }
+
+    @Test
+    public void shouldThrowExceptionIfInvalidSortOrderIsConfigured() throws Exception {
+        String reportName = "LabOrder report with invalid sortOrder configured in  sort by columns";
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03", true);
+
+        assertEquals("<h2>Incorrect Configuration</h2><h3>Invalid sortOrder in sortBy config. Only asc or desc with case insensitivity is allowed</h3>", report.getReportName());
+    }
+
+    @Test
+    public void shouldSortTheColumnsBasedOnCaseInsensitivityOfColumnNamesAndSortOrderInSortByConfig() throws Exception {
+        String reportName = "LabOrder report with case insensitive column name and sort order configured in  sort by columns";
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03", true);
+
+        assertEquals(17, report.columnsCount());
+        assertTrue(report.getRowAsString(1, " ").contains("1000"));
+        assertTrue(report.getRowAsString(1, " ").contains("Abnormal"));
     }
 
 }

@@ -356,5 +356,51 @@
             "excludeColumns": ["Patient Name","Visit Type"],
             "preferredColumns" : ["Visit Type","Patient Name","Patient Id","Concept Id"]
         }
+    },
+    "LabOrderReportWithSortByColumns": {
+        "name": "LabOrder report with sort by columns configured",
+        "type": "labOrders",
+        "config": {
+            "sortBy": [{"column": "Patient Identifier", "sortOrder": "asc"}]
+        }
+    },
+    "LabOrderReportWithOnlyColumnConfiguredSortByColumns": {
+        "name": "LabOrder report with only column configured in  sort by columns",
+        "type": "labOrders",
+        "config": {
+            "visitAttributes": [ "Visit Status","Admission Status"],
+            "sortBy": [{"column": "Test Name"},{"column" : "Age","sortOrder":"desc"}]
+        }
+    },
+    "LabOrderReportWithOnlySortByConfiguredSortByColumns": {
+        "name": "LabOrder report with only sort by configured in  sort by columns",
+        "type": "labOrders",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "sortBy": [{"sortOrder":"asc"},{"sortOrder":"desc"}]
+        }
+    },
+    "LabOrderReportWithInvalidColumnConfiguredSortByColumns": {
+        "name": "LabOrder report with invalid column configured in  sort by columns",
+        "type": "labOrders",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "sortBy": [{"column" : "random", "sortOrder":"asc"},{"column":"class","sortOrder":"desc"}]
+        }
+    },
+    "LabOrderReportWithInvalidSortOrderIsConfiguredSortByColumns": {
+        "name": "LabOrder report with invalid sortOrder configured in  sort by columns",
+        "type": "labOrders",
+        "config": {
+            "sortBy": [{"column" : "Location Name", "sortOrder":"ascending"},{"column":"class","sortOrder":"descending"}]
+        }
+    },
+    "LabOrderReportWithCaseInsensitivityColumnNameIsConfiguredSortByColumns": {
+        "name": "LabOrder report with case insensitive column name and sort order configured in  sort by columns",
+        "type": "labOrders",
+        "config": {
+            "forDataAnalysis": true,
+            "sortBy": [{"column" : "conCePt Id", "sortOrder":"aSc"},{"column" : "TeSt OuTcoMe","sortOrder":"dEsc"}]
+        }
     }
 }
