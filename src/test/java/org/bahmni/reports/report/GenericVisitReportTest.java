@@ -308,4 +308,17 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         assertEquals("Age", report.getColumnHeaderAtIndex(2));
     }
 
+    @Test
+    public void shouldIgnoreDuplicatePreferredColumn() throws Exception {
+        String reportName = "visit report which have patient attributes configured in order of columns with duplicate preferred column";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(19, report.columnsCount());
+        assertEquals("class", report.getColumnHeaderAtIndex(0));
+        assertEquals("cluster", report.getColumnHeaderAtIndex(1));
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(2));
+        assertEquals("Visit Status", report.getColumnHeaderAtIndex(3));
+        assertEquals("Patient Id", report.getColumnHeaderAtIndex(4));
+    }
 }

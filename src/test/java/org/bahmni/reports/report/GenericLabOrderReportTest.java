@@ -551,6 +551,18 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
     }
 
     @Test
+    public void shouldReturnTheColumnsInSpecifiedOrderWithDuplicatePreferredColumns() throws Exception {
+        String reportName = "LabOrder report with order of columns configured with duplicates";
+        CsvReport report = fetchCsvReport(reportName, "2014-08-9", "2014-09-10");
+        assertEquals(13, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals("Birthdate", report.getColumnHeaderAtIndex(0));
+        assertEquals("Test Order Date", report.getColumnHeaderAtIndex(1));
+        assertEquals("File Uploaded", report.getColumnHeaderAtIndex(2));
+        assertEquals("Min Range", report.getColumnHeaderAtIndex(3));
+    }
+
+    @Test
     public void shouldReturnTheColumnsInSpecifiedOrderWhenTheyBelongToDifferentConfigs() throws Exception {
         String reportName = "LabOrder report with order of columns configured belong to two different sections";
 

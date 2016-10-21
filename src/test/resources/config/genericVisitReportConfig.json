@@ -233,5 +233,15 @@
             "excludeColumns": ["Date of Discharge","Visit Type","New patient visit"],
             "preferredColumns": ["new patient visit", "date of discharge","Patient name","Birthdate","Age","visit Type"]
         }
+    },
+    "visitReportWithPatientAttributesConfiguredInOrderOfColumnsHavingDuplicatePreferredColumn": {
+        "name": "visit report which have patient attributes configured in order of columns with duplicate preferred column",
+        "type": "visits",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "visitAttributes" : [ "Visit Status", "Admission Status"],
+            "forDataAnalysis": true,
+            "preferredColumns": ["class", "cluster","Patient Name","Visit Status","Patient Id", "class"]
+        }
     }
 }

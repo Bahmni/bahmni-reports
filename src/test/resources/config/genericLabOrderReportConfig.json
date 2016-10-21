@@ -318,6 +318,13 @@
             "preferredColumns" : ["Birthdate","Test Order Date","File Uploaded","Min Range"]
         }
     },
+    "LabOrderReportWithOrderOfColumnsConfiguredWithDuplicatePreferredColumn": {
+        "name": "LabOrder report with order of columns configured with duplicates",
+        "type": "labOrders",
+        "config": {
+            "preferredColumns" : ["Birthdate","Test Order Date","File Uploaded","Min Range", "Birthdate"]
+        }
+    },
     "LabOrderReportWithOrderOfColumnsConfiguredBelongToTwoDifferentSections": {
         "name": "LabOrder report with order of columns configured belong to two different sections",
         "type": "labOrders",
