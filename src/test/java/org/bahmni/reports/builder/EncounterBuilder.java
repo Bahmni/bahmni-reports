@@ -31,6 +31,11 @@ public class EncounterBuilder {
         return this;
     }
 
+    public EncounterBuilder withDateCreated(String dateTime) {
+        encounter.setDateCreated(DateUtil.parseDate(dateTime));
+        return this;
+    }
+
     public EncounterBuilder withEncounterType(EncounterType encounterType) {
         encounter.setEncounterType(encounterType);
         return this;

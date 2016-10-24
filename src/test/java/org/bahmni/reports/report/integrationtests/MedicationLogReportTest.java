@@ -54,7 +54,9 @@ public class MedicationLogReportTest extends BaseIntegrationTest {
 
 
         EncounterType encounterType = Context.getEncounterService().getEncounterType(7);
-        Encounter encounter = new EncounterBuilder().withPatient(patient).withDatetime("2015-11-02").withVisit(visit).withEncounterType(encounterType).build();
+        Encounter encounter = new EncounterBuilder().withPatient(patient).withDatetime("2015-11-02")
+                .withDateCreated("2016-03-04").withVisit(visit)
+                .withEncounterType(encounterType).build();
         Context.getEncounterService().saveEncounter(encounter);
 
         EncounterRole encounterRole = Context.getEncounterService().getEncounterRole(1);
