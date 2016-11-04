@@ -17,8 +17,7 @@ import org.bahmni.reports.web.ReportHeader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.report;
 
@@ -46,9 +45,21 @@ public class BahmniReportUtil {
         return false;
     }
 
+    private static List<String> removeDuplicatesFrom(List<String> duplicates) {
+        List<String> disticts = new ArrayList<String>();
+        if (duplicates != null && !duplicates.isEmpty())
+            for (String word : duplicates) {
+                if (!disticts.contains(word)) {
+                    disticts.add(word);
+                }
+            }
+        return disticts;
+    }
+
     private static void orderColumns(Config config, JasperReportBuilder reportBuilder){
         if (config instanceof GenericReportsConfig) {
-            List<String> columns = ((GenericReportsConfig) config).getPreferredColumns();
+            List<String> allColumns = ((GenericReportsConfig) config).getPreferredColumns();
+            List<String> columns = removeDuplicatesFrom(allColumns);
             List<String> excludeColumns = ((GenericReportsConfig) config).getExcludeColumns();
             if (columns != null && columns.size() > 0) {
                 DRReport drReport = reportBuilder.getReport();

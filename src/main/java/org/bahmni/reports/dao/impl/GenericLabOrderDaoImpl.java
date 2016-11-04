@@ -5,6 +5,7 @@ import org.bahmni.reports.dao.GenericDao;
 import org.bahmni.reports.model.GenericLabOrderReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.util.SqlUtil;
+import org.quartz.impl.jdbcjobstore.InvalidConfigurationException;
 import org.stringtemplate.v4.ST;
 
 import java.sql.Connection;
@@ -29,7 +30,7 @@ public class GenericLabOrderDaoImpl implements GenericDao {
     @Override
     public ResultSet getResultSet(Connection connection,
                                   String startDate, String endDate, List<String> conceptNamesToFilter)
-            throws SQLException {
+            throws SQLException, InvalidConfigurationException {
         String sql = getFileContent("sql/genericLabOrderReport.sql");
         ST sqlTemplate = new ST(sql, '#', '#');
         sqlTemplate.add("startDate", startDate);
@@ -50,6 +51,9 @@ public class GenericLabOrderDaoImpl implements GenericDao {
             sqlTemplate.add("extraPatientIdentifierTypes", constructExtraPatientIdentifiersToFilter(report.getConfig()));
             sqlTemplate.add("ageGroupName", report.getConfig().getAgeGroupName());
             sqlTemplate.add("showReferredOutTests", report.getConfig().showReferredOutTests());
+            if(report.getConfig().getSortBy() != null && report.getConfig().getSortBy().size() > 0) {
+                sqlTemplate.add("sortByColumns", constructSortByColumnsOrder(report.getConfig()));
+            }
         }
 
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());

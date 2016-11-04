@@ -651,6 +651,54 @@
             "excludeColumns": ["Concept Id","Order Id"],
             "preferredColumns": ["Concept Id", "Order Id","Patient Name","Birthdate","Age","Patient Identifier"]
         }
+    },
+    "observationReportWithSortByColumns": {
+        "name": "Observation report with sort by columns configured",
+        "type": "observations",
+        "config": {
+            "sortBy": [{"column": "Patient Identifier", "sortOrder": "desc"}],
+            "preferredColumns": ["Concept Id", "Order Id","Patient Name","Birthdate","Age","Patient Identifier"]
+        }
+    },
+    "observationReportWithOnlyColumnConfiguredSortByColumns": {
+        "name": "Observation report with only column configured in  sort by columns",
+        "type": "observations",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "sortBy": [{"column": "Location Name"},{"column" : "Value","sortOrder":"desc"}]
+        }
+    },
+    "observationReportWithOnlySortByConfiguredSortByColumns": {
+        "name": "Observation report with only sort by configured in  sort by columns",
+        "type": "observations",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "sortBy": [{"sortOrder":"asc"},{"sortOrder":"desc"}]
+        }
+    },
+    "observationReportWithInvalidColumnConfiguredSortByColumns": {
+        "name": "Observation report with invalid column configured in  sort by columns",
+        "type": "observations",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "sortBy": [{"column" : "random", "sortOrder":"asc"},{"column":"class","sortOrder":"desc"}]
+        }
+    },
+    "observationReportWithInvalidSortOrderIsConfiguredSortByColumns": {
+        "name": "Observation report with invalid sortOrder configured in  sort by columns",
+        "type": "observations",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "sortBy": [{"column" : "Location Name", "sortOrder":"ascending"},{"column":"class","sortOrder":"descending"}]
+        }
+    },
+    "observationReportWithCaseInsensitivityColumnNameIsConfiguredSortByColumns": {
+        "name": "Observation report with case insensitive column name and sort order configured in  sort by columns",
+        "type": "observations",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "sortBy": [{"column" : "locatioN NaMe", "sortOrder":"aSc"},{"column" : "vAlUe","sortOrder":"dEsc"}]
+        }
     }
 
 }

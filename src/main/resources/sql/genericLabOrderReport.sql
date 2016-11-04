@@ -10,6 +10,7 @@ SET @showProvider = '#showProvider#';
 SET @extraPatientIdentifierTypes = '#extraPatientIdentifierTypes#';
 SET @applyAgeGroup = '#ageGroupName#';
 SET @showReferredOutTests = '#showReferredOutTests#';
+SET @sortByColumns = '#sortByColumns#';
 
 SET @visitAttributeJoinSql = ' LEFT JOIN visit_attribute va ON va.visit_id=v.visit_id AND va.voided is false
   LEFT JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.retired is false';
@@ -200,6 +201,7 @@ FROM (SELECT * FROM orders ord WHERE cast(ord.date_activated AS DATE) BETWEEN "#
                   IF(@filterByConceptNames != '' OR @filterByConceptValues != '' OR @showReferredOutTests ='false' , ' WHERE', ''),
                   IF(@filterByConceptNames = '', '', @conceptNamesToFilterSql), '
    ', IF(@filterByConceptValues = '', '', @filterByConceptValuesSql),'
+   ',IF(@sortByColumns != '', @sortByColumns, ''),'
    ',If(@showReferredOutTests = 'false' ,@referredOutFilter,'')
 
 );

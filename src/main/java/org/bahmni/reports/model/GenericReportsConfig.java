@@ -1,6 +1,7 @@
 package org.bahmni.reports.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class GenericReportsConfig {
@@ -12,6 +13,7 @@ public class GenericReportsConfig {
     private List<String> additionalPatientIdentifiers;
     private String ageGroupName;
     private List<String> preferredColumns;
+    private List<HashMap<String,String>> sortBy;
 
     public List<String> getExcludeColumns() {
         return excludeColumns;
@@ -75,5 +77,13 @@ public class GenericReportsConfig {
 
     public void setPreferredColumns(List<String> preferredColumns) {
         this.preferredColumns = preferredColumns;
+    }
+
+    public List<HashMap<String, String>> getSortBy() {
+        return sortBy;
+    }
+
+    public void setSortBy(List<HashMap<String, String>> sortBy) {
+        this.sortBy = sortBy;
     }
 }

@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GenericVisitReportTest extends BaseIntegrationTest {
     public GenericVisitReportTest() {
@@ -308,4 +309,74 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         assertEquals("Age", report.getColumnHeaderAtIndex(2));
     }
 
+    @Test
+    public void shouldIgnoreDuplicatePreferredColumn() throws Exception {
+        String reportName = "visit report which have patient attributes configured in order of columns with duplicate preferred column";
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03");
+
+        assertEquals(19, report.columnsCount());
+        assertEquals("class", report.getColumnHeaderAtIndex(0));
+        assertEquals("cluster", report.getColumnHeaderAtIndex(1));
+        assertEquals("Patient Name", report.getColumnHeaderAtIndex(2));
+        assertEquals("Visit Status", report.getColumnHeaderAtIndex(3));
+        assertEquals("Patient Id", report.getColumnHeaderAtIndex(4));
+    }
+    public void shouldSortTheColumnsBasedOnTheConfiguration() throws Exception {
+        String reportName = "visit report with sort by columns configured";
+        CsvReport report = fetchCsvReport(reportName, "2016-03-01", "2020-08-03");
+
+        assertEquals(12, report.columnsCount());
+        assertTrue(report.getRowAsString(1, " ").contains("Return TB Clinic Visit"));
+        assertTrue(report.getRowAsString(2, " ").contains("Initial HIV Clinic Visit"));
+    }
+
+    @Test
+    public void shouldSortInAscendingOrderByDefaultIfSortOrderIsNotMentionedInConfig() throws Exception {
+        String reportName = "visit report with only column configured in  sort by columns";
+        CsvReport report = fetchCsvReport(reportName, "2016-03-01", "2020-08-03");
+
+        assertEquals(13, report.columnsCount());
+        assertTrue(report.getRowAsString(1, " ").contains("Admitted"));
+        assertTrue(report.getRowAsString(1, " ").contains("Return TB Clinic Visit"));
+        assertTrue(report.getRowAsString(2, " ").contains("Initial HIV Clinic Visit"));
+        assertTrue(report.getRowAsString(3, " ").contains("Discharged"));
+    }
+
+    @Test
+    public void shouldThrowExceptionIfOnlySortByIsConfiguredInConfig() throws Exception {
+        String reportName = "visit report with only sort by configured in  sort by columns";
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03", true);
+
+        assertEquals("<h2>Incorrect Configuration</h2><h3>Column is not configured in sortBy</h3>", report.getReportName());
+    }
+
+    @Test
+    public void shouldThrowExceptionIfInvalidColumnIsConfigured() throws Exception {
+        String reportName = "visit report with invalid column configured in  sort by columns";
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03", true);
+
+        assertEquals("<h2>Incorrect Configuration</h2><h3>Column that you have configured in sortBy is either not present in output of the report or it is invaid column</h3>", report.getReportName());
+
+    }
+
+    @Test
+    public void shouldThrowExceptionIfInvalidSortOrderIsConfigured() throws Exception {
+        String reportName = "visit report with invalid sortOrder configured in  sort by columns";
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03", true);
+
+        assertEquals("<h2>Incorrect Configuration</h2><h3>Invalid sortOrder in sortBy config. Only asc or desc with case insensitivity is allowed</h3>", report.getReportName());
+    }
+
+    @Test
+    public void shouldSortTheColumnsBasedOnCaseInsensitivityOfColumnNamesAndSortOrderInSortByConfig() throws Exception {
+        String reportName = "visit report with case insensitive column name and sort order configured in  sort by columns";
+        CsvReport report = fetchCsvReport(reportName, "2016-03-01", "2020-08-03", true);
+
+        assertEquals(14, report.columnsCount());
+        assertTrue(report.getRowAsString(1, " ").contains("2"));
+        assertTrue(report.getRowAsString(1, " ").contains("8"));
+        assertTrue(report.getRowAsString(2, " ").contains("7"));
+        assertTrue(report.getRowAsString(3, " ").contains("3"));
+    }
 }

@@ -234,5 +234,51 @@
             "excludeColumns": ["Gender","Completed Date","EnrolledDate"],
             "preferredColumns": ["Gender","Birthdate","Age","Completed Date"]
         }
+    },
+    "programReportWithSortByColumns": {
+        "name": "program report with sort by columns configured",
+        "type": "programs",
+        "config": {
+            "sortBy": [{"column": "Program Name", "sortOrder": "desc"}]
+        }
+    },
+    "programReportWithOnlyColumnConfiguredSortByColumns": {
+        "name": "program report with only column configured in  sort by columns",
+        "type": "programs",
+        "config": {
+            "showAllStates": true,
+            "sortBy": [{"column": "Enrolled Date"},{"column" : "Patient Identifier","sortOrder":"desc"}]
+        }
+    },
+    "programReportWithOnlySortByConfiguredSortByColumns": {
+        "name": "program report with only sort by configured in  sort by columns",
+        "type": "programs",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "sortBy": [{"sortOrder":"asc"},{"sortOrder":"desc"}]
+        }
+    },
+    "programReportWithInvalidColumnConfiguredSortByColumns": {
+        "name": "program report with invalid column configured in  sort by columns",
+        "type": "programs",
+        "config": {
+            "patientAttributes": ["secondaryContact","class","cluster"],
+            "sortBy": [{"column" : "random", "sortOrder":"asc"},{"column":"class","sortOrder":"desc"}]
+        }
+    },
+    "programReportWithInvalidSortOrderIsConfiguredSortByColumns": {
+        "name": "program report with invalid sortOrder configured in  sort by columns",
+        "type": "programs",
+        "config": {
+            "sortBy": [{"column" : "Location Name", "sortOrder":"ascending"},{"column":"class","sortOrder":"descending"}]
+        }
+    },
+    "programReportWithCaseInsensitivityColumnNameIsConfiguredSortByColumns": {
+        "name": "program report with case insensitive column name and sort order configured in  sort by columns",
+        "type": "programs",
+        "config": {
+            "forDataAnalysis": true,
+            "sortBy": [{"column" : "paTient Id", "sortOrder":"aSc"},{"column" : "pRoGram Id","sortOrder":"dEsc"}]
+        }
     }
 }

@@ -5,9 +5,11 @@ import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.model.GenericReportsConfig;
+import org.quartz.impl.jdbcjobstore.InvalidConfigurationException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
@@ -110,5 +112,24 @@ public class GenericReportsHelper {
         if (StringUtils.isEmpty(config.getAgeGroupName())) return;
         TextColumnBuilder<String> ageGroupColumn = col.column(config.getAgeGroupName(), config.getAgeGroupName(), type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
         jasperReport.addColumn(ageGroupColumn);
+    }
+
+    public static String constructSortByColumnsOrder(GenericReportsConfig config) throws InvalidConfigurationException {
+        List<HashMap<String, String>> sortOrder = config.getSortBy();
+        String helperString = "ORDER BY ";
+        for (HashMap<String, String> columns : sortOrder) {
+            if (columns.get("column") == null) {
+                throw new InvalidConfigurationException("Column is not configured in sortBy");
+            }
+            if (columns.get("sortOrder") == null) {
+                columns.put("sortOrder", "asc");
+            }
+            if (!(columns.get("sortOrder").equalsIgnoreCase("asc") || columns.get("sortOrder").equalsIgnoreCase("desc"))) {
+                throw new InvalidConfigurationException("Invalid sortOrder in sortBy config. Only asc or desc with case insensitivity is allowed");
+            }
+            helperString = helperString.concat('`' + columns.get("column") + "` " + columns.get("sortOrder").toUpperCase() + ", ");
+        }
+        helperString = helperString.substring(0, helperString.lastIndexOf(","));
+        return helperString;
     }
 }

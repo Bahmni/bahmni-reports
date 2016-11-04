@@ -13,6 +13,7 @@ SET @selectConceptNamesSql = '#selectConceptNamesSql#';
 SET @showProvider = '#showProvider#';
 SET @applyAgeGroup = '#ageGroupName#';
 SET @visitTypesToFilterSql = '#visitTypesToFilter#';
+SET @sortByColumns = '#sortByColumns#';
 SET @extraPatientIdentifierTypes = '#extraPatientIdentifierTypes#';
 SET @visitAttributeJoinSql = ' LEFT OUTER JOIN visit_attribute va ON va.visit_id=v.visit_id AND va.voided is false
   LEFT OUTER JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.retired is false';
@@ -105,7 +106,8 @@ FROM obs o
 WHERE o.voided is false
   ',IF(@locationTagsToFilterSql = '', '', 'AND l.location_id in (SELECT ltm.location_id from location_tag_map ltm JOIN location_tag lt ON ltm.location_tag_id=lt.location_tag_id AND lt.retired is false AND lt.name in (#locationTagsToFilter#))'),'
   ',@dateRangeSql,IF(@visitTypesToFilterSql = '', '', 'AND vt.name in (#visitTypesToFilter#)'),'
-GROUP BY e.encounter_id');
+GROUP BY e.encounter_id
+',IF(@sortByColumns != '', @sortByColumns, ''));
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;

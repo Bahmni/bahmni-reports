@@ -9,6 +9,7 @@ import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
+import org.quartz.impl.jdbcjobstore.InvalidConfigurationException;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -22,7 +23,7 @@ import static org.bahmni.reports.util.GenericVisitReportTemplateHelper.*;
 public class GenericVisitReportTemplate extends BaseReportTemplate<GenericVisitReportConfig> {
 
     @Override
-    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<GenericVisitReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<GenericVisitReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException, InvalidConfigurationException {
         CommonComponents.addTo(jasperReport, report, pageType);
 
         jasperReport.setShowColumnTitle(true)

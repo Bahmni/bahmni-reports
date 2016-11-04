@@ -15,6 +15,7 @@ SET @showProvider = '#showProvider#';
 SET @visitTypesToFilterSql = '#visitTypesToFilter#';
 SET @extraPatientIdentifierTypes = '#extraPatientIdentifierTypes#';
 SET @applyAgeGroup = '#ageGroupName#';
+SET @sortByColumns = '#sortByColumns#';
 SET @visitAttributeJoinSql = ' LEFT OUTER JOIN visit_attribute va ON va.visit_id=v.visit_id AND va.voided is false
   LEFT OUTER JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.retired is false';
 SET @patientAttributeJoinSql = ' LEFT OUTER JOIN person_attribute pa ON p.person_id = pa.person_id AND pa.voided is false
@@ -132,7 +133,8 @@ WHERE o.voided is false
   ON ltm.location_tag_id=lt.location_tag_id AND lt.retired is false AND lt.name in (#locationTagsToFilter#))'),'
   ',@dateRangeSql,IF(@visitTypesToFilterSql = '', '', 'AND vt.name in (#visitTypesToFilter#)'),
   IF(@filterByConceptValues = '', '', @filterByConceptValuesSql),
-                  ' GROUP BY o.obs_id ',IF(@ignoreEmptyValues = '', '', @ignoreEmptyValues),';');
+                  ' GROUP BY o.obs_id ',IF(@ignoreEmptyValues = '', '', @ignoreEmptyValues),'
+                  ', IF(@sortByColumns != '', @sortByColumns, ''), ';');
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
