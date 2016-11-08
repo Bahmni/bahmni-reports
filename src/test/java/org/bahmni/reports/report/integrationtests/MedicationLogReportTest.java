@@ -23,16 +23,16 @@ public class MedicationLogReportTest extends BaseIntegrationTest {
     @Before
     public void setUp() throws Exception {
 
-        Concept medicationLogConcept = new ConceptBuilder().withClassId(11).withDataTypeId(4).withName("Medication log Template").withShortName("Medication Log").build();
+        Concept medicationLogConcept = new ConceptBuilder().withClassId(11).withDataTypeId(4).withName("Medication log Template").withShortName("Medication Log").withDescription("Medication template").build();
         Context.getConceptService().saveConcept(medicationLogConcept);
 
-        Concept tbTreatmentStartConcept = new ConceptBuilder().withClassId(11).withDataTypeId(4).withName("TB Treatment Start").withShortName("TB treatment start").build();
+        Concept tbTreatmentStartConcept = new ConceptBuilder().withClassId(11).withDataTypeId(4).withName("TB Treatment Start").withShortName("TB treatment start").withDescription("TB start").build();
         Context.getConceptService().saveConcept(tbTreatmentStartConcept);
 
-        Concept typeOfTreatmentRegimen = new ConceptBuilder().withClassId(11).withDataTypeId(2).withName("Medication log, Type of treatment regimen").withShortName("Type of regimen").build();
+        Concept typeOfTreatmentRegimen = new ConceptBuilder().withClassId(11).withDataTypeId(2).withName("Medication log, Type of treatment regimen").withShortName("Type of regimen").withDescription("regimen").build();
         Context.getConceptService().saveConcept(typeOfTreatmentRegimen);
 
-        Concept onlyFirstLineDrugsConcept = new ConceptBuilder().withClassId(11).withDataTypeId(4).withName("Only 1st line drugs").withShortName("").build();
+        Concept onlyFirstLineDrugsConcept = new ConceptBuilder().withClassId(11).withDataTypeId(4).withName("Only 1st line drugs").withShortName("").withDescription("1st line drugs").build();
         Context.getConceptService().saveConcept(onlyFirstLineDrugsConcept);
 
 
@@ -68,10 +68,8 @@ public class MedicationLogReportTest extends BaseIntegrationTest {
         Context.getEncounterService().saveEncounter(encounter);
 
         Obs typeOfRegimenObs = new ObsBuilder().withConcept(typeOfTreatmentRegimen).withEncounter(encounter).withDatetime(DateUtil.parseDate("2015-11-02")).withValue(onlyFirstLineDrugsConcept).withPerson(person).build();
-        Context.getObsService().saveObs(typeOfRegimenObs, "");
 
         Obs tbTreatmentStartObs = new ObsBuilder().withConcept(tbTreatmentStartConcept).withEncounter(encounter).withDatetime(DateUtil.parseDate("2015-11-02")).withGroupMembers(typeOfRegimenObs).withPerson(person).build();
-        Context.getObsService().saveObs(tbTreatmentStartObs, "");
 
         Obs medicationLogTemplateObs = new ObsBuilder().withConcept(medicationLogConcept).withEncounter(encounter).withDatetime(DateUtil.parseDate("2015-11-02")).withGroupMembers(tbTreatmentStartObs).withPerson(person).build();
         Context.getObsService().saveObs(medicationLogTemplateObs, "");

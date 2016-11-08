@@ -17,10 +17,10 @@ public class OrderFulfillmentReportTest extends BaseIntegrationTest {
 
     @Before
     public void setUp() {
-        Concept concept = new ConceptBuilder().withClassId(3).withDataTypeId(2).withName("Plain Concept").withShortName("Plain Concept").build();
+        Concept concept = new ConceptBuilder().withClassId(3).withDataTypeId(2).withName("Plain Concept").withShortName("Plain Concept").withDescription("Plain").build();
         Context.getConceptService().saveConcept(concept);
 
-        Concept anotherConcept = new ConceptBuilder().withClassId(3).withDataTypeId(2).withName("Plain concept 2").withShortName("Plain concpet 2").build();
+        Concept anotherConcept = new ConceptBuilder().withClassId(3).withDataTypeId(2).withName("Plain concept 2").withShortName("Plain concpet 2").withDescription("Plain2").build();
         Context.getConceptService().saveConcept(anotherConcept);
 
         Patient patient = Context.getPatientService().getPatient(2);

@@ -3,7 +3,7 @@ SET @sql = NULL;
 SET @conceptObsPivot = NULL;
 SELECT
   GROUP_CONCAT(
-      CONCAT('GROUP_CONCAT(IF(obsConcept.name = \'', name, '\', coalesce(obs.value_numeric, obs.value_boolean, obs.value_datetime, obs.value_text, coded_value.name), NULL)) as \'', name, '\''))
+      CONCAT('GROUP_CONCAT(IF(obsConcept.name = \'', name, '\', coalesce(obs.value_numeric, obs.value_datetime, obs.value_text, coded_value.name), NULL)) as \'', name, '\''))
 into @conceptObsPivot
 FROM concept_name where concept_name.name in (#conceptNames#) and concept_name_type = 'FULLY_SPECIFIED';
 

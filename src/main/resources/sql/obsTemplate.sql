@@ -49,7 +49,6 @@ SET @sql = CONCAT('SELECT
                        e.date_created,
                        e.encounter_datetime,
                        ob.value_numeric,
-                       ob.value_boolean,
                        ob.value_datetime,
                        ob.date_created AS obs_date,
                        ob.value_text,
