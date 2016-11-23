@@ -110,7 +110,7 @@
         <dependency>
             <groupId>org.bahmni.module</groupId>
             <artifactId>mail-appender</artifactId>
-            <version>5.3-SNAPSHOT</version>
+            <version>0.86-SNAPSHOT</version>
             <type>jar</type>
         </dependency>
         <dependency>
