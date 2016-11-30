@@ -1,4 +1,3 @@
-
 package org.bahmni.reports.template;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
@@ -33,6 +32,7 @@ public class ConcatenatedReportTemplate extends BaseReportTemplate<ConcatenatedR
         List<JasperReportBuilder> reportBuilders = new ArrayList<>();
 
         for (Report subReport : subReports) {
+            subReport.setHttpClient(concatenatedReport.getHttpClient());
             BahmniReportBuilder reportBuilder = BahmniReportUtil.build(subReport, connection,
                     startDate, endDate, resources, pageType, bahmniReportsProperties);
             reportBuilders.addAll(reportBuilder.getReportBuilders());
