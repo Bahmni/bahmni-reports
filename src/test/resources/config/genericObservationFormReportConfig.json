@@ -438,6 +438,16 @@
                     "Vitals"
                 ]
             }
+        },"observationFormReportWithFullySpecifiedandShortNameConceptNameDisplayConfig": {
+            "name": "Observation form report with fully specified and short name concept  name format",
+            "type": "forms",
+            "config": {
+                "conceptNameDisplayFormat": "fullySpecifiedName(shortName)",
+                "encounterPerRow": true,
+                "formNamesToFilter": [
+                    "Vitals"
+                ]
+            }
         },
         "observationFormReportWithShortConceptNameDisplayConfig": {
             "name": "Observation form report with short concept name preferred format",

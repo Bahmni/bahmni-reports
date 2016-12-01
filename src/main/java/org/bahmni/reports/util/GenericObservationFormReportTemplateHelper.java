@@ -134,6 +134,12 @@ public class GenericObservationFormReportTemplateHelper extends GenericReportsHe
                 return preferShortConceptName(conceptName);
             case "fullySpecifiedName":
                 return conceptName.getFullySpecifiedName();
+            case "fullySpecifiedName(shortName)":
+                if (conceptName.getShortName() == null) {
+                    return conceptName.getFullySpecifiedName();
+                } else {
+                return conceptName.getFullySpecifiedName() + "(" + conceptName.getShortName() + ")";
+                }
             default:
                 return getDefaultConceptNameDisplayFormat(conceptName);
         }

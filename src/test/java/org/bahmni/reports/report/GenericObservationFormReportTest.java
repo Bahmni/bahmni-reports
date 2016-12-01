@@ -479,6 +479,25 @@ public class GenericObservationFormReportTest extends BaseIntegrationTest {
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari 180 80", report.getRowAsString(1, " "));
         assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari 170 70", report.getRowAsString(2, " "));
     }
+@Test
+    public void shouldShowFullySpecifiedNameAndShortNameOfConceptIfConfigured() throws Exception {
+        String reportName = "Observation form report with fully specified and short name concept  name format";
+        List<ConceptName> objectList = new ArrayList<>();
+        objectList.add(new ConceptName("Height", "HeightShort"));
+        objectList.add(new ConceptName("Weight",null));
+        URI getLeafConceptsUri = URI.create(bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/leafConceptNames?conceptNames=Vitals");
+        when(httpClient.get(getLeafConceptsUri)).thenReturn(new ObjectMapper().writeValueAsString(objectList));
+
+        CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2016-08-30");
+
+        assertEquals(8, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(2, report.rowsCount());
+        assertThat(report.getColumnHeaderAtIndex(6), is("Height(HeightShort)"));
+        assertThat(report.getColumnHeaderAtIndex(7), is("Weight"));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Ganiyari 180 80", report.getRowAsString(1, " "));
+        assertEquals("OBS1 Generic Observation1 11 15-Aug-2004 F Chithari 170 70", report.getRowAsString(2, " "));
+    }
 
     @Test
     public void shouldShowShortNameOfConceptIfConfigured() throws Exception {
