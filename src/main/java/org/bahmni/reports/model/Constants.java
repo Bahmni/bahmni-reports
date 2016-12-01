@@ -5,5 +5,6 @@ public class Constants {
     public static final String PROGRAMS = "programs";
     public static final String VISITS = "visits";
     public static final String OBSERVAIONS = "observations";
+    public static final String OBSERVAIONFORMS = "forms";
     public static final String LABORDERS = "labOrders";
 }

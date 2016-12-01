@@ -149,7 +149,10 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         if (CollectionUtils.isEmpty(conceptNamesToFilter)) {
             return new ArrayList<>();
         }
-        HttpClient httpClient = report.getHttpClient();
+        return fetchConcepts(conceptNamesToFilter, report.getHttpClient(), bahmniReportsProperties);
+    }
+
+    public static List<ConceptName> fetchConcepts(List<String> conceptNamesToFilter, HttpClient httpClient, BahmniReportsProperties bahmniReportsProperties){
         try {
             String url = bahmniReportsProperties.getOpenmrsRootUrl() + "/reference-data/leafConceptNames?" + getConceptNamesParameter(conceptNamesToFilter);
             String response = httpClient.get(new URI(url));
@@ -162,6 +165,7 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         }
         return null;
     }
+
 
    public static List<String> fetchChildConceptsAsList(Report<GenericObservationReportConfig> report, BahmniReportsProperties bahmniReportsProperties) throws WebClientsException {
         List<String> conceptNamesToFilter = getConceptNamesToFilter(report.getConfig());
@@ -182,7 +186,7 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         return null;
     }
 
-    private static String getConceptNamesParameter(List<String> conceptNamesToFilter) {
+    public static String getConceptNamesParameter(List<String> conceptNamesToFilter) {
         List<String> parameters = new ArrayList<>();
         for (String conceptName : conceptNamesToFilter) {
             try {

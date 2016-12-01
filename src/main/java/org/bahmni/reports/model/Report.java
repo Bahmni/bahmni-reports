@@ -47,6 +47,7 @@ import static org.bahmni.reports.model.Constants.*;
         @JsonSubTypes.Type(value = VisitReport.class, name = "visitReport"),
         @JsonSubTypes.Type(value = GenericVisitReport.class, name = VISITS),
         @JsonSubTypes.Type(value = GenericObservationReport.class, name = OBSERVAIONS),
+        @JsonSubTypes.Type(value = GenericObservationFormReport.class, name = OBSERVAIONFORMS),
         @JsonSubTypes.Type(value = ObsCannedReport.class, name = "obsCannedReport"),
         @JsonSubTypes.Type(value = GenericProgramReport.class, name = PROGRAMS),
         @JsonSubTypes.Type(value = AggregationReport.class, name = "aggregation"),
