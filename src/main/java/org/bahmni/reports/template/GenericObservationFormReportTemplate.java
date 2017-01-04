@@ -60,18 +60,23 @@ public class GenericObservationFormReportTemplate extends BaseReportTemplate<Gen
         List<String> formNamesToFilter = new ArrayList<>();
         createAndAddDefaultColumns(jasperReport, report.getConfig());
         if (report.getConfig() != null && (!CollectionUtils.isEmpty(report.getConfig().getFormNamesToFilter()))) {
-            createAndAddExtraPatientIdentifierTypes(jasperReport, report.getConfig());
-            createAndAddVisitAttributeColumns(jasperReport, report.getConfig());
-            createAndAddPatientAttributeColumns(jasperReport, report.getConfig());
-            createAndAddProgramsToFilterColumns(jasperReport, report.getConfig());
-            createAndAddPatientAddressColumns(jasperReport, report.getConfig());
-            createAndAddProviderNameColumn(jasperReport, report.getConfig());
-            createAndAddVisitInfoColumns(jasperReport, report.getConfig());
-            List<ConceptName> leafConceptNames = fetchLeafConceptsAsList(report, bahmniReportsProperties);
-            createAndAddConceptColumns(leafConceptNames, jasperReport, report.getConfig().getConceptNameDisplayFormat());
-            formNamesToFilter = getListOfFullySpecifiedNames(leafConceptNames);
-            createAndAddDataAnalysisColumns(jasperReport, report.getConfig());
-            createAndAddAgeGroupColumn(jasperReport, report.getConfig());
+           if(fetchLeafConceptsAsList(report, bahmniReportsProperties).size() != 0) {
+               createAndAddExtraPatientIdentifierTypes(jasperReport, report.getConfig());
+               createAndAddVisitAttributeColumns(jasperReport, report.getConfig());
+               createAndAddPatientAttributeColumns(jasperReport, report.getConfig());
+               createAndAddProgramsToFilterColumns(jasperReport, report.getConfig());
+               createAndAddPatientAddressColumns(jasperReport, report.getConfig());
+               createAndAddProviderNameColumn(jasperReport, report.getConfig());
+               createAndAddVisitInfoColumns(jasperReport, report.getConfig());
+               List<ConceptName> leafConceptNames = fetchLeafConceptsAsList(report, bahmniReportsProperties);
+               createAndAddConceptColumns(leafConceptNames, jasperReport, report.getConfig().getConceptNameDisplayFormat());
+               formNamesToFilter = getListOfFullySpecifiedNames(leafConceptNames);
+               createAndAddDataAnalysisColumns(jasperReport, report.getConfig());
+               createAndAddAgeGroupColumn(jasperReport, report.getConfig());
+           }
+           else{
+               throw new InvalidConfigurationException("Please provide a valid Form Name");
+           }
         } else {
             throw new InvalidConfigurationException("You need configure atleast one observation form to filter");
         }
