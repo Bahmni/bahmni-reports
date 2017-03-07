@@ -71,7 +71,7 @@
     <global_property property="order.nextOrderNumberSeed" property_value="1" uuid="7ed7aeb4-0663-11e1-8c99-2b4f0c4f671b" />
     <concept_map_type concept_map_type_id="1" name="SAME-AS" creator="1" date_created="2014-09-18 00:00:00" uuid="35543629-7d8c-11e1-909d-c80aa9edcf4e"/>
     <global_property property="concept.defaultConceptMapType" property_value="SAME-AS" uuid="7ed7aeb4-0663-91e1-8c99-2b4f0c4f671b" />
-    <global_property property="emr.primaryIdentifierType" property_value="81433852-3f10-11e4-adec-0800271c1b75" uuid="120asdf-0663-91e1-8c99-2b4f0c4f671b" />
+    <global_property property="bahmni.primaryIdentifierType" property_value="81433852-3f10-11e4-adec-0800271c1b75" uuid="120asdf-0663-91e1-8c99-2b4f0c4f671b" />
 
     <order_type order_type_id="17" name="Plain Order" java_class_name="org.openmrs.Order" description="Plain order" creator="1" date_created="2008-08-15 15:49:04.0" retired="0" uuid="dd3fb1d0-ae06-11e3-a5e2-0800200c9a77"/>
     <order_type order_type_id="18" name="DrugOrder" java_class_name="org.openmrs.DrugOrder" description="Drug order" creator="1" date_created="2008-08-15 15:49:04.0" retired="0" uuid="07e1ffdf-d563-11e5-a6a1-0800274a5156"/>

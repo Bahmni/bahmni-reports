@@ -122,7 +122,7 @@ where coalesce(child_value_obs.value_coded, child_value_obs.value_text, child_va
 INTO @labReportFileObsGroupIds;
 
 SET @primaryIdentifierTypeUuid = NULL;
-SELECT property_value FROM global_property WHERE property = 'emr.primaryIdentifierType' into @primaryIdentifierTypeUuid;
+SELECT property_value FROM global_property WHERE property = 'bahmni.primaryIdentifierType' into @primaryIdentifierTypeUuid;
 
 SET @primaryIdentifierTypeName = NULL;
 SELECT name FROM patient_identifier_type WHERE uuid = @primaryIdentifierTypeUuid INTO @primaryIdentifierTypeName;

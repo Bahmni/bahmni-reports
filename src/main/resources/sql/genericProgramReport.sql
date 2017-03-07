@@ -27,7 +27,7 @@ SET @ageGroupJoinSql = 'LEFT JOIN reporting_age_group rag ON DATE(pprog.date_enr
 SET @ageGroupSelectSql = 'rag.name AS "#ageGroupName#", rag.sort_order AS "Age Group Order"';
 
 SET @primaryIdentifierTypeUuid = NULL;
-SELECT property_value FROM global_property WHERE property = 'emr.primaryIdentifierType' into @primaryIdentifierTypeUuid;
+SELECT property_value FROM global_property WHERE property = 'bahmni.primaryIdentifierType' into @primaryIdentifierTypeUuid;
 
 SET @primaryIdentifierTypeName = NULL;
 SELECT name FROM patient_identifier_type WHERE uuid = @primaryIdentifierTypeUuid INTO @primaryIdentifierTypeName;
