@@ -15,7 +15,7 @@
         <jackson.version>2.5.1</jackson.version>
         <skipDump>false</skipDump>
         <skipConfig>false</skipConfig>
-        <openMRSVersion>2.1.0-SNAPSHOT</openMRSVersion>
+        <openMRSVersion>2.1.1-SNAPSHOT</openMRSVersion>
     </properties>
 
     <build>
