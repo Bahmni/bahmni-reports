@@ -8,7 +8,7 @@ Hosts the reports web application for the [Bahmni project](http://www.bahmni.org
 
 1. Clone or download this repository.
 
-2. Run `mvn clean install -DskipDump -DskipTests` to build it
+2. Run `mvn clean install -DskipTests` to build it
 
 3. Deploy the WAR file in `target/bahmnireports.war`
 
@@ -24,4 +24,4 @@ Hosts the reports web application for the [Bahmni project](http://www.bahmni.org
 
 6. Change `openmrs.password` to set the database user password
 
-7. Run `mvn clean install` to build your changes and run integration tests. If you are using an IDE you can directly run a specific integration test.
+7. Run `mvn clean install -DskipDump=false` to build your changes and run integration tests. If you are using an IDE you can directly run a specific integration test.
