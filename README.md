@@ -2,6 +2,8 @@
 
 Hosts the reports web application for the [Bahmni project](http://www.bahmni.org/)
 
+[![Build Status](https://travis-ci.org/Bahmni/bahmni-reports.svg?branch=master)](https://travis-ci.org/Bahmni/bahmni-reports)
+
 # Installing the application
 
 1. Clone or download this repository.
