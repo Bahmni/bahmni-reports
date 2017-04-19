@@ -94,20 +94,16 @@ public class MainReportController {
     }
 
     private static void catchBlock(HttpServletResponse response, Throwable e) {
+        response.reset();
         e.printStackTrace();
         logger.error("Error running report", e);
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         try {
             String errorMessage = e.getMessage();
-            String content = "<h2>Incorrect Configuration</h2><h3>" + errorMessage + "</h3>";
+            String content = "Incorrect Configuration " + errorMessage + "";
             if( e instanceof WebClientsException) {
                 content = "<h3>" + errorMessage + "</h3>";
             }
-            response.setContentLength(content.length());
-            response.setContentType("text/html");
-            response.getOutputStream().write(content.getBytes());
-            response.flushBuffer();
-            response.getOutputStream().close();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, content);
         } catch (IOException e1) {
             e1.printStackTrace();
         }
