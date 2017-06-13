@@ -30,8 +30,8 @@ public class ConcatenatedReportTest extends BaseIntegrationTest {
     @Test
     public void shouldThrowExceptionForConcatenatedReportOfCsvResponseType() throws Exception {
         MvcResult mvcResult = fetchMvcResult("Concatenated Report Name", "2014-04-01", "2016-08-30", "text/csv", true);
-        String response = mvcResult.getResponse().getContentAsString();
-        String expectedResponse = "<h2>Incorrect Configuration</h2><h3>CSV format is not supported for Concatenated report</h3>";
+        String response = mvcResult.getResponse().getErrorMessage();
+        String expectedResponse = "Incorrect Configuration CSV format is not supported for Concatenated report";
         assertEquals(expectedResponse, response);
     }
 }

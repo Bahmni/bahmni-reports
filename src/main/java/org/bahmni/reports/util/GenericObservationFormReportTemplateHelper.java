@@ -189,4 +189,12 @@ public class GenericObservationFormReportTemplateHelper extends GenericReportsHe
         }
         return formConceptIds.substring(0, formConceptIds.length() - 1);
     }
+
+
+    public static String constructRegexForFormNameAndVersion(List<String> formList){
+        if (CollectionUtils.isEmpty(formList)) {
+            return null;
+        }
+        return StringUtils.join(formList, '|');
+    }
 }

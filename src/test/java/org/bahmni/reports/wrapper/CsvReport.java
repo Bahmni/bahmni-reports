@@ -19,9 +19,11 @@ public class CsvReport {
     private List<String> footers;
     private List<String[]> rows;
     private String footerPattern = "\\d+,,,,, of \\d+,,,";
+    private String errorMessage;
 
-    public static CsvReport getReport(String result) {
+    public static CsvReport getReport(String result, String errorMessage) {
         CsvReport report = new CsvReport(result);
+        report.setErrorMessage(errorMessage);
         try {
             report.process();
         } catch (IOException e) {
@@ -100,5 +102,13 @@ public class CsvReport {
 
     private static String joinStringArray(String[] array, String delimiter) {
         return StringUtils.join(array, delimiter);
+    }
+    
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+    
+    public void setErrorMessage(String errorMessage) {
+        this.errorMessage = errorMessage;
     }
 }

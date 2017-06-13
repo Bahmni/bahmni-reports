@@ -216,7 +216,7 @@ public class AggregationReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-04-01", "2016-04-30",true);
 
-        assertEquals("<h2>Incorrect Configuration</h2><h3>You have not configured rowGroups.</h3>", report.getReportName());
+        assertEquals("Incorrect Configuration You have not configured rowGroups.", report.getErrorMessage());
     }
 
     @Test

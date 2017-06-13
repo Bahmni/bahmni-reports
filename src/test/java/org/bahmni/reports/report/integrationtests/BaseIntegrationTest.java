@@ -156,7 +156,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         MockHttpServletResponse response = mvcResult.getResponse();
         response.setCharacterEncoding(enc);
         String result = response.getContentAsString();
-        return CsvReport.getReport(result);
+        return CsvReport.getReport(result, response.getErrorMessage());
     }
 
     protected XSSFWorkbook fetchXlsReport(String reportName, String startDate, String endDate) throws Exception {

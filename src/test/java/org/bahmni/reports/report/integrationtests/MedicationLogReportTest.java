@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import org.bahmni.reports.builder.*;
 import org.bahmni.reports.wrapper.CsvReport;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openmrs.*;
 import org.openmrs.api.context.Context;
@@ -17,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 
-
+@Ignore
 public class MedicationLogReportTest extends BaseIntegrationTest {
 
     @Before

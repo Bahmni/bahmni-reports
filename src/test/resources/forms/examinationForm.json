@@ -1,0 +1,9 @@
+{
+  "resources": [
+    {
+      "value": "{\"name\":\"examination\",\"id\":6,\"uuid\":\"2432f3a9-df0b-456b-b84c-cb843eb1c3ef\",\"controls\":[{\"type\":\"obsControl\",\"label\":{\"type\":\"label\",\"value\":\"Examination Notes\"},\"properties\":{\"mandatory\":false,\"notes\":false,\"addMore\":false,\"hideLabel\":false,\"controlEvent\":false,\"location\":{\"column\":0,\"row\":0}},\"id\":\"1\",\"concept\":{\"name\":\"Examination Notes\",\"uuid\":\"c39a35e2-3f10-11e4-adec-0800271c1b75\",\"description\":[{\"display\":\"desc Examination Notes\",\"uuid\":\"45b7f453-63fd-4443-aa28-1d3fa1a0a199\",\"description\":\"desc Examination Notes\",\"locale\":\"en\",\"links\":[{\"rel\":\"self\",\"uri\":\"http://192.168.33.10/openmrs/ws/rest/v1/concept/c39a35e2-3f10-11e4-adec-0800271c1b75/description/45b7f453-63fd-4443-aa28-1d3fa1a0a199\"},{\"rel\":\"full\",\"uri\":\"http://192.168.33.10/openmrs/ws/rest/v1/concept/c39a35e2-3f10-11e4-adec-0800271c1b75/description/45b7f453-63fd-4443-aa28-1d3fa1a0a199?v=full\"}],\"resourceVersion\":\"1.9\"}],\"datatype\":\"Text\",\"answers\":[],\"properties\":{\"allowDecimal\":null}},\"units\":null,\"hiNormal\":null,\"lowNormal\":null,\"hiAbsolute\":null,\"lowAbsolute\":null}],\"events\":{}}",
+      "dataType": "org.bahmni.customdatatype.datatype.FileSystemStorageDatatype",
+      "uuid": "a9d9e4d1-3869-4217-8c87-df5ceb308b19"
+    }
+  ]
+}

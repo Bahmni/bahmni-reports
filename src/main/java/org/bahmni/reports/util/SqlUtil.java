@@ -76,7 +76,7 @@ public class SqlUtil {
                 hasMoreResultSets = stmt.getMoreResults(); //true if it is a resultset
             }
         }catch (SQLSyntaxErrorException e){
-            throw new InvalidConfigurationException("Column that you have configured in sortBy is either not present in output of the report or it is invaid column");
+            throw new InvalidConfigurationException("Column that you have configured in sortBy is either not present in output of the report or it is invalid column");
         }
         catch (SQLException e) {
             e.printStackTrace();

@@ -184,7 +184,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
 
         CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2016-01-30", true);
 
-        assertEquals("<h2>Incorrect Configuration</h2><h3>You have excluded all columns.</h3>", report.getReportName());
+        assertEquals("Incorrect Configuration You have excluded all columns.", report.getErrorMessage());
     }
 
     @Test
@@ -348,7 +348,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         String reportName = "visit report with only sort by configured in  sort by columns";
         CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03", true);
 
-        assertEquals("<h2>Incorrect Configuration</h2><h3>Column is not configured in sortBy</h3>", report.getReportName());
+        assertEquals("Incorrect Configuration Column is not configured in sortBy", report.getErrorMessage());
     }
 
     @Test
@@ -356,7 +356,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         String reportName = "visit report with invalid column configured in  sort by columns";
         CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03", true);
 
-        assertEquals("<h2>Incorrect Configuration</h2><h3>Column that you have configured in sortBy is either not present in output of the report or it is invaid column</h3>", report.getReportName());
+        assertEquals("Incorrect Configuration Column that you have configured in sortBy is either not present in output of the report or it is invalid column", report.getErrorMessage());
 
     }
 
@@ -365,7 +365,7 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         String reportName = "visit report with invalid sortOrder configured in  sort by columns";
         CsvReport report = fetchCsvReport(reportName, "2016-08-01", "2020-08-03", true);
 
-        assertEquals("<h2>Incorrect Configuration</h2><h3>Invalid sortOrder in sortBy config. Only asc or desc with case insensitivity is allowed</h3>", report.getReportName());
+        assertEquals("Incorrect Configuration Invalid sortOrder in sortBy config. Only asc or desc with case insensitivity is allowed", report.getErrorMessage());
     }
 
     @Test
