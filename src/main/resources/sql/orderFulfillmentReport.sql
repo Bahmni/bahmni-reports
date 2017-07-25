@@ -5,7 +5,7 @@ SELECT
   ot.name                                        AS OrderType,
   o.date_activated                                  OrderDate,
   pt.identifier                                  AS PatientID,
-  CONCAT(pn.given_name, " ", pn.family_name)     AS PatientName,
+  CONCAT(pn.given_name, " ", ifnull(pn.family_name,""))     AS PatientName,
   p.gender                                       AS Gender,
   min(associatedObs.obs_datetime)                 AS FulfilmentDate,
   IF(associatedObs.obs_datetime IS NULL, "No", "Yes") AS FulfillmentStatus

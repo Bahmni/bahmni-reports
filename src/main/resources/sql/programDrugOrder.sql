@@ -53,7 +53,7 @@ SET @sql = CONCAT('SELECT
    FROM
                      (SELECT
                         pi.identifier,
-                        CONCAT(pn.given_name, "" "", pn.family_name) as patient_name,
+                        CONCAT(pn.given_name, "" "", ifnull(pn.family_name,"")) as patient_name,
                         floor(datediff(CURDATE(), p.birthdate) / 365) AS age,
                         p.gender,
                         IF(drug.name is NULL,drug_order.drug_non_coded, drug.name) as drugName,

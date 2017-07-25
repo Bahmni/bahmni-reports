@@ -29,7 +29,7 @@ SET @programsJoinSql = ' JOIN episode_encounter ee ON e.encounter_id = ee.encoun
 SET @filterByProgramsSql = '  AND program.name IN (#programsToFilter#)';
 SET @providerJoinSql = '  JOIN provider pro ON pro.provider_id=ep.provider_id
   LEFT JOIN person_name provider_person ON provider_person.person_id = pro.person_id';
-SET @providerSelectSql = 'coalesce(pro.name, concat(provider_person.given_name, " ", provider_person.family_name)) AS "Provider"';
+SET @providerSelectSql = 'coalesce(pro.name, concat(provider_person.given_name, " ", ifnull(provider_person.family_name, ""))) AS "Provider"';
 SET @ageGroupJoinSql = 'LEFT JOIN reporting_age_group rag ON DATE(ord.date_activated) BETWEEN (DATE_ADD(
                      DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(
                      DATE_ADD(p.birthdate, INTERVAL rag.max_years YEAR), INTERVAL rag.max_days DAY))
@@ -130,7 +130,7 @@ SELECT name FROM patient_identifier_type WHERE uuid = @primaryIdentifierTypeUuid
 SET @sql = CONCAT('SELECT * FROM (SELECT
   GROUP_CONCAT(DISTINCT(IF(pit.name = @primaryIdentifierTypeName, pi.identifier, NULL)))     AS "Patient Identifier",
   ',IF(@extraPatientIdentifierTypes = '', '', CONCAT(@extraPatientIdentifierTypes, ',')),'
-  concat(pn.given_name, " ", pn.family_name)                    AS "Patient Name",
+  concat(pn.given_name, " ", ifnull(pn.family_name, ""))                    AS "Patient Name",
   floor(DATEDIFF(DATE(ord.date_activated), p.birthdate) / 365)      AS "Age",
   DATE_FORMAT(p.birthdate, "%d-%b-%Y")                                                   AS "Birthdate",
   p.gender                                                      AS "Gender",

@@ -36,7 +36,7 @@ SET @dateRangeSql = IF(@dateRangeFilter = 'visitStartDate', ' AND cast(v.date_st
 
 SET @providerJoinSql = '  JOIN provider pro ON pro.provider_id=ep.provider_id
   LEFT OUTER JOIN person_name provider_person ON provider_person.person_id = pro.person_id';
-SET @providerSelectSql = 'coalesce(pro.name, concat(provider_person.given_name, " ", provider_person.family_name)) AS "Provider"';
+SET @providerSelectSql = 'coalesce(pro.name, concat(provider_person.given_name, " ", ifnull(provider_person.family_name,""))) AS "Provider"';
 
 SET @ageGroupJoinSql = 'LEFT JOIN reporting_age_group rag ON DATE("#endDate#") BETWEEN (DATE_ADD(
                      DATE_ADD(p.birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(
@@ -54,7 +54,7 @@ SELECT name FROM patient_identifier_type WHERE uuid = @primaryIdentifierTypeUuid
 SET @sql = CONCAT('SELECT
   GROUP_CONCAT(DISTINCT(IF(pit.name = @primaryIdentifierTypeName, pi.identifier, NULL)))     AS "Patient Identifier",'
   ,IF(@extraPatientIdentifierTypes = '', '', CONCAT(@extraPatientIdentifierTypes, ',')),'
-  concat(pn.given_name, " ", pn.family_name)                    AS "Patient Name",
+  concat(pn.given_name, " ", ifnull(pn.family_name,""))                    AS "Patient Name",
   floor(DATEDIFF(DATE(o.obs_datetime), p.birthdate) / 365)      AS "Age",
   DATE_FORMAT(p.birthdate, "%d-%b-%Y")                          AS "Birthdate",
   p.gender                                                      AS "Gender",
