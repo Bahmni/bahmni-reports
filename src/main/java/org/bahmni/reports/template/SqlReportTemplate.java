@@ -67,7 +67,6 @@ public class SqlReportTemplate extends BaseReportTemplate<SqlReportConfig> {
             case Types.TINYINT:
             case Types.SMALLINT:
             case Types.INTEGER:
-            case Types.NUMERIC:
                 return DataTypes.integerType();
 
             case Types.BIGINT:
