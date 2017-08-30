@@ -16,7 +16,7 @@ into @visit_attributes
 FROM visit_attribute_type where name in (#visitAttributes#);
 
 
-SET @sql = CONCAT('SELECT pi.identifier, CONCAT(pn.given_name, " ", pn.family_name) AS "Patient Name", p.gender as Gender,'
+SET @sql = CONCAT('SELECT pi.identifier, CONCAT(pn.given_name, " ", ifnull(pn.family_name,"")) AS "Patient Name", p.gender as Gender,'
 , @visit_attributes, ',', @person_attributes,
 ',date(v.date_started) as date_started
   from visit v

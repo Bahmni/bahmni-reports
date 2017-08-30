@@ -16,10 +16,10 @@ SELECT
 FROM
   (SELECT
      patient_identifier.identifier                                                                     AS patientID,
-     concat(person_name.given_name, ' ', person_name.family_name)                                      AS patientName,
+     concat(person_name.given_name, ' ', ifnull(person_name.family_name,''))                                      AS patientName,
      person.gender                                                                                     AS gender,
      floor(datediff(CURDATE(), person.birthdate) / 365)                                                AS age,
-     concat(pro.given_name, ' ', pro.family_name)                                                      AS user,
+     concat(pro.given_name, ' ', ifnull(pro.family_name,''))                                                      AS user,
      IF(drug_order.drug_non_coded IS NULL, drug.name, drug_order.drug_non_coded)                       AS name,
      IF(drug_order.dose IS NULL, drug_order.dosing_instructions, drug_order.dose)                      AS dose,
      dcn.concept_full_name                                                                             AS units,

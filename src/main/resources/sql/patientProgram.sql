@@ -1,5 +1,5 @@
 select pi.identifier,
-  CONCAT(pn.given_name, " ", pn.family_name) AS PatientName,
+  CONCAT(pn.given_name, " ", ifnull(pn.family_name, "")) AS PatientName,
   floor(datediff(CURDATE(), p.birthdate) / 365) AS age,
   date(pp.date_enrolled) as date_enrolled,
   cn.name as state_name,

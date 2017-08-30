@@ -30,7 +30,7 @@ SELECT name FROM patient_identifier_type WHERE uuid = @primaryIdentifierTypeUuid
 SET @sql = CONCAT('SELECT
   GROUP_CONCAT(DISTINCT(IF(pit.name = @primaryIdentifierTypeName, pi.identifier, NULL)))     AS "Patient Identifier",
   ',IF(@extraPatientIdentifierTypes = '', '', CONCAT(@extraPatientIdentifierTypes, ',')),'
-  concat(pn.given_name, " ", pn.family_name)                    AS "Patient Name",
+  concat(pn.given_name, " ", ifnull(pn.family_name, ""))                    AS "Patient Name",
   floor(DATEDIFF(DATE(v.date_started), p.birthdate) / 365)      AS "Age",
   DATE_FORMAT(p.birthdate, "%d-%b-%Y")         AS "Birthdate",
   p.gender                                                      AS "Gender",
