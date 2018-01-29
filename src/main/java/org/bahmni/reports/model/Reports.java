@@ -13,15 +13,19 @@ import java.util.HashMap;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Reports extends HashMap<String, Report> {
 
-    public static  Report find(String reportName, String reportConfigUrl,HttpClient httpClient) throws IOException, URISyntaxException {
-        String data=httpClient.get(new URI(reportConfigUrl));
-        ObjectMapper mapper=new ObjectMapper();
-        Reports reports=mapper.readValue(data,Reports.class);
+    public static Report find(String reportName, String reportConfigUrl,HttpClient httpClient) throws IOException, URISyntaxException {
+        Reports reports = findAll(reportConfigUrl, httpClient);
         for (Report report : reports.values()) {
             if (reportName.equals(report.getName())) {
                 return report;
             }
         }
         return null;
+    }
+
+    public static Reports findAll(String reportConfigUrl, HttpClient httpClient) throws URISyntaxException, IOException {
+        String data=httpClient.get(new URI(reportConfigUrl));
+        ObjectMapper mapper=new ObjectMapper();
+        return mapper.readValue(data,Reports.class);
     }
 }

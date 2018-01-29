@@ -20,6 +20,7 @@ public class JasperResponseConverter {
 
     private static final Logger logger = Logger.getLogger(JasperResponseConverter.class);
     private static final String TEXT_HTML = "text/html";
+    public static final String APPLICATION_JSON = "application/json";
     private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
     private static final String APPLICATION_VND_MS_EXCEL_CUSTOM = "application/vnd.ms-excel-custom";
     private static final String APPLICATION_PDF = "application/pdf";
@@ -92,6 +93,9 @@ public class JasperResponseConverter {
         switch (responseType) {
             case TEXT_HTML:
                 response.setContentType(TEXT_HTML);
+                break;
+            case APPLICATION_JSON:
+                response.setContentType(APPLICATION_JSON);
                 break;
             case APPLICATION_VND_MS_EXCEL:
                 response.setContentType(APPLICATION_VND_MS_EXCEL);

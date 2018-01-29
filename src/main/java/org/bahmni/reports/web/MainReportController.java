@@ -4,6 +4,8 @@ import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
+import org.bahmni.reports.model.Report;
+import org.bahmni.reports.model.Reports;
 import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.scheduler.ReportsScheduler;
 import org.bahmni.webclients.HttpClient;
@@ -11,18 +13,16 @@ import org.bahmni.webclients.WebClientsException;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class MainReportController {
@@ -93,6 +93,17 @@ public class MainReportController {
         }
     }
 
+    @RequestMapping(value = "/allReports", method = RequestMethod.GET)
+    public List<String> getAllReportNames() {
+        try {
+            Reports reports = Reports.findAll(bahmniReportsProperties.getConfigFileUrl(), httpClient);
+            return reports.values().stream().map(Report::getName).collect(Collectors.toCollection(ArrayList::new));
+        } catch (Throwable e) {
+            logger.error("Error while reading all report names", e);
+            return Collections.emptyList();
+        }
+    }
+
     private static void catchBlock(HttpServletResponse response, Throwable e) {
         response.reset();
         e.printStackTrace();
@@ -100,7 +111,7 @@ public class MainReportController {
         try {
             String errorMessage = e.getMessage();
             String content = "Incorrect Configuration " + errorMessage + "";
-            if( e instanceof WebClientsException) {
+            if (e instanceof WebClientsException) {
                 content = "<h3>" + errorMessage + "</h3>";
             }
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, content);

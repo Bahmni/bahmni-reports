@@ -7,6 +7,7 @@ import net.sf.dynamicreports.report.constant.PageType;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.bahmni.reports.BahmniReportsProperties;
+import org.bahmni.reports.builder.BahmniJasperReportBuilder;
 import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.GenericReportsConfig;
 import org.bahmni.reports.model.Report;
@@ -28,7 +29,7 @@ public class BahmniReportUtil {
                                             List<AutoCloseable> resources, PageType pageType,
                                             BahmniReportsProperties bahmniReportsProperties) throws Exception {
         BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
-        JasperReportBuilder reportBuilder = report();
+        JasperReportBuilder reportBuilder = new BahmniJasperReportBuilder();
         reportBuilder = new ReportHeader().add(reportBuilder, report.getName(), startDate, endDate);
         BahmniReportBuilder build = reportTemplate.build(connection, reportBuilder, report, startDate, endDate, resources, pageType);
         excludeColumns(report.getConfig(), reportBuilder);
