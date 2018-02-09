@@ -37,6 +37,7 @@ SET @sql = CONCAT('SELECT
     ) personattribute on personattribute.person_id = p.person_id
     LEFT JOIN (SELECT
                  COALESCE(coded_diagnosis_concept_name.name, diagnosis_obs.value_text)       diagnosis_name,
+                 diagnosis_status_obs.value_coded  diagnosis_status,
                  diagnosis_obs.encounter_id     encounter_id
                FROM obs revised_obs
                JOIN concept_name revised_concept
@@ -59,16 +60,14 @@ SET @sql = CONCAT('SELECT
                  ON diagnosis_obs.value_coded = coded_diagnosis_concept_name.concept_id
                     AND coded_diagnosis_concept_name.concept_name_type = "FULLY_SPECIFIED"
                     AND coded_diagnosis_concept_name.voided IS FALSE
-
-               JOIN obs diagnosis_status_obs
-                 ON revised_obs.obs_group_id = diagnosis_status_obs.obs_group_id
                JOIN concept_name diagnosis_status_concept
-                 ON diagnosis_status_obs.concept_id = diagnosis_status_concept.concept_id
-                    AND diagnosis_status_concept.concept_name_type = "FULLY_SPECIFIED"
+                 ON  diagnosis_status_concept.concept_name_type = "FULLY_SPECIFIED"
                     AND diagnosis_status_concept.name = "Bahmni Diagnosis Status"
-                    AND diagnosis_status_obs.voided IS FALSE
                     AND diagnosis_status_concept.voided IS FALSE
-                    AND diagnosis_status_obs.value_coded IS NULL
+               LEFT JOIN obs diagnosis_status_obs
+                 ON revised_obs.obs_group_id = diagnosis_status_obs.obs_group_id
+                AND diagnosis_status_obs.concept_id = diagnosis_status_concept.concept_id
+                AND diagnosis_status_obs.voided IS FALSE
                JOIN obs diagnosis_certainty_obs
                  ON revised_obs.obs_group_id = diagnosis_certainty_obs.obs_group_id
                JOIN concept_name diagnosis_certainty_concept
@@ -83,7 +82,7 @@ SET @sql = CONCAT('SELECT
                     AND confirmed_concept.name = "Confirmed"
                     AND confirmed_concept.voided IS FALSE
               ) diagnoses
-        ON e.encounter_id = diagnoses.encounter_id
+        ON e.encounter_id = diagnoses.encounter_id AND diagnoses.diagnosis_status IS NULL
         LEFT JOIN obs on e.encounter_id = obs.encounter_id
         LEFT JOIN concept_name as obsConcept on obs.concept_id = obsConcept.concept_id and obsConcept.concept_name_type = "FULLY_SPECIFIED" and obs.voided=0 and obsConcept.name in (#conceptNames#)
         LEFT JOIN concept_name as coded_value on obs.value_coded = coded_value.concept_id and coded_value.concept_name_type = "SHORT"
