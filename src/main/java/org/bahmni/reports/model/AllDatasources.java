@@ -22,6 +22,9 @@ public class AllDatasources {
     @Autowired
     private DataSource bahmniReportsDataSource;
 
+    @Autowired
+    private DataSource martDataSource;
+
     public Connection getConnectionFromDatasource(Object object) {
         Connection connection = null;
         try {
@@ -39,8 +42,7 @@ public class AllDatasources {
         Class<?> annotatedClass = object.getClass();
         if (annotatedClass.isAnnotationPresent(UsingDatasource.class)) {
             UsingDatasource annotation = annotatedClass.getAnnotation(UsingDatasource.class);
-            DataSource dataSource = dataSourceFor(annotation.value());
-            return dataSource;
+            return dataSourceFor(annotation.value());
         }
         return null;
     }
@@ -55,6 +57,8 @@ public class AllDatasources {
                 return openerpDataSource;
             case "bahmniReports":
                 return bahmniReportsDataSource;
+            case "bahmniMart":
+                return martDataSource;
             default:
                 throw new RuntimeException("No datasource found for " + value + ". Verify value of UsingDatasource annotation. ");
         }
