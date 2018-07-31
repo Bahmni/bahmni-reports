@@ -93,6 +93,19 @@ public class BahmniReportsConfiguration {
     }
 
     @Bean
+    public ComboPooledDataSource martDataSource() throws PropertyVetoException {
+        ComboPooledDataSourceBuilder comboPooledDataSourceBuilder = new ComboPooledDataSourceBuilder();
+        ComboPooledDataSource dataSource = comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getMartUrl())
+                .withUser(bahmniReportsProperties.getMartUser())
+                .withPassword(bahmniReportsProperties.getMartPassword())
+                .withDriver(Driver.class).build();
+
+        dataSource.setIdleConnectionTestPeriod(IDLE_CONNECTION_TEST_TIME);
+        dataSource.setPreferredTestQuery("SELECT 1;");
+        return dataSource;
+    }
+
+    @Bean
     public ComboPooledDataSource bahmniReportsDataSource() throws PropertyVetoException {
         ComboPooledDataSourceBuilder comboPooledDataSourceBuilder = new ComboPooledDataSourceBuilder();
         ComboPooledDataSource dataSource = comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getBahmniReportsDbUrl())
