@@ -7,8 +7,8 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static org.junit.Assert.assertEquals;
 
-public class ConcatenatedReportTest extends BaseIntegrationTest {
-    public ConcatenatedReportTest() {
+public class OpenmrsConcatenatedReportTest extends BaseIntegrationTest {
+    public OpenmrsConcatenatedReportTest() {
         super("src/test/resources/config/concatenatedReportConfig.json");
     }
 

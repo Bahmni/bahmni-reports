@@ -5,7 +5,6 @@ import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.ConcatenatedReportConfig;
 import org.bahmni.reports.model.Report;
-import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.BahmniReportUtil;
 
@@ -13,7 +12,6 @@ import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
-@UsingDatasource("openmrs")
 public class ConcatenatedReportTemplate extends BaseReportTemplate<ConcatenatedReportConfig> {
 
     private BahmniReportsProperties bahmniReportsProperties;
