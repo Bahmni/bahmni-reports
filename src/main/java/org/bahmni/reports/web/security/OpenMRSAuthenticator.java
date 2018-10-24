@@ -53,7 +53,7 @@ public class OpenMRSAuthenticator {
         }
     }
 
-    private static class Privileges extends ArrayList<Privilege> {
+    static class Privileges extends ArrayList<Privilege> {
         boolean hasReportingPrivilege() {
             for (Privilege privilege : this) {
                 if (privilege.isReportingPrivilege()) return true;
@@ -62,9 +62,14 @@ public class OpenMRSAuthenticator {
         }
     }
 
-    private static class Privilege {
+    static class Privilege {
         static final String VIEW_REPORTS_PRIVILEGE = "app:reports";
         private String name;
+
+        String getName() {
+            return name;
+        }
+
         private void setName(String name) {
             this.name = name;
         }

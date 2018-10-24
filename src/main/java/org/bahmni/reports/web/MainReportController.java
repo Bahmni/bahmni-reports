@@ -6,6 +6,8 @@ import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
 import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.scheduler.ReportsScheduler;
+import org.bahmni.reports.web.security.OpenMRSAuthenticator;
+import org.bahmni.reports.web.security.ReportAuthorization;
 import org.bahmni.webclients.HttpClient;
 import org.bahmni.webclients.WebClientsException;
 import org.quartz.SchedulerException;
@@ -18,11 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class MainReportController {
@@ -33,23 +37,33 @@ public class MainReportController {
     private AllDatasources allDatasources;
     private HttpClient httpClient;
     private ReportsScheduler reportsScheduler;
+    private OpenMRSAuthenticator openMRSAuthenticator;
 
     @Autowired
     public MainReportController(JasperResponseConverter converter,
                                 BahmniReportsProperties bahmniReportsProperties,
-                                AllDatasources allDatasources, HttpClient httpClient, ReportsScheduler reportsScheduler) {
+                                AllDatasources allDatasources, HttpClient httpClient,
+                                ReportsScheduler reportsScheduler, OpenMRSAuthenticator openMRSAuthenticator) {
         this.converter = converter;
         this.bahmniReportsProperties = bahmniReportsProperties;
         this.allDatasources = allDatasources;
         this.httpClient = httpClient;
         this.reportsScheduler = reportsScheduler;
+        this.openMRSAuthenticator = openMRSAuthenticator;
     }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
-    public void getReport(ReportParams reportParams, HttpServletResponse response) {
+    public void getReport(ReportParams reportParams, HttpServletResponse response, HttpServletRequest request) {
         try {
+            ReportAuthorization reportAuthorization = new ReportAuthorization(request, openMRSAuthenticator,
+                    bahmniReportsProperties, httpClient);
+            if (!reportAuthorization.hasPrivilege(reportParams.getName())) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                        "Privileges is required to access report");
+            }
             converter.applyHttpHeaders(reportParams.getResponseType(), response, reportParams.getName());
-            ReportGenerator reportGenerator = new ReportGenerator(reportParams, response.getOutputStream(), allDatasources, bahmniReportsProperties, httpClient, converter);
+            ReportGenerator reportGenerator = new ReportGenerator(reportParams, response.getOutputStream(), allDatasources,
+                    bahmniReportsProperties, httpClient, converter);
             reportGenerator.invoke();
         } catch (Throwable e) {
             catchBlock(response, e);
@@ -70,8 +84,17 @@ public class MainReportController {
     }
 
     @RequestMapping(value = "/getReports", method = RequestMethod.GET)
-    public List<ScheduledReport> getReports(@RequestParam(name = "user") String user) {
-        return reportsScheduler.getReports(user);
+    public List<ScheduledReport> getReports(@RequestParam(name = "user") String user, HttpServletRequest request) {
+        List<ScheduledReport> reports = reportsScheduler.getReports(user);
+        ReportAuthorization reportAuthorization = new ReportAuthorization(request, openMRSAuthenticator,
+                bahmniReportsProperties, httpClient);
+        return reports.stream().filter(report -> {
+            try {
+                return reportAuthorization.hasPrivilege(report.getName());
+            } catch (Exception e) {
+                return true;
+            }
+        }).collect(Collectors.toList());
     }
 
     @RequestMapping(value = "/download/{id}", method = RequestMethod.GET)

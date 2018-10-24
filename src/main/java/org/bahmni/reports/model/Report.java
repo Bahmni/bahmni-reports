@@ -62,6 +62,7 @@ public abstract class Report<T extends Config> {
 
     private String name;
     private String type;
+    private String requiredPrivilege;
     private T config;
     private HttpClient httpClient;
 
@@ -97,5 +98,9 @@ public abstract class Report<T extends Config> {
 
     public HttpClient getHttpClient() {
         return httpClient;
+    }
+
+    public String getRequiredPrivilege() {
+        return requiredPrivilege;
     }
 }
