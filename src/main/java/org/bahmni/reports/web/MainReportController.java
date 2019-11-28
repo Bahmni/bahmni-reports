@@ -58,38 +58,37 @@ public class MainReportController {
     
     private boolean hasPrivilege(HttpServletRequest request, String reportName){
     	if(request != null){
-    		try {
-    			Report report = Reports.find(reportName, bahmniReportsProperties.getConfigFileUrl(),httpClient);
-    			if(report.getRequiredPrivilege() != null){
-    				Cookie[] cookies = request.getCookies();
-    				for (Cookie cookie : cookies) {
-    					if (cookie.getName().equals(AuthenticationFilter.REPORTING_COOKIE_NAME)) {
-    						AuthenticationResponse res = authorizer.authorize(cookie.getValue(), report.getRequiredPrivilege());
-                    		if(res == AuthenticationResponse.AUTHORIZED)
-                    			return true;
-                    		else
-                    			return false;
-    					}
-    				}
-    			} else return true;
-    			
-    		} catch (IOException | URISyntaxException e) {
-				return false;
-			}	
-    	}	
+            try {
+            	Report report = Reports.find(reportName, bahmniReportsProperties.getConfigFileUrl(),httpClient);
+            	if(report.getRequiredPrivilege() != null){
+                    Cookie[] cookies = request.getCookies();
+                    for (Cookie cookie : cookies) {
+                    	if (cookie.getName().equals(AuthenticationFilter.REPORTING_COOKIE_NAME)) {
+                            AuthenticationResponse res = authorizer.authorize(cookie.getValue(), report.getRequiredPrivilege());
+                            if(res == AuthenticationResponse.AUTHORIZED)
+                            	return true;
+                            else
+                            	return false;
+                          }
+                     }
+                 } else return true;
+            } catch (IOException | URISyntaxException e) {
+            	return false;
+            }	
+        }	
     	return false;
     }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
     public void getReport(ReportParams reportParams, HttpServletRequest request, HttpServletResponse response) {
         try {
-        	if(hasPrivilege(request, reportParams.getName())){
-	            converter.applyHttpHeaders(reportParams.getResponseType(), response, reportParams.getName());
-	            ReportGenerator reportGenerator = new ReportGenerator(reportParams, response.getOutputStream(), allDatasources, bahmniReportsProperties, httpClient, converter);
-	            reportGenerator.invoke();
-        	} else 
-        		response.sendError(HttpServletResponse.SC_FORBIDDEN,
-                        "Privileges is required to access reports");
+            if(hasPrivilege(request, reportParams.getName())){
+            	converter.applyHttpHeaders(reportParams.getResponseType(), response, reportParams.getName());
+            	ReportGenerator reportGenerator = new ReportGenerator(reportParams, response.getOutputStream(), allDatasources, bahmniReportsProperties, httpClient, converter);
+            	reportGenerator.invoke();
+            } else 
+            	response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                     "Privileges is required to access reports");
         } catch (Throwable e) {
             catchBlock(response, e);
         }
@@ -98,11 +97,11 @@ public class MainReportController {
     @RequestMapping(value = "/schedule", method = RequestMethod.GET)
     public void schedule(ReportParams reportParams, HttpServletRequest request, HttpServletResponse response) {
         try {
-        	if(hasPrivilege(request, reportParams.getName()))
-        		reportsScheduler.schedule(reportParams);
-        	else 
-        		response.sendError(HttpServletResponse.SC_FORBIDDEN,
-                        "Privileges is required to access reports");
+            if(hasPrivilege(request, reportParams.getName()))
+            	reportsScheduler.schedule(reportParams);
+            else 
+            	response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                    "Privileges is required to access reports");
         } catch (ParseException | IOException e) {
             catchBlock(response, e);
         } catch (SchedulerException e) {
