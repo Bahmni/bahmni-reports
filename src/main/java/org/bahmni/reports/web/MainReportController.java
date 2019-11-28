@@ -4,8 +4,13 @@ import org.apache.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
+import org.bahmni.reports.model.Report;
+import org.bahmni.reports.model.Reports;
 import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.scheduler.ReportsScheduler;
+import org.bahmni.reports.web.security.AuthenticationFilter;
+import org.bahmni.reports.web.security.AuthenticationResponse;
+import org.bahmni.reports.web.security.ReportAuthorizer;
 import org.bahmni.webclients.HttpClient;
 import org.bahmni.webclients.WebClientsException;
 import org.quartz.SchedulerException;
@@ -18,9 +23,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.List;
 
@@ -33,6 +41,9 @@ public class MainReportController {
     private AllDatasources allDatasources;
     private HttpClient httpClient;
     private ReportsScheduler reportsScheduler;
+    
+    @Autowired
+    ReportAuthorizer authorizer;
 
     @Autowired
     public MainReportController(JasperResponseConverter converter,
@@ -44,29 +55,61 @@ public class MainReportController {
         this.httpClient = httpClient;
         this.reportsScheduler = reportsScheduler;
     }
+    
+    private boolean hasPrivilege(HttpServletRequest request, String reportName){
+    	if(request != null){
+    		try {
+    			Report report = Reports.find(reportName, bahmniReportsProperties.getConfigFileUrl(),httpClient);
+    			if(report.getRequiredPrivilege() != null){
+    				Cookie[] cookies = request.getCookies();
+    				for (Cookie cookie : cookies) {
+    					if (cookie.getName().equals(AuthenticationFilter.REPORTING_COOKIE_NAME)) {
+    						AuthenticationResponse res = authorizer.authorize(cookie.getValue(), report.getRequiredPrivilege());
+                    		if(res == AuthenticationResponse.AUTHORIZED)
+                    			return true;
+                    		else
+                    			return false;
+    					}
+    				}
+    			} else return true;
+    			
+    		} catch (IOException | URISyntaxException e) {
+				return false;
+			}	
+    	}	
+    	return false;
+    }
 
     @RequestMapping(value = "/report", method = RequestMethod.GET)
-    public void getReport(ReportParams reportParams, HttpServletResponse response) {
+    public void getReport(ReportParams reportParams, HttpServletRequest request, HttpServletResponse response) {
         try {
-            converter.applyHttpHeaders(reportParams.getResponseType(), response, reportParams.getName());
-            ReportGenerator reportGenerator = new ReportGenerator(reportParams, response.getOutputStream(), allDatasources, bahmniReportsProperties, httpClient, converter);
-            reportGenerator.invoke();
+        	if(hasPrivilege(request, reportParams.getName())){
+	            converter.applyHttpHeaders(reportParams.getResponseType(), response, reportParams.getName());
+	            ReportGenerator reportGenerator = new ReportGenerator(reportParams, response.getOutputStream(), allDatasources, bahmniReportsProperties, httpClient, converter);
+	            reportGenerator.invoke();
+        	} else 
+        		response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                        "Privileges is required to access reports");
         } catch (Throwable e) {
             catchBlock(response, e);
         }
     }
 
     @RequestMapping(value = "/schedule", method = RequestMethod.GET)
-    public void schedule(ReportParams reportParams, HttpServletResponse response) {
+    public void schedule(ReportParams reportParams, HttpServletRequest request, HttpServletResponse response) {
         try {
-            reportsScheduler.schedule(reportParams);
-        } catch (ParseException | UnsupportedEncodingException e) {
+        	if(hasPrivilege(request, reportParams.getName()))
+        		reportsScheduler.schedule(reportParams);
+        	else 
+        		response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                        "Privileges is required to access reports");
+        } catch (ParseException | IOException e) {
             catchBlock(response, e);
         } catch (SchedulerException e) {
             logger.error("Scheduling report failed", e);
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        }
+        } 
     }
 
     @RequestMapping(value = "/getReports", method = RequestMethod.GET)

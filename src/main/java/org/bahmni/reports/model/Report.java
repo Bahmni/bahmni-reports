@@ -64,6 +64,7 @@ public abstract class Report<T extends Config> {
     private String type;
     private T config;
     private HttpClient httpClient;
+    private String requiredPrivilege;
 
     public String getName() {
         return name;
@@ -97,5 +98,13 @@ public abstract class Report<T extends Config> {
 
     public HttpClient getHttpClient() {
         return httpClient;
+    }
+    
+    public String getRequiredPrivilege() {
+        return requiredPrivilege;
+    }
+
+    public void setRequiredPrivilege(String requiredPrivilege) {
+        this.requiredPrivilege = requiredPrivilege;
     }
 }
