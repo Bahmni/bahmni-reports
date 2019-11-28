@@ -1,6 +1,6 @@
 language: java
 jdk:
- - openJdk
+ - openJdk8
 script: mvn clean install -DskipDump -DskipTests
 branches:
   only:
