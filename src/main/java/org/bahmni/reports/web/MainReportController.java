@@ -67,11 +67,9 @@ public class MainReportController {
                             AuthenticationResponse res = authorizer.authorize(cookie.getValue(), report.getRequiredPrivilege());
                             if(res == AuthenticationResponse.AUTHORIZED)
                             	return true;
-                            else
-                            	return false;
                           }
                      }
-                 } else return true;
+                 }
             } catch (IOException | URISyntaxException e) {
             	return false;
             }	
