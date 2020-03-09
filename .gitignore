@@ -1,8 +1,27 @@
-.idea
+*.class
 *.iml
-*.ids
-*.ipr
-*.iws
+*.idea
+.settings
+.project
+*.sass-cache
 target
-logs
+.java-version
+*.releaseBackup
+release.properties
+README.html
+
+# Package Files #
+*.jar
+*.war
+*.ear
+*.iml
+
+.settings/*
+**/bin
+**/.classpath
+**/.project
+**/.settings/*
+**/target/*
+
+# OS X auto-generated files #
 .DS_Store
