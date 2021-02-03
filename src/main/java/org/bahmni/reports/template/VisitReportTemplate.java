@@ -17,7 +17,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.col;
+//import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
@@ -61,6 +61,7 @@ public class VisitReportTemplate extends BaseReportTemplate<VisitReportConfig> {
         TextColumnBuilder<String> genderColumn = col.column("Gender", "Gender", type.stringType()).setStyle(minimalColumnStyle);
 
         jasperReport.setShowColumnTitle(true)
+        		.setResourceBundle(getLocaleBundle())
                 .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL)
                 .columns(patientIdColumn, patientNameColumn, genderColumn);
 
@@ -68,7 +69,6 @@ public class VisitReportTemplate extends BaseReportTemplate<VisitReportConfig> {
         addColumns(jasperReport, report.getConfig().getPersonAttributes(), minimalColumnStyle);
 
         String sqlString = getSqlString(personAttributes, visitAttributes, startDate, endDate);
-
         JasperReportBuilder jasperReportBuilder = SqlUtil.executeReportWithStoredProc(jasperReport, connection, sqlString);
         return new BahmniReportBuilder(jasperReportBuilder);
     }

@@ -19,7 +19,7 @@ import java.sql.Statement;
 import java.sql.Types;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.col;
+//import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 public class SqlReportTemplate extends BaseReportTemplate<SqlReportConfig> {

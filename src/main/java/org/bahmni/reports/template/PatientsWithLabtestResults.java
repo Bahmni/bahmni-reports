@@ -17,7 +17,7 @@ import java.sql.Connection;
 import java.util.Date;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.col;
+//import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;

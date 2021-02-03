@@ -20,7 +20,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.col;
+//import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
@@ -30,7 +30,7 @@ public class IpdPatientsReportTemplate extends BaseReportTemplate<IpdPatientsCon
     @Override
     public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<IpdPatientsConfig> report,
                                      String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) throws SQLException {
-        CommonComponents.addTo(jasperReport, report, pageType);
+    	CommonComponents.addTo(jasperReport, report, pageType);
 
         PatientAttributesHelper patientAttributesHelper = new PatientAttributesHelper(report.getConfig().getPatientAttributes());
 

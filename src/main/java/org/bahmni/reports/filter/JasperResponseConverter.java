@@ -3,8 +3,10 @@ package org.bahmni.reports.filter;
 import net.sf.dynamicreports.jasper.builder.JasperConcatenatedReportBuilder;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.jasper.builder.export.Exporters;
+import net.sf.dynamicreports.jasper.builder.export.JasperHtmlExporterBuilder;
 import net.sf.dynamicreports.jasper.builder.export.JasperXlsExporterBuilder;
 import net.sf.dynamicreports.report.exception.DRException;
+
 import org.apache.log4j.Logger;
 import org.bahmni.reports.template.Templates;
 import org.bahmni.reports.web.ReportParams;
@@ -31,7 +33,13 @@ public class JasperResponseConverter {
                                       JasperConcatenatedReportBuilder concatenatedReportBuilder) throws DRException {
         switch (reportParams.getResponseType()) {
             case TEXT_HTML:
-                concatenatedReportBuilder.toHtml(outputStream);
+            	if ("ar".equalsIgnoreCase(reportParams.getLanguageTag())) {
+	            	JasperHtmlExporterBuilder htmlBuilder = Exporters.htmlExporter(outputStream);
+	            	htmlBuilder.setHtmlHeader("<html dir='rtl'>");
+	            	concatenatedReportBuilder.toHtml(htmlBuilder);
+            	} else {
+            		concatenatedReportBuilder.toHtml(outputStream);
+            	}
                 break;
             case APPLICATION_VND_MS_EXCEL:
                 concatenatedReportBuilder.toXlsx(outputStream);
