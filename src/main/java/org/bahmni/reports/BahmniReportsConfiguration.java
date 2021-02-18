@@ -1,12 +1,12 @@
 package org.bahmni.reports;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.conn.ssl.SSLSocketFactory;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.impl.conn.SchemeRegistryFactory;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.bahmni.reports.builder.ComboPooledDataSourceBuilder;
 import org.bahmni.webclients.AllTrustedSSLSocketFactory;
 import org.bahmni.webclients.ConnectionDetails;
@@ -34,35 +34,34 @@ public class BahmniReportsConfiguration {
     }
 
     @Bean
-    public HttpClient httpClient(SchemeRegistry schemeRegistry) {
-        PoolingClientConnectionManager connectionManager = new PoolingClientConnectionManager(schemeRegistry);
+    public HttpClient httpClient(Registry<ConnectionSocketFactory> schemeRegistry) {
+
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(schemeRegistry);
         connectionManager.setDefaultMaxPerRoute(10);
+
         ConnectionDetails connectionDetails = new ConnectionDetails(bahmniReportsProperties.getOpenmrsRootUrl() + "/session",
                 bahmniReportsProperties.getOpenmrsServiceUser(),
                 bahmniReportsProperties.getOpenmrsServicePassword(), bahmniReportsProperties.getOpenmrsConnectionTimeout(),
                 bahmniReportsProperties.getOpenmrsReplyTimeout(), connectionManager);
-        return new HttpClient(connectionDetails, new OpenMRSLoginAuthenticator(connectionDetails));
-    }
-
-
-    @Bean
-    public SchemeRegistry schemeRegistry(SSLSocketFactory allTrustSSLSocketFactory){
-
         if(!"true".equals(bahmniReportsProperties.getTrustSSLConnection())){
-            return SchemeRegistryFactory.createDefault();
+            return new HttpClient(connectionDetails);
+        }else {
+            return new HttpClient(connectionDetails, new OpenMRSLoginAuthenticator(connectionDetails));
         }
-
-        SchemeRegistry registry = new SchemeRegistry();
-        registry.register(
-                new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
-        registry.register(
-                new Scheme("https", 443, allTrustSSLSocketFactory));
-
-        return registry;
     }
 
+
     @Bean
-    public SSLSocketFactory allTrustSSLSocketFactory(){
+    public Registry<ConnectionSocketFactory> schemeRegistry(SSLConnectionSocketFactory allTrustSSLSocketFactory){
+
+        Registry<ConnectionSocketFactory> schemeRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("https", allTrustSSLSocketFactory)
+                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .build();
+        return schemeRegistry;
+    }
+    @Bean
+    public SSLConnectionSocketFactory allTrustSSLSocketFactory(){
         return new AllTrustedSSLSocketFactory().getSSLSocketFactory();
     }
 
