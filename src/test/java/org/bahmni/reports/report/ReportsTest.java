@@ -1,10 +1,16 @@
 package org.bahmni.reports.report;
 
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.bahmni.webclients.AllTrustedSSLSocketFactory;
 import org.bahmni.webclients.ConnectionDetails;
 import org.bahmni.webclients.HttpClient;
@@ -19,7 +25,7 @@ public class ReportsTest{
 
     @Test
     public void testReportConnection() throws Exception {
-        PoolingClientConnectionManager connectionManager = new PoolingClientConnectionManager(schemeRegistry(allTrustSSLSocketFactory()));
+        PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager(schemeRegistry(allTrustSSLSocketFactory()));
         connectionManager.setDefaultMaxPerRoute(10);
         ConnectionDetails connectionDetails = new ConnectionDetails("http://192.168.33.10:8050/openmrs/ws/rest/v1/session",
                 "superman",
@@ -32,19 +38,16 @@ public class ReportsTest{
         System.out.println(data);
     }
 
+    public Registry<ConnectionSocketFactory> schemeRegistry(SSLConnectionSocketFactory allTrustSSLSocketFactory){
 
-    public SchemeRegistry schemeRegistry(SSLSocketFactory allTrustSSLSocketFactory){
-
-        SchemeRegistry registry = new SchemeRegistry();
-        registry.register(
-                new Scheme("http", 80, PlainSocketFactory.getSocketFactory()));
-        registry.register(
-                new Scheme("https", 443, allTrustSSLSocketFactory));
-
-        return registry;
+        Registry<ConnectionSocketFactory> schemeRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("https", allTrustSSLSocketFactory)
+                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .build();
+        return schemeRegistry;
     }
 
-    public SSLSocketFactory allTrustSSLSocketFactory(){
+    public SSLConnectionSocketFactory allTrustSSLSocketFactory(){
         return new AllTrustedSSLSocketFactory().getSSLSocketFactory();
     }
 }

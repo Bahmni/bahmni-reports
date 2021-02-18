@@ -1,7 +1,10 @@
 package org.bahmni.reports;
 
+import org.apache.http.config.Registry;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +21,7 @@ public class BahmniReportsConfigurationTest {
 	private BahmniReportsProperties bahmniReportsProperties;
 
 	@Mock
-	SSLSocketFactory allTrustSSLSocketFactory;
+	SSLConnectionSocketFactory allTrustSSLSocketFactory;
 
 	@Before
 	public void setup(){
@@ -30,10 +33,9 @@ public class BahmniReportsConfigurationTest {
 
 		when(bahmniReportsProperties.getTrustSSLConnection()).thenReturn("true");
 		BahmniReportsConfiguration bahmniReportsConfiguration = new BahmniReportsConfiguration(bahmniReportsProperties);
-		SchemeRegistry actualSchemeRegistry= bahmniReportsConfiguration.schemeRegistry(allTrustSSLSocketFactory);
-
-		Scheme actualScheme = actualSchemeRegistry.get("https");
-		assertTrue(actualScheme.getSchemeSocketFactory().equals(allTrustSSLSocketFactory));
+		Registry<ConnectionSocketFactory> actualSchemeRegistry= bahmniReportsConfiguration.schemeRegistry(allTrustSSLSocketFactory);
+		ConnectionSocketFactory actualScheme = actualSchemeRegistry.lookup("https");
+		assertTrue(actualScheme.equals(allTrustSSLSocketFactory));
 
 	}
 
@@ -42,9 +44,9 @@ public class BahmniReportsConfigurationTest {
 
 		when(bahmniReportsProperties.getTrustSSLConnection()).thenReturn("false");
 		BahmniReportsConfiguration bahmniReportsConfiguration = new BahmniReportsConfiguration(bahmniReportsProperties);
-		SchemeRegistry actualSchemeRegistry= bahmniReportsConfiguration.schemeRegistry(allTrustSSLSocketFactory);
+		Registry<ConnectionSocketFactory> actualSchemeRegistry= bahmniReportsConfiguration.schemeRegistry(allTrustSSLSocketFactory);
 
-		Scheme actualScheme = actualSchemeRegistry.get("https");
-		assertFalse(actualScheme.getSchemeSocketFactory().equals(allTrustSSLSocketFactory));
+		ConnectionSocketFactory actualScheme = actualSchemeRegistry.lookup("https");
+		assertFalse(actualScheme.equals(allTrustSSLSocketFactory));
 	}
 }
