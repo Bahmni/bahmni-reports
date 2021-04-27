@@ -4,8 +4,11 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.base.DRReport;
 import net.sf.dynamicreports.report.base.column.DRColumn;
 import net.sf.dynamicreports.report.constant.PageType;
+import net.sf.jasperreports.engine.JRParameter;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
+import org.apache.commons.lang.StringUtils;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.Config;
 import org.bahmni.reports.model.GenericReportsConfig;
@@ -19,17 +22,41 @@ import java.io.StringWriter;
 import java.sql.Connection;
 import java.util.*;
 
+//import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.report;
+//import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+//import static org.bahmni.reports.template.Templates.minimalColumnStyle;
+
 
 public class BahmniReportUtil {
+
+    public static String getResourceBundleLabel(String key, ResourceBundle reportLocaleBundle) {
+    	try {
+    		String newKey = "";
+    		if (!StringUtils.isEmpty(key)) {
+    			newKey = key.trim();
+    			newKey = newKey.replaceAll(" ", "_");
+    		}
+	    	if (reportLocaleBundle!=null) {
+	    		return new String(reportLocaleBundle.getString(newKey).getBytes("8859_1"), "UTF-8");
+	    	}
+    	} catch (Exception e) {
+    	}
+    	return key;
+    }
 
     public static BahmniReportBuilder build(Report report, Connection connection,
                                             String startDate, String endDate,
                                             List<AutoCloseable> resources, PageType pageType,
                                             BahmniReportsProperties bahmniReportsProperties) throws Exception {
         BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
+        ResourceBundle reportLocaleBundle = reportTemplate.getLocaleBundle();
         JasperReportBuilder reportBuilder = report();
-        reportBuilder = new ReportHeader().add(reportBuilder, report.getName(), startDate, endDate);
+        reportBuilder = new ReportHeader().add(reportBuilder, getResourceBundleLabel(report.getName(), reportLocaleBundle), startDate, endDate);
+        reportBuilder = reportBuilder.setResourceBundle(reportLocaleBundle);
+        reportBuilder = reportBuilder.setLocale(reportLocaleBundle.getLocale());
+        //reportBuilder = reportBuilder.setParameter(JRParameter.REPORT_RESOURCE_BUNDLE, reportLocaleBundle);
+        //reportBuilder = reportBuilder.setParameter(JRParameter.REPORT_LOCALE, reportLocaleBundle.getLocale());
         BahmniReportBuilder build = reportTemplate.build(connection, reportBuilder, report, startDate, endDate, resources, pageType);
         excludeColumns(report.getConfig(), reportBuilder);
         orderColumns(report.getConfig(), reportBuilder);
