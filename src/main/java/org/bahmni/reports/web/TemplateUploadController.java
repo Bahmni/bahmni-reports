@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.UUID;
 
 @Controller
 public class TemplateUploadController {
@@ -25,9 +26,12 @@ public class TemplateUploadController {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
     public String uploadTemplateFile(@RequestParam(value = "file") MultipartFile file) throws IOException {
-        String pathname = bahmniReportsProperties.getMacroTemplatesTempDirectory() + file.getOriginalFilename();
+        String pathname = bahmniReportsProperties.getMacroTemplatesTempDirectory() + getTemplateName(file.getOriginalFilename());
         file.transferTo(new File(pathname));
         return pathname;
+    }
 
+    private String getTemplateName(String originalFilename) {
+        return UUID.randomUUID().toString() + "-" + originalFilename;
     }
 }
