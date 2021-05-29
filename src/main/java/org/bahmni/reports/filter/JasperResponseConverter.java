@@ -38,16 +38,16 @@ public class JasperResponseConverter {
                 break;
             case APPLICATION_VND_MS_EXCEL_CUSTOM:
                 // below code is to embed existing template and generate a new excel in xls format
+                File templateFile = new File(reportParams.getMacroTemplateLocation());
                 JasperXlsExporterBuilder exporterBuilder = Exporters.xlsExporter(outputStream).setDetectCellType(true);
                 exporterBuilder.setKeepWorkbookTemplateSheets(true);
                 exporterBuilder.setWorkbookTemplate(reportParams.getMacroTemplateLocation());
                 exporterBuilder.addSheetName("Report");
                 concatenatedReportBuilder.toXls(exporterBuilder);
-                File templateFile = new File(reportParams.getMacroTemplateLocation());
                 if (reportParams.getMacroTemplateLocation().startsWith(macroTemplatesTempDirectory)) {
                     boolean delete = templateFile.delete();
                     if (!delete) {
-                        logger.warn("Template file not deleted");
+                        logger.warn(String.format("Uploaded report template file not deleted: %s", reportParams.getMacroTemplateLocation()));
                     }
                 }
                 break;
