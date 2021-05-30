@@ -16,6 +16,8 @@ import org.bahmni.webclients.HttpClient;
 
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -77,16 +79,17 @@ public class ReportGenerator {
 
         if (!StringUtils.isBlank(reportParams.getMacroTemplateLocation())) {
             String templatePath = bahmniReportsProperties.getMacroTemplatesTempDirectory();
-            logger.error(String.format(" template path: %s", templatePath));
-            logger.error(String.format(" template specified: %s",  reportParams.getMacroTemplateLocation()));
+            logger.debug(String.format(" template path: %s", templatePath));
+            logger.debug(String.format(" template specified: %s",  reportParams.getMacroTemplateLocation()));
 
             if (StringUtils.isBlank(templatePath)) {
                 logger.error(ERROR_MACRO_TEMPLATE_LOCATION_UNDEFINED);
                 throw new RuntimeException(EX_MACRO_TEMPLATE_LOCATiON_UNDEFINED);
             }
 
-            if (!reportParams.getMacroTemplateLocation().trim().toUpperCase()
-                    .startsWith(templatePath.trim().toUpperCase())) {
+            Path templateLocation = Paths.get(templatePath);
+            Path normalizedTemplatePath = Paths.get(templatePath, reportParams.getMacroTemplateLocation()).normalize();
+            if (!normalizedTemplatePath.startsWith(templateLocation)) {
                 logger.error(String.format("Invalid Macro Template Location: %s", reportParams.getMacroTemplateLocation()));
                 throw new RuntimeException(EX_INVALID_MACRO_TEMPLATE);
             }

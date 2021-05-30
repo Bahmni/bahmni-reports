@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Component
@@ -25,6 +27,7 @@ public class JasperResponseConverter {
     private static final String APPLICATION_PDF = "application/pdf";
     private static final String TEXT_CSV = "text/csv";
     private static final String APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET = "application/vnd.oasis.opendocument.spreadsheet";
+    private static final String EX_INVALID_MACRO_TEMPLATE = "Invalid Template";
 
     public void convertToResponseType(ReportParams reportParams,
                                       String macroTemplatesTempDirectory, OutputStream outputStream,
@@ -38,17 +41,20 @@ public class JasperResponseConverter {
                 break;
             case APPLICATION_VND_MS_EXCEL_CUSTOM:
                 // below code is to embed existing template and generate a new excel in xls format
-                File templateFile = new File(reportParams.getMacroTemplateLocation());
+                Path macroTemplateFile = macroTemplateFilePath(macroTemplatesTempDirectory, reportParams.getMacroTemplateLocation());
+                File templateFile = macroTemplateFile.toFile();
+                if (!templateFile.exists()) {
+                    logger.error(String.format("Invalid Macro Template specified: %s", macroTemplateFile));
+                    throw new RuntimeException(EX_INVALID_MACRO_TEMPLATE);
+                }
                 JasperXlsExporterBuilder exporterBuilder = Exporters.xlsExporter(outputStream).setDetectCellType(true);
                 exporterBuilder.setKeepWorkbookTemplateSheets(true);
-                exporterBuilder.setWorkbookTemplate(reportParams.getMacroTemplateLocation());
+                exporterBuilder.setWorkbookTemplate(macroTemplateFile.toString());
                 exporterBuilder.addSheetName("Report");
                 concatenatedReportBuilder.toXls(exporterBuilder);
-                if (reportParams.getMacroTemplateLocation().startsWith(macroTemplatesTempDirectory)) {
-                    boolean delete = templateFile.delete();
-                    if (!delete) {
-                        logger.warn(String.format("Uploaded report template file not deleted: %s", reportParams.getMacroTemplateLocation()));
-                    }
+                boolean delete = templateFile.delete();
+                if (!delete) {
+                    logger.warn(String.format("Uploaded report template file not deleted: %s", macroTemplateFile));
                 }
                 break;
             case APPLICATION_PDF:
@@ -61,6 +67,10 @@ public class JasperResponseConverter {
                 concatenatedReportBuilder.toOds(outputStream);
                 break;
         }
+    }
+
+    private Path macroTemplateFilePath(String macroTemplatesTempDirectory, String macroTemplate) {
+        return Paths.get(macroTemplatesTempDirectory, macroTemplate);
     }
 
     public void applyReportTemplates(List<JasperReportBuilder> reports, String responseType) {
