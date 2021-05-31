@@ -26,9 +26,10 @@ public class TemplateUploadController {
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     @ResponseBody
     public String uploadTemplateFile(@RequestParam(value = "file") MultipartFile file) throws IOException {
-        String pathname = bahmniReportsProperties.getMacroTemplatesTempDirectory() + getTemplateName(file.getOriginalFilename());
+        String templateFileName = getTemplateName(file.getOriginalFilename());
+        String pathname = bahmniReportsProperties.getMacroTemplatesTempDirectory() + templateFileName;
         file.transferTo(new File(pathname));
-        return pathname;
+        return templateFileName;
     }
 
     private String getTemplateName(String originalFilename) {
