@@ -1,5 +1,8 @@
 package org.bahmni.reports.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class BahmniForm {
     private String name;
     private String uuid;
