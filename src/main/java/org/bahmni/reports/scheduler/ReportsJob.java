@@ -1,6 +1,7 @@
 package org.bahmni.reports.scheduler;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
@@ -25,7 +26,7 @@ import static org.bahmni.reports.scheduler.ReportStatus.ERROR;
 import static org.bahmni.reports.scheduler.ReportStatus.PROCESSING;
 
 public class ReportsJob implements Job {
-    private static final Logger logger = Logger.getLogger(ReportsJob.class);
+    private static final Logger logger = LogManager.getLogger(ReportsJob.class);
 
     private ReportParams reportParams;
 
@@ -49,7 +50,7 @@ public class ReportsJob implements Job {
         String reportId = null;
         try {
             reportId = jobExecutionContext.getJobDetail().getKey().getName();
-            logger.info("Running report " + reportId);
+            logger.info("Running report {}", reportId);
             final String fileName = generateFileName();
             ScheduledReport scheduledReport = scheduledReportRepository.findScheduledReportById(reportId);
             scheduledReport.setFileName(fileName);
@@ -67,7 +68,7 @@ public class ReportsJob implements Job {
 
             scheduledReport.setStatus(COMPLETED);
             scheduledReportRepository.save(scheduledReport);
-            logger.info("Successfully ran report " + reportId);
+            logger.info("Successfully ran report {}", reportId);
         } catch (Throwable throwable) {
             logger.error("Error in running report " + reportId, throwable);
             ScheduledReport scheduledReport = scheduledReportRepository.findScheduledReportById(reportId);

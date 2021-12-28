@@ -1,6 +1,7 @@
 package org.bahmni.reports.web;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
 @RestController
 public class MainReportController {
 
-    private static final Logger logger = Logger.getLogger(MainReportController.class);
+    private static final Logger logger = LogManager.getLogger(MainReportController.class);
     private JasperResponseConverter converter;
     private BahmniReportsProperties bahmniReportsProperties;
     private AllDatasources allDatasources;
