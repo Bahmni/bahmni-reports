@@ -30,7 +30,7 @@ public class FileReaderUtil {
 
             return sb.toString();
         } catch (IOException e) {
-            logger.error("File" + fileName + "not found", e);
+            logger.error("File {} not found {}", fileName, e);
         } finally {
             try {
                 br.close();
@@ -49,7 +49,7 @@ public class FileReaderUtil {
         try {
             return new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            logger.error("File at location " + filePath + " not found", e);
+            logger.error("File at location {} not found {}", filePath , e);
         }
         return null;
     }

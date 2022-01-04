@@ -70,7 +70,7 @@ public class ReportsJob implements Job {
             scheduledReportRepository.save(scheduledReport);
             logger.info("Successfully ran report {}", reportId);
         } catch (Throwable throwable) {
-            logger.error("Error in running report " + reportId, throwable);
+            logger.error("Error in running report {}", reportId, throwable);
             ScheduledReport scheduledReport = scheduledReportRepository.findScheduledReportById(reportId);
             scheduledReport.setStatus(ERROR);
             scheduledReport.setErrorMessage(throwable.getCause().getMessage());
