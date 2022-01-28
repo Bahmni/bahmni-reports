@@ -1,6 +1,7 @@
 package org.bahmni.reports.scheduler;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.persistence.ScheduledReportRepository;
@@ -32,7 +33,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 @Service
 public class ReportsScheduler {
-    private static final Logger logger = Logger.getLogger(ReportsScheduler.class);
+    private static final Logger logger = LogManager.getLogger(ReportsScheduler.class);
 
     @Autowired
     private Scheduler scheduler;
@@ -45,7 +46,7 @@ public class ReportsScheduler {
 
 
     public void schedule(ReportParams reportParams) throws ParseException, SchedulerException, UnsupportedEncodingException {
-        logger.info("Starting to schedule report " + reportParams.getName());
+        logger.info("Starting to schedule report {}", reportParams.getName());
 
         JobDetail job = newJob(ReportsJob.class).build();
         job.getJobDataMap().put("reportParams", reportParams);
@@ -58,7 +59,7 @@ public class ReportsScheduler {
 
         scheduler.scheduleJob(job, trigger);
 
-        logger.info("Successfully scheduled report " + reportParams.getName());
+        logger.info("Successfully scheduled report {}", reportParams.getName());
     }
 
     public List<ScheduledReport> getReports(String user) {
@@ -97,7 +98,7 @@ public class ReportsScheduler {
 
         schedulerFactoryBean.getScheduler().scheduleJob(cleanupJob, cleanupTrigger);
 
-        logger.info("Reports cleanup job scheduled for:" + triggerTime);
+        logger.info("Reports cleanup job scheduled for:{}", triggerTime);
     }
 
     public String getFilePath(ScheduledReport scheduledReport) {
@@ -116,13 +117,13 @@ public class ReportsScheduler {
             case QUEUED:
                 scheduler.deleteJob(jobKey(id));
                 scheduledReportRepository.delete(scheduledReport);
-                logger.info("Deleted scheduled report job " + scheduledReport.getId());
+                logger.info("Deleted scheduled report job {}", scheduledReport.getId());
                 break;
             case ERROR:
             case COMPLETED:
                 deleteFileOfReport(scheduledReport);
                 scheduledReportRepository.delete(scheduledReport);
-                logger.info("Deleted the completed report file " + scheduledReport.getFileName());
+                logger.info("Deleted the completed report file {}", scheduledReport.getFileName());
                 break;
         }
     }

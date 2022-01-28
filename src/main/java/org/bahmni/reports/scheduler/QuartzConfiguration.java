@@ -1,6 +1,7 @@
 package org.bahmni.reports.scheduler;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.model.AllDatasources;
 import org.quartz.spi.JobFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 @Configuration
 public class QuartzConfiguration {
-    private static final Logger logger = Logger.getLogger(QuartzConfiguration.class);
+    private static final Logger logger = LogManager.getLogger(QuartzConfiguration.class);
 
     @Autowired
     private ApplicationContext applicationContext;

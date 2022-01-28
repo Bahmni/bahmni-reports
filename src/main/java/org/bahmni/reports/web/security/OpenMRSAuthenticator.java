@@ -1,6 +1,7 @@
 package org.bahmni.reports.web.security;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 @Component
 public class OpenMRSAuthenticator {
 
-    private static final Logger logger = Logger.getLogger(OpenMRSAuthenticator.class);
+    private static final Logger logger = LogManager.getLogger(OpenMRSAuthenticator.class);
     private static final String WHOAMI_URL = "/bahmnicore/whoami";
     public static final String OPENMRS_SESSION_ID_COOKIE_NAME = "JSESSIONID";
 

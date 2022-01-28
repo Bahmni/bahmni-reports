@@ -16,6 +16,7 @@
         <skipDump>true</skipDump>
         <skipConfig>true</skipConfig>
         <openMRSVersion>2.1.0</openMRSVersion>
+        <log4jVersion>2.17.1</log4jVersion>
     </properties>
 
     <build>
@@ -208,9 +209,16 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.15</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4jVersion}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4jVersion}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs.test</groupId>
@@ -369,7 +377,7 @@
             <name>The "public-jboss" repository group provides a combined view all JBoss community project artifacts
             </name>
             <layout>default</layout>
-            <url>http://repository.jboss.org/nexus/content/groups/public-jboss</url>
+            <url>https://repository.jboss.org/nexus/content/groups/public-jboss</url>
             <releases>
                 <updatePolicy>interval:10080</updatePolicy>
             </releases>
@@ -424,7 +432,7 @@
         <repository>
             <id>openmrs-repo</id>
             <name>OpenMRS Nexus Repository</name>
-            <url>http://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+            <url>https://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
             <releases>
                 <updatePolicy>always</updatePolicy>
             </releases>
@@ -432,7 +440,7 @@
         <repository>
            <id>repo.mybahmni.org</id>
            <name>bahmni-artifactory-snapshots</name>
-           <url>http://repo.mybahmni.org.s3.amazonaws.com/artifactory/snapshot</url>
+           <url>https://repo.mybahmni.org.s3.amazonaws.com/artifactory/snapshot</url>
            <snapshots>
                <updatePolicy>always</updatePolicy>
            </snapshots>

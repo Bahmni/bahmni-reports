@@ -1,6 +1,7 @@
 package org.bahmni.reports.util;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.template.Templates;
 
 import java.io.BufferedReader;
@@ -11,7 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class FileReaderUtil {
-    private static final Logger logger = Logger.getLogger(FileReaderUtil.class);
+    private static final Logger logger = LogManager.getLogger(FileReaderUtil.class);
 
     public static String getFileContent(final String fileName) {
 
@@ -29,7 +30,7 @@ public class FileReaderUtil {
 
             return sb.toString();
         } catch (IOException e) {
-            logger.error("File" + fileName + "not found", e);
+            logger.error("File {} not found {}", fileName, e);
         } finally {
             try {
                 br.close();
@@ -48,7 +49,7 @@ public class FileReaderUtil {
         try {
             return new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            logger.error("File at location " + filePath + " not found", e);
+            logger.error("File at location {} not found {}", filePath , e);
         }
         return null;
     }

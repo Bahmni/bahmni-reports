@@ -7,7 +7,8 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.builder.ComboPooledDataSourceBuilder;
 import org.bahmni.webclients.AllTrustedSSLSocketFactory;
 import org.bahmni.webclients.ConnectionDetails;
@@ -29,7 +30,7 @@ public class BahmniReportsConfiguration {
     private static int IDLE_CONNECTION_TEST_TIME = 300; //in seconds
 
     private BahmniReportsProperties bahmniReportsProperties;
-    private static final Logger logger = Logger.getLogger(BahmniReportsConfiguration.class);
+    private static final Logger logger = LogManager.getLogger(BahmniReportsConfiguration.class);
 
     @Autowired
     public BahmniReportsConfiguration(BahmniReportsProperties bahmniReportsProperties){

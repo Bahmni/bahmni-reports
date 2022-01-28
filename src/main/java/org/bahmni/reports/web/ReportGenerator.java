@@ -3,7 +3,8 @@ package org.bahmni.reports.web;
 import net.sf.dynamicreports.jasper.builder.JasperConcatenatedReportBuilder;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
@@ -25,7 +26,7 @@ import java.util.List;
 import static net.sf.dynamicreports.report.builder.DynamicReports.concatenatedReport;
 
 public class ReportGenerator {
-    private static final Logger logger = Logger.getLogger(ReportGenerator.class);
+    private static final Logger logger = LogManager.getLogger(ReportGenerator.class);
     private static final String EX_MACRO_TEMPLATE_LOCATiON_UNDEFINED = "Can not identify template. Please contact your system administrator.";
     private static final String ERROR_MACRO_TEMPLATE_LOCATION_UNDEFINED = "Can not generate report. Please define the macro template location";
     private static final String EX_INVALID_MACRO_TEMPLATE = "Invalid Template";
