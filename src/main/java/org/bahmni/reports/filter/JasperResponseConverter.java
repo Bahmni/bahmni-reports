@@ -5,7 +5,8 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.jasper.builder.export.Exporters;
 import net.sf.dynamicreports.jasper.builder.export.JasperXlsExporterBuilder;
 import net.sf.dynamicreports.report.exception.DRException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.template.Templates;
 import org.bahmni.reports.web.ReportParams;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ import java.util.List;
 @Component
 public class JasperResponseConverter {
 
-    private static final Logger logger = Logger.getLogger(JasperResponseConverter.class);
+    private static final Logger logger = LogManager.getLogger(JasperResponseConverter.class);
     private static final String TEXT_HTML = "text/html";
     private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
     private static final String APPLICATION_VND_MS_EXCEL_CUSTOM = "application/vnd.ms-excel-custom";

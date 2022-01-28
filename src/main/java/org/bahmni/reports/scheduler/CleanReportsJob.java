@@ -1,6 +1,7 @@
 package org.bahmni.reports.scheduler;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.persistence.ScheduledReportRepository;
@@ -22,7 +23,7 @@ public class CleanReportsJob implements Job {
     @Autowired
     private ScheduledReportRepository scheduledReportRepository;
 
-    private static final Logger logger = Logger.getLogger(CleanReportsJob.class);
+    private static final Logger logger = LogManager.getLogger(CleanReportsJob.class);
 
 
     @Override
@@ -37,7 +38,7 @@ public class CleanReportsJob implements Job {
                 if (scheduledReportList.get(i).getFileName() != null) {
                     File file = new File(bahmniReportsProperties.getReportsSaveDirectory(), scheduledReportList.get(i).getFileName());
                     file.delete();
-                    logger.info("Cleanup job removed report."+scheduledReportList.get(i).getFileName());
+                    logger.info("Cleanup job removed report.{}",scheduledReportList.get(i).getFileName());
                 }
                 scheduledReportRepository.delete(scheduledReportList.get(i));
             }
