@@ -15,9 +15,9 @@
         <jackson.version>2.10.3</jackson.version>
         <skipDump>true</skipDump>
         <skipConfig>true</skipConfig>
-        <openMRSVersion>2.1.5</openMRSVersion>
+        <openMRSVersion>2.1.6</openMRSVersion>
         <log4jVersion>2.17.1</log4jVersion>
-        <bahmniJavaUtils.version>0.95.0-SNAPSHOT</bahmniJavaUtils.version>
+        <bahmniJavaUtils.version>0.94.0</bahmniJavaUtils.version>
     </properties>
 
     <build>
