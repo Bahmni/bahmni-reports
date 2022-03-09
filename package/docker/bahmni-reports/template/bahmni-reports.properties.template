@@ -1,0 +1,21 @@
+openelis.url=jdbc:postgresql://${OPENELIS_DB_SERVER}:5432/clinlims
+openelis.username=clinlims
+openelis.password=clinlims
+openmrs.url=jdbc:mysql://${OPENMRS_DB_HOST}:3306/${OPENMRS_DB_NAME}?allowMultiQueries=true
+openmrs.test.url=jdbc:mysql://${OPENMRS_DB_HOST}:3306/reports_integration_tests?allowMultiQueries=true
+openmrs.username=${OPENMRS_DB_USERNAME}
+openmrs.password=${OPENMRS_DB_PASSWORD}
+reports.config.url=http://bahmni-web:8091/bahmni_config/openmrs/apps/reports/reports.json
+reports.username=${REPORTS_DB_USERNAME}
+reports.password=${REPORTS_DB_PASSWORD}
+openmrs.service.rootUrl=http://${OPENMRS_HOST}:${OPENMRS_PORT}/openmrs/ws/rest/v1
+openmrs.service.user=reports-user
+openmrs.service.password=Admin123
+openmrs.connectionTimeoutInMilliseconds=30000
+openmrs.replyTimeoutInMilliseconds=120000
+macrotemplates.temp.directory=/tmp/
+openerp.url=jdbc:postgresql://${ODOO_DB_SERVER}:5432/odoo
+openerp.username= ${ODOO_DB_USERNAME}
+openerp.password=${ODOO_DB_PASSWORD}
+bahmnireports.db.url=jdbc:mysql://${REPORTS_DB_SERVER}:3306/${REPORTS_DB_NAME}?allowMultiQueries=true
+reports.save.directory=/home/bahmni/reports/
