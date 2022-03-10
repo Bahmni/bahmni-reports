@@ -2,9 +2,10 @@
 set -e
 
 #Parameters (repository_name,artifact_name,github_pat)
-REPOSITORY_NAME = $1
-ARTIFACT_NAME = $2
-GITHUB_PAT = $3
+REPOSITORY_NAME=$1
+ARTIFACT_NAME=$2
+GITHUB_PAT=$3
+
 if [ $# -ne 3 ]
 then
 echo "Invalid Arguments. Need repository_name, artifact_name, github_pat"

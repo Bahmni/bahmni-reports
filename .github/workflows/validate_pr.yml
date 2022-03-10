@@ -12,4 +12,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '8'
-      - run: ./mvnw --no-transfer-progress clean install -DskipTests
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Build package
+        run: ./mvnw --no-transfer-progress clean install -DskipTests
