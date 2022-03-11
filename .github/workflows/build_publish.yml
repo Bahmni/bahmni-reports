@@ -34,7 +34,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          file: package/docker/Dockerfile
+          file: package/docker/bahmni-reports/Dockerfile
           push: true
           tags: bahmni/reports:${{env.BAHMNI_VERSION}}-${{github.run_number}},bahmni/reports:latest
           
