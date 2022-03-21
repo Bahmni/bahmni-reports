@@ -28,7 +28,7 @@ public class ReportAuthorization {
         this.bahmniReportsProperties = bahmniReportsProperties;
         this.httpClient = httpClient;
         String sessionId = getSessionId(request);
-        OpenMRSAuthenticator.Privileges privileges = openMRSAuthenticator.callOpenMRS(sessionId).getBody();
+        Privileges privileges = openMRSAuthenticator.callOpenMRS(sessionId).getBody();
         userPrivileges = new ArrayList();
         privileges.forEach(a -> userPrivileges.add(a.getName()));
     }

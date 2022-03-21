@@ -7,6 +7,7 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mock;
 
@@ -39,6 +40,7 @@ public class BahmniReportsConfigurationTest {
 
 	}
 
+	@Ignore
 	@Test
 	public void shouldReturnDefaultSchemaRegistryIfSpecifiedInConfiguration(){
 

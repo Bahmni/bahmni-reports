@@ -56,7 +56,7 @@ public class ReportAuthorizationTest {
 
     @Test
     public void shouldInvokeCallOpenMRSWithGivenSessionId() {
-        OpenMRSAuthenticator.Privileges privileges = mock(OpenMRSAuthenticator.Privileges.class);
+        Privileges privileges = mock(Privileges.class);
         when(openMRSAuthenticator.callOpenMRS(SESSION_ID)).thenReturn(ResponseEntity.ok(privileges));
 
         new ReportAuthorization(request, openMRSAuthenticator, bahmniReportsProperties, httpClient);
@@ -66,8 +66,8 @@ public class ReportAuthorizationTest {
 
     @Test
     public void shouldSetGivenPrivilegesAfterObjectCreation() throws IllegalAccessException {
-        OpenMRSAuthenticator.Privileges privileges = new OpenMRSAuthenticator.Privileges();
-        OpenMRSAuthenticator.Privilege privilege = new OpenMRSAuthenticator.Privilege();
+        Privileges privileges = new Privileges();
+        Privilege privilege = new Privilege();
         String privilegeName = "privilege";
         FieldUtils.writeField(privilege, "name", privilegeName, true);
         privileges.add(privilege);
@@ -83,7 +83,7 @@ public class ReportAuthorizationTest {
 
     @Test
     public void shouldReturnTrueIfUserHaveTheGivenReportPrivilege() throws Exception {
-        OpenMRSAuthenticator.Privileges privileges = mock(OpenMRSAuthenticator.Privileges.class);
+        Privileges privileges = mock(Privileges.class);
         when(openMRSAuthenticator.callOpenMRS(SESSION_ID)).thenReturn(ResponseEntity.ok(privileges));
         reportAuthorization = new ReportAuthorization(request, openMRSAuthenticator, bahmniReportsProperties, httpClient);
         String privilegeName = "privilege";
@@ -101,7 +101,7 @@ public class ReportAuthorizationTest {
 
     @Test
     public void shouldReturnFalseIfUserHaveTheGivenReportPrivilege() throws Exception {
-        OpenMRSAuthenticator.Privileges privileges = mock(OpenMRSAuthenticator.Privileges.class);
+        Privileges privileges = mock(Privileges.class);
         when(openMRSAuthenticator.callOpenMRS(SESSION_ID)).thenReturn(ResponseEntity.ok(privileges));
         reportAuthorization = new ReportAuthorization(request, openMRSAuthenticator, bahmniReportsProperties, httpClient);
         FieldUtils.writeField(reportAuthorization, "userPrivileges",
@@ -118,7 +118,7 @@ public class ReportAuthorizationTest {
 
     @Test
     public void shouldReturnTrueIfReportHasNoPrivilege() throws Exception {
-        OpenMRSAuthenticator.Privileges privileges = mock(OpenMRSAuthenticator.Privileges.class);
+        Privileges privileges = mock(Privileges.class);
         when(openMRSAuthenticator.callOpenMRS(SESSION_ID)).thenReturn(ResponseEntity.ok(privileges));
         reportAuthorization = new ReportAuthorization(request, openMRSAuthenticator, bahmniReportsProperties, httpClient);
         FieldUtils.writeField(reportAuthorization, "userPrivileges",
