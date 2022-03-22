@@ -1,8 +1,7 @@
 openelis.url=jdbc:postgresql://${OPENELIS_DB_SERVER}:5432/clinlims
 openelis.username=clinlims
 openelis.password=clinlims
-openmrs.url=jdbc:mysql://${OPENMRS_DB_HOST}:3306/${OPENMRS_DB_NAME}?allowMultiQueries=true
-openmrs.test.url=jdbc:mysql://${OPENMRS_DB_HOST}:3306/reports_integration_tests?allowMultiQueries=true
+openmrs.url=jdbc:mysql://${OPENMRS_DB_HOST}:3306/${OPENMRS_DB_NAME}?allowMultiQueries=true&useUnicode=yes&characterEncoding=UTF-8
 openmrs.username=${OPENMRS_DB_USERNAME}
 openmrs.password=${OPENMRS_DB_PASSWORD}
 reports.config.url=http://bahmni-web:8091/bahmni_config/openmrs/apps/reports/reports.json
