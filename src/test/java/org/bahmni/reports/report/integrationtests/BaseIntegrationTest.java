@@ -3,6 +3,7 @@ package org.bahmni.reports.report.integrationtests;
 import net.sf.dynamicreports.jasper.builder.JasperConcatenatedReportBuilder;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
@@ -10,6 +11,9 @@ import org.bahmni.reports.model.AllDatasources;
 import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.reports.web.MainReportController;
 import org.bahmni.reports.web.ReportParams;
+import org.bahmni.reports.web.security.OpenMRSAuthenticator;
+import org.bahmni.reports.web.security.Privileges;
+import org.bahmni.reports.web.security.Privilege;
 import org.bahmni.reports.wrapper.CsvReport;
 import org.bahmni.webclients.HttpClient;
 import org.dbunit.DatabaseUnitException;
@@ -29,6 +33,7 @@ import org.mockito.Mock;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -50,8 +55,7 @@ import java.util.Properties;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,6 +68,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     protected MockMvc mockMvc;
+
+    @Mock
+    private OpenMRSAuthenticator openMRSAuthenticator;
 
     @Mock
     protected HttpClient httpClient;
@@ -107,6 +114,13 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         when(httpClient.get(any(URI.class))).thenReturn(fileData);
         setUpTestData();
         Context.authenticate("admin", "test");
+
+        Privileges privileges = new Privileges();
+        Privilege privilege = new Privilege();
+        String privilegeName = "privilege";
+        FieldUtils.writeField(privilege, "name", privilegeName, true);
+        privileges.add(privilege);
+        when(openMRSAuthenticator.callOpenMRS("")).thenReturn(ResponseEntity.ok(privileges));
     }
 
     private void setUpTestData() throws Exception {

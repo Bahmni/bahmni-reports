@@ -29,7 +29,7 @@ openelis.password=clinlims
 openerp.url=jdbc:postgresql://localhost:5432/openerp
 openerp.username=openerp
 openerp.password=
-openmrs.url=jdbc:mysql://localhost:3306/reports_integration_tests?allowMultiQueries=true
+openmrs.url=jdbc:mysql://localhost:3306/reports_integration_tests?allowMultiQueries=true&useUnicode=yes&characterEncoding=UTF-8
 openmrs.username=root
 openmrs.password=password
 config.file.path=/var/www/bahmni_config/openmrs/apps/reports/reports.json
