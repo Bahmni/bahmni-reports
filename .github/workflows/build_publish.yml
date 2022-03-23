@@ -1,0 +1,40 @@
+name: Build and Publish
+on:
+  push:
+    branches: [ master ]
+    paths-ignore:
+      - "**.md"
+  repository_dispatch:
+    types: ["bahmni-embedded-tomcat-trigger"]
+
+env:
+  BAHMNI_VERSION: 0.94
+
+jobs:
+  docker-build-publish:
+    name: Docker Build & Publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Java 8
+        uses: actions/setup-java@v2
+        with:
+          distribution: "zulu"
+          java-version: "8"
+      - name: Package
+        run: ./mvnw --no-transfer-progress clean package -DskipTests
+      - name: Download bahmni-embedded-tomcat.zip
+        run: sh .github/download_artifact.sh bahmni-package bahmni-embedded-tomcat ${{secrets.BAHMNI_PAT}}
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Docker Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: package/docker/bahmni-reports/Dockerfile
+          push: true
+          tags: bahmni/reports:${{env.BAHMNI_VERSION}}-${{github.run_number}},bahmni/reports:latest
+          
