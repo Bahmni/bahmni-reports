@@ -5,7 +5,11 @@ on:
 jobs:
   build-package:
     name: Build Package
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
+    env:
+      DB_DATABASE: reports_integration_tests
+      DB_USER: root
+      DB_PASSWORD: root
     steps:
       - name: Setup Java 8
         uses: actions/setup-java@v2
@@ -14,5 +18,16 @@ jobs:
           java-version: '8'
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Build package
-        run: ./mvnw --no-transfer-progress clean install -DskipTests
+# OpenMRS 2.1.6 and its corresponding schema dump is on MySql 5.6. There are breaking changes between 5.6 and 5.7
+# e.g. only_full_group_by is enabled by default
+# We are mutating global and session sql_mode as workaround to make 5.7 almost similar to 5.6
+# since there isnt any official Ubuntu image supported by GHA that runs mysql 5.6
+# POst OMRS upgrade to 2.5, this needs to be revisited
+      - name: start MySQL
+        run: |
+          sudo systemctl start mysql.service
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+          mysql -uroot -proot reports_integration_tests -e "set global sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';"
+          mysql -uroot -proot reports_integration_tests -e "set session sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';"
+      - name: Test and build package
+        run: ./mvnw --no-transfer-progress -DskipDump=false -DskipConfig=false clean install
