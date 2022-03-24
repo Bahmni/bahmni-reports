@@ -1,11 +1,11 @@
 name: Build and Publish
 on:
   push:
-    branches: [ master ]
+    branches: [master, integration-tests-fix]
     paths-ignore:
-      - "**.md"
+      - '**.md'
   repository_dispatch:
-    types: ["bahmni-embedded-tomcat-trigger"]
+    types: ['bahmni-embedded-tomcat-trigger']
 
 env:
   BAHMNI_VERSION: 0.94
@@ -13,20 +13,38 @@ env:
 jobs:
   docker-build-publish:
     name: Docker Build & Publish
-    runs-on: ubuntu-latest
+    # MySQL dist 5.7 comes preinstalled on ubuntu-18.04. Ubuntu-latest have dist 20.x
+    runs-on: ubuntu-18.04
+    env:
+      DB_DATABASE: reports_integration_tests
+      DB_USER: root
+      DB_PASSWORD: root
     steps:
       - uses: actions/checkout@v2
       - name: Setup Java 8
         uses: actions/setup-java@v2
         with:
-          distribution: "zulu"
-          java-version: "8"
-      - name: Package
-        run: ./mvnw --no-transfer-progress clean package -DskipTests
+          distribution: 'zulu'
+          java-version: '8'
+# OpenMRS 2.1.6 and its corresponding schema dump is on MySql 5.6. There are breaking changes between 5.6 and 5.7
+# e.g. only_full_group_by is enabled by default
+# We are mutating global and session sql_mode as workaround to make 5.7 almost similar to 5.6 
+# since there isnt any official Ubuntu image supported by GHA that runs mysql 5.6
+# POst OMRS upgrade to 2.5, this needs to be revisited
+      - name: start MySQL
+        run: |
+          sudo systemctl start mysql.service
+          mysql -e 'CREATE DATABASE ${{ env.DB_DATABASE }};' -u${{ env.DB_USER }} -p${{ env.DB_PASSWORD }}
+          mysql -uroot -proot reports_integration_tests -e "set global sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';"
+          mysql -uroot -proot reports_integration_tests -e "set session sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';"
+      - name: Test and Package
+        run:
+          ./mvnw --no-transfer-progress -DskipDump=false -DskipConfig=false clean package
       - name: Download bahmni-embedded-tomcat.zip
-        run: sh .github/download_artifact.sh bahmni-package bahmni-embedded-tomcat ${{secrets.BAHMNI_PAT}}
+        run: |
+          sh .github/download_artifact.sh bahmni-package bahmni-embedded-tomcat ${{secrets.BAHMNI_PAT}}
       - name: Login to DockerHub
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v1
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
@@ -37,4 +55,3 @@ jobs:
           file: package/docker/bahmni-reports/Dockerfile
           push: true
           tags: bahmni/reports:${{env.BAHMNI_VERSION}}-${{github.run_number}},bahmni/reports:latest
-          
