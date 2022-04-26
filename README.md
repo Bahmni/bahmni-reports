@@ -12,16 +12,17 @@ Hosts the reports web application for the [Bahmni project](http://www.bahmni.org
 
 3. Deploy the WAR file in `target/bahmnireports.war`
 
-# For developers : How to run integration tests
+# Running Integration tests
 
-1. Run `scripts/create_configuration.sh` to create the properties file required to run integration tests. The file created at `$HOME/.bahmni-reports/bahmni-reports-test.properties` comes with default values.
+   1. Install MySQL client and server in your machine. If you already have a MySQL server available make sure that the user has the privileges to dump the database.
+   2. Run: `./mvnw -DskipDump=false -DskipConfig=false clean package` (note this would trigger `scripts/create_configuration.sh` as part of test-compile and create respective test properties under `$HOME/.bahmni-reports/bahmni-reports-test.properties`. You can also explicitly run `scripts/create_configuration.sh` to create the properties (incase if you are using IDE to run the test)
+   3. This should trigger all the tests including integration (it assumes jdbc:mysql://localhost:3306/reports_integration_tests as the DB URL)
 
-3. Install MySQL client and server in your machine. If you already have a MySQL server available make sure that the user has the privileges to dump the database.
+**Note:**
 
-4. Change `openmrs.url` in the properties file to set the host and port of the MySQL server.
+OpenMRS 2.1.6 and its corresponding schema dump is on MySql 5.6(**preferred**). There are breaking changes between 5.6 and 5.7
 
-5. Change `openmrs.username` to set the database user.
+E.g. only_full_group_by is enabled by default 
 
-6. Change `openmrs.password` to set the database user password
+We are mutating global and session sql_mode as workaround to make 5.7 almost similar to 5.6. For reference check github action workflow. 
 
-7. Run `./mvnw clean install -DskipDump=false` to build your changes and run integration tests. If you are using an IDE you can directly run a specific integration test.
