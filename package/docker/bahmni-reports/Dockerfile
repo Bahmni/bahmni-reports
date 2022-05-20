@@ -12,6 +12,8 @@ RUN mkdir -p /home/bahmni/reports
 RUN mkdir -p ${WAR_DIRECTORY}
 RUN mkdir -p ${HOME}/.bahmni-reports/
 RUN mkdir -p /var/log/bahmni-reports/
+RUN mkdir -p /tmp/artifacts/default_config/
+RUN mkdir -p /etc/bahmni_config/reports/
 RUN apt-get update && apt-get install gettext-base
 
 ADD https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for /etc/wait-for
@@ -28,6 +30,12 @@ COPY package/resources/log4j2.properties ${WAR_DIRECTORY}/WEB-INF/classes/
 COPY package/resources/run-liquibase.sh /etc/bahmni-reports/
 COPY package/docker/bahmni-reports/template/bahmni-reports.properties.template /etc/bahmni-reports/
 
+#unzip and copy default_config's reports
+ADD package/resources/default_config.zip /tmp/artifacts/
+RUN unzip -d /tmp/artifacts/default_config/ /tmp/artifacts/default_config.zip
+RUN cp -r /tmp/artifacts/default_config/openmrs/apps/reports/. /etc/bahmni_config/reports/
+
 COPY package/docker/bahmni-reports/start.sh start.sh
 RUN chmod +x start.sh
+RUN rm -rf /tmp/artifacts
 CMD [ "./start.sh" ]
