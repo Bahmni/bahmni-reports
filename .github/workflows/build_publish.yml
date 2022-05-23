@@ -50,7 +50,7 @@ jobs:
           mysql -uroot -proot reports_integration_tests -e "set session sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';"
       - name: Test and Package
         run:
-          ./mvnw --no-transfer-progress -DskipDump=false -DskipConfig=false clean package
+          ./mvnw -T 4 --no-transfer-progress -DskipDump=false -DskipConfig=false clean package
       - name: Download bahmni-embedded-tomcat.zip
         run: |
           sh .github/download_artifact.sh bahmni-package bahmni-embedded-tomcat ${{secrets.BAHMNI_PAT}}
