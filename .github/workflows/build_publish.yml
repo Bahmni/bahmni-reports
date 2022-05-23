@@ -11,8 +11,8 @@ env:
   HELM_CHART_PATH: package/helm/
 
 jobs:
-  docker-build-publish:
-    name: Docker Build & Publish
+  build-publish:
+    name: Build & Publish
     # MySQL dist 5.7 comes preinstalled on ubuntu-18.04. Ubuntu-latest have dist 20.x
     runs-on: ubuntu-18.04
     env:
