@@ -30,4 +30,4 @@ jobs:
           mysql -uroot -proot reports_integration_tests -e "set global sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';"
           mysql -uroot -proot reports_integration_tests -e "set session sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';"
       - name: Test and build package
-        run: ./mvnw --no-transfer-progress -DskipDump=false -DskipConfig=false clean install
+        run: ./mvnw -T 4 --no-transfer-progress -DskipDump=false -DskipConfig=false clean install
