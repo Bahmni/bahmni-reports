@@ -53,10 +53,6 @@ public class JasperResponseConverter {
                 exporterBuilder.setWorkbookTemplate(macroTemplateFile.toString());
                 exporterBuilder.addSheetName("Report");
                 concatenatedReportBuilder.toXls(exporterBuilder);
-                boolean delete = templateFile.delete();
-                if (!delete) {
-                    logger.warn(String.format("Uploaded report template file not deleted: %s", macroTemplateFile));
-                }
                 break;
             case APPLICATION_PDF:
                 concatenatedReportBuilder.toPdf(outputStream);
