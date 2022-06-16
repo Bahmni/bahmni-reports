@@ -27,6 +27,7 @@ import java.io.File;
 import static org.bahmni.reports.scheduler.ReportStatus.COMPLETED;
 import static org.bahmni.reports.scheduler.ReportStatus.ERROR;
 import static org.bahmni.reports.scheduler.ReportStatus.QUEUED;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -35,7 +36,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
-import static org.springframework.test.util.MatcherAssertionErrors.assertThat;
 
 @RunWith(PowerMockRunner.class)
 @PowerMockIgnore({"org.hibernate.*", "org.springframework.*", "javax.management.*"})

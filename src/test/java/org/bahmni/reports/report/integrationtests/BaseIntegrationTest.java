@@ -17,6 +17,7 @@ import org.bahmni.reports.web.security.Privilege;
 import org.bahmni.reports.wrapper.CsvReport;
 import org.bahmni.webclients.HttpClient;
 import org.dbunit.DatabaseUnitException;
+import org.dbunit.DatabaseUnitRuntimeException;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
@@ -35,8 +36,8 @@ import org.openmrs.test.BaseContextSensitiveTest;
 import org.openmrs.test.SkipBaseSetup;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -63,7 +64,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @Transactional
-@TransactionConfiguration(defaultRollback = false)
+@Commit
 @SkipBaseSetup
 public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
@@ -211,27 +212,32 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     }
 
     @Override
-    public void deleteAllData() throws Exception {
-        Context.clearSession();
-        Connection connection = this.getConnection();
-        this.turnOffDBConstraints(connection);
-        String[] types = {"Table"};
-        IDatabaseConnection dbUnitConn = this.setupDatabaseConnection(connection);
-        ResultSet resultSet = connection.getMetaData().getTables((String) null, "PUBLIC", "%", types);
-        DefaultDataSet dataset = new DefaultDataSet();
+    public void deleteAllData() {
+        try {
+            Context.clearSession();
+            Connection connection = this.getConnection();
+            this.turnOffDBConstraints(connection);
+            String[] types = {"Table"};
+            IDatabaseConnection dbUnitConn = this.setupDatabaseConnection(connection);
+            ResultSet resultSet = connection.getMetaData().getTables((String) null, "PUBLIC", "%", types);
+            DefaultDataSet dataset = new DefaultDataSet();
 
-        while (resultSet.next()) {
-            String tableName = resultSet.getString(3);
-            dataset.addTable(new DefaultTable(tableName));
+            while (resultSet.next()) {
+                String tableName = resultSet.getString(3);
+                dataset.addTable(new DefaultTable(tableName));
+            }
+
+            DatabaseOperation.DELETE_ALL.execute(dbUnitConn, dataset);
+            this.turnOnDBConstraints(connection);
+            connection.commit();
+            this.updateSearchIndex();
         }
-
-        DatabaseOperation.DELETE_ALL.execute(dbUnitConn, dataset);
-        this.turnOnDBConstraints(connection);
-        connection.commit();
-        this.updateSearchIndex();
+        catch (DatabaseUnitException | SQLException var6) {
+            throw new DatabaseUnitRuntimeException(var6);
+        }
     }
 
-    private void turnOffDBConstraints(Connection connection) throws SQLException {
+    protected void turnOffDBConstraints(Connection connection) throws SQLException {
         String constraintsOffSql;
         if (this.useInMemoryDatabase().booleanValue()) {
             constraintsOffSql = "SET REFERENTIAL_INTEGRITY FALSE";
@@ -244,7 +250,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         ps.close();
     }
 
-    private IDatabaseConnection setupDatabaseConnection(Connection connection) throws DatabaseUnitException {
+    protected IDatabaseConnection setupDatabaseConnection(Connection connection) throws DatabaseUnitException {
         DatabaseConnection dbUnitConn = new DatabaseConnection(connection);
         if (this.useInMemoryDatabase().booleanValue()) {
             DatabaseConfig config = dbUnitConn.getConfig();
@@ -254,7 +260,7 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         return dbUnitConn;
     }
 
-    private void turnOnDBConstraints(Connection connection) throws SQLException {
+    protected void turnOnDBConstraints(Connection connection) throws SQLException {
         String constraintsOnSql;
         if (this.useInMemoryDatabase().booleanValue()) {
             constraintsOnSql = "SET REFERENTIAL_INTEGRITY TRUE";
