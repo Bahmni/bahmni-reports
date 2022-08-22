@@ -20,6 +20,7 @@ openmrs.service.password=test
 openmrs.connectionTimeoutInMilliseconds=30000
 openmrs.replyTimeoutInMilliseconds=120000
 macrotemplates.temp.directory=/tmp/
+reports.timezone=Asia/Kolkata
 bahmnireports.db.url=jdbc:mysql://localhost:3306/bahmni_reports?allowMultiQueries=true
 reports.save.directory=$TARGET_DIR/reports""" > $TARGET_DIR/bahmni-reports.properties
 
@@ -39,6 +40,7 @@ openmrs.service.password=test
 openmrs.connectionTimeoutInMilliseconds=30000
 openmrs.replyTimeoutInMilliseconds=120000
 macrotemplates.temp.directory=/tmp/
+reports.timezone=Asia/Kolkata
 bahmnireports.db.url=jdbc:mysql://localhost:3306/bahmni_reports_it?allowMultiQueries=true
 reports.save.directory=$TARGET_DIR/reports""" > $TARGET_DIR/bahmni-reports-test.properties
 
