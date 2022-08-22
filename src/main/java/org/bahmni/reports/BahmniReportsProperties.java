@@ -1,8 +1,10 @@
 package org.bahmni.reports;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.time.ZoneId;
 import java.util.Properties;
 
 @Component
@@ -145,6 +147,9 @@ public class BahmniReportsProperties {
     }
 
     public String getReportsTimeZone() {
+        if (StringUtils.isBlank(props.getProperty("reports.timezone"))) {
+            return ZoneId.systemDefault().getId();
+        }
         return props.getProperty("reports.timezone");
     }
 
