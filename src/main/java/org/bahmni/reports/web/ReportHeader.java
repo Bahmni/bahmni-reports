@@ -3,14 +3,32 @@ package org.bahmni.reports.web;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.component.HorizontalListBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
+
+import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.template.Templates;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
 
 public class ReportHeader {
+
+    private String reportTimeZone;
+
+    public ReportHeader() {
+        this.reportTimeZone = ZoneId.systemDefault().getId();
+    }
+
+    public ReportHeader(String reportTimeZone) {
+        if (StringUtils.isBlank(reportTimeZone)) {
+            this.reportTimeZone = ZoneId.systemDefault().getId();
+        } else {
+            this.reportTimeZone = reportTimeZone;
+        }
+    }
 
     public JasperReportBuilder add(JasperReportBuilder jasperReportBuilder, String reportName, String startDate, String endDate) {
         HorizontalListBuilder headerList = cmp.horizontalList();
@@ -51,11 +69,17 @@ public class ReportHeader {
     }
 
     private void addReportGeneratedDateSubHeader(HorizontalListBuilder headerList) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String dateString = simpleDateFormat.format(new Date());
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder()
+                .parseCaseInsensitive()
+                .appendPattern("yyyy-MM-dd hh:mm:ss")
+                .toFormatter();
+        ZoneId rZone = ZoneId.of(reportTimeZone);
+        ZonedDateTime nowLocalTime = ZonedDateTime.now(rZone);
+        String dateString = formatter.format(nowLocalTime);
         headerList.add(cmp.text("Report Generated On: " + dateString)
                 .setStyle(Templates.bold12CenteredStyle)
                 .setHorizontalAlignment(HorizontalAlignment.CENTER))
                 .newRow();
     }
+
 }
