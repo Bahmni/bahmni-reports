@@ -125,10 +125,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: bahmnireports.war
-          path: target/
-      - name: Copying Artifacts to package/rpm/resources
-        run: |
-            cp target/bahmnireports.war package/rpm/resources/
+          path: package/rpm/resources/
       - name: Setup Java 8 for Gradle
         uses: actions/setup-java@v3
         with:
