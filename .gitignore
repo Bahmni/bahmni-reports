@@ -15,6 +15,7 @@ README.html
 *.war
 *.ear
 *.iml
+!package/rpm/gradle/wrapper/gradle-wrapper.jar
 
 .settings/*
 **/bin
