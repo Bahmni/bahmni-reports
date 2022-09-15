@@ -1,9 +1,10 @@
 name: Build and Publish
 on:
   push:
-    branches: 
+    branches:
       - master
       - 'release-*'
+      - BAH-2304
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
     paths-ignore:
@@ -107,7 +108,7 @@ jobs:
           git add .
           git commit -m "Release of reports-${{ env.ARTIFACT_VERSION }}"
           git push 'https://${{ secrets.BAHMNI_USERNAME}}:${{ secrets.BAHMNI_PAT}}@github.com/bahmni/helm-charts.git' gh-pages
- 
+
   rpm-build-publish:
     name: RPM Build and Publish
     runs-on: ubuntu-latest
@@ -132,7 +133,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '8'      
+          java-version: '8'
       - name: Gradle Build
         run: |
             cd package/rpm
