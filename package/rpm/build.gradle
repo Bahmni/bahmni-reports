@@ -26,7 +26,7 @@ task extractWar(type: Copy) {
 }
 
 task normalizeJarName(type: Copy) {
-    from "${buildDir}" + "/resources/"
+    from "${projectDir}" + "/resources/"
     into "${buildDir}" + "/libs/"
     include('core-1.0-SNAPSHOT.jar')
     rename('core-1.0-SNAPSHOT.jar', project.name + '.jar')
