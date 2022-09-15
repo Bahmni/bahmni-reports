@@ -3,7 +3,6 @@ on:
   push:
     branches: 
       - master
-      - BAH-2304
       - 'release-*'
     tags:
       - '[0-9]+.[0-9]+.[0-9]+'
@@ -11,9 +10,6 @@ on:
       - '**.md'
   repository_dispatch:
     types: ['bahmni-embedded-tomcat-trigger',"default-config-trigger"]
-
-env:
-  HELM_CHART_PATH: package/helm/
 
 jobs:
   build:
@@ -45,6 +41,8 @@ jobs:
   docker-build-publish:
     name: Docker Build and Publish
     runs-on: ubuntu-latest
+    env:
+      HELM_CHART_PATH: package/helm/
     needs: [ build ]
     steps:
       - uses: actions/checkout@v2
