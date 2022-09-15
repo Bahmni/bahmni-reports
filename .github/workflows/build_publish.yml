@@ -1,7 +1,12 @@
 name: Build and Publish
 on:
   push:
-    branches: [ master ]
+    branches: 
+      - master
+      - BAH-2304
+      - 'release-*'
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
     paths-ignore:
       - '**.md'
   repository_dispatch:
@@ -11,8 +16,8 @@ env:
   HELM_CHART_PATH: package/helm/
 
 jobs:
-  build-publish:
-    name: Build & Publish
+  build:
+    name: Build
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -24,24 +29,34 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Verify app version
-        run: |
-          APP_VERSION=$(cat package/.appversion)
-          if [ $(git tag -l "$APP_VERSION") ]; then
-            echo "App version $APP_VERSION already released. Please update app version in package/.appversion to represent next major/minor/patch increment"
-            exit 1
-          else
-            echo "setting artifact version to $(echo $APP_VERSION-${{github.run_number}})"
-            echo "ARTIFACT_VERSION=$(echo $APP_VERSION-${{github.run_number}})" >> $GITHUB_ENV
-          fi
       - name: Setup Java 8
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '8'
       - name: Test and Package
         run:
           ./mvnw -T 4 --no-transfer-progress -DskipDump=false -DskipConfig=false clean package
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bahmnireports.war
+          path: target/bahmnireports.war
+
+  docker-build-publish:
+    name: Docker Build and Publish
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v3
+        with:
+          name: bahmnireports.war
+          path: target/
+      - name: Set artifact version
+        run: |
+          wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
+          ./setArtifactVersion.sh
+          rm setArtifactVersion.sh
       - name: Download bahmni-embedded-tomcat.zip
         run: |
           sh .github/download_artifact.sh bahmni-package bahmni-embedded-tomcat ${{secrets.BAHMNI_PAT}}
@@ -94,3 +109,39 @@ jobs:
           git add .
           git commit -m "Release of reports-${{ env.ARTIFACT_VERSION }}"
           git push 'https://${{ secrets.BAHMNI_USERNAME}}:${{ secrets.BAHMNI_PAT}}@github.com/bahmni/helm-charts.git' gh-pages
+ 
+  rpm-build-publish:
+    name: RPM Build and Publish
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set artifact version
+        run: |
+          wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
+          ./setArtifactVersion.sh
+          rm setArtifactVersion.sh
+      - name: Download bahmni-embedded-tomcat.zip
+        run: sh .github/download_artifact.sh bahmni-package bahmni-embedded-tomcat ${{secrets.BAHMNI_PAT}}
+      - uses: actions/download-artifact@v3
+        with:
+          name: bahmnireports.war
+          path: target/
+      - name: Copying Artifacts to package/rpm/resources
+        run: |
+            cp target/bahmnireports.war package/rpm/resources/
+      - name: Setup Java 8 for Gradle
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '8'      
+      - name: Gradle Build
+        run: |
+            cd package/rpm
+            export version=$(awk -F- '{print $1}' <<< ${{env.ARTIFACT_VERSION}})
+            export release=$(awk -F- '{print $2}' <<< ${{env.ARTIFACT_VERSION}})
+            ./gradlew -Pversion=$version -Prelease=$release clean buildRpm
+      - uses: actions/upload-artifact@v3
+        with:
+          name: bahmni-reports-rpm
+          path: package/rpm/build/distributions/*.rpm

@@ -15,7 +15,7 @@ repositories {
 }
 
 group 'org.bahmni.reports'
-version project.bahmniRelease
+version project.version
 
 apply plugin: 'java'
 
@@ -26,15 +26,16 @@ task extractWar(type: Copy) {
 }
 
 task normalizeJarName(type: Copy) {
-    from "${buildDir}" + "/libs/"
+    from "${buildDir}" + "/resources/"
     into "${buildDir}" + "/libs/"
-    include(project.name + '-' + project.bahmniRelease + '.jar')
-    rename(project.name + '-' + project.bahmniRelease + '.jar', project.name + '.jar')
+    include('core-1.0-SNAPSHOT.jar')
+    rename('core-1.0-SNAPSHOT.jar', project.name + '.jar')
 }
 
 ospackage {
     packageName = 'bahmni-reports'
-    release = System.getenv('GO_PIPELINE_COUNTER') ?: project.buildNumber
+    version = project.version
+    release = project.hasProperty('release') ? project.release : ""
     arch = NOARCH
     os = LINUX
     user = 'root'
@@ -118,10 +119,6 @@ buildRpm {
     preInstall file("${projectDir}/scripts/preinstall.sh")
     postInstall file("${projectDir}/scripts/postinstall.sh")
     preUninstall file("${projectDir}/scripts/preuninstall.sh")
-}
-
-dependencies {
-    compile project(":core")
 }
 
 jar {
