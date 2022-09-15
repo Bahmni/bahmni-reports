@@ -26,8 +26,8 @@ RUN cd ${WAR_DIRECTORY} && jar xvf /etc/bahmni-reports/bahmnireports.war
 # core.jar contains embedded tomcat server and is built from bahmni-package/core directory
 COPY package/resources/core-1.0-SNAPSHOT.jar /opt/bahmni-reports/lib/bahmni-embedded-tomcat.jar
 
-COPY package/resources/log4j2.properties ${WAR_DIRECTORY}/WEB-INF/classes/
-COPY package/resources/run-liquibase.sh /etc/bahmni-reports/
+COPY package/docker/bahmni-reports/resources/log4j2.properties ${WAR_DIRECTORY}/WEB-INF/classes/
+COPY package/docker/bahmni-reports/resources/run-liquibase.sh /etc/bahmni-reports/
 COPY package/docker/bahmni-reports/template/bahmni-reports.properties.template /etc/bahmni-reports/
 
 #unzip and copy default_config's reports
