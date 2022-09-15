@@ -1,0 +1,136 @@
+plugins {
+    id "nebula.ospackage" version "3.4.0"
+}
+
+repositories {
+    mavenCentral()
+    jcenter()
+    maven {
+        url 'http://mavenrepo.openmrs.org/nexus/content/repositories/public'
+    }
+    maven {
+        url 'https://oss.sonatype.org/content/repositories'
+    }
+    mavenLocal()
+}
+
+group 'org.bahmni.reports'
+version project.bahmniRelease
+
+apply plugin: 'java'
+
+//The bahmni-reports.war will be copied by the CI server after the artifacts are built.
+task extractWar(type: Copy) {
+    from zipTree(file("${projectDir}/resources/bahmnireports.war"))
+    into file("${buildDir}/bahmni-reports")
+}
+
+task normalizeJarName(type: Copy) {
+    from "${buildDir}" + "/libs/"
+    into "${buildDir}" + "/libs/"
+    include(project.name + '-' + project.bahmniRelease + '.jar')
+    rename(project.name + '-' + project.bahmniRelease + '.jar', project.name + '.jar')
+}
+
+ospackage {
+    packageName = 'bahmni-reports'
+    release = System.getenv('GO_PIPELINE_COUNTER') ?: project.buildNumber
+    arch = NOARCH
+    os = LINUX
+    user = 'root'
+
+    into '/opt/bahmni-reports'
+
+    from("${projectDir}/resources/log4j2.properties") {
+        fileMode = 0644
+        createDirectoryEntry = true
+        into 'bahmni-reports/WEB-INF/classes'
+    }
+
+    from("${buildDir}/libs/bahmni-reports.jar") {
+        fileMode = 0644
+        createDirectoryEntry = true
+        into 'lib/'
+    }
+
+    from("${projectDir}/resources/") {
+        fileMode = 0644
+        createDirectoryEntry = true
+        into 'etc'
+        exclude('run-liquibase.sh')
+        exclude('bahmnireports.war')
+        exclude('*.checksum')
+        exclude('initDB.sh')
+    }
+
+    from("${projectDir}/resources/initDB.sh") {
+        fileMode = 0744
+        user 'bahmni'
+        into 'etc'
+    }
+
+    from("${projectDir}/resources/run-liquibase.sh") {
+        fileMode = 0744
+        user 'bahmni'
+        into 'etc'
+    }
+
+    from("${projectDir}/scripts/rpm/") {
+        fileMode = 0744
+        createDirectoryEntry = true
+        into 'bin'
+    }
+
+    from("${projectDir}/scripts/bahmni-reports.service") {
+        fileMode = 0744
+        user 'root'
+        into '/usr/lib/systemd/system/'
+    }
+
+    from("${projectDir}/resources/placeholder") {
+        fileMode = 0644
+        createDirectoryEntry = true
+        into 'run'
+    }
+
+    from("${projectDir}/resources/placeholder") {
+        fileMode = 0644
+        createDirectoryEntry = true
+        into 'log'
+    }
+
+    from("${buildDir}/bahmni-reports/") {
+        fileMode = 0755
+        createDirectoryEntry = true
+        into 'bahmni-reports'
+    }
+
+    from("${projectDir}/resources/") {
+        fileMode = 0755
+        into 'etc'
+        include('bahmni_reports_ssl.conf')
+    }
+}
+
+buildRpm {
+    dependsOn 'build','normalizeJarName', 'extractWar'
+
+    preInstall file("${projectDir}/scripts/preinstall.sh")
+    postInstall file("${projectDir}/scripts/postinstall.sh")
+    preUninstall file("${projectDir}/scripts/preuninstall.sh")
+}
+
+dependencies {
+    compile project(":core")
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': "org.bahmni.deployment.launch.Main"
+    }
+    from {
+        configurations.compile.collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
+}

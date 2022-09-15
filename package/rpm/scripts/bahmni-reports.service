@@ -1,0 +1,20 @@
+[Unit]
+Description=Bahmni Reports Service
+After=network-online.target
+After=network.service
+
+[Service]
+Type=forking
+KillMode=none
+GuessMainPID=no
+RuntimeDirectory=bahmni-reports
+LogsDirectory=bahmni-reports
+User=bahmni
+Group=bahmni
+PIDFile=/var/run/bahmni-reports/bahmni-reports.pid
+ExecStart=/opt/bahmni-reports/bin/bahmni-reports start
+ExecStop=/opt/bahmni-reports/bin/bahmni-reports stop
+ExecReload=/opt/bahmni-reports/bin/bahmni-reports restart
+
+[Install]
+WantedBy=multi-user.target
