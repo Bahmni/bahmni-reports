@@ -63,4 +63,12 @@ spec:
                 optional: false
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - mountPath: /etc/bahmni_config
+              name: bahmni-config
+      volumes:
+        - name: bahmni-config
+          persistentVolumeClaim:
+            claimName: bahmni-config-pvc
+
       restartPolicy: Always
