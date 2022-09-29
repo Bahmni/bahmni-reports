@@ -21,8 +21,7 @@ RUN chmod +x /etc/wait-for
 COPY target/bahmnireports.war /etc/bahmni-reports/bahmnireports.war
 RUN cd ${WAR_DIRECTORY} && jar xvf /etc/bahmni-reports/bahmnireports.war
 
-# core.jar contains embedded tomcat server and is built from bahmni-package/core directory
-COPY package/resources/core-1.0-SNAPSHOT.jar /opt/bahmni-reports/lib/bahmni-embedded-tomcat.jar
+ADD https://repo.mybahmni.org/packages/build/bahmni-embedded-tomcat-8.0.42.jar /opt/bahmni-reports/lib/bahmni-embedded-tomcat.jar
 
 COPY package/resources/log4j2.properties ${WAR_DIRECTORY}/WEB-INF/classes/
 COPY package/resources/run-liquibase.sh /etc/bahmni-reports/
