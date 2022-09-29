@@ -13,8 +13,8 @@ env:
   HELM_CHART_PATH: package/helm/
 
 jobs:
-  build-publish:
-    name: Build & Publish
+  build-publish-docker-helm:
+    name: Build & Publish Docker Image & Helm Chart
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -26,7 +26,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: Set artifact version
+      - name: Set env.ARTIFACT_VERSION
         run: |
           wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
           ./setArtifactVersion.sh
