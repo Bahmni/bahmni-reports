@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM amazoncorretto:8
 
 ENV SERVER_PORT=8051
 ENV BASE_DIR=/var/run/bahmni-reports
@@ -14,10 +14,10 @@ RUN mkdir -p ${HOME}/.bahmni-reports/
 RUN mkdir -p /var/log/bahmni-reports/
 RUN mkdir -p /tmp/artifacts/default_config/
 RUN mkdir -p /etc/bahmni_config/reports/
-RUN apt-get update && apt-get install gettext-base
+RUN yum install -y gettext unzip
 
 ADD https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for /etc/wait-for
-RUN apt-get install -y netcat
+RUN yum install -y nc
 RUN chmod +x /etc/wait-for
 
 COPY target/bahmnireports.war /etc/bahmni-reports/bahmnireports.war
