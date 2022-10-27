@@ -15,7 +15,7 @@
         <jackson.version>2.10.3</jackson.version>
         <skipDump>true</skipDump>
         <skipConfig>true</skipConfig>
-        <openMRSVersion>2.1.6</openMRSVersion>
+        <openMRSVersion>2.5.0</openMRSVersion>
         <log4jVersion>2.17.1</log4jVersion>
         <bahmniJavaUtils.version>0.94.2</bahmniJavaUtils.version>
     </properties>
@@ -62,7 +62,7 @@
                     <configuration>
                         <target>1.8</target>
                         <source>1.8</source>
-
+                        <encoding>UTF-8</encoding>
                     </configuration>
                 </plugin>
                 <plugin>
