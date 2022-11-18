@@ -10,7 +10,7 @@
     <version>0.94-SNAPSHOT</version>
 
     <properties>
-        <spring.version>5.2.14.RELEASE</spring.version>
+        <spring.version>5.2.21.RELEASE</spring.version>
         <dynamicreports.version>4.0.0</dynamicreports.version>
         <jackson.version>2.13.0</jackson.version>
         <skipDump>true</skipDump>
