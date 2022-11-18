@@ -75,7 +75,7 @@ public class BahmniReportsConfiguration {
         ComboPooledDataSource dataSource = comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getOpenmrsUrl())
                 .withUser(bahmniReportsProperties.getOpenmrsUser())
                 .withPassword(bahmniReportsProperties.getOpenmrsPassword())
-                .withDriver(com.mysql.jdbc.Driver.class).build();
+                .withDriver(com.mysql.cj.jdbc.Driver.class).build();
 
         dataSource.setIdleConnectionTestPeriod(IDLE_CONNECTION_TEST_TIME);
         dataSource.setPreferredTestQuery("SELECT 1;");
@@ -114,7 +114,7 @@ public class BahmniReportsConfiguration {
         ComboPooledDataSource dataSource = comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getBahmniReportsDbUrl())
                 .withUser(bahmniReportsProperties.getReportsUser())
                 .withPassword(bahmniReportsProperties.getReportsPassword())
-                .withDriver(com.mysql.jdbc.Driver.class).build();
+                .withDriver(com.mysql.cj.jdbc.Driver.class).build();
 
         dataSource.setIdleConnectionTestPeriod(IDLE_CONNECTION_TEST_TIME);
         dataSource.setPreferredTestQuery("SELECT 1;");

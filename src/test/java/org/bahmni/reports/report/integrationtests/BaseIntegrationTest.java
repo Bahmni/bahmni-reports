@@ -36,7 +36,6 @@ import org.openmrs.test.SkipBaseSetup;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -63,7 +62,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @Transactional
-@TransactionConfiguration(defaultRollback = false)
 @SkipBaseSetup
 public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
@@ -208,62 +206,5 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         perform.andExpect(status().isOk());
         List<JasperReportBuilder> value = reportBuilderArgumentCaptor.getValue();
         return value.get(0);
-    }
-
-    @Override
-    public void deleteAllData() throws Exception {
-        Context.clearSession();
-        Connection connection = this.getConnection();
-        this.turnOffDBConstraints(connection);
-        String[] types = {"Table"};
-        IDatabaseConnection dbUnitConn = this.setupDatabaseConnection(connection);
-        ResultSet resultSet = connection.getMetaData().getTables((String) null, "PUBLIC", "%", types);
-        DefaultDataSet dataset = new DefaultDataSet();
-
-        while (resultSet.next()) {
-            String tableName = resultSet.getString(3);
-            dataset.addTable(new DefaultTable(tableName));
-        }
-
-        DatabaseOperation.DELETE_ALL.execute(dbUnitConn, dataset);
-        this.turnOnDBConstraints(connection);
-        connection.commit();
-        this.updateSearchIndex();
-    }
-
-    private void turnOffDBConstraints(Connection connection) throws SQLException {
-        String constraintsOffSql;
-        if (this.useInMemoryDatabase().booleanValue()) {
-            constraintsOffSql = "SET REFERENTIAL_INTEGRITY FALSE";
-        } else {
-            constraintsOffSql = "SET FOREIGN_KEY_CHECKS=0;";
-        }
-
-        PreparedStatement ps = connection.prepareStatement(constraintsOffSql);
-        ps.execute();
-        ps.close();
-    }
-
-    private IDatabaseConnection setupDatabaseConnection(Connection connection) throws DatabaseUnitException {
-        DatabaseConnection dbUnitConn = new DatabaseConnection(connection);
-        if (this.useInMemoryDatabase().booleanValue()) {
-            DatabaseConfig config = dbUnitConn.getConfig();
-            config.setProperty("http://www.dbunit.org/properties/datatypeFactory", new H2DataTypeFactory());
-        }
-
-        return dbUnitConn;
-    }
-
-    private void turnOnDBConstraints(Connection connection) throws SQLException {
-        String constraintsOnSql;
-        if (this.useInMemoryDatabase().booleanValue()) {
-            constraintsOnSql = "SET REFERENTIAL_INTEGRITY TRUE";
-        } else {
-            constraintsOnSql = "SET FOREIGN_KEY_CHECKS=1;";
-        }
-
-        PreparedStatement ps = connection.prepareStatement(constraintsOnSql);
-        ps.execute();
-        ps.close();
     }
 }

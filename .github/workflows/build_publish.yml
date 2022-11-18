@@ -36,7 +36,7 @@ jobs:
           java-version: '8'
       - name: Test and Package
         run:
-          ./mvnw -T 4 --no-transfer-progress -DskipDump=false -DskipConfig=false clean package
+          ./mvnw -T 4 --no-transfer-progress -DskipTests clean package -U
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Set up Docker Buildx
