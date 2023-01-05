@@ -86,7 +86,7 @@
         </createView>
     </changeSet>
     <changeSet id="Reports-202304011846" author="Hemanth">
-        <preConditions>
+        <preConditions onFail="MARK_RAN">
             <sqlCheck expectedResult="0">
                 select count(*) from users where username='reports-user';
             </sqlCheck>
