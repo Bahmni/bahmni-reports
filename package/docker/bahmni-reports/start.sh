@@ -2,7 +2,7 @@
 set -e
 
 sh /etc/wait-for ${REPORTS_DB_SERVER}:3306
-sh /etc/wait-for ${OPENMRS_DB_HOST}:3306
+sh /etc/wait-for --timeout=3600 ${OPENMRS_DB_HOST}:3306
 
 echo "[INFO] Substituting Environment Variables"
 envsubst < /etc/bahmni-reports/bahmni-reports.properties.template > ${HOME}/.bahmni-reports/bahmni-reports.properties

@@ -85,7 +85,12 @@
             AND concept_reference_term_map_view.concept_map_type_name = 'SAME-AS' WHERE concept_class_name = 'Diagnosis';
         </createView>
     </changeSet>
-    <changeSet id="Reports-170220160438" author="Hemanth">
+    <changeSet id="Reports-202304011846" author="Hemanth">
+        <preConditions>
+            <sqlCheck expectedResult="0">
+                select count(*) from users where username='reports-user';
+            </sqlCheck>
+        </preConditions>
         <comment>Creating a openmrs user for reports</comment>
         <sql>
             SET @puuid = uuid();
