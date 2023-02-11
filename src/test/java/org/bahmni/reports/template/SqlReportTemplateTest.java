@@ -1,5 +1,6 @@
 package org.bahmni.reports.template;
 
+import ca.uhn.fhir.context.FhirContext;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.base.column.DRColumn;
 import net.sf.dynamicreports.report.builder.datatype.DoubleType;
@@ -8,8 +9,16 @@ import net.sf.dynamicreports.report.builder.datatype.StringType;
 import net.sf.dynamicreports.report.definition.component.DRIComponent;
 import net.sf.dynamicreports.report.definition.component.DRITextField;
 import org.bahmni.reports.report.integrationtests.BaseIntegrationTest;
+import org.hl7.fhir.r4.model.ValueSet;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 

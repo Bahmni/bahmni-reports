@@ -55,7 +55,8 @@ import static org.bahmni.reports.model.Constants.*;
         @JsonSubTypes.Type(value = OpenmrsConcatenatedReport.class, name = "concatenated"),
         @JsonSubTypes.Type(value = MartConcatenatedReport.class, name = "MartConcatenated"),
         @JsonSubTypes.Type(value = GenericLabOrderReport.class, name = LABORDERS),
-        @JsonSubTypes.Type(value = ObservationFormReport.class, name = FORM_BUILDER_FORMS)
+        @JsonSubTypes.Type(value = ObservationFormReport.class, name = FORM_BUILDER_FORMS),
+        @JsonSubTypes.Type(value = SnomedDiagnosisReport.class, name = "snomedDiagnosis")
 })
 
 public abstract class Report<T extends Config> {
