@@ -10,7 +10,7 @@
     <version>0.94-SNAPSHOT</version>
 
     <properties>
-        <spring.version>5.2.14.RELEASE</spring.version>
+        <spring.version>5.3.18</spring.version>
         <dynamicreports.version>4.0.0</dynamicreports.version>
         <jackson.version>2.13.0</jackson.version>
         <skipDump>true</skipDump>
@@ -105,7 +105,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>5.3.4</version>
+            <version>5.3.18</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
