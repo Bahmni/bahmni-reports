@@ -1,111 +1,108 @@
 package org.bahmni.reports.template;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
-import net.sf.dynamicreports.report.builder.crosstab.CrosstabBuilder;
-import net.sf.dynamicreports.report.builder.crosstab.CrosstabColumnGroupBuilder;
-import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
-import net.sf.dynamicreports.report.builder.style.StyleBuilder;
-import net.sf.dynamicreports.report.builder.style.Styles;
-import net.sf.dynamicreports.report.constant.*;
-import org.apache.commons.lang3.StringUtils;
-import org.bahmni.reports.model.ObsCountConfig;
+import net.sf.dynamicreports.report.constant.HorizontalAlignment;
+import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.SnomedDiagnosisReportConfig;
+import org.bahmni.reports.model.TSPageObject;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
-import org.bahmni.reports.util.SqlUtil;
-import org.openmrs.module.fhir2.providers.r3.ValueSetFhirResourceProvider;
+import org.bahmni.webclients.HttpClient;
 import org.stringtemplate.v4.ST;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.net.URI;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.*;
-import static net.sf.dynamicreports.report.builder.DynamicReports.cmp;
+import static net.sf.dynamicreports.report.builder.DynamicReports.col;
+import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
-import ca.uhn.fhir.context.FhirContext;
-import org.hl7.fhir.r4.model.ValueSet;
-
-
-
-
-
-
 
 
 @UsingDatasource("openmrs")
-public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiagnosisReportConfig>{
+public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiagnosisReportConfig> {
+    public static final String CREATE_SQL_TEMPLATE = "create temporary table {0}(code varchar(100) not null)";
+    public static final String INSERT_SQL_TEMPLATE = "insert into {0} values (?)";
+    private HttpClient httpClient;
 
-    private final String VISIT_TYPE_CRITERIA = "and va.value_reference in (%s)";
+    public SnomedDiagnosisReportTemplate(HttpClient httpClient) {
+        super();
+        this.httpClient = httpClient;
+    }
+
     @Override
     public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<SnomedDiagnosisReportConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+        String tempTableName = "tmpCodes_" + System.nanoTime();
+        loadTempTable(connection, tempTableName, report.getConfig().getSnomedParentCode());
+        String sql = getFileContent("sql/snomedDiagnosisCount.sql");
 
-        StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
-
-
-
-        TextColumnBuilder<String> diagnosis = col.column("Diagnosis", "Diagnosis", type.stringType())
-                .setStyle(textStyle)
-                .setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<String> snomedCode = col.column("Snomed Code", "SNOMED Code", type.stringType())
-                .setStyle(textStyle)
-                .setHorizontalAlignment(HorizontalAlignment.CENTER);
-        TextColumnBuilder<Integer> countTotal = col.column("Count", "Total", type.integerType())
-                .setStyle(textStyle)
-                .setHorizontalAlignment(HorizontalAlignment.CENTER);
-
-
-
-        String sql = getFileContent("sql/snomedCountTest.sql");
-        jasperReport.setShowColumnTitle(true)
-                .setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL)
-                .setColumnStyle(textStyle)
-                .columns(diagnosis,snomedCode, countTotal)
-                .setDataSource(getFormattedSql(sql, startDate, endDate , report.getConfig().getSnomedParentCode() ,report.getConfig().getCodes()), connection);
+        CommonComponents.addTo(jasperReport, report, pageType);
+        jasperReport.addColumn(col.column("Diagnosis", "Diagnosis", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        jasperReport.addColumn(col.column("Snomed Code", "SNOMED Code", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        jasperReport.addColumn(col.column("Count", "Total", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        jasperReport.setShowColumnTitle(true).setDataSource(getFormattedSql(sql, startDate, endDate, tempTableName),
+                connection);
 
         return new BahmniReportBuilder(jasperReport);
     }
 
-    private String getFormattedSql(String formattedSql, String startDate, String endDate , String snomedParentCode , List<String> codes) {
-        ST sqlTemplate = new ST(formattedSql, '#', '#');
-        sqlTemplate.add("startDate", startDate);
-        sqlTemplate.add("endDate", endDate);
-        sqlTemplate.add("snomedParentCode", snomedParentCode);
-        sqlTemplate.add("codes", codes);
-
-        return sqlTemplate.render();
-    }
-
-    public void fetch(){
-        System.out.println(getDescendants("195967001"));
-    }
-    public List<String> getDescendants(String snomedCode){
-        String baseUrl = "https://snowstorm.snomed.mybahmni.in/fhir/";
-        String valueSetUrl = "http://snomed.info/sct?fhir_vs=ecl/<<";
-        String localeLanguage = "en";
-        String valueSetUrlTemplate = "ValueSet/$expand?url={0}{1}&displayLanguage={2}";
+    private void loadTempTable(Connection connection, String tempTableName, String parentCode) {
+        int offset = 0;
+        int pageSize = 50000;
         try {
-            String relativeUrl = MessageFormat.format(valueSetUrlTemplate, encode(valueSetUrl),snomedCode,localeLanguage);
-            String url = baseUrl+relativeUrl;
-            //String urlNonEncoded = "https://snowstorm.snomed.mybahmni.in/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs=ecl/<195967001&displayLanguage=en";
-            ValueSet valueSet = FhirContext.forR4().newRestfulGenericClient(baseUrl).read().resource(ValueSet.class).withUrl(url).execute();
-            List<String> codes = valueSet.getExpansion().getContains().stream().map(item -> item.getCode()).collect(Collectors.toList());
-            return codes;
-        } catch (UnsupportedEncodingException e) {
+            String createSqlStmt = MessageFormat.format(CREATE_SQL_TEMPLATE, tempTableName);
+            String insertSqlStmt = MessageFormat.format(INSERT_SQL_TEMPLATE, tempTableName);
+            Statement statement = connection.createStatement();
+            statement.execute(createSqlStmt);
+
+            PreparedStatement pstmtInsert = connection.prepareStatement(insertSqlStmt);
+
+            TSPageObject pageObject = null;
+            do {
+                pageObject = fetchDescendantsByPagination(parentCode, pageSize, offset, "en");
+                List<String> codes = pageObject.getCodes();
+                for (int batchcount = 0; batchcount < codes.size(); batchcount++) {
+                    pstmtInsert.setString(1, codes.get(batchcount));
+                    pstmtInsert.addBatch();
+                }
+                pstmtInsert.executeBatch();
+                offset += pageSize;
+            } while (offset < pageObject.getTotal());
+        } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
-    private String encode(String rawStr) throws UnsupportedEncodingException {
-        return URLEncoder.encode(rawStr, StandardCharsets.UTF_8.name());
+
+    private TSPageObject fetchDescendantsByPagination(String snomedCode, int pageSize, int offset, String localeLanguage) {
+        String descendantsUrlTemplate = "http://openmrs:8080/openmrs/ws/rest/v1/terminologyServices/searchSnomedCodes?code={0}&size={1}&offset={2}&locale={3}";
+        String url = MessageFormat.format(descendantsUrlTemplate, snomedCode, pageSize, offset, localeLanguage);
+        String responseStr = httpClient.get(URI.create(url));
+        ObjectMapper mapper = new ObjectMapper();
+        TSPageObject pageObject = null;
+        try {
+            pageObject = mapper.readValue(responseStr, TSPageObject.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return pageObject;
     }
 
+    private String getFormattedSql(String formattedSql, String startDate, String endDate, String tempTableName) {
+        ST sqlTemplate = new ST(formattedSql, '#', '#');
+        sqlTemplate.add("startDate", startDate);
+        sqlTemplate.add("endDate", endDate);
+        sqlTemplate.add("tempTable", tempTableName);
+        return sqlTemplate.render();
+    }
 
 }

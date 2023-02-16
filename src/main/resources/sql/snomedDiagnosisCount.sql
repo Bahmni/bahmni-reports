@@ -90,8 +90,8 @@ from
                             patient_conditions.date_created,
                             '+00:00', '+5:30'
                         ) AS DATE
-                ) BETWEEN @startDate
-                AND @endDate
+                ) BETWEEN '#startDate#'
+                AND '#endDate#'
               AND patient_conditions.voided = FALSE
               AND person.voided = FALSE
             group by
@@ -102,8 +102,9 @@ from
         AND cn.concept_name_type = 'FULLY_SPECIFIED'
         AND cn.locale = 'en'
         AND cn.voided = FALSE
-        JOIN concept_reference_map crm on crm.concept_id = cn.concept_id
-        JOIN concept_reference_term crt on crt.concept_reference_term_id = crm.concept_reference_term_id and
-                                           crt.concept_source_id = (select concept_source_id from concept_reference_source where name like 'SNOMED') and crt.code = "#snomedParentCode#"
+        INNER JOIN concept_reference_map crm on crm.concept_id = cn.concept_id
+        INNER JOIN concept_reference_term crt on crt.concept_reference_term_id = crm.concept_reference_term_id and
+        crt.concept_source_id = (select concept_source_id from concept_reference_source where name like 'SNOMED')
+        INNER JOIN #tempTable# tmp on tmp.code = crt.code
 group by
     cn.name;

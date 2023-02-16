@@ -119,7 +119,6 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         } else {
             sqlTemplate.add("countOnlyTaggedLocationsJoin", "");
         }
-        System.out.println("SQL Templ" + sqlTemplate.render());
         return sqlTemplate.render();
     }
 }
