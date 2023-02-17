@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
+import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.SnomedDiagnosisReportConfig;
 import org.bahmni.reports.model.TSPageObject;
@@ -15,10 +16,7 @@ import org.bahmni.webclients.HttpClient;
 import org.stringtemplate.v4.ST;
 
 import java.net.URI;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -50,21 +48,20 @@ public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiag
         jasperReport.addColumn(col.column("Diagnosis", "Diagnosis", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         jasperReport.addColumn(col.column("Snomed Code", "SNOMED Code", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         jasperReport.addColumn(col.column("Count", "Total", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-        jasperReport.setShowColumnTitle(true).setDataSource(getFormattedSql(sql, startDate, endDate, tempTableName),
-                connection);
+        String formattedSql = getFormattedSql(sql, startDate, endDate, tempTableName);
+        jasperReport.setShowColumnTitle(true).setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL).setDataSource(formattedSql, connection);
 
         return new BahmniReportBuilder(jasperReport);
     }
 
     private void loadTempTable(Connection connection, String tempTableName, String parentCode) {
         int offset = 0;
-        int pageSize = 50000;
+        int pageSize = 10000;
         try {
             String createSqlStmt = MessageFormat.format(CREATE_SQL_TEMPLATE, tempTableName);
             String insertSqlStmt = MessageFormat.format(INSERT_SQL_TEMPLATE, tempTableName);
             Statement statement = connection.createStatement();
             statement.execute(createSqlStmt);
-
             PreparedStatement pstmtInsert = connection.prepareStatement(insertSqlStmt);
 
             TSPageObject pageObject = null;
@@ -84,7 +81,7 @@ public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiag
     }
 
     private TSPageObject fetchDescendantsByPagination(String snomedCode, int pageSize, int offset, String localeLanguage) {
-        String descendantsUrlTemplate = "http://openmrs:8080/openmrs/ws/rest/v1/terminologyServices/searchSnomedCodes?code={0}&size={1}&offset={2}&locale={3}";
+        String descendantsUrlTemplate = "http://openmrs:8080/openmrs/ws/rest/v1/terminologyServices/searchSnomedCodes?code={0}&size={1,number,#}&offset={2,number,#}&locale={3}";
         String url = MessageFormat.format(descendantsUrlTemplate, snomedCode, pageSize, offset, localeLanguage);
         String responseStr = httpClient.get(URI.create(url));
         ObjectMapper mapper = new ObjectMapper();
@@ -97,8 +94,8 @@ public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiag
         return pageObject;
     }
 
-    private String getFormattedSql(String formattedSql, String startDate, String endDate, String tempTableName) {
-        ST sqlTemplate = new ST(formattedSql, '#', '#');
+    private String getFormattedSql(String templateSql, String startDate, String endDate, String tempTableName) {
+        ST sqlTemplate = new ST(templateSql, '#', '#');
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         sqlTemplate.add("tempTable", tempTableName);
