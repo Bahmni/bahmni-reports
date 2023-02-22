@@ -15,7 +15,13 @@ import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.webclients.HttpClient;
 import org.stringtemplate.v4.ST;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.sql.*;
 import java.text.MessageFormat;
 import java.util.List;
@@ -66,7 +72,11 @@ public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiag
 
             TSPageObject pageObject = null;
             do {
-                pageObject = fetchDescendantsByPagination(parentCode, pageSize, offset, "en");
+                try {
+                    pageObject = fetchDescendantsByPagination(parentCode, pageSize, offset, "en");
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 List<String> codes = pageObject.getCodes();
                 for (int batchcount = 0; batchcount < codes.size(); batchcount++) {
                     pstmtInsert.setString(1, codes.get(batchcount));
@@ -80,10 +90,27 @@ public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiag
         }
     }
 
-    private TSPageObject fetchDescendantsByPagination(String snomedCode, int pageSize, int offset, String localeLanguage) {
+    private TSPageObject fetchDescendantsByPagination(String snomedCode, int pageSize, int offset, String localeLanguage) throws IOException {
         String descendantsUrlTemplate = "http://openmrs:8080/openmrs/ws/rest/v1/terminologyServices/searchSnomedCodes?code={0}&size={1,number,#}&offset={2,number,#}&locale={3}";
         String url = MessageFormat.format(descendantsUrlTemplate, snomedCode, pageSize, offset, localeLanguage);
-        String responseStr = httpClient.get(URI.create(url));
+        //String responseStr = httpClient.get(URI.create(url));
+        String responseStr = "";
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        BufferedReader br = null;
+        if (conn.getResponseCode() == 200) {
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String strCurrentLine;
+            while ((strCurrentLine = br.readLine()) != null) {
+                responseStr+=strCurrentLine;
+            }
+        } else {
+            br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+            String strCurrentLine;
+            while ((strCurrentLine = br.readLine()) != null) {
+                responseStr+=strCurrentLine;
+            }
+        }
+        System.out.println(responseStr);
         ObjectMapper mapper = new ObjectMapper();
         TSPageObject pageObject = null;
         try {
