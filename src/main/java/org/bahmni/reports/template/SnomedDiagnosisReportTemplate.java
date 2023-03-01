@@ -3,6 +3,11 @@ package org.bahmni.reports.template;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import net.sf.dynamicreports.report.builder.crosstab.CrosstabBuilder;
+import net.sf.dynamicreports.report.builder.crosstab.CrosstabColumnGroupBuilder;
+import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
+import net.sf.dynamicreports.report.builder.style.Styles;
+import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
@@ -26,8 +31,8 @@ import java.sql.*;
 import java.text.MessageFormat;
 import java.util.List;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.col;
-import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+import static net.sf.dynamicreports.report.builder.DynamicReports.*;
+import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
 import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
@@ -52,8 +57,16 @@ public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiag
 
         CommonComponents.addTo(jasperReport, report, pageType);
         jasperReport.addColumn(col.column("Diagnosis", "Diagnosis", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-        jasperReport.addColumn(col.column("Snomed Code", "SNOMED Code", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-        jasperReport.addColumn(col.column("Count", "Total", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        if(report.getConfig().isDisplaySnomedCode()){
+            jasperReport.addColumn(col.column("Snomed Code", "SNOMED Code", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        }
+        if(report.getConfig().isDisplayGenderGroup()) {
+            jasperReport.addColumn(col.column("Female", "Female", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+            jasperReport.addColumn(col.column("Male", "Male", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+            jasperReport.addColumn(col.column("Other", "Other", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+            jasperReport.addColumn(col.column("Not disclosed", "Not disclosed", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        }
+        jasperReport.addColumn(col.column("Total", "Total", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         String formattedSql = getFormattedSql(sql, startDate, endDate, tempTableName);
         jasperReport.setShowColumnTitle(true).setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL).setDataSource(formattedSql, connection);
 
