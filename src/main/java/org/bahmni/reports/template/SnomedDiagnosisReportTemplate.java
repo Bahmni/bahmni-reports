@@ -106,7 +106,8 @@ public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiag
     private TSPageObject fetchDescendantsByPagination(String snomedCode, int pageSize, int offset, String localeLanguage) throws IOException {
         String descendantsUrlTemplate = "http://openmrs:8080/openmrs/ws/rest/v1/terminologyServices/searchSnomedCodes?code={0}&size={1,number,#}&offset={2,number,#}&locale={3}";
         String url = MessageFormat.format(descendantsUrlTemplate, snomedCode, pageSize, offset, localeLanguage);
-        //String responseStr = httpClient.get(URI.create(url));
+        String responseStr = httpClient.get(URI.create(url));
+        /*
         String responseStr = "";
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         BufferedReader br = null;
@@ -124,6 +125,7 @@ public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiag
             }
         }
         System.out.println(responseStr);
+         */
         ObjectMapper mapper = new ObjectMapper();
         TSPageObject pageObject = null;
         try {
