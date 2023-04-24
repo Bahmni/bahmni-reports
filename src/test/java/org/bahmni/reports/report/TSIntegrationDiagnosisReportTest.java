@@ -4,14 +4,15 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.Report;
-import org.bahmni.reports.model.SnomedDiagnosisReportConfig;
-import org.bahmni.reports.template.SnomedDiagnosisReportTemplate;
+import org.bahmni.reports.model.TSIntegrationDiagnosisReportConfig;
+import org.bahmni.reports.template.TSIntegrationDiagnosisReportTemplate;
 import org.bahmni.webclients.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.modules.junit4.PowerMockRunner;
 
@@ -25,6 +26,7 @@ import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
@@ -33,11 +35,11 @@ import static org.mockito.Mockito.*;
 
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 @RunWith(PowerMockRunner.class)
-public class SnomedDiagnosisReportTest {
+public class TSIntegrationDiagnosisReportTest {
     @InjectMocks
-    SnomedDiagnosisReportTemplate snomedDiagnosisReportTemplate;
+    TSIntegrationDiagnosisReportTemplate tsIntegrationDiagnosisReportTemplate;
     @Mock
-    Report<SnomedDiagnosisReportConfig> mockReport;
+    Report<TSIntegrationDiagnosisReportConfig> mockReport;
     @Mock
     private HttpClient mockHttpClient;
     @Mock
@@ -49,25 +51,31 @@ public class SnomedDiagnosisReportTest {
     @Mock
     private JasperReportBuilder mockJasperReport;
 
+    @Mock
+    private Properties mockTsProperties;
+
     @Before
     public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        tsIntegrationDiagnosisReportTemplate.setDescendantsUrlTemplate("dummyUrlTemplate");
     }
 
     @Test
-    public void shouldUseSnomedDiagnosisReportTemplateWhenSnomedDiagnosisReportTypeIsInvoked() {
-        SnomedDiagnosisReportConfig snomedDiagnosisReportConfig = new SnomedDiagnosisReportConfig();
-        SnomedDiagnosisReport snomedDiagnosisReport = new SnomedDiagnosisReport();
-        snomedDiagnosisReport.setConfig(snomedDiagnosisReportConfig);
-        assertTrue(snomedDiagnosisReport.getTemplate(new BahmniReportsProperties()).getClass().isAssignableFrom(SnomedDiagnosisReportTemplate.class));
+    public void shouldFetchTSDiagnosisReportTemplateWhenTSDiagnosisReportTypeIsInvoked() {
+        TSIntegrationDiagnosisReportConfig tsIntegrationDiagnosisReportConfig = new TSIntegrationDiagnosisReportConfig();
+        TSIntegrationDiagnosisReport tsIntegrationDiagnosisReport = new TSIntegrationDiagnosisReport();
+        tsIntegrationDiagnosisReport.setConfig(tsIntegrationDiagnosisReportConfig);
+        assertTrue(tsIntegrationDiagnosisReport.getTemplate(new BahmniReportsProperties()).getClass().isAssignableFrom(TSIntegrationDiagnosisReportTemplate.class));
     }
 
     @Test
-    public void shouldProcessFilteredDescendantsWithPagination() throws Exception {
+    public void shouldProcessTerminologyDescendantsWithPagination() throws Exception {
+        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockSnomedDiagnosisReportConfig(true, true));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -76,12 +84,11 @@ public class SnomedDiagnosisReportTest {
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
 
-        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockSnomedDescendants());
+        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
+        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
-        snomedDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
-
-        //2 SNOMED Descendant Codes
+        //Two Descendant Codes
         verify(mockPreparedStatement, times(2)).setString(eq(1), anyString());
         verify(mockPreparedStatement, times(2)).addBatch();
         //Single Pagination
@@ -89,12 +96,13 @@ public class SnomedDiagnosisReportTest {
     }
 
     @Test
-    public void shouldIncludeBothSnomedCodeAndGenderGroupColumnsInJasperReport() throws Exception {
+    public void shouldIncludeBothTerminologyCodeAndGenderGroupColumnsInJasperReport() throws Exception {
+        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockSnomedDiagnosisReportConfig(true, true));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -103,20 +111,21 @@ public class SnomedDiagnosisReportTest {
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
 
-        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockSnomedDescendants());
+        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
-        snomedDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
         verify(mockJasperReport, times(7)).addColumn(any());
     }
 
     @Test
-    public void shouldIncludeSnomedCodeAndExcludeGenderGroupColumnsInJasperReport() throws Exception {
+    public void shouldIncludeTerminologyCodeAndExcludeGenderGroupColumnsInJasperReport() throws Exception {
+        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockSnomedDiagnosisReportConfig(true, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -125,20 +134,21 @@ public class SnomedDiagnosisReportTest {
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
 
-        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockSnomedDescendants());
+        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
-        snomedDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
         verify(mockJasperReport, times(3)).addColumn(any());
     }
 
     @Test
-    public void shouldExcludeSnomedCodeAndIncludeGenderGroupColumnsInJasperReport() throws Exception {
+    public void shouldExcludeTerminologyCodeAndIncludeGenderGroupColumnsInJasperReport() throws Exception {
+        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockSnomedDiagnosisReportConfig(false, true));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -147,20 +157,21 @@ public class SnomedDiagnosisReportTest {
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
 
-        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockSnomedDescendants());
+        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
-        snomedDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
         verify(mockJasperReport, times(6)).addColumn(any());
     }
 
     @Test
-    public void shouldExcludeBothSnomedCodeAndGenderGroupColumnsInJasperReport() throws Exception {
+    public void shouldExcludeBothTerminologyCodeAndGenderGroupColumnsInJasperReport() throws Exception {
+        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockSnomedDiagnosisReportConfig(false, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -169,25 +180,24 @@ public class SnomedDiagnosisReportTest {
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
 
-        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockSnomedDescendants());
+        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
-        snomedDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
         verify(mockJasperReport, times(2)).addColumn(any());
     }
 
-    private SnomedDiagnosisReportConfig getMockSnomedDiagnosisReportConfig(boolean displaySnomedCodeFlag, boolean displayGenderFlag) {
-        SnomedDiagnosisReportConfig snomedDiagnosisReportConfig = new SnomedDiagnosisReportConfig();
-        snomedDiagnosisReportConfig.setDisplaySnomedCode(displaySnomedCodeFlag);
-        snomedDiagnosisReportConfig.setDisplayGenderGroup(displayGenderFlag);
-        snomedDiagnosisReportConfig.setSnomedParentCode("dummyCode");
-        return snomedDiagnosisReportConfig;
+    private TSIntegrationDiagnosisReportConfig getMockTerminologyDiagnosisReportConfig(boolean displayTerminologyCodeFlag, boolean displayGenderFlag) {
+        TSIntegrationDiagnosisReportConfig tsIntegrationDiagnosisReportConfig = new TSIntegrationDiagnosisReportConfig();
+        tsIntegrationDiagnosisReportConfig.setDisplayTerminologyCode(displayTerminologyCodeFlag);
+        tsIntegrationDiagnosisReportConfig.setDisplayGenderGroup(displayGenderFlag);
+        tsIntegrationDiagnosisReportConfig.setTerminologyParentCode("dummyCode");
+        return tsIntegrationDiagnosisReportConfig;
     }
 
-    private String getMockSnomedDescendants() throws URISyntaxException, IOException {
+    private String getMockTerminologyDescendants() throws URISyntaxException, IOException {
         Path path = Paths.get(getClass().getClassLoader()
-                .getResource("terminology/snomedDescendantCodes.json").toURI());
+                .getResource("ts/descendantCodes.json").toURI());
         return Files.lines(path, StandardCharsets.UTF_8).collect(Collectors.joining("\n"));
     }
-
 }

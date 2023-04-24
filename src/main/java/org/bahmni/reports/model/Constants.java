@@ -8,4 +8,5 @@ public class Constants {
     public static final String OBSERVAIONFORMS = "forms";
     public static final String LABORDERS = "labOrders";
     public static final String FORM_BUILDER_FORMS = "formBuilder";
+    public static final String TS_INTEGRATION_DIAGNOSIS = "tsIntDiagnosis";
 }

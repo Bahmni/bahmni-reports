@@ -1,6 +1,6 @@
 SELECT
   cn.name AS "Diagnosis",
-  crt.code AS "SNOMED Code",
+  crt.code AS "Terminology Code",
   sum(diagnosisObs.female) AS "Female",
   sum(diagnosisObs.male) AS "Male",
   sum(diagnosisObs.other) AS "Other",
@@ -110,7 +110,7 @@ from
     from
       concept_reference_source
     where
-      name like 'SNOMED'
+      name like '#conceptSourceCode#'
   )
   INNER JOIN #tempTable# tmp on tmp.code = crt.code
 group by

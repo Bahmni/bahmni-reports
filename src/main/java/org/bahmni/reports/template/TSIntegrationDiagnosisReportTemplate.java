@@ -3,16 +3,12 @@ package org.bahmni.reports.template;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
-import net.sf.dynamicreports.report.builder.crosstab.CrosstabBuilder;
-import net.sf.dynamicreports.report.builder.crosstab.CrosstabColumnGroupBuilder;
-import net.sf.dynamicreports.report.builder.crosstab.CrosstabRowGroupBuilder;
-import net.sf.dynamicreports.report.builder.style.Styles;
-import net.sf.dynamicreports.report.constant.Calculation;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
+import org.apache.log4j.Logger;
 import org.bahmni.reports.model.Report;
-import org.bahmni.reports.model.SnomedDiagnosisReportConfig;
+import org.bahmni.reports.model.TSIntegrationDiagnosisReportConfig;
 import org.bahmni.reports.model.TSPageObject;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
@@ -20,54 +16,62 @@ import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.webclients.HttpClient;
 import org.stringtemplate.v4.ST;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Properties;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.*;
-import static net.sf.dynamicreports.report.builder.DynamicReports.ctab;
+import static net.sf.dynamicreports.report.builder.DynamicReports.col;
+import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 
 @UsingDatasource("openmrs")
-public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiagnosisReportConfig> {
+public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSIntegrationDiagnosisReportConfig> {
     public static final String CREATE_SQL_TEMPLATE = "create temporary table {0}(code varchar(100) not null)";
     public static final String INSERT_SQL_TEMPLATE = "insert into {0} values (?)";
+    private static Logger logger = Logger.getLogger(TSIntegrationDiagnosisReportTemplate.class);
     private HttpClient httpClient;
+    private Properties tsProperties;
+    private String descendantsUrlTemplate;
 
-    public SnomedDiagnosisReportTemplate(HttpClient httpClient) {
+    public TSIntegrationDiagnosisReportTemplate(HttpClient httpClient, Properties tsProperties, String descendantsUrlTemplate) {
         super();
         this.httpClient = httpClient;
+        this.tsProperties = tsProperties;
+        this.descendantsUrlTemplate = descendantsUrlTemplate;
+    }
+
+    public void setDescendantsUrlTemplate(String descendantsUrlTemplate) {
+        this.descendantsUrlTemplate = descendantsUrlTemplate;
     }
 
     @Override
-    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<SnomedDiagnosisReportConfig> report, String
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<TSIntegrationDiagnosisReportConfig> report, String
             startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         String tempTableName = "tmpCodes_" + System.nanoTime();
-        loadTempTable(connection, tempTableName, report.getConfig().getSnomedParentCode());
-        String sql = getFileContent("sql/snomedDiagnosisCount.sql");
+        loadTempTable(connection, tempTableName, report.getConfig().getTerminologyParentCode());
+        String sql = getFileContent("sql/tsIntegrationDiagnosisCount.sql");
 
         CommonComponents.addTo(jasperReport, report, pageType);
         jasperReport.addColumn(col.column("Diagnosis", "Diagnosis", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-        if(report.getConfig().isDisplaySnomedCode()){
-            jasperReport.addColumn(col.column("Snomed Code", "SNOMED Code", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        if (report.getConfig().isDisplayTerminologyCode()) {
+            jasperReport.addColumn(col.column("Terminology Code", "Terminology Code", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         }
-        if(report.getConfig().isDisplayGenderGroup()) {
+        if (report.getConfig().isDisplayGenderGroup()) {
             jasperReport.addColumn(col.column("Female", "Female", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
             jasperReport.addColumn(col.column("Male", "Male", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
             jasperReport.addColumn(col.column("Other", "Other", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
             jasperReport.addColumn(col.column("Not disclosed", "Not disclosed", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         }
         jasperReport.addColumn(col.column("Total", "Total", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-        String formattedSql = getFormattedSql(sql, startDate, endDate, tempTableName);
+        String formattedSql = getFormattedSql(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName);
         jasperReport.setShowColumnTitle(true).setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL).setDataSource(formattedSql, connection);
 
         return new BahmniReportBuilder(jasperReport);
@@ -75,7 +79,7 @@ public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiag
 
     private void loadTempTable(Connection connection, String tempTableName, String parentCode) {
         int offset = 0;
-        int pageSize = 10000;
+        int pageSize = getDefaultPageSize();
         try {
             String createSqlStmt = MessageFormat.format(CREATE_SQL_TEMPLATE, tempTableName);
             String insertSqlStmt = MessageFormat.format(INSERT_SQL_TEMPLATE, tempTableName);
@@ -88,7 +92,7 @@ public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiag
                 try {
                     pageObject = fetchDescendantsByPagination(parentCode, pageSize, offset, "en");
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    throw new RuntimeException();
                 }
                 List<String> codes = pageObject.getCodes();
                 for (int batchcount = 0; batchcount < codes.size(); batchcount++) {
@@ -99,49 +103,41 @@ public class SnomedDiagnosisReportTemplate extends BaseReportTemplate<SnomedDiag
                 offset += pageSize;
             } while (offset < pageObject.getTotal());
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            logger.error("Error occured while making database call to " + tempTableName + " table");
+            throw new RuntimeException();
         }
     }
 
-    private TSPageObject fetchDescendantsByPagination(String snomedCode, int pageSize, int offset, String localeLanguage) throws IOException {
-        String descendantsUrlTemplate = "http://openmrs:8080/openmrs/ws/rest/v1/terminologyServices/searchSnomedCodes?code={0}&size={1,number,#}&offset={2,number,#}&locale={3}";
-        String url = MessageFormat.format(descendantsUrlTemplate, snomedCode, pageSize, offset, localeLanguage);
+    private TSPageObject fetchDescendantsByPagination(String terminologyCode, int pageSize, int offset, String localeLanguage) throws IOException {
+        String url = MessageFormat.format(descendantsUrlTemplate, terminologyCode, pageSize, offset, localeLanguage);
         String responseStr = httpClient.get(URI.create(url));
-        /*
-        String responseStr = "";
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-        BufferedReader br = null;
-        if (conn.getResponseCode() == 200) {
-            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String strCurrentLine;
-            while ((strCurrentLine = br.readLine()) != null) {
-                responseStr+=strCurrentLine;
-            }
-        } else {
-            br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-            String strCurrentLine;
-            while ((strCurrentLine = br.readLine()) != null) {
-                responseStr+=strCurrentLine;
-            }
-        }
-        System.out.println(responseStr);
-         */
         ObjectMapper mapper = new ObjectMapper();
-        TSPageObject pageObject = null;
         try {
-            pageObject = mapper.readValue(responseStr, TSPageObject.class);
+            return mapper.readValue(responseStr, TSPageObject.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException();
         }
-        return pageObject;
     }
 
-    private String getFormattedSql(String templateSql, String startDate, String endDate, String tempTableName) {
+
+    private String getFormattedSql(String templateSql, String conceptSourceCode, String startDate, String endDate, String tempTableName) {
         ST sqlTemplate = new ST(templateSql, '#', '#');
+        sqlTemplate.add("conceptSourceCode", conceptSourceCode);
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         sqlTemplate.add("tempTable", tempTableName);
         return sqlTemplate.render();
+    }
+
+
+    public int getDefaultPageSize() {
+        String pageSize = System.getenv("REPORTS_TS_PAGE_SIZE");
+        if (pageSize == null)
+            pageSize = tsProperties.getProperty("ts.defaultPageSize");
+        if (pageSize != null) {
+            return Integer.parseInt(pageSize);
+        }
+        return 20;
     }
 
 }
