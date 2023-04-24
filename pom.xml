@@ -345,7 +345,6 @@
             <version>4.7.0</version>
             <scope>test</scope>
         </dependency>
-        <!-- Thanks for using https://jar-download.com -->
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
             <artifactId>quartz</artifactId>
