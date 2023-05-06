@@ -6,7 +6,8 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
-import org.apache.log4j.Logger;
+//import org.apache.logging.log4j.LogManager;
+//import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.TSIntegrationDiagnosisReportConfig;
 import org.bahmni.reports.model.TSPageObject;
@@ -16,8 +17,12 @@ import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.webclients.HttpClient;
 import org.stringtemplate.v4.ST;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -36,7 +41,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSIntegrationDiagnosisReportConfig> {
     public static final String CREATE_SQL_TEMPLATE = "create temporary table {0}(code varchar(100) not null)";
     public static final String INSERT_SQL_TEMPLATE = "insert into {0} values (?)";
-    private static Logger logger = Logger.getLogger(TSIntegrationDiagnosisReportTemplate.class);
+    //private static Logger logger = LogManager.getLogger(TSIntegrationDiagnosisReportTemplate.class);
     private HttpClient httpClient;
     private Properties tsProperties;
     private String descendantsUrlTemplate;
@@ -103,7 +108,7 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
                 offset += pageSize;
             } while (offset < pageObject.getTotal());
         } catch (SQLException e) {
-            logger.error("Error occured while making database call to " + tempTableName + " table");
+            //logger.error("Error occured while making database call to " + tempTableName + " table");
             throw new RuntimeException();
         }
     }
@@ -111,6 +116,26 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
     private TSPageObject fetchDescendantsByPagination(String terminologyCode, int pageSize, int offset, String localeLanguage) throws IOException {
         String url = MessageFormat.format(descendantsUrlTemplate, terminologyCode, pageSize, offset, localeLanguage);
         String responseStr = httpClient.get(URI.create(url));
+        /*
+        String responseStr = "";
+        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+        BufferedReader br = null;
+        if (conn.getResponseCode() == 200) {
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            String strCurrentLine;
+            while ((strCurrentLine = br.readLine()) != null) {
+                responseStr+=strCurrentLine;
+            }
+        } else {
+            br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+            String strCurrentLine;
+            while ((strCurrentLine = br.readLine()) != null) {
+                responseStr+=strCurrentLine;
+            }
+        }
+        */
+        System.out.println(responseStr);
+
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(responseStr, TSPageObject.class);
