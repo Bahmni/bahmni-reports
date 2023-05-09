@@ -116,26 +116,6 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
     private TSPageObject fetchDescendantsByPagination(String terminologyCode, int pageSize, int offset, String localeLanguage) throws IOException {
         String url = MessageFormat.format(descendantsUrlTemplate, terminologyCode, pageSize, offset, localeLanguage);
         String responseStr = httpClient.get(URI.create(url));
-        /*
-        String responseStr = "";
-        HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-        BufferedReader br = null;
-        if (conn.getResponseCode() == 200) {
-            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String strCurrentLine;
-            while ((strCurrentLine = br.readLine()) != null) {
-                responseStr+=strCurrentLine;
-            }
-        } else {
-            br = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-            String strCurrentLine;
-            while ((strCurrentLine = br.readLine()) != null) {
-                responseStr+=strCurrentLine;
-            }
-        }
-        */
-        System.out.println(responseStr);
-
         ObjectMapper mapper = new ObjectMapper();
         try {
             return mapper.readValue(responseStr, TSPageObject.class);
