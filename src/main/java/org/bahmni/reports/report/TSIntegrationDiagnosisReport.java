@@ -3,7 +3,8 @@ package org.bahmni.reports.report;
 import org.apache.http.config.Registry;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-//import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.BahmniReportsConfiguration;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.Report;
@@ -11,25 +12,21 @@ import org.bahmni.reports.model.TSIntegrationDiagnosisReportConfig;
 import org.bahmni.reports.template.BaseReportTemplate;
 import org.bahmni.reports.template.TSIntegrationDiagnosisReportTemplate;
 import org.bahmni.webclients.HttpClient;
-import org.openmrs.util.OpenmrsUtil;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 public class TSIntegrationDiagnosisReport extends Report<TSIntegrationDiagnosisReportConfig> {
-    //private static Logger logger = Logger.getLogger(TSIntegrationDiagnosisReport.class);
+    private static final Logger logger = LogManager.getLogger(TSIntegrationDiagnosisReport.class);
     private static final String TS_PROPERTIES_FILENAME = "terminology-service-config.properties";
+
     @Override
     public BaseReportTemplate getTemplate(BahmniReportsProperties bahmniReportsProperties) {
         HttpClient httpClient = getHttpClient(bahmniReportsProperties);
         Properties tsProperties = getTSProperties();
-        String tsEndpointTemplate = bahmniReportsProperties.getOpenmrsRootUrl() + "/terminologyServices/searchTerminologyCodes?code={0}&size={1,number,#}&offset={2,number,#}&locale={3}";
+        String tsEndpointTemplate = bahmniReportsProperties.getOpenmrsRootUrl() + tsProperties.getProperty("ts.endpoint");
+        ;
         return new TSIntegrationDiagnosisReportTemplate(httpClient, tsProperties, tsEndpointTemplate);
     }
 
@@ -48,7 +45,7 @@ public class TSIntegrationDiagnosisReport extends Report<TSIntegrationDiagnosisR
             p.load(in);
             return p;
         } catch (IOException e) {
-            //logger.error("Could not load terminology service properties from: " + TS_PROPERTIES_FILENAME, e);
+            logger.error("Could not load terminology service properties from: " + TS_PROPERTIES_FILENAME, e);
             throw new RuntimeException();
         }
     }
