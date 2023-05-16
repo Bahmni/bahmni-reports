@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class TSIntegrationDiagnosisReportConfig implements Config {
     private String tsConceptSource;
     private String terminologyParentCode;
+    private String terminologyColumnName;
     private Boolean displayTerminologyCode;
     private Boolean displayGenderGroup;
 
@@ -32,6 +33,14 @@ public class TSIntegrationDiagnosisReportConfig implements Config {
 
     public void setDisplayTerminologyCode(Boolean displayTerminologyCode) {
         this.displayTerminologyCode = displayTerminologyCode;
+    }
+
+    public String getTerminologyColumnName() {
+        return terminologyColumnName;
+    }
+
+    public void setTerminologyColumnName(String terminologyColumnName) {
+        this.terminologyColumnName = terminologyColumnName;
     }
 
     public Boolean isDisplayGenderGroup() {

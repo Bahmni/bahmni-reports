@@ -6,6 +6,7 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.model.Report;
@@ -37,7 +38,14 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSIntegrationDiagnosisReportConfig> {
     public static final String CREATE_SQL_TEMPLATE = "create temporary table {0}(code varchar(100) not null)";
     public static final String INSERT_SQL_TEMPLATE = "insert into {0} values (?)";
-
+    public static final String DIAGNOSIS_COLUMN_NAME = "Diagnosis";
+    public static final String TERMINOLOGY_COLUMN_NAME = "Terminology Code";
+    public static final String FEMALE_COLUMN_NAME = "Female";
+    public static final String MALE_COLUMN_NAME = "Male";
+    public static final String OTHER_COLUMN_NAME = "Other";
+    public static final String NOT_DISCLOSED_COLUMN_NAME = "Not disclosed";
+    public static final String TOTAL_COLUMN_NAME = "Total";
+    public static final int TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE = 20;
     private static final Logger logger = LogManager.getLogger(TSIntegrationDiagnosisReportTemplate.class);
     private HttpClient httpClient;
     private Properties tsProperties;
@@ -55,24 +63,25 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
     }
 
     @Override
-    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<TSIntegrationDiagnosisReportConfig> report, String
-            startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<TSIntegrationDiagnosisReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         String tempTableName = "tmpCodes_" + System.nanoTime();
         loadTempTable(connection, tempTableName, report.getConfig().getTerminologyParentCode());
         String sql = getFileContent("sql/tsIntegrationDiagnosisCount.sql");
 
         CommonComponents.addTo(jasperReport, report, pageType);
-        jasperReport.addColumn(col.column("Diagnosis", "Diagnosis", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        jasperReport.addColumn(col.column(DIAGNOSIS_COLUMN_NAME, DIAGNOSIS_COLUMN_NAME, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         if (report.getConfig().isDisplayTerminologyCode()) {
-            jasperReport.addColumn(col.column("Terminology Code", "Terminology Code", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+            String terminologyConfigColumnName = report.getConfig().getTerminologyColumnName();
+            String terminologyColumnName = StringUtils.isNotBlank(terminologyConfigColumnName) ? terminologyConfigColumnName : TERMINOLOGY_COLUMN_NAME;
+            jasperReport.addColumn(col.column(terminologyColumnName, TERMINOLOGY_COLUMN_NAME, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         }
         if (report.getConfig().isDisplayGenderGroup()) {
-            jasperReport.addColumn(col.column("Female", "Female", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-            jasperReport.addColumn(col.column("Male", "Male", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-            jasperReport.addColumn(col.column("Other", "Other", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-            jasperReport.addColumn(col.column("Not disclosed", "Not disclosed", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+            jasperReport.addColumn(col.column(FEMALE_COLUMN_NAME, FEMALE_COLUMN_NAME, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+            jasperReport.addColumn(col.column(MALE_COLUMN_NAME, MALE_COLUMN_NAME, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+            jasperReport.addColumn(col.column(OTHER_COLUMN_NAME, OTHER_COLUMN_NAME, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+            jasperReport.addColumn(col.column(NOT_DISCLOSED_COLUMN_NAME, NOT_DISCLOSED_COLUMN_NAME, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         }
-        jasperReport.addColumn(col.column("Total", "Total", type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        jasperReport.addColumn(col.column(TOTAL_COLUMN_NAME, TOTAL_COLUMN_NAME, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         String formattedSql = getFormattedSql(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName);
         jasperReport.setShowColumnTitle(true).setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL).setDataSource(formattedSql, connection);
 
@@ -134,12 +143,11 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
 
     public int getDefaultPageSize() {
         String pageSize = System.getenv("REPORTS_TS_PAGE_SIZE");
-        if (pageSize == null)
-            pageSize = tsProperties.getProperty("ts.defaultPageSize");
+        if (pageSize == null) pageSize = tsProperties.getProperty("ts.defaultPageSize");
         if (pageSize != null) {
             return Integer.parseInt(pageSize);
         }
-        return 20;
+        return TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE;
     }
 
 }
