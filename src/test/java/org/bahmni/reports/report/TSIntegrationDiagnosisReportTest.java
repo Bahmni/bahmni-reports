@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 @RunWith(PowerMockRunner.class)
@@ -76,7 +75,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, true, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -84,7 +83,6 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
@@ -104,7 +102,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, true, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -112,7 +110,6 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
@@ -128,7 +125,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, false, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -136,7 +133,6 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
@@ -152,7 +148,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, true, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -160,7 +156,6 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
@@ -176,7 +171,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, false, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -184,7 +179,6 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
@@ -193,69 +187,17 @@ public class TSIntegrationDiagnosisReportTest {
         verify(mockJasperReport, times(2)).addColumn(any());
     }
 
-    @Test
-    public void shouldDisplayShortWhenConceptNameDisplayFormatEqualsShortNamePreferredInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
-        when(mockConnection.createStatement()).thenReturn(mockStatement);
-        when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
-
-        when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, false, true));
-
-        when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
-        when(mockJasperReport.setTemplate(any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
-        when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
-
-        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
-
-        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
-        verify(mockJasperReport, times(1)).setDataSource(contains("AND cn.concept_name_type = 'SHORT'"), any());
-    }
-
-    @Test
-    public void shouldDisplayFullySpecifiedWhenConceptNameDisplayFormatNotEqualsShortNamePreferredInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
-        when(mockConnection.createStatement()).thenReturn(mockStatement);
-        when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
-
-        when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, false, false));
-
-        when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
-        when(mockJasperReport.setTemplate(any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
-        when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
-        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
-
-        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
-
-        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
-        verify(mockJasperReport, times(1)).setDataSource(contains("AND cn.concept_name_type = 'FULLY_SPECIFIED'"), any());
-    }
-
-    private TSIntegrationDiagnosisReportConfig getMockTerminologyDiagnosisReportConfig(boolean displayTerminologyCodeFlag, boolean displayGenderFlag, boolean shortNamePreferredFlag) {
+    private TSIntegrationDiagnosisReportConfig getMockTerminologyDiagnosisReportConfig(boolean displayTerminologyCodeFlag, boolean displayGenderFlag) {
         TSIntegrationDiagnosisReportConfig tsIntegrationDiagnosisReportConfig = new TSIntegrationDiagnosisReportConfig();
         tsIntegrationDiagnosisReportConfig.setDisplayTerminologyCode(displayTerminologyCodeFlag);
         tsIntegrationDiagnosisReportConfig.setDisplayGenderGroup(displayGenderFlag);
         tsIntegrationDiagnosisReportConfig.setTerminologyParentCode("dummyCode");
-        if (shortNamePreferredFlag)
-            tsIntegrationDiagnosisReportConfig.setConceptNameDisplayFormat("shortNamePreferred");
         return tsIntegrationDiagnosisReportConfig;
     }
 
     private String getMockTerminologyDescendants() throws URISyntaxException, IOException {
-        return readFileAsStr("ts/descendantCodes.json");
-    }
-
-    private String readFileAsStr(String relativePath) throws URISyntaxException, IOException {
         Path path = Paths.get(getClass().getClassLoader()
-                .getResource(relativePath).toURI());
+                .getResource("ts/descendantCodes.json").toURI());
         return Files.lines(path, StandardCharsets.UTF_8).collect(Collectors.joining("\n"));
     }
 }

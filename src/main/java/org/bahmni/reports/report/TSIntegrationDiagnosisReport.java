@@ -26,6 +26,7 @@ public class TSIntegrationDiagnosisReport extends Report<TSIntegrationDiagnosisR
         HttpClient httpClient = getHttpClient(bahmniReportsProperties);
         Properties tsProperties = getTSProperties();
         String tsEndpointTemplate = bahmniReportsProperties.getOpenmrsRootUrl() + tsProperties.getProperty("ts.endpoint");
+        ;
         return new TSIntegrationDiagnosisReportTemplate(httpClient, tsProperties, tsEndpointTemplate);
     }
 
