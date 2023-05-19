@@ -2,14 +2,17 @@ name: Build and Publish
 on:
   push:
     branches:
-      - snomed-master
-      - 'snomed-release-*'
+      - master
+      - 'release-*'
     tags:
-      - 'snomed-[0-9]+.[0-9]+.[0-9]+'
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+env:
+  HELM_CHART_PATH: package/helm/
 
 jobs:
-  build-publish-docker:
-    name: Build & Publish Docker Image
+  build-publish-docker-helm:
+    name: Build & Publish Docker Image & Helm Chart
     runs-on: ubuntu-latest
     services:
       mysql:
@@ -21,6 +24,11 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Set env.ARTIFACT_VERSION
+        run: |
+          wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
+          ./setArtifactVersion.sh
+          rm setArtifactVersion.sh
       - name: Setup Java 8
         uses: actions/setup-java@v3
         with:
@@ -45,25 +53,39 @@ jobs:
           platforms: linux/amd64,linux/arm64
           file: package/docker/bahmni-reports/Dockerfile
           push: true
-          tags: bahmni/reports:snomed-${{ github.run_number }},bahmni/reports:snomed-latest
+          tags: bahmni/reports:${{env.ARTIFACT_VERSION}},bahmni/reports:latest
 
-  trigger:
-    name: Trigger Deployment Workflow to SNOMED Environment
-    needs:
-      - build-publish-docker
-    runs-on: ubuntu-latest
-    env:
-      ORG_NAME: Bahmni
-      REPOSITORY_NAME: snomed-bahmni-docker
-      ENVIRONMENT: dev
-    steps:
-      - name: Create workflow_dispatch
+      - name: Helm - Update Version and Image Tag
         run: |
-          trigger_result=$(curl -s -o trigger_response.txt -w "%{http_code}" -X POST -H "Accept: application/vnd.github.v3+json" -H 'authorization: Bearer ${{ secrets.BAHMNI_PAT }}' https://api.github.com/repos/${ORG_NAME}/${REPOSITORY_NAME}/actions/workflows/snomed-deploy.yml/dispatches -d '{"ref":"snomed-master","inputs":{"environment":"'"${ENVIRONMENT}"'"}}')
-          if [ $trigger_result == 204 ];then
-            echo "Trigger to $ORG_NAME/$REPOSITORY_NAME Success"
-          else
-            echo "Trigger to $ORG_NAME/$REPOSITORY_NAME Failed"
-            cat trigger_response.txt
-            exit 1
-          fi
+          yq --inplace '.image.tag = "${{ env.ARTIFACT_VERSION }}"' $HELM_CHART_PATH/values.yaml
+          yq --inplace '.version = "${{ env.ARTIFACT_VERSION }}"' $HELM_CHART_PATH/Chart.yaml
+
+      - name: Helm Lint
+        run: helm lint $HELM_CHART_PATH
+
+      - name: Helm Package
+        run: helm package $HELM_CHART_PATH
+
+      - name: Helm - Checkout Charts Repository
+        uses: actions/checkout@v2
+        with:
+          repository: Bahmni/helm-charts
+          ref: gh-pages
+          path: helm-charts
+          persist-credentials: false
+
+      - name: Helm - Copy chart
+        run: mkdir -p helm-charts/reports/ && cp reports-${{ env.ARTIFACT_VERSION }}.tgz helm-charts/reports/
+
+      - name: Helm - reIndex
+        working-directory: helm-charts/
+        run: helm repo index --merge index.yaml --url https://bahmni.github.io/helm-charts/  .
+
+      - name: Helm - Publish Chart
+        working-directory: helm-charts/
+        run: |
+          git config user.name ${{ secrets.BAHMNI_USERNAME}}
+          git config user.email ${{ secrets.BAHMNI_EMAIL}}
+          git add .
+          git commit -m "Release of reports-${{ env.ARTIFACT_VERSION }}"
+          git push 'https://${{ secrets.BAHMNI_USERNAME}}:${{ secrets.BAHMNI_PAT}}@github.com/bahmni/helm-charts.git' gh-pages
