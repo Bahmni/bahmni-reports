@@ -7,3 +7,4 @@ data:
   OPENMRS_HOST: "{{ .Values.config.OPENMRS_HOST }}"
   OPENMRS_PORT: "{{ .Values.config.OPENMRS_PORT }}"
   REPORTS_DB_NAME: "{{ .Values.config.REPORTS_DB_NAME }}"
+  TZ: "{{ .Values.global.TZ }}"
