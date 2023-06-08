@@ -4,7 +4,6 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.component.HorizontalListBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 
-import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.template.Templates;
 
 import java.time.ZoneId;
@@ -69,9 +68,6 @@ public class ReportHeader {
                 .parseCaseInsensitive()
                 .appendPattern("yyyy-MM-dd hh:mm:ss")
                 .toFormatter();
-        if (StringUtils.isBlank(reportTimeZone)) {
-            reportTimeZone = ZoneId.systemDefault().getId();
-        }
         ZoneId rZone = ZoneId.of(reportTimeZone);
         ZonedDateTime nowLocalTime = ZonedDateTime.now(rZone);
         String dateString = formatter.format(nowLocalTime);
