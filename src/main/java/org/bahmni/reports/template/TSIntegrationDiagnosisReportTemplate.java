@@ -3,6 +3,9 @@ package org.bahmni.reports.template;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
+import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
+import net.sf.dynamicreports.report.builder.style.StyleBuilder;
+import net.sf.dynamicreports.report.builder.subtotal.AggregationSubtotalBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
@@ -28,8 +31,7 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Properties;
 
-import static net.sf.dynamicreports.report.builder.DynamicReports.col;
-import static net.sf.dynamicreports.report.builder.DynamicReports.type;
+import static net.sf.dynamicreports.report.builder.DynamicReports.*;
 import static org.bahmni.reports.template.Templates.columnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
@@ -45,6 +47,8 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
     public static final String OTHER_COLUMN_NAME = "Other";
     public static final String NOT_DISCLOSED_COLUMN_NAME = "Not disclosed";
     public static final String TOTAL_COLUMN_NAME = "Total";
+    public static final String COUNT_COLUMN_NAME = "Count";
+    public static final String TOTAL_LABEL_NAME = "Total";
     public static final int TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE = 20;
     private static final Logger logger = LogManager.getLogger(TSIntegrationDiagnosisReportTemplate.class);
     private HttpClient httpClient;
@@ -81,9 +85,14 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
             jasperReport.addColumn(col.column(OTHER_COLUMN_NAME, OTHER_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
             jasperReport.addColumn(col.column(NOT_DISCLOSED_COLUMN_NAME, NOT_DISCLOSED_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         }
-        jasperReport.addColumn(col.column(TOTAL_COLUMN_NAME, TOTAL_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        TextColumnBuilder<Integer> rowCount = col.column(COUNT_COLUMN_NAME, TOTAL_COLUMN_NAME, type.integerType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+        jasperReport.addColumn(rowCount);
+        StyleBuilder subtotalStyle = stl.style().bold().setHorizontalAlignment(HorizontalAlignment.RIGHT);
+        AggregationSubtotalBuilder<Integer> totalCount = sbt.sum(rowCount)
+                .setLabel(TOTAL_LABEL_NAME)
+                .setLabelStyle(subtotalStyle);
         String formattedSql = getFormattedSql(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName);
-        jasperReport.setShowColumnTitle(true).setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL).setDataSource(formattedSql, connection);
+        jasperReport.setShowColumnTitle(true).setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL).subtotalsAtSummary(totalCount).setDataSource(formattedSql, connection);
 
         return new BahmniReportBuilder(jasperReport);
     }
