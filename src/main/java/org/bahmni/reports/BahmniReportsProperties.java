@@ -143,9 +143,4 @@ public class BahmniReportsProperties {
     public String getFileUploadMaxSize() {
         return props.getProperty("reports.config.fileUploadMaxSize");
     }
-
-    public String getReportsTimeZone() {
-        return props.getProperty("reports.timezone");
-    }
-
 }

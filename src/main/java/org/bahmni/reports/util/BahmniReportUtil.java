@@ -29,7 +29,7 @@ public class BahmniReportUtil {
                                             BahmniReportsProperties bahmniReportsProperties) throws Exception {
         BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
         JasperReportBuilder reportBuilder = report();
-        reportBuilder = new ReportHeader(bahmniReportsProperties.getReportsTimeZone()).add(reportBuilder, report.getName(), startDate, endDate);
+        reportBuilder = new ReportHeader().add(reportBuilder, report.getName(), startDate, endDate);
         BahmniReportBuilder build = reportTemplate.build(connection, reportBuilder, report, startDate, endDate, resources, pageType);
         excludeColumns(report.getConfig(), reportBuilder);
         orderColumns(report.getConfig(), reportBuilder);
