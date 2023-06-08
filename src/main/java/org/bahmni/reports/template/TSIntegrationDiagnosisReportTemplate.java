@@ -17,7 +17,6 @@ import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.webclients.HttpClient;
 import org.stringtemplate.v4.ST;
-import static org.bahmni.reports.template.Templates.columnStyle;
 
 import java.io.IOException;
 import java.net.URI;
@@ -31,7 +30,7 @@ import java.util.Properties;
 
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
-import static org.bahmni.reports.template.Templates.minimalColumnStyle;
+import static org.bahmni.reports.template.Templates.columnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 
@@ -70,7 +69,7 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
         String sql = getFileContent("sql/tsIntegrationDiagnosisCount.sql");
 
         CommonComponents.addTo(jasperReport, report, pageType);
-        jasperReport.addColumn(col.column(DIAGNOSIS_COLUMN_NAME, DIAGNOSIS_COLUMN_NAME, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        jasperReport.addColumn(col.column(DIAGNOSIS_COLUMN_NAME, DIAGNOSIS_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         if (report.getConfig().isDisplayTerminologyCode()) {
             String terminologyConfigColumnName = report.getConfig().getTerminologyColumnName();
             String terminologyColumnName = StringUtils.isNotBlank(terminologyConfigColumnName) ? terminologyConfigColumnName : TERMINOLOGY_COLUMN_NAME;
