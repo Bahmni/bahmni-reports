@@ -99,7 +99,7 @@ from
       )
   ) as diagnosisObs
   JOIN concept_name cn on cn.concept_id = diagnosisObs.value_coded
-  AND cn.concept_name_type = 'FULLY_SPECIFIED'
+  AND cn.concept_name_type = 'SHORT'
   AND cn.locale = 'en'
   AND cn.voided = FALSE
   INNER JOIN concept_reference_map crm on crm.concept_id = cn.concept_id

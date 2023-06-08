@@ -83,6 +83,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
@@ -110,6 +111,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
@@ -133,6 +135,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
@@ -156,6 +159,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
@@ -179,6 +183,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
         when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
