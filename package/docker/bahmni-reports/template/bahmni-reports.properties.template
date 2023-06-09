@@ -19,4 +19,3 @@ openerp.password=${ODOO_DB_PASSWORD}
 bahmnireports.db.url=jdbc:mysql://${REPORTS_DB_SERVER}:3306/${REPORTS_DB_NAME}?allowMultiQueries=true
 reports.save.directory=/home/bahmni/reports/
 bahmni.login.url=/bahmni/home/#/login?showLoginMessage
-reports.timezone=Asia/Kolkata
