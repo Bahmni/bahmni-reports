@@ -1,14 +1,13 @@
 SELECT
     DISTINCT
     IF(extraIdentifier.identifier IS NULL OR extraIdentifier.identifier = "",
-       primaryIdentifier.identifier, extraIdentifier.identifier)                       AS "Patient Id",
+       primaryIdentifier.identifier, extraIdentifier.identifier)                        AS "Patient Id",
     concat(pn.given_name, " ", ifnull(pn.family_name, ""))                              AS "Patient Name",
-    p.gender 										   AS "Gender",
-    p.person_id                                                                         AS "pid",
+    p.gender 										                                    AS "Gender",
     p.birthdate                                                                         AS "Date of Birth",
     cn.name                                                                             AS "Diagnosis",
     crt.code                                                                            AS "Terminology Code",
-    DATE_FORMAT(diagnosisObs.obs_datetime, "%d-%b-%Y %H:%i")                            AS "Date of Diagnosis"
+    DATE_FORMAT(diagnosisObs.obs_datetime, "%d-%b-%Y %H:%i")                            AS "Date & Time of Diagnosis"
 FROM patient pt
          JOIN person p ON p.person_id = pt.patient_id AND p.voided is FALSE
          JOIN person_name pn ON pn.person_id = p.person_id AND pn.voided is FALSE

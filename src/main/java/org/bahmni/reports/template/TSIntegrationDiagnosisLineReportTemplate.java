@@ -39,11 +39,11 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
     public static final String INSERT_SQL_TEMPLATE = "insert into {0} values (?)";
     public static final String DIAGNOSIS_COLUMN_NAME = "Diagnosis";
     public static final String TERMINOLOGY_COLUMN_NAME = "Terminology Code";
-    public static final String PATIENT_ID_COLUMN_NAME = "Patient ID";
+    public static final String PATIENT_ID_COLUMN_NAME = "Patient Id";
     public static final String PATIENT_NAME_COLUMN_NAME = "Patient Name";
     public static final String PATIENT_DATE_OF_BIRTH_COLUMN_NAME = "Date of Birth";
     public static final String GENDER_COLUMN_NAME = "Gender";
-    public static final String DATE_AND_COLUMN_NAME = "Date & Time of Diagnosis";
+    public static final String DATE_AND_TIME_COLUMN_NAME = "Date & Time of Diagnosis";
     public static final int TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE = 20;
     private static final Logger logger = LogManager.getLogger(TSIntegrationDiagnosisLineReportTemplate.class);
     private HttpClient httpClient;
@@ -70,15 +70,15 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
         CommonComponents.addTo(jasperReport, report, pageType);
         jasperReport.addColumn(col.column(PATIENT_ID_COLUMN_NAME, PATIENT_ID_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         jasperReport.addColumn(col.column(PATIENT_NAME_COLUMN_NAME, PATIENT_NAME_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-        jasperReport.addColumn(col.column(PATIENT_DATE_OF_BIRTH_COLUMN_NAME, PATIENT_DATE_OF_BIRTH_COLUMN_NAME, type.dateType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         jasperReport.addColumn(col.column(GENDER_COLUMN_NAME, GENDER_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        jasperReport.addColumn(col.column(PATIENT_DATE_OF_BIRTH_COLUMN_NAME, PATIENT_DATE_OF_BIRTH_COLUMN_NAME, type.dateType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         jasperReport.addColumn(col.column(DIAGNOSIS_COLUMN_NAME, DIAGNOSIS_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-        jasperReport.addColumn(col.column(DATE_AND_COLUMN_NAME, DATE_AND_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         if (report.getConfig().isDisplayTerminologyCode()) {
             String terminologyConfigColumnName = report.getConfig().getTerminologyColumnName();
             String terminologyColumnName = StringUtils.isNotBlank(terminologyConfigColumnName) ? terminologyConfigColumnName : TERMINOLOGY_COLUMN_NAME;
             jasperReport.addColumn(col.column(terminologyColumnName, TERMINOLOGY_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         }
+        jasperReport.addColumn(col.column(DATE_AND_TIME_COLUMN_NAME, DATE_AND_TIME_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         String formattedSql = getFormattedSql(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName);
         jasperReport.setDataSource(formattedSql, connection);
 
