@@ -8,6 +8,6 @@ public class Constants {
     public static final String OBSERVAIONFORMS = "forms";
     public static final String LABORDERS = "labOrders";
     public static final String FORM_BUILDER_FORMS = "formBuilder";
-    public static final String FHIR_TS_LOOKUP_DIAGNOSIS_COUNT = "fhirTSLookupDiagnosisCount";
+    public static final String FHIR_TS_LOOKUP_DIAGNOSIS = "fhirTSLookupDiagnosis";
     public static final String FHIR_TS_LOOKUP_DIAGNOSIS_LINE = "fhirTSLookupDiagnosisLine";
 }
