@@ -62,4 +62,5 @@ FROM patient pt
         where
                 name like '#conceptSourceCode#'
     )
+    INNER JOIN #tempTable# tmp on tmp.code = crt.code
 ORDER BY diagnosisObs.obs_datetime DESC;
