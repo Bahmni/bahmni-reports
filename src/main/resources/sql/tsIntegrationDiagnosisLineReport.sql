@@ -13,13 +13,14 @@ SELECT
     IF(extraIdentifier.identifier IS NULL OR extraIdentifier.identifier = "",
        primaryIdentifier.identifier, extraIdentifier.identifier)                        AS "Patient Id",
     concat(pn.given_name, " ", ifnull(pn.family_name, ""))                              AS "Patient Name",
-    p.gender 										                                    AS "Gender",
-    p.birthdate                                                                         AS "Date of Birth",
+    p.gender 										                                    AS "Gender", ',
+    IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')),'
+    ',IF(@patientAddressesSql = '', '', CONCAT(@patientAddressesSql, '')),'
+    ',
+    'p.birthdate                                                                         AS "Date of Birth",
     cn.name                                                                             AS "Diagnosis",
-    crt.code                                                                            AS "Terminology Code", ',
-  IF(@patientAttributesSql = '', '', CONCAT(@patientAttributesSql, ',')),'
-  ',IF(@patientAddressesSql = '', '', CONCAT(@patientAddressesSql, '')),'
-  ', 'DATE_FORMAT(CONVERT_TZ(
+    crt.code                                                                            AS "Terminology Code",
+    DATE_FORMAT(CONVERT_TZ(
                         diagnosisObs.obs_datetime,
                         "+00:00", "+5:30"
                     ), "%d-%b-%Y %H:%i")                                                AS "Date & Time of Diagnosis"

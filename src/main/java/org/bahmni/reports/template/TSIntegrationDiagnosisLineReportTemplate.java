@@ -82,6 +82,8 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
         jasperReport.addColumn(col.column(PATIENT_ID_COLUMN_NAME, PATIENT_ID_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         jasperReport.addColumn(col.column(PATIENT_NAME_COLUMN_NAME, PATIENT_NAME_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         jasperReport.addColumn(col.column(GENDER_COLUMN_NAME, GENDER_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        createAndAddPatientAttributeColumns(jasperReport, report.getConfig());
+        createAndAddPatientAddressColumns(jasperReport, report.getConfig());
         jasperReport.addColumn(col.column(PATIENT_DATE_OF_BIRTH_COLUMN_NAME, PATIENT_DATE_OF_BIRTH_COLUMN_NAME, type.dateType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         jasperReport.addColumn(col.column(DIAGNOSIS_COLUMN_NAME, DIAGNOSIS_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         if (report.getConfig().isDisplayTerminologyCode()) {
@@ -90,8 +92,6 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
             jasperReport.addColumn(col.column(terminologyColumnName, TERMINOLOGY_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         }
         jasperReport.addColumn(col.column(DATE_AND_TIME_COLUMN_NAME, DATE_AND_TIME_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-        createAndAddPatientAttributeColumns(jasperReport, report.getConfig());
-        createAndAddPatientAddressColumns(jasperReport, report.getConfig());
         ResultSet formattedSql = getFormattedSql(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName, report.getConfig(), connection);
         jasperReport.setDataSource(formattedSql);
 
