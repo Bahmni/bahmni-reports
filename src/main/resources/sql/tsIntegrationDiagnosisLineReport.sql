@@ -7,7 +7,10 @@ SELECT
     p.birthdate                                                                         AS "Date of Birth",
     cn.name                                                                             AS "Diagnosis",
     crt.code                                                                            AS "Terminology Code",
-    DATE_FORMAT(diagnosisObs.obs_datetime, "%d-%b-%Y %H:%i")                            AS "Date & Time of Diagnosis"
+    DATE_FORMAT(CONVERT_TZ(
+                        diagnosisObs.obs_datetime,
+                        '+00:00', '+5:30'
+                    ), "%d-%b-%Y %H:%i")                                                AS "Date & Time of Diagnosis"
 FROM patient pt
          JOIN person p ON p.person_id = pt.patient_id AND p.voided is FALSE
          JOIN person_name pn ON pn.person_id = p.person_id AND pn.voided is FALSE
@@ -25,7 +28,10 @@ FROM patient pt
                        diagnosis.obs_datetime from obs AS diagnosis
                                                        JOIN concept_view AS cv
                                                             ON cv.concept_id = diagnosis.value_coded AND cv.concept_class_name = 'Diagnosis' AND
-                                                               cast(diagnosis.obs_datetime AS DATE) BETWEEN '#startDate#' AND '#endDate#'  AND diagnosis.voided = 0
+                                                               cast(CONVERT_TZ(
+                                                                       diagnosis.obs_datetime,
+                                                                       '+00:00', '+5:30'
+                                                                   ) AS DATE) BETWEEN '#startDate#' AND '#endDate#'  AND diagnosis.voided = 0
                                                                 AND diagnosis.obs_group_id IN (
                                                                     SELECT DISTINCT certaintyObs.obs_id from (
                                                                                                                  SELECT DISTINCT parent.obs_id
@@ -47,7 +53,10 @@ FROM patient pt
                       patient_conditions.date_created AS obs_datetime
                FROM conditions patient_conditions
                WHERE patient_conditions.clinical_status = 'ACTIVE'
-                 AND cast(patient_conditions.date_created AS DATE) BETWEEN '#startDate#' AND '#endDate#' AND voided = FALSE
+                 AND cast(CONVERT_TZ(
+                       patient_conditions.date_created,
+                       '+00:00', '+5:30'
+                   ) AS DATE) BETWEEN '#startDate#' AND '#endDate#' AND voided = FALSE
 ) as diagnosisObs on diagnosisObs.person_id = p.person_id
          JOIN concept_set cs on cs.concept_id = diagnosisObs.value_coded
          JOIN concept_name cn on cn.concept_id = cs.concept_id AND diagnosisObs.value_coded
