@@ -60,7 +60,7 @@ FROM patient pt
         from
             concept_reference_source
         where
-                name like '#conceptSourceCode#'
+          hl7_code like '#conceptSourceCode#'
     )
     INNER JOIN #tempTable# tmp on tmp.code = crt.code
 ORDER BY diagnosisObs.obs_datetime DESC;
