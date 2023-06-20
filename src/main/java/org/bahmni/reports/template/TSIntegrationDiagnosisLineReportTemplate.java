@@ -9,7 +9,6 @@ import net.sf.dynamicreports.report.constant.PageType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bahmni.reports.model.GenericReportsConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.TSIntegrationDiagnosisLineReportConfig;
 import org.bahmni.reports.model.TSPageObject;
@@ -36,12 +35,7 @@ import java.util.Properties;
 import static net.sf.dynamicreports.report.builder.DynamicReports.col;
 import static net.sf.dynamicreports.report.builder.DynamicReports.type;
 import static org.bahmni.reports.template.Templates.columnStyle;
-import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
-import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAddressesToDisplay;
-import static org.bahmni.reports.util.GenericReportsHelper.constructPatientAttributeNamesToDisplay;
-import static org.bahmni.reports.util.GenericReportsHelper.createAndAddPatientAddressColumns;
-import static org.bahmni.reports.util.GenericReportsHelper.createAndAddPatientAttributeColumns;
 
 
 @UsingDatasource("openmrs")
@@ -92,7 +86,7 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
             jasperReport.addColumn(col.column(terminologyColumnName, TERMINOLOGY_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         }
         jasperReport.addColumn(col.column(DATE_AND_TIME_COLUMN_NAME, DATE_AND_TIME_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-        ResultSet formattedSql = getFormattedSql(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName, report.getConfig(), connection);
+        ResultSet formattedSql = getResultSet(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName, report.getConfig(), connection);
         jasperReport.setDataSource(formattedSql);
 
         return new BahmniReportBuilder(jasperReport);
@@ -141,7 +135,7 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
     }
 
 
-    private ResultSet getFormattedSql(String templateSql, String conceptSourceCode, String startDate, String endDate, String tempTableName, TSIntegrationDiagnosisLineReportConfig config, Connection connection) throws SQLException, InvalidConfigurationException {
+    private ResultSet getResultSet(String templateSql, String conceptSourceCode, String startDate, String endDate, String tempTableName, TSIntegrationDiagnosisLineReportConfig config, Connection connection) throws SQLException, InvalidConfigurationException {
         ST sqlTemplate = new ST(templateSql, '#', '#');
         sqlTemplate.add("conceptSourceCode", conceptSourceCode);
         sqlTemplate.add("startDate", startDate);
@@ -164,13 +158,13 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
 
     public static void createAndAddPatientAddressColumns(JasperReportBuilder jasperReport, TSIntegrationDiagnosisLineReportConfig config) {
         for (String address : getPatientAddresses(config)) {
-            TextColumnBuilder<String> column = col.column(address, address, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            TextColumnBuilder<String> column = col.column(address, address, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
             jasperReport.addColumn(column);
         }
     }
     public static void createAndAddPatientAttributeColumns(JasperReportBuilder jasperReport, TSIntegrationDiagnosisLineReportConfig config) {
         for (String patientAttribute : getPatientAttributes(config)) {
-            TextColumnBuilder<String> column = col.column(patientAttribute, patientAttribute, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
+            TextColumnBuilder<String> column = col.column(patientAttribute, patientAttribute, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
             jasperReport.addColumn(column);
         }
     }
