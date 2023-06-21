@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TSIntegrationDiagnosisReportConfig implements Config {
     private String tsConceptSource;
+    private String conceptNameDisplayFormat;
     private String terminologyParentCode;
     private String terminologyColumnName;
     private Boolean displayTerminologyCode;
@@ -17,6 +18,14 @@ public class TSIntegrationDiagnosisReportConfig implements Config {
 
     public void setTsConceptSource(String tsConceptSource) {
         this.tsConceptSource = tsConceptSource;
+    }
+
+    public String getConceptNameDisplayFormat() {
+        return conceptNameDisplayFormat;
+    }
+
+    public void setConceptNameDisplayFormat(String conceptNameDisplayFormat) {
+        this.conceptNameDisplayFormat = conceptNameDisplayFormat;
     }
 
     public String getTerminologyParentCode() {
