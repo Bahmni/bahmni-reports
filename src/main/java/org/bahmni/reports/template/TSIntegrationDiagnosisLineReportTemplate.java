@@ -15,6 +15,7 @@ import org.bahmni.reports.model.TSPageObject;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
+import org.bahmni.reports.util.PatientAttributesHelper;
 import org.bahmni.reports.util.SqlUtil;
 import org.bahmni.webclients.HttpClient;
 import org.quartz.impl.jdbcjobstore.InvalidConfigurationException;
@@ -143,7 +144,9 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         sqlTemplate.add("tempTable", tempTableName);
-        sqlTemplate.add("patientAttributes", constructPatientAttributeNamesToDisplay(config));
+        PatientAttributesHelper patientAttributesHelper = new PatientAttributesHelper(config.getPatientAttributes());
+        sqlTemplate.add("patientAttributesFromClause", patientAttributesHelper.getFromClause());
+        sqlTemplate.add("patientAttributeSql", patientAttributesHelper.getSql());
         sqlTemplate.add("patientAddresses", constructPatientAddressesToDisplay(config));
         sqlTemplate.add("conceptNameDisplayFormat", "shortNamePreferred".equals(config.getConceptNameDisplayFormat()) ? SHORT_DISPLAY_FORMAT : FULLY_SPECIFIED_DISPLAY_FORMAT);
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());
