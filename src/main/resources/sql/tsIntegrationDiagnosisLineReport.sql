@@ -86,6 +86,7 @@ FROM patient pt
         where
           hl7_code like "#conceptSourceCode#"
     )
+  INNER JOIN #tempTable# tmp on tmp.code = crt.code
 ORDER BY diagnosisObs.obs_datetime DESC', ';');
 
 PREPARE stmt FROM @sql;
