@@ -3,7 +3,7 @@ SET @patientAttributesSql = '#patientAttributes#';
 SET @patientAddressesSql = '#patientAddresses#';
 SET @patientAttributeJoinSql = ' LEFT OUTER JOIN person_attribute pa ON p.person_id = pa.person_id AND pa.voided is false
   LEFT OUTER JOIN person_attribute_type pat ON pa.person_attribute_type_id = pat.person_attribute_type_id AND pat.retired is false
-  LEFT OUTER JOIN concept_name scn ON pat.format = "org.openmrs.Concept" AND pa.value = scn.concept_id AND scn.concept_name_type = "SHORT" AND scn.voided is false
+  LEFT OUTER JOIN concept_name scn ON pat.format = "org.openmrs.Concept" AND pa.value = scn.concept_id AND scn.concept_name_type = "#conceptNameDisplayFormat#" AND scn.voided is false
   LEFT OUTER JOIN concept_name fscn ON pat.format = "org.openmrs.Concept" AND pa.value = fscn.concept_id AND fscn.concept_name_type = "FULLY_SPECIFIED" AND fscn.voided is false ';
 SET @patientAddressJoinSql = ' LEFT OUTER JOIN person_address paddress ON p.person_id = paddress.person_id AND paddress.voided is false ';
 
@@ -75,7 +75,7 @@ FROM patient pt
 ) as diagnosisObs on diagnosisObs.person_id = p.person_id
          JOIN concept_set cs on cs.concept_id = diagnosisObs.value_coded
          JOIN concept_name cn on cn.concept_id = cs.concept_id AND diagnosisObs.value_coded
-    AND cn.concept_name_type = "SHORT" AND cn.locale = "en" AND cn.voided = false
+    AND cn.concept_name_type = "#conceptNameDisplayFormat#" AND cn.locale = "en" AND cn.voided = false
          INNER JOIN concept_reference_map crm on crm.concept_id = cn.concept_id
          INNER JOIN concept_reference_term crt on crt.concept_reference_term_id = crm.concept_reference_term_id
     AND crt.concept_source_id = (

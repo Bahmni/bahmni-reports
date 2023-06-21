@@ -50,6 +50,8 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
     public static final String GENDER_COLUMN_NAME = "Gender";
     public static final String DATE_AND_TIME_COLUMN_NAME = "Date & Time of Diagnosis";
     public static final int TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE = 20;
+    public static final String SHORT_DISPLAY_FORMAT = "SHORT";
+    public static final String FULLY_SPECIFIED_DISPLAY_FORMAT = "FULLY_SPECIFIED";
     private static final Logger logger = LogManager.getLogger(TSIntegrationDiagnosisLineReportTemplate.class);
     private HttpClient httpClient;
     private Properties tsProperties;
@@ -143,6 +145,7 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
         sqlTemplate.add("tempTable", tempTableName);
         sqlTemplate.add("patientAttributes", constructPatientAttributeNamesToDisplay(config));
         sqlTemplate.add("patientAddresses", constructPatientAddressesToDisplay(config));
+        sqlTemplate.add("conceptNameDisplayFormat", "shortNamePreferred".equals(config.getConceptNameDisplayFormat()) ? SHORT_DISPLAY_FORMAT : FULLY_SPECIFIED_DISPLAY_FORMAT);
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());
     }
 

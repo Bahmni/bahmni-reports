@@ -8,6 +8,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TSIntegrationDiagnosisLineReportConfig implements Config {
     private String tsConceptSource;
+    private String conceptNameDisplayFormat;
     private String terminologyParentCode;
     private String terminologyColumnName;
     private Boolean displayTerminologyCode;
@@ -20,6 +21,14 @@ public class TSIntegrationDiagnosisLineReportConfig implements Config {
 
     public void setTsConceptSource(String tsConceptSource) {
         this.tsConceptSource = tsConceptSource;
+    }
+
+    public String getConceptNameDisplayFormat() {
+        return conceptNameDisplayFormat;
+    }
+
+    public void setConceptNameDisplayFormat(String conceptNameDisplayFormat) {
+        this.conceptNameDisplayFormat = conceptNameDisplayFormat;
     }
 
     public String getTerminologyParentCode() {
@@ -61,4 +70,5 @@ public class TSIntegrationDiagnosisLineReportConfig implements Config {
     public void setPatientAddresses(List<String> patientAddresses) {
         this.patientAddresses = patientAddresses;
     }
+
 }
