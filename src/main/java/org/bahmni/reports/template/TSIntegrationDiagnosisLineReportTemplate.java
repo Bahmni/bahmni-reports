@@ -86,8 +86,8 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
             jasperReport.addColumn(col.column(terminologyColumnName, TERMINOLOGY_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         }
         jasperReport.addColumn(col.column(DATE_AND_TIME_COLUMN_NAME, DATE_AND_TIME_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
-        ResultSet formattedSql = getResultSet(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName, report.getConfig(), connection);
-        jasperReport.setDataSource(formattedSql);
+        ResultSet resultSet = getResultSet(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName, report.getConfig(), connection);
+        jasperReport.setDataSource(resultSet);
 
         return new BahmniReportBuilder(jasperReport);
     }
