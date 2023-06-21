@@ -50,6 +50,8 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
     public static final String COUNT_COLUMN_NAME = "Count";
     public static final String TOTAL_LABEL_NAME = "Total";
     public static final int TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE = 20;
+    public static final String SHORT_DISPLAY_FORMAT = "SHORT";
+    public static final String FULLY_SPECIFIED_DISPLAY_FORMAT = "FULLY_SPECIFIED";
     private static final Logger logger = LogManager.getLogger(TSIntegrationDiagnosisReportTemplate.class);
     private HttpClient httpClient;
     private Properties tsProperties;
@@ -91,7 +93,7 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
         AggregationSubtotalBuilder<Integer> totalCount = sbt.sum(rowCount)
                 .setLabel(TOTAL_LABEL_NAME)
                 .setLabelStyle(subtotalStyle);
-        String formattedSql = getFormattedSql(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName);
+        String formattedSql = getFormattedSql(sql, report.getConfig().getTsConceptSource(), report.getConfig().getConceptNameDisplayFormat(), startDate, endDate, tempTableName);
         jasperReport.setShowColumnTitle(true).setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL).subtotalsAtSummary(totalCount).setDataSource(formattedSql, connection);
 
         return new BahmniReportBuilder(jasperReport);
@@ -140,12 +142,13 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
     }
 
 
-    private String getFormattedSql(String templateSql, String conceptSourceCode, String startDate, String endDate, String tempTableName) {
+    private String getFormattedSql(String templateSql, String conceptSourceCode, String conceptNameDisplayFormat, String startDate, String endDate, String tempTableName) {
         ST sqlTemplate = new ST(templateSql, '#', '#');
         sqlTemplate.add("conceptSourceCode", conceptSourceCode);
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         sqlTemplate.add("tempTable", tempTableName);
+        sqlTemplate.add("conceptNameDisplayFormat", "shortNamePreferred".equals(conceptNameDisplayFormat) ? SHORT_DISPLAY_FORMAT : FULLY_SPECIFIED_DISPLAY_FORMAT);
         return sqlTemplate.render();
     }
 
