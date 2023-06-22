@@ -42,6 +42,7 @@ public class ObservationFormDaoImpl implements ObservationFormDao {
             sqlTemplate.add("patientAttributes", constructPatientAttributeNamesToDisplay(report.getConfig()));
             sqlTemplate.add("patientAddresses", constructPatientAddressesToDisplay(report.getConfig()));
             sqlTemplate.add("visitAttributes", constructVisitAttributeNamesToDisplay(report.getConfig()));
+            sqlTemplate.add("preferredLocale", constructPreferredLocaleToFilter(report.getConfig()));
             sqlTemplate.add("locationTagsToFilter", constructLocationTagsToFilter(report.getConfig()));
             sqlTemplate.add("conceptClassesToFilter", constructConceptClassesToFilter(report.getConfig()));
             sqlTemplate.add("programsToFilter", constructProgramsString(report.getConfig()));
