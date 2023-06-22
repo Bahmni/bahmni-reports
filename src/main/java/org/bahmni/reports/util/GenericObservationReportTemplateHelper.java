@@ -41,6 +41,13 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         return config.getProgramsToFilter() != null ? config.getProgramsToFilter() : new ArrayList<String>();
     }
 
+    public static String constructPreferredLocaleToFilter(GenericObservationReportConfig config) {
+        String preferredLocale = config.getPreferredLocale();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("AND coded_fscn.locale = ").append("\"").append(preferredLocale).append("\"");
+        return stringBuilder.toString();
+    }
+
     public static String constructLocationTagsToFilter(GenericObservationReportConfig config) {
         List<String> locationTagsToFilter = getLocationTagsToFilter(config);
         List<String> parts = new ArrayList<>();

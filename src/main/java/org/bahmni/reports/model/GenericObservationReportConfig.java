@@ -7,6 +7,7 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
     private List<String> locationTagsToFilter;
     private Boolean showProvider = false;
     private boolean showVisitInfo = false;
+    private String preferredLocale = "en";
     private List<String> conceptClassesToFilter;
     private List<String> programsToFilter;
     private List<String> conceptNamesToFilter;
@@ -27,6 +28,10 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
 
     public List<String> getVisitTypesToFilter() {
         return visitTypesToFilter;
+    }
+
+    public String getPreferredLocale() {
+        return preferredLocale;
     }
 
     public void setVisitTypesToFilter(List<String> visitTypesToFilter) {
