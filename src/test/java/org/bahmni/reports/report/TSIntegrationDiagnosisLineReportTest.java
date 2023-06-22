@@ -30,6 +30,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
@@ -87,7 +88,8 @@ public class TSIntegrationDiagnosisLineReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisLineReportConfig(true));
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(true);
+        when(mockReport.getConfig()).thenReturn(addPatientAttributesToConfig(reportConfig, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -112,7 +114,8 @@ public class TSIntegrationDiagnosisLineReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisLineReportConfig(false));
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false);
+        when(mockReport.getConfig()).thenReturn(addPatientAttributesToConfig(reportConfig, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -137,7 +140,7 @@ public class TSIntegrationDiagnosisLineReportTest {
 
         when(mockReport.getName()).thenReturn("dummyReport");
         TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false);
-        when(mockReport.getConfig()).thenReturn(addPatientAttributesToConfig(reportConfig));
+        when(mockReport.getConfig()).thenReturn(addPatientAttributesToConfig(reportConfig, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -162,6 +165,7 @@ public class TSIntegrationDiagnosisLineReportTest {
 
         when(mockReport.getName()).thenReturn("dummyReport");
         TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false);
+        addPatientAttributesToConfig(reportConfig, true);
         when(mockReport.getConfig()).thenReturn(addPatientAddressesToConfig(reportConfig));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
@@ -189,8 +193,8 @@ public class TSIntegrationDiagnosisLineReportTest {
         return tsIntegrationDiagnosisLineReportConfig;
     }
 
-    private TSIntegrationDiagnosisLineReportConfig addPatientAttributesToConfig(TSIntegrationDiagnosisLineReportConfig tsIntegrationDiagnosisLineReportConfig) {
-        List<String> patientAttributeList = Arrays.asList("education",
+    private TSIntegrationDiagnosisLineReportConfig addPatientAttributesToConfig(TSIntegrationDiagnosisLineReportConfig tsIntegrationDiagnosisLineReportConfig, boolean isEmpty) {
+        List<String> patientAttributeList = isEmpty? new ArrayList<>() : Arrays.asList("education",
                 "primaryContact",
                 "secondaryContact");
         tsIntegrationDiagnosisLineReportConfig.setPatientAttributes(patientAttributeList);
