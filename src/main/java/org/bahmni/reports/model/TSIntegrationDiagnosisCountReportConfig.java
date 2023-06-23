@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TSIntegrationDiagnosisReportConfig implements Config {
+public class TSIntegrationDiagnosisCountReportConfig implements Config {
     private String tsConceptSource;
     private String conceptNameDisplayFormat;
     private String terminologyParentCode;

@@ -8,17 +8,17 @@ import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.BahmniReportsConfiguration;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.Report;
-import org.bahmni.reports.model.TSIntegrationDiagnosisReportConfig;
+import org.bahmni.reports.model.TSIntegrationDiagnosisCountReportConfig;
 import org.bahmni.reports.template.BaseReportTemplate;
-import org.bahmni.reports.template.TSIntegrationDiagnosisReportTemplate;
+import org.bahmni.reports.template.TSIntegrationDiagnosisCountReportTemplate;
 import org.bahmni.webclients.HttpClient;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class TSIntegrationDiagnosisReport extends Report<TSIntegrationDiagnosisReportConfig> {
-    private static final Logger logger = LogManager.getLogger(TSIntegrationDiagnosisReport.class);
+public class TSIntegrationDiagnosisCountReport extends Report<TSIntegrationDiagnosisCountReportConfig> {
+    private static final Logger logger = LogManager.getLogger(TSIntegrationDiagnosisCountReport.class);
     private static final String TS_PROPERTIES_FILENAME = "terminology-service-config.properties";
 
     @Override
@@ -26,7 +26,7 @@ public class TSIntegrationDiagnosisReport extends Report<TSIntegrationDiagnosisR
         HttpClient httpClient = getHttpClient(bahmniReportsProperties);
         Properties tsProperties = getTSProperties();
         String tsEndpointTemplate = bahmniReportsProperties.getOpenmrsRootUrl() + tsProperties.getProperty("ts.endpoint");
-        return new TSIntegrationDiagnosisReportTemplate(httpClient, tsProperties, tsEndpointTemplate);
+        return new TSIntegrationDiagnosisCountReportTemplate(httpClient, tsProperties, tsEndpointTemplate);
     }
 
     private static HttpClient getHttpClient(BahmniReportsProperties bahmniReportsProperties) {

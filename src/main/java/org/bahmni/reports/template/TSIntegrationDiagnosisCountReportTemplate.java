@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.model.Report;
-import org.bahmni.reports.model.TSIntegrationDiagnosisReportConfig;
+import org.bahmni.reports.model.TSIntegrationDiagnosisCountReportConfig;
 import org.bahmni.reports.model.TSPageObject;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
@@ -37,7 +37,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 
 @UsingDatasource("openmrs")
-public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSIntegrationDiagnosisReportConfig> {
+public class TSIntegrationDiagnosisCountReportTemplate extends BaseReportTemplate<TSIntegrationDiagnosisCountReportConfig> {
     public static final String CREATE_SQL_TEMPLATE = "create temporary table {0}(code varchar(100) not null)";
     public static final String INSERT_SQL_TEMPLATE = "insert into {0} values (?)";
     public static final String DIAGNOSIS_COLUMN_NAME = "Diagnosis";
@@ -52,12 +52,12 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
     public static final int TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE = 20;
     public static final String SHORT_DISPLAY_FORMAT = "SHORT";
     public static final String FULLY_SPECIFIED_DISPLAY_FORMAT = "FULLY_SPECIFIED";
-    private static final Logger logger = LogManager.getLogger(TSIntegrationDiagnosisReportTemplate.class);
+    private static final Logger logger = LogManager.getLogger(TSIntegrationDiagnosisCountReportTemplate.class);
     private HttpClient httpClient;
     private Properties tsProperties;
     private String descendantsUrlTemplate;
 
-    public TSIntegrationDiagnosisReportTemplate(HttpClient httpClient, Properties tsProperties, String descendantsUrlTemplate) {
+    public TSIntegrationDiagnosisCountReportTemplate(HttpClient httpClient, Properties tsProperties, String descendantsUrlTemplate) {
         super();
         this.httpClient = httpClient;
         this.tsProperties = tsProperties;
@@ -69,7 +69,7 @@ public class TSIntegrationDiagnosisReportTemplate extends BaseReportTemplate<TSI
     }
 
     @Override
-    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<TSIntegrationDiagnosisReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
+    public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<TSIntegrationDiagnosisCountReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         String tempTableName = "tmpCodes_" + System.nanoTime();
         loadTempTable(connection, tempTableName, report.getConfig().getTerminologyParentCode());
         String sql = getFileContent("sql/tsIntegrationDiagnosisCount.sql");
