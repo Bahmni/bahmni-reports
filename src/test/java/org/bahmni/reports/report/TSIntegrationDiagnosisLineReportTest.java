@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
+import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 @RunWith(PowerMockRunner.class)
@@ -88,7 +89,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(true);
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(true, false);
         when(mockReport.getConfig()).thenReturn(addPatientAttributesToConfig(reportConfig, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
@@ -114,7 +115,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false);
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, false);
         when(mockReport.getConfig()).thenReturn(addPatientAttributesToConfig(reportConfig, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
@@ -132,6 +133,7 @@ public class TSIntegrationDiagnosisLineReportTest {
 
         verify(mockJasperReport, times(6)).addColumn(any());
     }
+
     @Test
     public void shouldIncludePatientAttributeColumnsInJasperReport() throws Exception {
         when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
@@ -139,7 +141,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false);
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, false);
         when(mockReport.getConfig()).thenReturn(addPatientAttributesToConfig(reportConfig, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
@@ -157,6 +159,7 @@ public class TSIntegrationDiagnosisLineReportTest {
 
         verify(mockJasperReport, times(9)).addColumn(any());
     }
+
     @Test
     public void shouldIncludePatientAddressColumnsInJasperReport() throws Exception {
         when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
@@ -164,7 +167,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false);
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, false);
         addPatientAttributesToConfig(reportConfig, true);
         when(mockReport.getConfig()).thenReturn(addPatientAddressesToConfig(reportConfig));
 
@@ -184,35 +187,94 @@ public class TSIntegrationDiagnosisLineReportTest {
         verify(mockJasperReport, times(8)).addColumn(any());
     }
 
+    @Test
+    public void shouldDisplayShortWhenConceptNameDisplayFormatEqualsShortNamePreferredInJasperReport() throws Exception {
+        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
+        when(mockConnection.createStatement()).thenReturn(mockStatement);
+        when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
+
+        when(mockReport.getName()).thenReturn("dummyReport");
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, true);
+        addPatientAttributesToConfig(reportConfig, true);
+        when(mockReport.getConfig()).thenReturn(addPatientAddressesToConfig(reportConfig));
+
+        when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
+        when(mockJasperReport.setTemplate(any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
+        when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
+        when(SqlUtil.executeSqlWithStoredProc(any(), anyString())).thenReturn(mockResultSet);
+        when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
+
+        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
+
+        tsIntegrationDiagnosisLineReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        verifyStatic(SqlUtil.class, times(1));
+        SqlUtil.executeSqlWithStoredProc(any(), contains("AND cn.concept_name_type = \"SHORT\" AND cn.locale = \"en\" AND cn.voided = false"));
+    }
+
+    @Test
+    public void shouldDisplayFullySpecifiedWhenConceptNameDisplayFormatNotEqualsShortNamePreferredInJasperReport() throws Exception {
+        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
+        when(mockConnection.createStatement()).thenReturn(mockStatement);
+        when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
+
+        when(mockReport.getName()).thenReturn("dummyReport");
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, false);
+        addPatientAttributesToConfig(reportConfig, true);
+        when(mockReport.getConfig()).thenReturn(addPatientAddressesToConfig(reportConfig));
+
+        when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
+        when(mockJasperReport.setTemplate(any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
+        when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
+        when(SqlUtil.executeSqlWithStoredProc(any(), anyString())).thenReturn(mockResultSet);
+        when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
+
+        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
+
+        tsIntegrationDiagnosisLineReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        verifyStatic(SqlUtil.class, times(1));
+        SqlUtil.executeSqlWithStoredProc(any(), contains("AND cn.concept_name_type = \"FULLY_SPECIFIED\" AND cn.locale = \"en\" AND cn.voided = false"));
+    }
 
 
-    private TSIntegrationDiagnosisLineReportConfig getMockTerminologyDiagnosisLineReportConfig(boolean displayTerminologyCodeFlag) {
+    private TSIntegrationDiagnosisLineReportConfig getMockTerminologyDiagnosisLineReportConfig(boolean displayTerminologyCodeFlag, boolean shortNamePreferredFlag) {
         TSIntegrationDiagnosisLineReportConfig tsIntegrationDiagnosisLineReportConfig = new TSIntegrationDiagnosisLineReportConfig();
         tsIntegrationDiagnosisLineReportConfig.setDisplayTerminologyCode(displayTerminologyCodeFlag);
         tsIntegrationDiagnosisLineReportConfig.setTerminologyParentCode("dummyCode");
+        if (shortNamePreferredFlag)
+            tsIntegrationDiagnosisLineReportConfig.setConceptNameDisplayFormat("shortNamePreferred");
         return tsIntegrationDiagnosisLineReportConfig;
     }
 
     private TSIntegrationDiagnosisLineReportConfig addPatientAttributesToConfig(TSIntegrationDiagnosisLineReportConfig tsIntegrationDiagnosisLineReportConfig, boolean isEmpty) {
-        List<String> patientAttributeList = isEmpty? new ArrayList<>() : Arrays.asList("education",
+        List<String> patientAttributeList = isEmpty ? new ArrayList<>() : Arrays.asList("education",
                 "primaryContact",
                 "secondaryContact");
         tsIntegrationDiagnosisLineReportConfig.setPatientAttributes(patientAttributeList);
-        return  tsIntegrationDiagnosisLineReportConfig;
+        return tsIntegrationDiagnosisLineReportConfig;
     }
+
     private TSIntegrationDiagnosisLineReportConfig addPatientAddressesToConfig(TSIntegrationDiagnosisLineReportConfig tsIntegrationDiagnosisLineReportConfig) {
-        List<String> patientAddressesList = Arrays.asList( "city_village",
+        List<String> patientAddressesList = Arrays.asList("city_village",
                 "address3");
         tsIntegrationDiagnosisLineReportConfig.setPatientAddresses(patientAddressesList);
-        return  tsIntegrationDiagnosisLineReportConfig;
+        return tsIntegrationDiagnosisLineReportConfig;
     }
 
 
     private String getMockTerminologyDescendants() throws URISyntaxException, IOException {
-        Path path = Paths.get(getClass().getClassLoader()
-                .getResource("ts/descendantCodes.json").toURI());
-        return Files.lines(path, StandardCharsets.UTF_8).collect(Collectors.joining("\n"));
+        return readFileAsStr("ts/descendantCodes.json");
     }
 
+    private String readFileAsStr(String relativePath) throws URISyntaxException, IOException {
+        Path path = Paths.get(getClass().getClassLoader()
+                .getResource(relativePath).toURI());
+        return Files.lines(path, StandardCharsets.UTF_8).collect(Collectors.joining("\n"));
+    }
 
 }
