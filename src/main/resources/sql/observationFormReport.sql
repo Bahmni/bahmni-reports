@@ -6,7 +6,6 @@ SET @visitAttributesSql = '#visitAttributes#';
 SET @locationTagsToFilterSql = '#locationTagsToFilter#';
 SET @filterByConceptClass = '#conceptClassesToFilter#';
 SET @filterByFormNames = '#formNamesToFilter#';
-SET @filterByLocale = '#preferredLocale#';
 SET @filterByPrograms = '#programsToFilter#';
 SET @filterByProgramAttributeTypes = '#programsAttributeTypesToFilter#';
 SET @selectProgramAttributesSql = '#selectProgramAttributesSql#';
@@ -99,9 +98,7 @@ FROM obs o
   ',IF(@applyAgeGroup = '', '', @ageGroupJoinSql),'
   LEFT JOIN location l ON e.location_id = l.location_id AND l.retired is false
   LEFT JOIN obs parent_obs ON parent_obs.obs_id=o.obs_group_id
-  LEFT JOIN concept_name parent_cn ON parent_cn.concept_id=parent_obs.concept_id AND parent_cn.concept_name_type="FULLY_SPECIFIED"
-  LEFT JOIN concept_name coded_fscn on coded_fscn.concept_id = o.value_coded AND coded_fscn.concept_name_type="FULLY_SPECIFIED" AND coded_fscn.voided is false
-  LEFT JOIN concept_name coded_scn on coded_scn.concept_id = o.value_coded AND coded_fscn.concept_name_type="SHORT" AND coded_scn.voided is false
+  LEFT JOIN concept_name parent_cn ON parent_cn.concept_id=parent_obs.concept_id AND parent_cn.concept_name_type="FULLY_SPECIFIED" #conceptNamesBasedLeftJoinSql#
   ',IF(@visitAttributesSql = '', '', @visitAttributeJoinSql),'
   ',IF(@patientAttributesSql = '', '', @patientAttributeJoinSql),'
   ',IF(@patientAddressesSql = '', '', @patientAddressJoinSql),'
@@ -114,7 +111,6 @@ FROM obs o
 WHERE o.voided is false
   ',IF(@locationTagsToFilterSql = '', '', 'AND l.location_id in (SELECT ltm.location_id from location_tag_map ltm JOIN location_tag lt ON ltm.location_tag_id=lt.location_tag_id AND lt.retired is false AND lt.name in (#locationTagsToFilter#))'),'
   ',@dateRangeSql,'
-  ',IF(@filterByLocale = '', '', @filterByLocale),'
   ',IF(@visitTypesToFilterSql = '', '', 'AND vt.name in (#visitTypesToFilter#)'),'
 GROUP BY e.encounter_id
 ',IF(@sortByColumns != '', @sortByColumns, ''));

@@ -1,13 +1,14 @@
 package org.bahmni.reports.model;
 
 import java.util.List;
+import java.util.Locale;
 
 public class GenericObservationReportConfig extends GenericReportsConfig implements Config {
     private String applyDateRangeFor;
     private List<String> locationTagsToFilter;
     private Boolean showProvider = false;
     private boolean showVisitInfo = false;
-    private String preferredLocale = "en";
+    private String preferredLocale = Locale.ENGLISH.toString();
     private List<String> conceptClassesToFilter;
     private List<String> programsToFilter;
     private List<String> conceptNamesToFilter;

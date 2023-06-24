@@ -158,9 +158,14 @@ public class GenericObservationFormReportTemplateHelper extends GenericReportsHe
         }
     }
 
-    public static String constructConceptNameSelectSql(List<String> formNamesToFilter) {
+    public static String constructConceptNameSelectSql(List<String> formNamesToFilter, GenericObservationFormReportConfig config) {
         List<String> conceptNamesWithDoubleQuote = new ArrayList<>();
-        String helperString = "GROUP_CONCAT(DISTINCT(IF(obs_fscn.name = \\'%s\\', coalesce(o.value_numeric, o.value_text, o.value_datetime, coded_scn.name, coded_fscn.name), NULL)) ORDER BY o.obs_id DESC) AS \\'%s\\'";
+        String conceptNameDisplayFormat = config.getConceptNameDisplayFormat();
+        String helperString = "GROUP_CONCAT(DISTINCT(IF(obs_fscn.name = \\'%s\\', coalesce(o.value_numeric, o.value_text, o.value_datetime, coded_fscn.name), NULL)) ORDER BY o.obs_id DESC) AS \\'%s\\'";
+        if(conceptNameDisplayFormat != null && conceptNameDisplayFormat.equals("shortNamePreferred")){
+            helperString = "GROUP_CONCAT(DISTINCT(IF(obs_fscn.name = \\'%s\\', coalesce(o.value_numeric, o.value_text, o.value_datetime, coded_scn.name), NULL)) ORDER BY o.obs_id DESC) AS \\'%s\\'";
+        }
+
         for (String conceptName : formNamesToFilter) {
             conceptNamesWithDoubleQuote.add(String.format(helperString, conceptName.replace("'", "\\\\\\\'"), conceptName.replace("'", "\\\\\\\'")));
         }

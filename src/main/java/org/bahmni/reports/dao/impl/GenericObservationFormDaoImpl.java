@@ -79,7 +79,7 @@ public class GenericObservationFormDaoImpl implements GenericDao {
 
             sqlTemplate.add("conceptValuesToFilter", conceptValuesToFilter);
             sqlTemplate.add("numericRangesFilterSql", constructNumericRangeFilters(report.getConfig()));
-            sqlTemplate.add("selectConceptNamesSql", constructConceptNameSelectSql(formNamesToFilter));
+            sqlTemplate.add("selectConceptNamesSql", constructConceptNameSelectSql(formNamesToFilter, report.getConfig()));
             sqlTemplate.add("selectProgramAttributesSql", constructProgramAttributesSql(report.getConfig()));
             sqlTemplate.add("showProvider", report.getConfig().showProvider());
             sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(getVisitTypesToFilter(report.getConfig())));
