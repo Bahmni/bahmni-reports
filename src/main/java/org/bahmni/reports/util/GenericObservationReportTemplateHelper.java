@@ -44,7 +44,12 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
     public static String constructPreferredLocaleToFilter(GenericObservationReportConfig config) {
         String preferredLocale = config.getPreferredLocale();
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("AND coded_fscn.locale = ").append("\"").append(preferredLocale).append("\"");
+        String conceptNameDisplayFormat = config.getConceptNameDisplayFormat();
+        if(conceptNameDisplayFormat != null && conceptNameDisplayFormat.equals("shortNamePreferred")){
+            stringBuilder.append("LEFT JOIN concept_name coded_scn on coded_scn.concept_id = o.value_coded AND coded_scn.concept_name_type=\"SHORT\" AND coded_scn.voided is false AND coded_scn.locale = ").append("\"").append(preferredLocale).append("\"");
+        }else{
+            stringBuilder.append("LEFT JOIN concept_name coded_fscn on coded_fscn.concept_id = o.value_coded AND coded_fscn.concept_name_type=\"FULLY_SPECIFIED\" AND coded_fscn.voided is false AND coded_fscn.locale = ").append("\"").append(preferredLocale).append("\"");
+        }
         return stringBuilder.toString();
     }
 

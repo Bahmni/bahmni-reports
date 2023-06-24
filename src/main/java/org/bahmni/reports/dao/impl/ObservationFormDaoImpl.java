@@ -39,10 +39,10 @@ public class ObservationFormDaoImpl implements ObservationFormDao {
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         if (report.getConfig() != null) {
+            sqlTemplate.add("conceptNamesBasedLeftJoinSql", constructPreferredLocaleToFilter(report.getConfig()));
             sqlTemplate.add("patientAttributes", constructPatientAttributeNamesToDisplay(report.getConfig()));
             sqlTemplate.add("patientAddresses", constructPatientAddressesToDisplay(report.getConfig()));
             sqlTemplate.add("visitAttributes", constructVisitAttributeNamesToDisplay(report.getConfig()));
-            sqlTemplate.add("preferredLocale", constructPreferredLocaleToFilter(report.getConfig()));
             sqlTemplate.add("locationTagsToFilter", constructLocationTagsToFilter(report.getConfig()));
             sqlTemplate.add("conceptClassesToFilter", constructConceptClassesToFilter(report.getConfig()));
             sqlTemplate.add("programsToFilter", constructProgramsString(report.getConfig()));
@@ -59,7 +59,7 @@ public class ObservationFormDaoImpl implements ObservationFormDao {
 
             sqlTemplate.add("conceptValuesToFilter", conceptValuesToFilter);
             sqlTemplate.add("numericRangesFilterSql", constructNumericRangeFilters(report.getConfig()));
-            sqlTemplate.add("selectConceptNamesSql", constructConceptNameSelectSql(conceptNamesToFilter));
+            sqlTemplate.add("selectConceptNamesSql", constructConceptNameSelectSql(conceptNamesToFilter, report.getConfig()));
             sqlTemplate.add("selectProgramAttributesSql", constructProgramAttributesSql(report.getConfig()));
             sqlTemplate.add("showProvider", report.getConfig().showProvider());
             sqlTemplate.add("visitTypesToFilter", constructVisitTypesString(getVisitTypesToFilter(report.getConfig())));
