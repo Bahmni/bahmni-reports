@@ -39,7 +39,7 @@ public class ObservationFormDaoImpl implements ObservationFormDao {
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         if (report.getConfig() != null) {
-            sqlTemplate.add("conceptNamesBasedLeftJoinSql", constructPreferredLocaleToFilter(report.getConfig()));
+            sqlTemplate.add("conceptNamesBasedLeftJoinSql", constructConceptDisplayFormatBasedFilter(report.getConfig()));
             sqlTemplate.add("patientAttributes", constructPatientAttributeNamesToDisplay(report.getConfig()));
             sqlTemplate.add("patientAddresses", constructPatientAddressesToDisplay(report.getConfig()));
             sqlTemplate.add("visitAttributes", constructVisitAttributeNamesToDisplay(report.getConfig()));

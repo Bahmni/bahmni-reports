@@ -41,15 +41,25 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         return config.getProgramsToFilter() != null ? config.getProgramsToFilter() : new ArrayList<String>();
     }
 
-    public static String constructPreferredLocaleToFilter(GenericObservationReportConfig config) {
+    private static String getPreferredLocaleToFilter(String preferredLocale, Boolean isShortConceptNameDisplayFormatPreferred){
+        if(preferredLocale == null || preferredLocale.isEmpty()){
+            return "";
+        }else {
+            StringBuilder stringBuilder = new StringBuilder();
+            String locale = "\"" + preferredLocale + "\"";
+            String table = isShortConceptNameDisplayFormatPreferred ? "coded_scn" : "coded_fscn";
+            stringBuilder.append(" AND ").append(table).append(".locale = ").append(locale);
+            return stringBuilder.toString();
+        }
+    }
+    public static String constructConceptDisplayFormatBasedFilter(GenericObservationReportConfig config) {
         String preferredLocale = config.getPreferredLocale();
         StringBuilder stringBuilder = new StringBuilder();
-        String conceptNameDisplayFormat = config.getConceptNameDisplayFormat();
-        if(conceptNameDisplayFormat != null && conceptNameDisplayFormat.equals("shortNamePreferred")){
-            stringBuilder.append("LEFT JOIN concept_name coded_scn on coded_scn.concept_id = o.value_coded AND coded_scn.concept_name_type=\"SHORT\" AND coded_scn.voided is false AND coded_scn.locale = ").append("\"").append(preferredLocale).append("\"");
-        }else{
-            stringBuilder.append("LEFT JOIN concept_name coded_fscn on coded_fscn.concept_id = o.value_coded AND coded_fscn.concept_name_type=\"FULLY_SPECIFIED\" AND coded_fscn.voided is false AND coded_fscn.locale = ").append("\"").append(preferredLocale).append("\"");
-        }
+        boolean isShortConceptNameDisplayFormatPreferred = config.isShortConceptNameDisplayFormatPreferred();
+        String preferredLocaleToFilter = getPreferredLocaleToFilter(preferredLocale, isShortConceptNameDisplayFormatPreferred);
+        String conceptNameType = isShortConceptNameDisplayFormatPreferred ? "SHORT" : "FULLY_SPECIFIED";
+        String tableName = isShortConceptNameDisplayFormatPreferred ? "coded_scn" : "coded_fscn";
+        stringBuilder.append("LEFT JOIN concept_name ").append(tableName).append(" ON ").append(tableName).append(".concept_id = o.value_coded").append(" AND ").append(tableName).append(".concept_name_type = \"").append(conceptNameType).append("\"").append(" AND ").append(tableName).append(".voided IS false").append(preferredLocaleToFilter);
         return stringBuilder.toString();
     }
 
