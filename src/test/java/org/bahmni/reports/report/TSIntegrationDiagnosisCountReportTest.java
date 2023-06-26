@@ -62,7 +62,7 @@ public class TSIntegrationDiagnosisCountReportTest {
     }
 
     @Test
-    public void shouldFetchTSDiagnosisReportTemplateWhenTSDiagnosisReportTypeIsInvoked() {
+    public void shouldFetchTSDiagnosisCountReportTemplateWhenTSDiagnosisCountReportTypeIsInvoked() {
         TSIntegrationDiagnosisCountReportConfig tsIntegrationDiagnosisCountReportConfig = new TSIntegrationDiagnosisCountReportConfig();
         TSIntegrationDiagnosisCountReport tsIntegrationDiagnosisCountReport = new TSIntegrationDiagnosisCountReport();
         tsIntegrationDiagnosisCountReport.setConfig(tsIntegrationDiagnosisCountReportConfig);
@@ -76,7 +76,7 @@ public class TSIntegrationDiagnosisCountReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, true, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(true, true, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -104,7 +104,7 @@ public class TSIntegrationDiagnosisCountReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, true, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(true, true, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -128,7 +128,7 @@ public class TSIntegrationDiagnosisCountReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, false, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(true, false, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -152,7 +152,7 @@ public class TSIntegrationDiagnosisCountReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, true, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(false, true, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -176,7 +176,7 @@ public class TSIntegrationDiagnosisCountReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, false, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(false, false, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -200,7 +200,7 @@ public class TSIntegrationDiagnosisCountReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, false, true));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(false, false, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -223,7 +223,7 @@ public class TSIntegrationDiagnosisCountReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, false, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(false, false, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -239,7 +239,7 @@ public class TSIntegrationDiagnosisCountReportTest {
         verify(mockJasperReport, times(1)).setDataSource(contains("AND cn.concept_name_type = 'FULLY_SPECIFIED'"), any());
     }
 
-    private TSIntegrationDiagnosisCountReportConfig getMockTerminologyDiagnosisReportConfig(boolean displayTerminologyCodeFlag, boolean displayGenderFlag, boolean shortNamePreferredFlag) {
+    private TSIntegrationDiagnosisCountReportConfig getMockTerminologyDiagnosisCountReportConfig(boolean displayTerminologyCodeFlag, boolean displayGenderFlag, boolean shortNamePreferredFlag) {
         TSIntegrationDiagnosisCountReportConfig tsIntegrationDiagnosisCountReportConfig = new TSIntegrationDiagnosisCountReportConfig();
         tsIntegrationDiagnosisCountReportConfig.setDisplayTerminologyCode(displayTerminologyCodeFlag);
         tsIntegrationDiagnosisCountReportConfig.setDisplayGenderGroup(displayGenderFlag);
