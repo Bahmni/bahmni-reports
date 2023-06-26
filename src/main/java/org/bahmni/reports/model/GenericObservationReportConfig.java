@@ -8,7 +8,7 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
     private List<String> locationTagsToFilter;
     private Boolean showProvider = false;
     private boolean showVisitInfo = false;
-    private String preferredLocale = Locale.ENGLISH.toString();
+    private String preferredLocale;
     private List<String> conceptClassesToFilter;
     private List<String> programsToFilter;
     private List<String> conceptNamesToFilter;
@@ -108,6 +108,9 @@ public class GenericObservationReportConfig extends GenericReportsConfig impleme
         return conceptNameDisplayFormat;
     }
 
+    public boolean isShortConceptNameDisplayFormatPreferred() {
+        return conceptNameDisplayFormat != null && conceptNameDisplayFormat.equals("shortNamePreferred");
+    }
     public void setConceptNameDisplayFormat(String conceptNameDisplayFormat) {
         this.conceptNameDisplayFormat = conceptNameDisplayFormat;
     }
