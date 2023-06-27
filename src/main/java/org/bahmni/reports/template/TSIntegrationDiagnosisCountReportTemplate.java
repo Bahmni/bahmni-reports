@@ -1,7 +1,5 @@
 package org.bahmni.reports.template;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.builder.style.StyleBuilder;
@@ -10,24 +8,15 @@ import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
 import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.TSIntegrationDiagnosisCountReportConfig;
-import org.bahmni.reports.model.TSPageObject;
 import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.webclients.HttpClient;
 import org.stringtemplate.v4.ST;
 
-import java.io.IOException;
-import java.net.URI;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Properties;
 
@@ -37,9 +26,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 
 
 @UsingDatasource("openmrs")
-public class TSIntegrationDiagnosisCountReportTemplate extends BaseReportTemplate<TSIntegrationDiagnosisCountReportConfig> {
-    public static final String CREATE_SQL_TEMPLATE = "create temporary table {0}(code varchar(100) not null)";
-    public static final String INSERT_SQL_TEMPLATE = "insert into {0} values (?)";
+public class TSIntegrationDiagnosisCountReportTemplate extends BaseReportTemplate<TSIntegrationDiagnosisCountReportConfig> implements TSIntegrationDiagnosisService {
     public static final String DIAGNOSIS_COLUMN_NAME = "Diagnosis";
     public static final String TERMINOLOGY_COLUMN_NAME = "Terminology Code";
     public static final String FEMALE_COLUMN_NAME = "Female";
@@ -48,11 +35,8 @@ public class TSIntegrationDiagnosisCountReportTemplate extends BaseReportTemplat
     public static final String NOT_DISCLOSED_COLUMN_NAME = "Not disclosed";
     public static final String TOTAL_COLUMN_NAME = "Total";
     public static final String COUNT_COLUMN_NAME = "Count";
-    public static final String TOTAL_LABEL_NAME = "Total";
-    public static final int TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE = 20;
     public static final String SHORT_DISPLAY_FORMAT = "SHORT";
     public static final String FULLY_SPECIFIED_DISPLAY_FORMAT = "FULLY_SPECIFIED";
-    private static final Logger logger = LogManager.getLogger(TSIntegrationDiagnosisCountReportTemplate.class);
     private HttpClient httpClient;
     private Properties tsProperties;
     private String descendantsUrlTemplate;
@@ -71,7 +55,7 @@ public class TSIntegrationDiagnosisCountReportTemplate extends BaseReportTemplat
     @Override
     public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<TSIntegrationDiagnosisCountReportConfig> report, String startDate, String endDate, List<AutoCloseable> resources, PageType pageType) {
         String tempTableName = "tmpCodes_" + System.nanoTime();
-        loadTempTable(connection, tempTableName, report.getConfig().getTerminologyParentCode());
+        loadTempTable(connection, tempTableName, report.getConfig().getTerminologyParentCode(), tsProperties, descendantsUrlTemplate, httpClient);
         String sql = getFileContent("sql/tsIntegrationDiagnosisCount.sql");
 
         CommonComponents.addTo(jasperReport, report, pageType);
@@ -91,54 +75,12 @@ public class TSIntegrationDiagnosisCountReportTemplate extends BaseReportTemplat
         jasperReport.addColumn(rowCount);
         StyleBuilder subtotalStyle = stl.style().bold().setHorizontalAlignment(HorizontalAlignment.RIGHT);
         AggregationSubtotalBuilder<Integer> totalCount = sbt.sum(rowCount)
-                .setLabel(TOTAL_LABEL_NAME)
+                .setLabel(TOTAL_COLUMN_NAME)
                 .setLabelStyle(subtotalStyle);
         String formattedSql = getFormattedSql(sql, report.getConfig().getTsConceptSource(), report.getConfig().getConceptNameDisplayFormat(), startDate, endDate, tempTableName);
         jasperReport.setShowColumnTitle(true).setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL).subtotalsAtSummary(totalCount).setDataSource(formattedSql, connection);
 
         return new BahmniReportBuilder(jasperReport);
-    }
-
-    private void loadTempTable(Connection connection, String tempTableName, String parentCode) {
-        int offset = 0;
-        int pageSize = getDefaultPageSize();
-        try {
-            String createSqlStmt = MessageFormat.format(CREATE_SQL_TEMPLATE, tempTableName);
-            String insertSqlStmt = MessageFormat.format(INSERT_SQL_TEMPLATE, tempTableName);
-            Statement statement = connection.createStatement();
-            statement.execute(createSqlStmt);
-            PreparedStatement pstmtInsert = connection.prepareStatement(insertSqlStmt);
-
-            TSPageObject pageObject = null;
-            do {
-                try {
-                    pageObject = fetchDescendantsByPagination(parentCode, pageSize, offset, "en");
-                } catch (IOException e) {
-                    throw new RuntimeException();
-                }
-                List<String> codes = pageObject.getCodes();
-                for (int batchcount = 0; batchcount < codes.size(); batchcount++) {
-                    pstmtInsert.setString(1, codes.get(batchcount));
-                    pstmtInsert.addBatch();
-                }
-                pstmtInsert.executeBatch();
-                offset += pageSize;
-            } while (offset < pageObject.getTotal());
-        } catch (SQLException e) {
-            logger.error("Error occured while making database call to " + tempTableName + " table");
-            throw new RuntimeException();
-        }
-    }
-
-    private TSPageObject fetchDescendantsByPagination(String terminologyCode, int pageSize, int offset, String localeLanguage) throws IOException {
-        String url = MessageFormat.format(descendantsUrlTemplate, terminologyCode, pageSize, offset, localeLanguage);
-        String responseStr = httpClient.get(URI.create(url));
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return mapper.readValue(responseStr, TSPageObject.class);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException();
-        }
     }
 
 
@@ -152,14 +94,5 @@ public class TSIntegrationDiagnosisCountReportTemplate extends BaseReportTemplat
         return sqlTemplate.render();
     }
 
-
-    public int getDefaultPageSize() {
-        String pageSize = System.getenv("REPORTS_TS_PAGE_SIZE");
-        if (pageSize == null) pageSize = tsProperties.getProperty("ts.defaultPageSize");
-        if (pageSize != null) {
-            return Integer.parseInt(pageSize);
-        }
-        return TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE;
-    }
 
 }
