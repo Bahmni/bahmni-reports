@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.model.TSIntegrationDiagnosisLineReportConfig;
@@ -29,7 +30,7 @@ import static org.bahmni.reports.template.Templates.columnStyle;
 public interface TSIntegrationDiagnosisService {
     final static String CREATE_SQL_TEMPLATE = "create temporary table {0}(code varchar(100) not null)";
     final static String INSERT_SQL_TEMPLATE = "insert into {0} values (?)";
-    final static int TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE = 20;
+    final static String TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE = "20";
     Logger logger = LogManager.getLogger(TSIntegrationDiagnosisService.class);
 
     static List<String> getPatientAttributes(TSIntegrationDiagnosisLineReportConfig config) {
@@ -85,12 +86,8 @@ public interface TSIntegrationDiagnosisService {
     }
 
     default int getDefaultPageSize(Properties tsProperties) {
-        String pageSize = System.getenv("REPORTS_TS_PAGE_SIZE");
-        if (pageSize == null) pageSize = tsProperties.getProperty("ts.defaultPageSize");
-        if (pageSize != null) {
-            return Integer.parseInt(pageSize);
-        }
-        return TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE;
+        String pageSize = StringUtils.firstNonBlank(System.getenv("REPORTS_TS_PAGE_SIZE"), tsProperties.getProperty("ts.defaultPageSize"), TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE);
+        return Integer.parseInt(pageSize);
     }
 
     default void createAndAddPatientAddressColumns(JasperReportBuilder jasperReport, TSIntegrationDiagnosisLineReportConfig config) {
