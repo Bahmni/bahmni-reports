@@ -86,7 +86,7 @@ public interface TSIntegrationDiagnosisService {
     }
 
     default int getDefaultPageSize(Properties tsProperties) {
-        String pageSize = StringUtils.firstNonBlank(System.getenv("REPORTS_TS_PAGE_SIZE"), tsProperties.getProperty("ts.defaultPageSize"), TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE);
+        String pageSize = StringUtils.firstNonBlank(System.getenv("REPORTS_TS_PAGE_SIZE"), tsProperties.getProperty("terminologyServer.defaultPageSize"), TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE);
         return Integer.parseInt(pageSize);
     }
 

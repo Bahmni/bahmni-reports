@@ -71,7 +71,7 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldProcessTerminologyDescendantsWithPagination() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
+        when(mockTsProperties.getProperty("terminologyServer.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
@@ -99,7 +99,7 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldIncludeBothTerminologyCodeAndGenderGroupColumnsInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
+        when(mockTsProperties.getProperty("terminologyServer.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
@@ -123,7 +123,7 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldIncludeTerminologyCodeAndExcludeGenderGroupColumnsInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
+        when(mockTsProperties.getProperty("terminologyServer.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
@@ -147,7 +147,7 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldExcludeTerminologyCodeAndIncludeGenderGroupColumnsInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
+        when(mockTsProperties.getProperty("terminologyServer.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
@@ -171,7 +171,7 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldExcludeBothTerminologyCodeAndGenderGroupColumnsInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
+        when(mockTsProperties.getProperty("terminologyServer.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
@@ -195,7 +195,7 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldDisplayShortWhenConceptNameDisplayFormatEqualsShortNamePreferredInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
+        when(mockTsProperties.getProperty("terminologyServer.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
@@ -218,7 +218,7 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldDisplayFullySpecifiedWhenConceptNameDisplayFormatNotEqualsShortNamePreferredInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
+        when(mockTsProperties.getProperty("terminologyServer.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
