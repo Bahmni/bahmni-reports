@@ -13,14 +13,19 @@ import java.util.stream.Collectors;
 
 public class ICD10Evaluator {
     static ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
-    static ScriptEngine scriptEngine = scriptEngineManager.getEngineByName("JavaScript");
+    static ScriptEngine scriptEngine = scriptEngineManager.getEngineByName("Nashorn");
     static List<ICDRule> rules = new ArrayList<>();
 
 
     public static void main(String[] args) {
         int age = 40;
         String gender = "F";
+        ICD10Evaluator icd10Evaluator = new ICD10Evaluator();
+        String icdCodes = icd10Evaluator.getICDCodes("", age, gender);
 
+    }
+
+    public String getICDCodes(String snomedCode, int age, String gender){
         try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("icd-response2.json")) {
             ObjectMapper mapper = new ObjectMapper();
             //mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -62,6 +67,7 @@ public class ICD10Evaluator {
             }
             System.out.println("-----------------------------");
             mapTargets.stream().forEach(System.out::println);
+            return String.join(",", mapTargets);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

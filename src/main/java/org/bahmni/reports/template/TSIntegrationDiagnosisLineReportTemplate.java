@@ -5,6 +5,8 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
 import org.apache.commons.lang3.StringUtils;
+import org.bahmni.reports.icd10.ICD10Decorator;
+import org.bahmni.reports.icd10.bean.ICDMap;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.TSIntegrationDiagnosisLineReportConfig;
 import org.bahmni.reports.model.UsingDatasource;
@@ -19,6 +21,7 @@ import org.stringtemplate.v4.ST;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -61,6 +64,15 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
         String sql = getFileContent("sql/tsIntegrationDiagnosisLineReport.sql");
 
         CommonComponents.addTo(jasperReport, report, pageType);
+        if (report.getConfig().isDisplayTerminologyCode()) {
+            String terminologyConfigColumnName = report.getConfig().getTerminologyColumnName();
+            String terminologyColumnName = StringUtils.isNotBlank(terminologyConfigColumnName) ? terminologyConfigColumnName : TERMINOLOGY_COLUMN_NAME;
+            jasperReport.addColumn(col.column(terminologyColumnName, "snomedCode", type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        }
+        jasperReport.addColumn(col.column(PATIENT_DATE_OF_BIRTH_COLUMN_NAME, "age", type.integerType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        jasperReport.addColumn(col.column(GENDER_COLUMN_NAME, "gender", type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        jasperReport.addColumn(col.column("ICD Codes", "icdCodes", type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        /*
         jasperReport.addColumn(col.column(PATIENT_ID_COLUMN_NAME, PATIENT_ID_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         jasperReport.addColumn(col.column(PATIENT_NAME_COLUMN_NAME, PATIENT_NAME_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         jasperReport.addColumn(col.column(GENDER_COLUMN_NAME, GENDER_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
@@ -74,9 +86,15 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
             jasperReport.addColumn(col.column(terminologyColumnName, TERMINOLOGY_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         }
         jasperReport.addColumn(col.column(DATE_AND_TIME_COLUMN_NAME, DATE_AND_TIME_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        jasperReport.addColumn(col.column("ICD10 Code", "ICD10 Code", type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+        */
         ResultSet resultSet = getResultSet(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName, report.getConfig(), connection);
-        jasperReport.setDataSource(resultSet);
-
+        try {
+            Collection<ICDMap>  collection = new ICD10Decorator().enrich(resultSet);
+            jasperReport.setDataSource(collection);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return new BahmniReportBuilder(jasperReport);
     }
 
