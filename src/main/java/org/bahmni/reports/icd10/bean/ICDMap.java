@@ -1,7 +1,5 @@
 package org.bahmni.reports.icd10.bean;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class ICDMap {
     String snomedCode;
     int age;
@@ -38,9 +36,5 @@ public class ICDMap {
 
     public void setIcdCodes(String icdCodes) {
         this.icdCodes = icdCodes;
-    }
-
-    public boolean hasAllInputs(){
-        return age>0 && StringUtils.isNotBlank(gender) && StringUtils.isNotBlank(snomedCode);
     }
 }
