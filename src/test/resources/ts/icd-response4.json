@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "1",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "1",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "1",
+      "mapTarget": "N97.9"
+    }
+  ]
+}

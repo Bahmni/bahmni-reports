@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "2",
+      "mapGroup": "1",
+      "mapTarget": "dummy1"
+    },
+    {
+      "mapRule": "TRUE",
+      "mapPriority": "1",
+      "mapGroup": "1",
+      "mapTarget": "J45.9"
+    }
+  ]
+}

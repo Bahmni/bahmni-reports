@@ -23,35 +23,6 @@ import java.util.stream.Collectors;
 @Component
 public class Icd10ServiceImpl implements Icd10Service {
 
-    private String mapRules;
-
-    public String getMapRules() {
-        return mapRules;
-    }
-
-    public void setMapRules(String mapRules) {
-        this.mapRules = mapRules;
-    }
-
-    public static void main(String[] args) {
-
-    //   searchMapRules("8619003",0,100,true);
-
-    };
-
-    private static String getResponse(){
-        String res = "String to return";
-        System.out.println("Test");
-        return res;
-    }
-
-
-    private static String searchMapTest(){
-        String testString = "Testing -- ";
-//        System.out.println("We are here!!!");
-        return testString;
-    }
-
     @Override
     public List<ICDRule> getMapRules(String snomedCode, Integer offset, Integer limit, Boolean termActive) {
         String baseUrl = getBaseURL(offset, limit, termActive);
@@ -76,7 +47,6 @@ public class Icd10ServiceImpl implements Icd10Service {
         try {
             JsonNode jsonNode = mapper.readValue(response, JsonNode.class);
             JsonNode itemsArr = jsonNode.get("items");
-            System.out.println("itemsArr: " + itemsArr);
 
             if (itemsArr.isArray()) {
                 for (JsonNode item : itemsArr) {
@@ -86,10 +56,19 @@ public class Icd10ServiceImpl implements Icd10Service {
             }
 
             Comparator<ICDRule> customComparator = (rule1, rule2) -> {
-                int rule1Weight = Integer.parseInt(rule1.mapGroup + rule1.mapPriority);
-                int rule2Weight = Integer.parseInt(rule2.mapGroup + rule2.mapPriority);
-                int difference = rule1Weight - rule2Weight;
-                return difference;
+                if (Integer.parseInt(rule1.mapGroup) < Integer.parseInt(rule2.mapGroup)) {
+                    return -1;
+                }
+                if (Integer.parseInt(rule1.mapGroup) > Integer.parseInt(rule2.mapGroup)) {
+                    return 1;
+                }
+                if (Integer.parseInt(rule1.mapPriority) < Integer.parseInt(rule2.mapPriority)) {
+                    return -1;
+                }
+                if (Integer.parseInt(rule1.mapPriority) > Integer.parseInt(rule2.mapPriority)) {
+                    return 1;
+                }
+                return Integer.compare(Integer.parseInt(rule1.mapTarget), Integer.parseInt(rule2.mapTarget));
             };
 
             sortedRules = rules.stream().sorted(customComparator).collect(Collectors.toList());
