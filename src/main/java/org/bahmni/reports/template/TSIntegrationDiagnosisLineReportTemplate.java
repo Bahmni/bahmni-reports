@@ -80,9 +80,14 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
         jasperReport.addColumn(col.column(DATE_AND_TIME_COLUMN_NAME, DATE_AND_TIME_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         ResultSet resultSet = getResultSet(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName, report.getConfig(), connection);
 
-        Collection<Map<String, String>> rawCollection = convertResultSetToCollection(resultSet);
-        Collection<Map<String, ?>> enrichCollection = enrichUsingReflection(rawCollection, report.getConfig().getExtensionClass(), jasperReport);
-        jasperReport.setDataSource(new JRMapCollectionDataSource(enrichCollection));
+        String extensionClass = report.getConfig().getExtensionClass();
+        if(StringUtils.isNotBlank(extensionClass)) {
+            Collection<Map<String, String>> rawCollection = convertResultSetToCollection(resultSet);
+            Collection<Map<String, ?>> enrichCollection = enrichUsingReflection(rawCollection, extensionClass, jasperReport);
+            jasperReport.setDataSource(new JRMapCollectionDataSource(enrichCollection));
+        }else{
+            jasperReport.setDataSource(resultSet);
+        }
         return new BahmniReportBuilder(jasperReport);
     }
 
