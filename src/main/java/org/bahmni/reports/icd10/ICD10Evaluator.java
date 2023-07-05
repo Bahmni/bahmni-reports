@@ -1,6 +1,8 @@
 package org.bahmni.reports.icd10;
 
 
+import jdk.nashorn.api.scripting.NashornScriptEngine;
+import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.icd10.Impl.Icd10ServiceImpl;
 import org.bahmni.reports.icd10.bean.ICDRule;
@@ -18,8 +20,6 @@ import java.util.stream.Collectors;
 
 @Component
 public class ICD10Evaluator {
-    static ScriptEngineManager scriptEngineManager = new ScriptEngineManager();
-    static ScriptEngine scriptEngine = scriptEngineManager.getEngineByName("Nashorn");
     static final String TRUE_KEYWORD = "TRUE";
     static final String FALSE_KEYWORD = "FALSE";
     static final String OTHERWISE_TRUE_KEYWORD = "OTHERWISE TRUE";
@@ -31,85 +31,61 @@ public class ICD10Evaluator {
     static final String OR_KEYWORD = "OR";
     static final String OR_KEYWORD_REPLACE = "||";
     static final String YEARS_KEYWORD = " years";
-    static final String YEARS_KEYWORD_REPLACE= "";
-    @Autowired
-    Icd10ServiceImpl icd10Service;
+    static final String YEARS_KEYWORD_REPLACE = "";
+    ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("Nashorn");
+    Icd10Service icd10Service = new Icd10ServiceImpl();
 
-
-
-
-    public String getICDCodes(String snomedCode, int age, String gender){
-        try  {
-            List<ICDRule> sortedRules = icd10Service.getMapRules(snomedCode, 0, 100, true);
-            List<String> selectedCodes = new ArrayList<>();
-            String mapGroup = "";
-            boolean isFound = false;
-            for(ICDRule rule : sortedRules) {
-                if (!mapGroup.equalsIgnoreCase(rule.getMapGroup())) {
-                    mapGroup = rule.getMapGroup();
-                    isFound = false;
-                }
-                if(mapGroup.equalsIgnoreCase(rule.getMapGroup()) && isFound) {
-                    continue;
-                }
-                if(mapGroup.equalsIgnoreCase(rule.getMapGroup()) && !isFound) {
-                    if(evaluateRule(convertRule(rule.getMapRule(), age, gender))) {
-                        selectedCodes.add(rule.getMapTarget());
-                        isFound =true;
-                    }
-                }
-            }
-            return selectedCodes.stream().filter(StringUtils::isNotBlank).collect(Collectors.joining(","));
-
-        }
-        catch(Exception ignored){
-
-        }
-        return "";
-    }
-
-
-    private static String evaluate(ICDRule rule, int age, String gender) {
-        String mapRule = rule.getMapRule();
-        String expression = mapRule.replace("IFA 248153007 | Male (finding) |", "gender=='M'")
-                .replace("IFA 248152002 | Female (finding) |", "gender=='F'")
-                .replace("IFA 445518008 | Age at onset of clinical finding (observable entity) |", "age")
-                .replace("OTHERWISE TRUE", "true")
-                .replace("TRUE", "true")
-                .replace("AND", "&&")
-                .replace("OR", "||")
-                .replace(" years", "");
-        System.out.println(expression);
-        try {
-            Bindings bindings = new SimpleBindings();
-            bindings.put("age", age);
-            bindings.put("gender", gender);
-            Boolean result = (Boolean) scriptEngine.eval(expression,bindings);
-            if(result) return rule.getMapTarget();
-        } catch (ScriptException e) {
-            throw new RuntimeException(e);
-        }
-        return null;
+    public ICD10Evaluator() {
     }
 
     static String convertRule(String rule, Integer age, String gender) {
         rule = rule.replace(OTHERWISE_TRUE_KEYWORD, TRUE_KEYWORD);
         // todo
-        rule = rule.replace(MALE_KEYWORD, gender.equalsIgnoreCase("M") ? TRUE_KEYWORD.toLowerCase() : FALSE_KEYWORD.toLowerCase() );
-        rule = rule.replace(FEMALE_KEYWORD, gender.equalsIgnoreCase("F") ? TRUE_KEYWORD.toLowerCase() : FALSE_KEYWORD.toLowerCase() );
+        rule = rule.replace(MALE_KEYWORD, gender.equalsIgnoreCase("M") ? TRUE_KEYWORD.toLowerCase() : FALSE_KEYWORD.toLowerCase());
+        rule = rule.replace(FEMALE_KEYWORD, gender.equalsIgnoreCase("F") ? TRUE_KEYWORD.toLowerCase() : FALSE_KEYWORD.toLowerCase());
         rule = rule.replace(AGE_KEYWORD, age.toString());
         rule = rule.replace(AND_KEYWORD, AND_KEYWORD_REPLACE);
         rule = rule.replace(OR_KEYWORD, OR_KEYWORD_REPLACE);
         rule = rule.replace(YEARS_KEYWORD, YEARS_KEYWORD_REPLACE);
         return rule;
     }
-   static boolean evaluateRule(String rule) throws ScriptException {
+
+    public String getICDCodes(String snomedCode, int age, String gender) {
+        try {
+            List<ICDRule> sortedRules = icd10Service.getMapRules(snomedCode, 0, 100, true);
+            List<String> selectedCodes = new ArrayList<>();
+            String mapGroup = "";
+            boolean isFound = false;
+            for (ICDRule rule : sortedRules) {
+                if (!mapGroup.equalsIgnoreCase(rule.getMapGroup())) {
+                    mapGroup = rule.getMapGroup();
+                    isFound = false;
+                }
+                if (mapGroup.equalsIgnoreCase(rule.getMapGroup()) && isFound) {
+                    continue;
+                }
+                if (mapGroup.equalsIgnoreCase(rule.getMapGroup()) && !isFound) {
+                    if (evaluateRule(convertRule(rule.getMapRule(), age, gender))) {
+                        selectedCodes.add(rule.getMapTarget());
+                        isFound = true;
+                    }
+                }
+            }
+            return selectedCodes.stream().filter(StringUtils::isNotBlank).collect(Collectors.joining(","));
+
+        } catch (Exception ignored) {
+
+        }
+        return "";
+    }
+
+    boolean evaluateRule(String rule) throws ScriptException {
         if (rule.equalsIgnoreCase(TRUE_KEYWORD)) {
             return true;
         }
-       if (rule.equalsIgnoreCase(FALSE_KEYWORD)) {
-           return false;
-       }
+        if (rule.equalsIgnoreCase(FALSE_KEYWORD)) {
+            return false;
+        }
         return (boolean) scriptEngine.eval(rule);
     }
 }

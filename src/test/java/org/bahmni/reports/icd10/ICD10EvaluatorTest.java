@@ -3,7 +3,6 @@ package org.bahmni.reports.icd10;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.bahmni.reports.icd10.Impl.Icd10ServiceImpl;
 import org.bahmni.reports.icd10.bean.ICDRule;
 import org.junit.Assert;
@@ -14,12 +13,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.reflect.Whitebox;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
+
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -29,93 +25,92 @@ import java.util.stream.Collectors;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
+@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*", "javax.script.*"})
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(ScriptEngineManager.class)
 public class ICD10EvaluatorTest {
 
     @InjectMocks
     ICD10Evaluator icd10Evaluator;
     @Mock
     Icd10ServiceImpl icd10Service;
-    @Mock
-    ScriptEngineManager scriptEngineManager;
-    @Mock
-    ScriptEngine scriptEngine;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        when(scriptEngineManager.getEngineByName("Nashorn")).thenReturn((new ScriptEngineManager()).getEngineByName("Nashorn"));
     }
 
     @Test
-    public  void shouldSelectICDCodeWithHighMapPriority() {
+    public void shouldSelectICDCodeWithHighMapPriority() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response1.json");
         when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 34, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("J45.9", codes);
     }
+
     @Test
-    public  void shouldSelectMultipleICDCodeWithHighMapPriorityWhenMultipleMapGroupsPassed() {
+    public void shouldSelectMultipleICDCodeWithHighMapPriorityWhenMultipleMapGroupsPassed() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response2.json");
         when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 34, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("J45.9,N45.9", codes);
     }
+
     @Test
-    public  void shouldSelectICDCodeWithHighMapPriorityWhenAgeIsGreaterThan65() {
+    public void shouldSelectICDCodeWithHighMapPriorityWhenAgeIsGreaterThan65() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response3.json");
         when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
-        ICD10Evaluator.scriptEngine = (new ScriptEngineManager()).getEngineByName("Nashorn");
         String codes = icd10Evaluator.getICDCodes("dummycode", 90, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("M83.19", codes);
     }
+
     @Test
-    public  void shouldSelectICDCodeWithHighMapPriorityWhenAgeIsLessThan18() {
+    public void shouldSelectICDCodeWithHighMapPriorityWhenAgeIsLessThan18() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response3.json");
         when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
-        ICD10Evaluator.scriptEngine = (new ScriptEngineManager()).getEngineByName("Nashorn");
         String codes = icd10Evaluator.getICDCodes("dummycode", 10, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("E55.0", codes);
     }
+
     @Test
-    public  void shouldSelectICDCodeWithHighMapPriorityWhenAgeIsGreaterThan18AndGreaterThan12() {
+    public void shouldSelectICDCodeWithHighMapPriorityWhenAgeIsGreaterThan18AndGreaterThan12() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response3.json");
         when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
-        ICD10Evaluator.scriptEngine = (new ScriptEngineManager()).getEngineByName("Nashorn");
         String codes = icd10Evaluator.getICDCodes("dummycode", 14, "M");
         Assert.assertNotNull(codes);
-        Assert.assertEquals("M87.19,", codes);
+        Assert.assertEquals("E55.0,M87.19", codes);
     }
+
     @Test
-    public  void shouldSelectICDCodeForMaleWhenMaleGenderPassed() {
+    public void shouldSelectICDCodeForMaleWhenMaleGenderPassed() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response4.json");
         when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 34, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("N46", codes);
     }
+
     @Test
-    public  void shouldSelectICDCodeForFemaleWhenFemaleGenderPassed() {
+    public void shouldSelectICDCodeForFemaleWhenFemaleGenderPassed() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response4.json");
         when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 34, "F");
         Assert.assertNotNull(codes);
         Assert.assertEquals("N97.9", codes);
     }
+
     @Test
-    public  void shouldReturnEmptyWhenNoInformationPassed() {
+    public void shouldReturnEmptyWhenNoInformationPassed() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response4.json");
         when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 34, "OTHER");
         Assert.assertNotNull(codes);
         Assert.assertEquals("", codes);
     }
+
     private List<ICDRule> getMockMapRules(String relativePath) {
         try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(relativePath)) {
             List<ICDRule> rules = new ArrayList<>();
@@ -129,26 +124,26 @@ public class ICD10EvaluatorTest {
                     rules.add(rule);
                 }
             }
-                        Comparator<ICDRule> customComparator = (rule1, rule2) -> {
-                            if (Integer.parseInt(rule1.mapGroup) < Integer.parseInt(rule2.mapGroup)) {
-                                return -1;
-                            }
-                            if (Integer.parseInt(rule1.mapGroup) > Integer.parseInt(rule2.mapGroup)) {
-                                return 1;
-                            }
-                            if (Integer.parseInt(rule1.mapPriority) < Integer.parseInt(rule2.mapPriority)) {
-                                return -1;
-                            }
-                            if (Integer.parseInt(rule1.mapPriority) > Integer.parseInt(rule2.mapPriority)) {
-                                return 1;
-                            }
-                            return Integer.compare(Integer.parseInt(rule1.mapTarget), Integer.parseInt(rule2.mapTarget));
-                        };
+            Comparator<ICDRule> customComparator = (rule1, rule2) -> {
+                if (Integer.parseInt(rule1.mapGroup) < Integer.parseInt(rule2.mapGroup)) {
+                    return -1;
+                }
+                if (Integer.parseInt(rule1.mapGroup) > Integer.parseInt(rule2.mapGroup)) {
+                    return 1;
+                }
+                if (Integer.parseInt(rule1.mapPriority) < Integer.parseInt(rule2.mapPriority)) {
+                    return -1;
+                }
+                if (Integer.parseInt(rule1.mapPriority) > Integer.parseInt(rule2.mapPriority)) {
+                    return 1;
+                }
+                return Integer.compare(Integer.parseInt(rule1.mapTarget), Integer.parseInt(rule2.mapTarget));
+            };
             return rules.stream().sorted(customComparator).collect(Collectors.toList());
-        }  catch(Exception ignored){
+        } catch (Exception ignored) {
 
         }
-       return new ArrayList<>();
+        return new ArrayList<>();
     }
 
 
