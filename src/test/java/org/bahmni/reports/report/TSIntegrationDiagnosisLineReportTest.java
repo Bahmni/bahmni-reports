@@ -26,10 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -41,7 +38,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
+@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*", "javax.script.*"})
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SqlUtil.class)
 public class TSIntegrationDiagnosisLineReportTest {
@@ -63,6 +60,9 @@ public class TSIntegrationDiagnosisLineReportTest {
 
     @Mock
     private ResultSet mockResultSet;
+
+    @Mock
+    private ResultSetMetaData mockResultSetMetaData;
 
     @Mock
     private Properties mockTsProperties;
@@ -89,7 +89,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(true, false);
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(true, false, false);
         when(mockReport.getConfig()).thenReturn(addPatientAttributesToConfig(reportConfig, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
@@ -115,7 +115,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, false);
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, false, false);
         when(mockReport.getConfig()).thenReturn(addPatientAttributesToConfig(reportConfig, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
@@ -141,7 +141,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, false);
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, false, false);
         when(mockReport.getConfig()).thenReturn(addPatientAttributesToConfig(reportConfig, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
@@ -167,7 +167,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, false);
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, false, false);
         addPatientAttributesToConfig(reportConfig, true);
         when(mockReport.getConfig()).thenReturn(addPatientAddressesToConfig(reportConfig));
 
@@ -194,7 +194,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, true);
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, true, false);
         addPatientAttributesToConfig(reportConfig, true);
         when(mockReport.getConfig()).thenReturn(addPatientAddressesToConfig(reportConfig));
 
@@ -221,7 +221,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, false);
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(false, false, false);
         addPatientAttributesToConfig(reportConfig, true);
         when(mockReport.getConfig()).thenReturn(addPatientAddressesToConfig(reportConfig));
 
@@ -241,27 +241,55 @@ public class TSIntegrationDiagnosisLineReportTest {
         SqlUtil.executeSqlWithStoredProc(any(), contains("AND cn.concept_name_type = \"FULLY_SPECIFIED\" AND cn.locale = \"en\" AND cn.voided = false"));
     }
 
+    @Test
+    public void shouldIncludeIcd10TerminologyCodeColumnInJasperReport() throws Exception {
+        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
+        when(mockConnection.createStatement()).thenReturn(mockStatement);
+        when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
-    private TSIntegrationDiagnosisLineReportConfig getMockTerminologyDiagnosisLineReportConfig(boolean displayTerminologyCodeFlag, boolean shortNamePreferredFlag) {
+        when(mockReport.getName()).thenReturn("dummyReport");
+        TSIntegrationDiagnosisLineReportConfig reportConfig = getMockTerminologyDiagnosisLineReportConfig(true, false, true);
+        when(mockReport.getConfig()).thenReturn(addPatientAttributesToConfig(reportConfig, true));
+
+        when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
+        when(mockJasperReport.setTemplate(any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.setShowColumnTitle(anyBoolean())).thenReturn(mockJasperReport);
+        when(mockJasperReport.setWhenNoDataType(any())).thenReturn(mockJasperReport);
+        when(SqlUtil.executeSqlWithStoredProc(any(), anyString())).thenReturn(mockResultSet);
+        when(mockJasperReport.setDataSource(anyString(), any())).thenReturn(mockJasperReport);
+        when(mockJasperReport.subtotalsAtSummary(any())).thenReturn(mockJasperReport);
+
+        when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
+
+        when(mockResultSet.getMetaData()).thenReturn(mockResultSetMetaData);
+        when(mockResultSetMetaData.getColumnCount()).thenReturn(-1);
+        when(mockResultSet.next()).thenReturn(false);
+
+        tsIntegrationDiagnosisLineReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+
+        verify(mockJasperReport, times(8)).addColumn(any());
+    }
+
+    private TSIntegrationDiagnosisLineReportConfig getMockTerminologyDiagnosisLineReportConfig(boolean displayTerminologyCodeFlag, boolean shortNamePreferredFlag, boolean icd10ExtensionFlag) {
         TSIntegrationDiagnosisLineReportConfig tsIntegrationDiagnosisLineReportConfig = new TSIntegrationDiagnosisLineReportConfig();
         tsIntegrationDiagnosisLineReportConfig.setDisplayTerminologyCode(displayTerminologyCodeFlag);
         tsIntegrationDiagnosisLineReportConfig.setTerminologyParentCode("dummyCode");
         if (shortNamePreferredFlag)
             tsIntegrationDiagnosisLineReportConfig.setConceptNameDisplayFormat("shortNamePreferred");
+        if (icd10ExtensionFlag)
+            tsIntegrationDiagnosisLineReportConfig.setExtensionClass("org.bahmni.reports.icd10.Icd10ResultSetExtension");
         return tsIntegrationDiagnosisLineReportConfig;
     }
 
     private TSIntegrationDiagnosisLineReportConfig addPatientAttributesToConfig(TSIntegrationDiagnosisLineReportConfig tsIntegrationDiagnosisLineReportConfig, boolean isEmpty) {
-        List<String> patientAttributeList = isEmpty ? new ArrayList<>() : Arrays.asList("education",
-                "primaryContact",
-                "secondaryContact");
+        List<String> patientAttributeList = isEmpty ? new ArrayList<>() : Arrays.asList("education", "primaryContact", "secondaryContact");
         tsIntegrationDiagnosisLineReportConfig.setPatientAttributes(patientAttributeList);
         return tsIntegrationDiagnosisLineReportConfig;
     }
 
     private TSIntegrationDiagnosisLineReportConfig addPatientAddressesToConfig(TSIntegrationDiagnosisLineReportConfig tsIntegrationDiagnosisLineReportConfig) {
-        List<String> patientAddressesList = Arrays.asList("city_village",
-                "address3");
+        List<String> patientAddressesList = Arrays.asList("city_village", "address3");
         tsIntegrationDiagnosisLineReportConfig.setPatientAddresses(patientAddressesList);
         return tsIntegrationDiagnosisLineReportConfig;
     }
@@ -272,8 +300,7 @@ public class TSIntegrationDiagnosisLineReportTest {
     }
 
     private String readFileAsStr(String relativePath) throws URISyntaxException, IOException {
-        Path path = Paths.get(getClass().getClassLoader()
-                .getResource(relativePath).toURI());
+        Path path = Paths.get(getClass().getClassLoader().getResource(relativePath).toURI());
         return Files.lines(path, StandardCharsets.UTF_8).collect(Collectors.joining("\n"));
     }
 
