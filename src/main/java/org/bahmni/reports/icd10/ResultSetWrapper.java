@@ -5,5 +5,5 @@ import java.util.Collection;
 import java.util.Map;
 
 public interface ResultSetWrapper {
-    Collection<Map<String, ?>> enrich(ResultSet resultSet) throws Exception;
+    Collection<Map<String, ?>> enrich(Collection<Map<String, String>> collection) throws Exception;
 }
