@@ -16,7 +16,7 @@
       "mapRule": "IFA 445518008 | Age at onset of clinical finding (observable entity) | >= 12.0 years AND IFA 445518008 | Age at onset of clinical finding (observable entity) | < 19.0 years",
       "mapPriority": "1",
       "mapGroup": "2",
-      "mapTarget": "M83.19"
+      "mapTarget": "M87.19"
     }
   ]
 }

@@ -3,6 +3,7 @@ package org.bahmni.reports.icd10;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.bahmni.reports.icd10.Impl.Icd10ServiceImpl;
 import org.bahmni.reports.icd10.bean.ICDRule;
 import org.junit.Assert;
@@ -15,6 +16,7 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -27,7 +29,7 @@ import java.util.stream.Collectors;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*", "javax.script.*"})
+@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ScriptEngineManager.class)
 public class ICD10EvaluatorTest {
@@ -56,28 +58,63 @@ public class ICD10EvaluatorTest {
         Assert.assertEquals("J45.9", codes);
     }
     @Test
-    public  void shouldSelectICDCodeWithHighMapPriority2() {
-        List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response1.json");
+    public  void shouldSelectMultipleICDCodeWithHighMapPriorityWhenMultipleMapGroupsPassed() {
+        List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response2.json");
         when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 34, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("J45.9,N45.9", codes);
     }
     @Test
-    public  void shouldSelectICDCodeWithHighMapPriority3() {
+    public  void shouldSelectICDCodeWithHighMapPriorityWhenAgeIsGreaterThan65() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response3.json");
         when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        ICD10Evaluator.scriptEngine = (new ScriptEngineManager()).getEngineByName("Nashorn");
         String codes = icd10Evaluator.getICDCodes("dummycode", 90, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("M83.19", codes);
     }
     @Test
-    public  void shouldSelectICDCodeWithHighMapPriority4() {
+    public  void shouldSelectICDCodeWithHighMapPriorityWhenAgeIsLessThan18() {
+        List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response3.json");
+        when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        ICD10Evaluator.scriptEngine = (new ScriptEngineManager()).getEngineByName("Nashorn");
+        String codes = icd10Evaluator.getICDCodes("dummycode", 10, "M");
+        Assert.assertNotNull(codes);
+        Assert.assertEquals("E55.0", codes);
+    }
+    @Test
+    public  void shouldSelectICDCodeWithHighMapPriorityWhenAgeIsGreaterThan18AndGreaterThan12() {
+        List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response3.json");
+        when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        ICD10Evaluator.scriptEngine = (new ScriptEngineManager()).getEngineByName("Nashorn");
+        String codes = icd10Evaluator.getICDCodes("dummycode", 14, "M");
+        Assert.assertNotNull(codes);
+        Assert.assertEquals("M87.19,", codes);
+    }
+    @Test
+    public  void shouldSelectICDCodeForMaleWhenMaleGenderPassed() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response4.json");
         when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 34, "M");
         Assert.assertNotNull(codes);
-        Assert.assertEquals("J45.9", codes);
+        Assert.assertEquals("N46", codes);
+    }
+    @Test
+    public  void shouldSelectICDCodeForFemaleWhenFemaleGenderPassed() {
+        List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response4.json");
+        when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        String codes = icd10Evaluator.getICDCodes("dummycode", 34, "F");
+        Assert.assertNotNull(codes);
+        Assert.assertEquals("N97.9", codes);
+    }
+    @Test
+    public  void shouldReturnEmptyWhenNoInformationPassed() {
+        List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response4.json");
+        when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        String codes = icd10Evaluator.getICDCodes("dummycode", 34, "OTHER");
+        Assert.assertNotNull(codes);
+        Assert.assertEquals("", codes);
     }
     private List<ICDRule> getMockMapRules(String relativePath) {
         try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(relativePath)) {
