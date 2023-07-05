@@ -1,4 +1,4 @@
-package org.bahmni.reports.icd10.bean;
+package org.bahmni.reports.extension.icd10.bean;
 
 public class ICDMap {
     String snomedCode;

@@ -278,7 +278,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         if (shortNamePreferredFlag)
             tsIntegrationDiagnosisLineReportConfig.setConceptNameDisplayFormat("shortNamePreferred");
         if (icd10ExtensionFlag)
-            tsIntegrationDiagnosisLineReportConfig.setExtensionClass("org.bahmni.reports.icd10.Icd10ResultSetExtension");
+            tsIntegrationDiagnosisLineReportConfig.setExtensionClass("org.bahmni.reports.extension.icd10.Icd10ResultSetExtension");
         return tsIntegrationDiagnosisLineReportConfig;
     }
 

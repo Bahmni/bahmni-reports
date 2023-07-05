@@ -1,6 +1,6 @@
-package org.bahmni.reports.icd10;
+package org.bahmni.reports.extension.icd10;
 
-import org.bahmni.reports.icd10.bean.ICDRule;
+import org.bahmni.reports.extension.icd10.bean.ICDRule;
 
 import java.util.List;
 

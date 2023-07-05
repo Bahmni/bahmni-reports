@@ -1,4 +1,4 @@
-package org.bahmni.reports.icd10;
+package org.bahmni.reports.extension.icd10;
 
 import org.bahmni.reports.template.TSIntegrationDiagnosisLineReportTemplate;
 

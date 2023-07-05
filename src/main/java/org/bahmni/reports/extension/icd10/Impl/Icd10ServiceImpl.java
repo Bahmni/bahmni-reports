@@ -1,9 +1,9 @@
-package org.bahmni.reports.icd10.Impl;
+package org.bahmni.reports.extension.icd10.Impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bahmni.reports.icd10.Icd10Service;
-import org.bahmni.reports.icd10.bean.ICDRule;
+import org.bahmni.reports.extension.icd10.Icd10Service;
+import org.bahmni.reports.extension.icd10.bean.ICDRule;
 import org.springframework.stereotype.Component;
 
 import javax.net.ssl.HttpsURLConnection;

@@ -1,10 +1,11 @@
-package org.bahmni.reports.icd10;
+package org.bahmni.reports.extension.icd10;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bahmni.reports.icd10.Impl.Icd10ServiceImpl;
-import org.bahmni.reports.icd10.bean.ICDRule;
+import org.bahmni.reports.extension.icd10.ICD10Evaluator;
+import org.bahmni.reports.extension.icd10.Impl.Icd10ServiceImpl;
+import org.bahmni.reports.extension.icd10.bean.ICDRule;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

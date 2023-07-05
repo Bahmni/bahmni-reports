@@ -7,7 +7,7 @@ import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bahmni.reports.icd10.ResultSetExtension;
+import org.bahmni.reports.extension.icd10.ResultSetExtension;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.TSIntegrationDiagnosisLineReportConfig;
 import org.bahmni.reports.model.UsingDatasource;

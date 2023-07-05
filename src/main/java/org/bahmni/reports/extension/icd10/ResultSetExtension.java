@@ -1,4 +1,4 @@
-package org.bahmni.reports.icd10;
+package org.bahmni.reports.extension.icd10;
 
 import java.util.Collection;
 import java.util.Map;

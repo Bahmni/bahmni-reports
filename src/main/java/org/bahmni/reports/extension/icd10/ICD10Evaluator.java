@@ -1,18 +1,14 @@
-package org.bahmni.reports.icd10;
+package org.bahmni.reports.extension.icd10;
 
 
-import jdk.nashorn.api.scripting.NashornScriptEngine;
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.apache.commons.lang3.StringUtils;
-import org.bahmni.reports.icd10.Impl.Icd10ServiceImpl;
-import org.bahmni.reports.icd10.bean.ICDRule;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.bahmni.reports.extension.icd10.Impl.Icd10ServiceImpl;
+import org.bahmni.reports.extension.icd10.bean.ICDRule;
 import org.springframework.stereotype.Component;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import javax.script.*;
 import java.util.ArrayList;
 
 import java.util.List;
