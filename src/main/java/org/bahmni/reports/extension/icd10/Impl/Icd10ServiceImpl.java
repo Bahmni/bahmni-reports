@@ -2,16 +2,19 @@ package org.bahmni.reports.extension.icd10.Impl;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.bahmni.reports.extension.icd10.Icd10Service;
 import org.bahmni.reports.extension.icd10.bean.ICDRule;
 import org.springframework.stereotype.Component;
 
-import javax.net.ssl.HttpsURLConnection;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -22,6 +25,14 @@ import java.util.stream.Collectors;
 
 @Component
 public class Icd10ServiceImpl implements Icd10Service {
+    public static void main(String[] args) {
+        String snomedCode = "16705321000119109";
+        Integer offset = 0;
+        Integer limit = 10;
+        Boolean termActive = true;
+        Icd10ServiceImpl service = new Icd10ServiceImpl();
+        service.getMapRules(snomedCode, offset, limit, termActive);
+    }
 
     @Override
     public List<ICDRule> getMapRules(String snomedCode, Integer offset, Integer limit, Boolean termActive) {
@@ -39,7 +50,7 @@ public class Icd10ServiceImpl implements Icd10Service {
             exception.printStackTrace();
         }
 
-        String response = sendGETRequest(urls);
+        String response = getIcdResponse(urls);
         ObjectMapper mapper = new ObjectMapper();
         List<ICDRule> rules = new ArrayList<>();
 
@@ -93,32 +104,35 @@ public class Icd10ServiceImpl implements Icd10Service {
         return "^[*] 447562003 |ICD-10 complex map reference set| {{ M referencedComponentId = \"" + referencedComponentId + "\" }}";
     }
 
-    private String sendGETRequest(String urlString) {
-        StringBuilder response = new StringBuilder();
+    public String getIcdResponse(String url) {
+        String result = null;
+        HttpGet request = new HttpGet(url);
 
-        try {
-            URL url = new URL(urlString);
-            HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
+        // add request headers
+        request.addHeader("content-type", "application/json");
 
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpsURLConnection.HTTP_OK) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
+        try (CloseableHttpClient httpClient = HttpClients.createDefault();
+             CloseableHttpResponse response = httpClient.execute(request)) {
+
+            if (response.getStatusLine().getStatusCode() == 200) {
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+
+                    try {
+                        result = EntityUtils.toString(entity);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    System.out.println(result);
                 }
-                reader.close();
-            } else {
-                System.out.println("GET request failed. Response Code: " + responseCode);
             }
 
-            connection.disconnect();
+        } catch (ClientProtocolException e) {
+            throw new RuntimeException(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-
-        return response.toString();
+        return result;
     }
 
     private String encode(String rawStr) throws UnsupportedEncodingException {
