@@ -2,15 +2,13 @@ package org.bahmni.reports.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class TSIntegrationDiagnosisReportConfig implements Config {
+public class TSIntegrationDiagnosisReportConfig {
     private String tsConceptSource;
     private String conceptNameDisplayFormat;
     private String terminologyParentCode;
     private String terminologyColumnName;
     private Boolean displayTerminologyCode;
-    private Boolean displayGenderGroup;
 
     public String getTsConceptSource() {
         return tsConceptSource;
@@ -52,11 +50,5 @@ public class TSIntegrationDiagnosisReportConfig implements Config {
         this.terminologyColumnName = terminologyColumnName;
     }
 
-    public Boolean isDisplayGenderGroup() {
-        return displayGenderGroup;
-    }
 
-    public void setDisplayGenderGroup(Boolean displayGenderGroup) {
-        this.displayGenderGroup = displayGenderGroup;
-    }
 }
