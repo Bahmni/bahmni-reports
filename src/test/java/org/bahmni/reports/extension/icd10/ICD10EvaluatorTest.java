@@ -3,8 +3,7 @@ package org.bahmni.reports.extension.icd10;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bahmni.reports.extension.icd10.ICD10Evaluator;
-import org.bahmni.reports.extension.icd10.Impl.Icd10ServiceImpl;
+import org.bahmni.reports.extension.icd10.Impl.Icd10LookupServiceImpl;
 import org.bahmni.reports.extension.icd10.bean.ICDRule;
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,7 +32,7 @@ public class ICD10EvaluatorTest {
     @InjectMocks
     ICD10Evaluator icd10Evaluator;
     @Mock
-    Icd10ServiceImpl icd10Service;
+    Icd10LookupServiceImpl icd10Service;
 
     @Before
     public void setUp() {
@@ -43,7 +42,7 @@ public class ICD10EvaluatorTest {
     @Test
     public void shouldSelectICDCodeWithHighMapPriority() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response1.json");
-        when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        when(icd10Service.getRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 34, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("J45.9", codes);
@@ -52,7 +51,7 @@ public class ICD10EvaluatorTest {
     @Test
     public void shouldSelectMultipleICDCodeWithHighMapPriorityWhenMultipleMapGroupsPassed() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response2.json");
-        when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        when(icd10Service.getRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 34, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("J45.9,N45.9", codes);
@@ -61,7 +60,7 @@ public class ICD10EvaluatorTest {
     @Test
     public void shouldSelectICDCodeWithHighMapPriorityWhenAgeIsGreaterThan65() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response3.json");
-        when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        when(icd10Service.getRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 90, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("M83.19", codes);
@@ -70,7 +69,7 @@ public class ICD10EvaluatorTest {
     @Test
     public void shouldSelectICDCodeWithHighMapPriorityWhenAgeIsLessThan18() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response3.json");
-        when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        when(icd10Service.getRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 10, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("E55.0", codes);
@@ -79,7 +78,7 @@ public class ICD10EvaluatorTest {
     @Test
     public void shouldSelectICDCodeWithHighMapPriorityWhenAgeIsGreaterThan18AndGreaterThan12() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response3.json");
-        when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        when(icd10Service.getRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 14, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("E55.0,M87.19", codes);
@@ -88,7 +87,7 @@ public class ICD10EvaluatorTest {
     @Test
     public void shouldSelectICDCodeForMaleWhenMaleGenderPassed() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response4.json");
-        when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        when(icd10Service.getRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 34, "M");
         Assert.assertNotNull(codes);
         Assert.assertEquals("N46", codes);
@@ -97,7 +96,7 @@ public class ICD10EvaluatorTest {
     @Test
     public void shouldSelectICDCodeForFemaleWhenFemaleGenderPassed() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response4.json");
-        when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        when(icd10Service.getRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 34, "F");
         Assert.assertNotNull(codes);
         Assert.assertEquals("N97.9", codes);
@@ -106,7 +105,7 @@ public class ICD10EvaluatorTest {
     @Test
     public void shouldReturnEmptyWhenNoInformationPassed() {
         List<ICDRule> mockSortedRules = getMockMapRules("ts/icd-response4.json");
-        when(icd10Service.getMapRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
+        when(icd10Service.getRules(any(), any(), any(), any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getICDCodes("dummycode", 34, "OTHER");
         Assert.assertNotNull(codes);
         Assert.assertEquals("", codes);

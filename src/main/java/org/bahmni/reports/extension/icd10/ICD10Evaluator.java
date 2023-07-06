@@ -2,8 +2,9 @@ package org.bahmni.reports.extension.icd10;
 
 
 import org.apache.commons.lang3.StringUtils;
-import org.bahmni.reports.extension.icd10.Impl.Icd10ServiceImpl;
+import org.bahmni.reports.extension.icd10.Impl.Icd10LookupServiceImpl;
 import org.bahmni.reports.extension.icd10.bean.ICDRule;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.script.ScriptEngine;
@@ -29,10 +30,8 @@ public class ICD10Evaluator {
     static final String YEARS_KEYWORD = " years";
     static final String YEARS_KEYWORD_REPLACE = "";
     ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("Nashorn");
-    Icd10Service icd10Service = new Icd10ServiceImpl();
+    Icd10LookupService icd10LookUpService = new Icd10LookupServiceImpl();
 
-    public ICD10Evaluator() {
-    }
 
     static String convertRule(String rule, Integer age, String gender) {
         rule = rule.replace(OTHERWISE_TRUE_KEYWORD, TRUE_KEYWORD);
@@ -48,7 +47,7 @@ public class ICD10Evaluator {
 
     public String getICDCodes(String snomedCode, int age, String gender) {
         try {
-            List<ICDRule> sortedRules = icd10Service.getMapRules(snomedCode, 0, 100, true);
+            List<ICDRule> sortedRules = icd10LookUpService.getRules(snomedCode, 0, 100, true);
             List<String> selectedCodes = new ArrayList<>();
             String mapGroup = "";
             boolean isFound = false;

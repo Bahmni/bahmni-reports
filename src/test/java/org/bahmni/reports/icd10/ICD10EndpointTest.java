@@ -6,7 +6,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.bahmni.reports.extension.icd10.Impl.Icd10ServiceImpl;
+import org.bahmni.reports.extension.icd10.Impl.Icd10LookupServiceImpl;
 import org.bahmni.reports.extension.icd10.bean.ICDRule;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 @PrepareForTest({HttpClients.class, EntityUtils.class})
 public class ICD10EndpointTest {
     @InjectMocks
-    Icd10ServiceImpl icd10ServiceImpl;
+    Icd10LookupServiceImpl icd10ServiceImpl;
 
     @Mock
     private CloseableHttpClient mockHttpClient;
@@ -72,7 +72,7 @@ public class ICD10EndpointTest {
         Integer limit = 10;
         Boolean termActive = true;
 
-        List<ICDRule> rules = icd10ServiceImpl.getMapRules(snomedCode, offset, limit, termActive);
+        List<ICDRule> rules = icd10ServiceImpl.getRules(snomedCode, offset, limit, termActive);
         assertEquals(4, rules.size());
     }
 

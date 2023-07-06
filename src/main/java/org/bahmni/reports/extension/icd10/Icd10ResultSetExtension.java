@@ -1,6 +1,8 @@
 package org.bahmni.reports.extension.icd10;
 
 import org.bahmni.reports.template.TSIntegrationDiagnosisLineReportTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -8,7 +10,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-
+@Component
 public class Icd10ResultSetExtension implements ResultSetExtension {
     public static final String ICD_10_COLUMN_NAME = "ICD10 Code(s)";
     ICD10Evaluator icd10Evaluator = new ICD10Evaluator();
