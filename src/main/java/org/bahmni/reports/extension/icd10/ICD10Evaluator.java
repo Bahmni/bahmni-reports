@@ -4,14 +4,12 @@ package org.bahmni.reports.extension.icd10;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.extension.icd10.Impl.Icd10LookupServiceImpl;
 import org.bahmni.reports.extension.icd10.bean.ICDRule;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.util.ArrayList;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
