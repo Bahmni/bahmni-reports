@@ -32,15 +32,7 @@ public class Icd10LookupServiceImpl implements Icd10LookupService {
     private static final Logger logger = LogManager.getLogger(Icd10LookupServiceImpl.class);
     private static final String ICD_PROPERTIES_FILENAME = "icd-service-config.properties";
     private static final Properties icd10Properties = loadIcdProperties();
-
-    public static void main(String[] args) {
-        String snomedCode = "421671002 ";
-        Integer offset = 0;
-        Integer limit = 10;
-        Boolean termActive = true;
-        Icd10LookupServiceImpl service = new Icd10LookupServiceImpl();
-        service.getRules(snomedCode, offset, limit, termActive);
-    }
+    RestTemplate restTemplate = new RestTemplate();
 
     static Properties loadIcdProperties() {
         try (InputStream in = Icd10LookupServiceImpl.class.getClassLoader().getResourceAsStream(ICD_PROPERTIES_FILENAME)) {
@@ -76,7 +68,6 @@ public class Icd10LookupServiceImpl implements Icd10LookupService {
     }
 
     private List<ICDRule> getResponse(URI encodedURI) {
-        RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<ICDResponse> responseEntity = restTemplate.exchange(encodedURI, HttpMethod.GET, new org.springframework.http.HttpEntity<>(null, getHeaders()), ICDResponse.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody().getItems();
