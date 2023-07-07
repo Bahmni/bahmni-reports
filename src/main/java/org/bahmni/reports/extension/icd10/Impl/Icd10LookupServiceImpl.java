@@ -31,7 +31,7 @@ import java.util.stream.Collectors;
 public class Icd10LookupServiceImpl implements Icd10LookupService {
     private static final Logger logger = LogManager.getLogger(Icd10LookupServiceImpl.class);
     private static final String ICD_PROPERTIES_FILENAME = "icd-service-config.properties";
-    private static Properties icd10Properties = loadIcdProperties();
+    private static final Properties icd10Properties = loadIcdProperties();
 
     public static void main(String[] args) {
         String snomedCode = "421671002 ";
