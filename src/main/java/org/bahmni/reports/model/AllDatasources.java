@@ -25,6 +25,9 @@ public class AllDatasources {
     @Autowired
     private DataSource martDataSource;
 
+    @Autowired
+    private DataSource avniDataSource;
+
     public Connection getConnectionFromDatasource(Object object) {
         Connection connection = null;
         try {
@@ -59,6 +62,8 @@ public class AllDatasources {
                 return bahmniReportsDataSource;
             case "bahmniMart":
                 return martDataSource;
+            case "avni":
+                return avniDataSource;
             default:
                 throw new RuntimeException("No datasource found for " + value + ". Verify value of UsingDatasource annotation. ");
         }

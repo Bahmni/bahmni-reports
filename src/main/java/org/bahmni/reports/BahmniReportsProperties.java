@@ -143,4 +143,16 @@ public class BahmniReportsProperties {
     public String getFileUploadMaxSize() {
         return props.getProperty("reports.config.fileUploadMaxSize");
     }
+
+    public String getAvniDBUrl(){
+        return props.getProperty("avni.db.url");
+    }
+
+    public String getAvniDBUser(){
+        return props.getProperty("avni.db.username");
+    }
+
+    public String getAvniDBPassword(){
+        return props.getProperty("avni.db.password");
+    }
 }

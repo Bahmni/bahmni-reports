@@ -141,6 +141,18 @@ public class BahmniReportsConfiguration {
         dataSource.setPreferredTestQuery("SELECT 1;");
         return dataSource;
     }
+    @Bean
+    public ComboPooledDataSource avniDataSource() throws PropertyVetoException {
+        ComboPooledDataSourceBuilder comboPooledDataSourceBuilder = new ComboPooledDataSourceBuilder();
+        ComboPooledDataSource dataSource = comboPooledDataSourceBuilder.withUrl(bahmniReportsProperties.getAvniDBUrl())
+                .withUser(bahmniReportsProperties.getAvniDBUser())
+                .withPassword(bahmniReportsProperties.getAvniDBPassword())
+                .withDriver(Driver.class).build();
+
+        dataSource.setIdleConnectionTestPeriod(IDLE_CONNECTION_TEST_TIME);
+        dataSource.setPreferredTestQuery("SELECT 1;");
+        return dataSource;
+    }
 
     private long getFileUploadMaxSize() {
         String fileUploadMaxSize = bahmniReportsProperties.getFileUploadMaxSize();
