@@ -17,12 +17,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
@@ -62,6 +62,7 @@ public class Icd10LookupServiceImplTest {
         Assert.assertEquals("2", sortedRules.get(3).getMapGroup());
         Assert.assertEquals("2", sortedRules.get(3).getMapPriority());
     }
+
     @Test
     public void shouldReturnEmptyListWhenInvokedAndResponseCodeIsNot2xx() {
         String dummyCode = "dummy";
@@ -73,6 +74,20 @@ public class Icd10LookupServiceImplTest {
         List<ICDRule> sortedRules = icd10LookupService.getRules(dummyCode, offset, limit, termActive);
         Assert.assertNotNull(sortedRules);
         Assert.assertEquals(0, sortedRules.size());
+    }
+    @Test
+    public void shouldGetCalledFourTimesWhenLimitIsOneAndTotalIsFour() {
+        String dummyCode = "dummy";
+        Integer offset = 0;
+        Integer limit = 1;
+        Boolean termActive = true;
+        ICDResponse mockResponse = getMockMapRules("ts/icd-response2.json");
+        when(restTemplate.exchange(any(), any(), any(), eq(ICDResponse.class))).thenReturn(mockIcdResponse);
+        when(mockIcdResponse.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
+        when(mockIcdResponse.getBody()).thenReturn(mockResponse);
+        List<ICDRule> sortedRules = icd10LookupService.getRules(dummyCode, offset, limit, termActive);
+        Assert.assertNotNull(sortedRules);
+        verify(restTemplate, times(4)).exchange(any(), any(), any(), eq(ICDResponse.class));
     }
 
     private ICDResponse getMockMapRules(String relativePath) {

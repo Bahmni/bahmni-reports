@@ -44,19 +44,26 @@ public class Icd10LookupServiceImpl implements Icd10LookupService {
             throw new RuntimeException(exception);
         }
     }
-// todo  get all mapRules leveraging against total
+
     @Override
     public List<ICDRule> getRules(String snomedCode, Integer offset, Integer limit, Boolean termActive) {
-        URI encodedURI = getEndPoint(snomedCode, offset, limit, termActive);
-        List<ICDRule> rules;
         try {
-            rules = getResponse(encodedURI);
+            ICDResponse icdResponse;
+            List<ICDRule> rules = new ArrayList<>();
+            do {
+                URI encodedURI = getEndPoint(snomedCode, offset, limit, termActive);
+                icdResponse = getResponse(encodedURI);
+                rules.addAll(icdResponse.getItems());
+                offset += limit;
+            } while (offset < icdResponse.getTotal());
+
+            Comparator<ICDRule> customComparator = Comparator.comparingInt((ICDRule rule) -> Integer.parseInt(rule.mapGroup)).thenComparingInt(rule -> Integer.parseInt(rule.mapPriority));
+            return rules.stream().sorted(customComparator).collect(Collectors.toList());
         } catch (Exception exception) {
             logger.error(String.format("Error caused during ICD lookup rest call: %s", exception.getMessage()));
-            throw new RuntimeException();
+            return new ArrayList<>();
         }
-        Comparator<ICDRule> customComparator = Comparator.comparingInt((ICDRule rule) -> Integer.parseInt(rule.mapGroup)).thenComparingInt(rule -> Integer.parseInt(rule.mapPriority));
-        return rules.stream().sorted(customComparator).collect(Collectors.toList());
+
     }
 
     private String getEclUrl(String referencedComponentId) {
@@ -67,12 +74,12 @@ public class Icd10LookupServiceImpl implements Icd10LookupService {
         return URLEncoder.encode(rawStr, StandardCharsets.UTF_8.name());
     }
 
-    private List<ICDRule> getResponse(URI encodedURI) {
+    private ICDResponse getResponse(URI encodedURI) {
         ResponseEntity<ICDResponse> responseEntity = restTemplate.exchange(encodedURI, HttpMethod.GET, new org.springframework.http.HttpEntity<>(null, getHeaders()), ICDResponse.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
-            return responseEntity.getBody().getItems();
+            return responseEntity.getBody();
         }
-        return new ArrayList<>();
+        return new ICDResponse();
     }
 
     private URI getEndPoint(String snomedCode, Integer offset, Integer limit, Boolean termActive) {
