@@ -43,25 +43,27 @@ public class ICD10Evaluator {
         return rule;
     }
 
+    private static boolean isNextMapGroup(String mapGroup, ICDRule rule) {
+        return !rule.getMapGroup().equalsIgnoreCase(mapGroup);
+    }
+
     public String getICDCodes(String snomedCode, int age, String gender) {
         try {
             List<ICDRule> sortedRules = icd10LookUpService.getRules(snomedCode, 0, 100, true);
             List<String> selectedCodes = new ArrayList<>();
-            String mapGroup = "";
+            String currentMapGroup = null;
             boolean isFound = false;
             for (ICDRule rule : sortedRules) {
-                if (!mapGroup.equalsIgnoreCase(rule.getMapGroup())) {
-                    mapGroup = rule.getMapGroup();
+                if (isNextMapGroup(currentMapGroup, rule)) {
+                    currentMapGroup = rule.getMapGroup();
                     isFound = false;
                 }
-                if (mapGroup.equalsIgnoreCase(rule.getMapGroup()) && isFound) {
+                if (isFound) {
                     continue;
                 }
-                if (mapGroup.equalsIgnoreCase(rule.getMapGroup()) && !isFound) {
-                    if (evaluateRule(convertRule(rule.getMapRule(), age, gender))) {
-                        selectedCodes.add(rule.getMapTarget());
-                        isFound = true;
-                    }
+                if (evaluateRule(convertRule(rule.getMapRule(), age, gender))) {
+                    selectedCodes.add(rule.getMapTarget());
+                    isFound = true;
                 }
             }
             return selectedCodes.stream().filter(StringUtils::isNotBlank).collect(Collectors.joining(","));

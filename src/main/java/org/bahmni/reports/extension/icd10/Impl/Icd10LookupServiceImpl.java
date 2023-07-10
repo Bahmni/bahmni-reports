@@ -44,7 +44,7 @@ public class Icd10LookupServiceImpl implements Icd10LookupService {
             throw new RuntimeException(exception);
         }
     }
-
+// todo  get all mapRules leveraging against total
     @Override
     public List<ICDRule> getRules(String snomedCode, Integer offset, Integer limit, Boolean termActive) {
         URI encodedURI = getEndPoint(snomedCode, offset, limit, termActive);
