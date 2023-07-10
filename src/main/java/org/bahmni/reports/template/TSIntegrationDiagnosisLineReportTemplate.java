@@ -3,6 +3,7 @@ package org.bahmni.reports.template;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
 import net.sf.dynamicreports.report.constant.PageType;
+import net.sf.dynamicreports.report.constant.WhenNoDataType;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -88,6 +89,7 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
         }else{
             jasperReport.setDataSource(resultSet);
         }
+        jasperReport.setShowColumnTitle(true).setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
         return new BahmniReportBuilder(jasperReport);
     }
 
