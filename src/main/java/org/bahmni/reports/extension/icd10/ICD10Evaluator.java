@@ -2,13 +2,14 @@ package org.bahmni.reports.extension.icd10;
 
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.extension.icd10.Impl.Icd10LookupServiceImpl;
 import org.bahmni.reports.extension.icd10.bean.ICDRule;
 import org.springframework.stereotype.Component;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,13 +28,12 @@ public class ICD10Evaluator {
     static final String OR_KEYWORD_REPLACE = "||";
     static final String YEARS_KEYWORD = " years";
     static final String YEARS_KEYWORD_REPLACE = "";
+    private static final Logger logger = LogManager.getLogger(ICD10Evaluator.class);
     ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("Nashorn");
     Icd10LookupService icd10LookUpService = new Icd10LookupServiceImpl();
 
-
     static String convertRule(String rule, Integer age, String gender) {
         rule = rule.replace(OTHERWISE_TRUE_KEYWORD, TRUE_KEYWORD);
-        // todo
         rule = rule.replace(MALE_KEYWORD, gender.equalsIgnoreCase("M") ? TRUE_KEYWORD.toLowerCase() : FALSE_KEYWORD.toLowerCase());
         rule = rule.replace(FEMALE_KEYWORD, gender.equalsIgnoreCase("F") ? TRUE_KEYWORD.toLowerCase() : FALSE_KEYWORD.toLowerCase());
         rule = rule.replace(AGE_KEYWORD, age.toString());
@@ -66,19 +66,24 @@ public class ICD10Evaluator {
             }
             return selectedCodes.stream().filter(StringUtils::isNotBlank).collect(Collectors.joining(","));
 
-        } catch (Exception ignored) {
-
+        } catch (Exception exception) {
+            logger.error("Error occurred when extracting Icd10 codes for snomed code: " + snomedCode, exception);
         }
         return "";
     }
 
-    boolean evaluateRule(String rule) throws ScriptException {
-        if (rule.equalsIgnoreCase(TRUE_KEYWORD)) {
-            return true;
+    boolean evaluateRule(String rule) {
+        try {
+            if (rule.equalsIgnoreCase(TRUE_KEYWORD)) {
+                return true;
+            }
+            if (rule.equalsIgnoreCase(FALSE_KEYWORD)) {
+                return false;
+            }
+            return (boolean) scriptEngine.eval(rule);
+        } catch (Exception exception) {
+            logger.error("Error occurred during evaluating rules", exception);
+            throw new RuntimeException(exception);
         }
-        if (rule.equalsIgnoreCase(FALSE_KEYWORD)) {
-            return false;
-        }
-        return (boolean) scriptEngine.eval(rule);
     }
 }
