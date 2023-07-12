@@ -1,12 +1,9 @@
-package org.bahmni.reports.extension.icd10;
+package org.bahmni.reports.extensions.icd10;
 
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bahmni.reports.extension.icd10.Impl.Icd10LookupServiceImpl;
-import org.bahmni.reports.extension.icd10.bean.ICDRule;
-import org.springframework.stereotype.Component;
+import org.bahmni.reports.extensions.icd10.Impl.Icd10LookupServiceImpl;
+import org.bahmni.reports.extensions.icd10.bean.ICDRule;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -14,8 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Component
-public class ICD10Evaluator {
+public class Icd10Evaluator {
     static final String TRUE_KEYWORD = "TRUE";
     static final String FALSE_KEYWORD = "FALSE";
     static final String OTHERWISE_TRUE_KEYWORD = "OTHERWISE TRUE";
@@ -28,11 +24,15 @@ public class ICD10Evaluator {
     static final String OR_KEYWORD_REPLACE = "||";
     static final String YEARS_KEYWORD = " years";
     static final String YEARS_KEYWORD_REPLACE = "";
-    private static final Logger logger = LogManager.getLogger(ICD10Evaluator.class);
-    ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("Nashorn");
-    Icd10LookupService icd10LookUpService = new Icd10LookupServiceImpl();
+    private static final Logger logger = LogManager.getLogger(Icd10Evaluator.class);
+    public Icd10LookupService icd10LookUpService = new Icd10LookupServiceImpl();
+    public ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("Nashorn");
 
-    static String convertRule(String rule, Integer age, String gender) {
+    private static int getMapGroup(ICDRule rule) {
+        return Integer.parseInt(rule.getMapGroup());
+    }
+
+    static String deriveRuleExpression(String rule, Integer age, String gender) {
         rule = rule.replace(OTHERWISE_TRUE_KEYWORD, TRUE_KEYWORD);
         rule = rule.replace(MALE_KEYWORD, gender.equalsIgnoreCase("M") ? TRUE_KEYWORD.toLowerCase() : FALSE_KEYWORD.toLowerCase());
         rule = rule.replace(FEMALE_KEYWORD, gender.equalsIgnoreCase("F") ? TRUE_KEYWORD.toLowerCase() : FALSE_KEYWORD.toLowerCase());
@@ -43,35 +43,34 @@ public class ICD10Evaluator {
         return rule;
     }
 
-    private static boolean isNextMapGroup(String mapGroup, ICDRule rule) {
-        return !rule.getMapGroup().equalsIgnoreCase(mapGroup);
+    private static boolean isRuleWithNextMapGroup(int currentMapGroup, ICDRule rule) {
+        int ruleMapGroup = getMapGroup(rule);
+        return ruleMapGroup > currentMapGroup;
     }
 
-    public String getICDCodes(String snomedCode, int age, String gender) {
+    public String getMatchingIcdCodes(String snomedCode, int age, String gender) {
+        List<String> matchingICDCodes = new ArrayList<>();
         try {
-            List<ICDRule> sortedRules = icd10LookUpService.getRules(snomedCode, 0, 100, true);
-            List<String> selectedCodes = new ArrayList<>();
-            String currentMapGroup = null;
-            boolean isFound = false;
-            for (ICDRule rule : sortedRules) {
-                if (isNextMapGroup(currentMapGroup, rule)) {
-                    currentMapGroup = rule.getMapGroup();
-                    isFound = false;
+            List<ICDRule> orderedRules = icd10LookUpService.getRules(snomedCode);
+            int currentMapGroup = 1;
+            boolean isMapTargetFoundForCurrentMapGroup = false;
+            for (ICDRule rule : orderedRules) {
+                if (isRuleWithNextMapGroup(currentMapGroup, rule)) {
+                    currentMapGroup = getMapGroup(rule);
+                    isMapTargetFoundForCurrentMapGroup = false;
                 }
-                if (isFound) {
+                if (isMapTargetFoundForCurrentMapGroup) {
                     continue;
                 }
-                if (evaluateRule(convertRule(rule.getMapRule(), age, gender))) {
-                    selectedCodes.add(rule.getMapTarget());
-                    isFound = true;
+                if (evaluateRule(deriveRuleExpression(rule.getMapRule(), age, gender))) {
+                    matchingICDCodes.add(rule.getMapTarget());
+                    isMapTargetFoundForCurrentMapGroup = true;
                 }
             }
-            return selectedCodes.stream().filter(StringUtils::isNotBlank).collect(Collectors.joining(","));
-
         } catch (Exception exception) {
             logger.error("Error occurred when extracting Icd10 codes for snomed code: " + snomedCode, exception);
         }
-        return "";
+        return matchingICDCodes.stream().collect(Collectors.joining(","));
     }
 
     boolean evaluateRule(String rule) {

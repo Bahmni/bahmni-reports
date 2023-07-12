@@ -268,7 +268,7 @@ public class TSIntegrationDiagnosisLineReportTest {
 
         tsIntegrationDiagnosisLineReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
-        verify(mockJasperReport, times(8)).addColumn(any());
+        verify(mockJasperReport, times(9)).addColumn(any());
     }
 
     private TSIntegrationDiagnosisLineReportConfig getMockTerminologyDiagnosisLineReportConfig(boolean displayTerminologyCodeFlag, boolean shortNamePreferredFlag, boolean icd10ExtensionFlag) {
@@ -278,7 +278,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         if (shortNamePreferredFlag)
             tsIntegrationDiagnosisLineReportConfig.setConceptNameDisplayFormat("shortNamePreferred");
         if (icd10ExtensionFlag)
-            tsIntegrationDiagnosisLineReportConfig.setExtensionClass("org.bahmni.reports.extension.icd10.Icd10ResultSetExtension");
+            tsIntegrationDiagnosisLineReportConfig.setExtensions(Arrays.asList("org.bahmni.reports.extensions.icd10.Icd10ResultSetExtension", "org.bahmni.reports.extensions.sample.SampleResultSetExtension"));
         return tsIntegrationDiagnosisLineReportConfig;
     }
 
@@ -294,9 +294,8 @@ public class TSIntegrationDiagnosisLineReportTest {
         return tsIntegrationDiagnosisLineReportConfig;
     }
 
-
     private String getMockTerminologyDescendants() throws URISyntaxException, IOException {
-        return readFileAsStr("ts/descendantCodes.json");
+        return readFileAsStr("terminologyServices/descendantCodes.json");
     }
 
     private String readFileAsStr(String relativePath) throws URISyntaxException, IOException {

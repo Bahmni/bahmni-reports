@@ -1,15 +1,14 @@
-package org.bahmni.reports.extension.icd10.Impl;
+package org.bahmni.reports.extensions.icd10.Impl;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bahmni.reports.extension.icd10.Icd10LookupService;
-import org.bahmni.reports.extension.icd10.bean.ICDResponse;
-import org.bahmni.reports.extension.icd10.bean.ICDRule;
+import org.bahmni.reports.extensions.icd10.Icd10LookupService;
+import org.bahmni.reports.extensions.icd10.bean.ICDResponse;
+import org.bahmni.reports.extensions.icd10.bean.ICDRule;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -19,20 +18,15 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
-
-@Component
 public class Icd10LookupServiceImpl implements Icd10LookupService {
+    public static final Comparator<ICDRule> customComparator = Comparator.comparingInt((ICDRule rule) -> Integer.parseInt(rule.mapGroup)).thenComparingInt(rule -> Integer.parseInt(rule.mapPriority));
     private static final Logger logger = LogManager.getLogger(Icd10LookupServiceImpl.class);
     private static final String ICD_PROPERTIES_FILENAME = "icd-service-config.properties";
     private static final Properties icd10Properties = loadIcdProperties();
-    RestTemplate restTemplate = new RestTemplate();
+    private RestTemplate restTemplate = new RestTemplate();
 
     static Properties loadIcdProperties() {
         try (InputStream in = Icd10LookupServiceImpl.class.getClassLoader().getResourceAsStream(ICD_PROPERTIES_FILENAME)) {
@@ -40,25 +34,24 @@ public class Icd10LookupServiceImpl implements Icd10LookupService {
             p.load(in);
             return p;
         } catch (IOException exception) {
-            logger.error("Could not load icd service properties from: " + ICD_PROPERTIES_FILENAME, exception);
+            logger.error("Could not load ICD service properties from: " + ICD_PROPERTIES_FILENAME, exception);
             throw new RuntimeException(exception);
         }
     }
 
     @Override
-    public List<ICDRule> getRules(String snomedCode, Integer offset, Integer limit, Boolean termActive) {
+    public List<ICDRule> getRules(String snomedCode) {
         try {
             ICDResponse icdResponse;
-            List<ICDRule> rules = new ArrayList<>();
+            List<ICDRule> icdRules = new ArrayList<>();
+            int offset = 0, limit = 100;
             do {
-                URI encodedURI = getEndPoint(snomedCode, offset, limit, termActive);
+                URI encodedURI = getEndPoint(snomedCode, offset, limit);
                 icdResponse = getResponse(encodedURI);
-                rules.addAll(icdResponse.getItems());
+                icdRules.addAll(icdResponse.getItems());
                 offset += limit;
             } while (offset < icdResponse.getTotal());
-
-            Comparator<ICDRule> customComparator = Comparator.comparingInt((ICDRule rule) -> Integer.parseInt(rule.mapGroup)).thenComparingInt(rule -> Integer.parseInt(rule.mapPriority));
-            return rules.stream().sorted(customComparator).collect(Collectors.toList());
+            return icdRules.stream().sorted(customComparator).collect(Collectors.toList());
         } catch (Exception exception) {
             logger.error(String.format("Error caused during ICD lookup rest call: %s", exception.getMessage()));
             return new ArrayList<>();
@@ -82,11 +75,11 @@ public class Icd10LookupServiceImpl implements Icd10LookupService {
         return new ICDResponse();
     }
 
-    private URI getEndPoint(String snomedCode, Integer offset, Integer limit, Boolean termActive) {
+    private URI getEndPoint(String snomedCode, Integer offset, Integer limit) {
         try {
             UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(icd10Properties.getProperty("icd.baseUrl"))
                     .queryParam("offset", offset)
-                    .queryParam("termActive", termActive)
+                    .queryParam("termActive", true)
                     .queryParam("ecl", encode(getEclUrl(snomedCode)))
                     .queryParam("limit", limit);
             return uriBuilder.build(true).toUri();

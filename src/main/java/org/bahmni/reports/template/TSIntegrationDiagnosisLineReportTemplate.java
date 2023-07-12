@@ -8,7 +8,7 @@ import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.bahmni.reports.extension.icd10.ResultSetExtension;
+import org.bahmni.reports.extensions.ResultSetExtension;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.TSIntegrationDiagnosisLineReportConfig;
 import org.bahmni.reports.model.UsingDatasource;
@@ -81,36 +81,33 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
         jasperReport.addColumn(col.column(DATE_AND_TIME_COLUMN_NAME, DATE_AND_TIME_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
         ResultSet resultSet = getResultSet(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName, report.getConfig(), connection);
 
-        String extensionClass = report.getConfig().getExtensionClass();
-        if(StringUtils.isNotBlank(extensionClass)) {
-            Collection<Map<String, String>> rawCollection = convertResultSetToCollection(resultSet);
-            Collection<Map<String, ?>> enrichCollection = enrichUsingReflection(rawCollection, extensionClass, jasperReport);
-            jasperReport.setDataSource(new JRMapCollectionDataSource(enrichCollection));
-        }else{
+        List<String> extensions = report.getConfig().getExtensions();
+        if (extensions == null) {
             jasperReport.setDataSource(resultSet);
+        }else{
+            Collection<Map<String, ?>> collection = convertResultSetToCollection(resultSet);
+            extensions.stream().forEach(extensionClassStr -> enrichUsingReflection(collection, extensionClassStr, jasperReport));
+            jasperReport.setDataSource(new JRMapCollectionDataSource(collection));
         }
         jasperReport.setShowColumnTitle(true).setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
         return new BahmniReportBuilder(jasperReport);
     }
 
-    private Collection<Map<String, ?>> enrichUsingReflection(Collection<Map<String, String>> rawCollection, String extensionClassStr, JasperReportBuilder jasperReport) {
-        Collection<Map<String, ?>> enrichCollection = null;
+    private void enrichUsingReflection(Collection<Map<String, ?>> collection, String extensionClassStr, JasperReportBuilder jasperReport) {
         try {
             Class<?> extensionClass = Class.forName(extensionClassStr);
             Constructor constructor = extensionClass.getDeclaredConstructor();
             constructor.setAccessible(true);
-            ResultSetExtension wrapper = (ResultSetExtension) constructor.newInstance();
-            enrichCollection = wrapper.enrich(rawCollection);
-            jasperReport.addColumn(col.column(wrapper.getColumnName(), wrapper.getColumnName(), type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
+            ResultSetExtension extension = (ResultSetExtension) constructor.newInstance();
+            extension.enrich(collection, jasperReport);
         } catch (Exception ex) {
             logger.error(String.format("Error caused during reflection in enrichUsingReflection method: %s", ex.getMessage()));
             throw new RuntimeException();
         }
-        return enrichCollection;
     }
 
-    public List<Map<String, String>> convertResultSetToCollection(ResultSet resultSet) throws SQLException {
-        List<Map<String, String>> resulSetListOfMap = new ArrayList<>();
+    public List<Map<String, ?>> convertResultSetToCollection(ResultSet resultSet) throws SQLException {
+        List<Map<String, ?>> resulSetListOfMap = new ArrayList<>();
         if (resultSet != null) {
             int columnCount = resultSet.getMetaData().getColumnCount();
             while (resultSet.next()) {

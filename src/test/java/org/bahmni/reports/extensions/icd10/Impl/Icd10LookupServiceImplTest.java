@@ -1,8 +1,8 @@
-package org.bahmni.reports.extension.icd10.Impl;
+package org.bahmni.reports.extensions.icd10.Impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bahmni.reports.extension.icd10.bean.ICDResponse;
-import org.bahmni.reports.extension.icd10.bean.ICDRule;
+import org.bahmni.reports.extensions.icd10.bean.ICDResponse;
+import org.bahmni.reports.extensions.icd10.bean.ICDRule;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,13 +21,12 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 @RunWith(PowerMockRunner.class)
 public class Icd10LookupServiceImplTest {
+    private static final String SNOMED_CODE = "dummy";
     @InjectMocks
     Icd10LookupServiceImpl icd10LookupService;
     @Mock
@@ -41,16 +40,12 @@ public class Icd10LookupServiceImplTest {
     }
 
     @Test
-    public void shouldGetSortedIcdRulesWhenInvokedAndResponseCodeIs2xx() {
-        String dummyCode = "dummy";
-        Integer offset = 0;
-        Integer limit = 100;
-        Boolean termActive = true;
-        ICDResponse mockResponse = getMockMapRules("ts/icd-response2.json");
+    public void shouldReturnIcdRulesOrderedByMapGroupAndMapPriorityWhenValidSnomedCodeIsPassed() {
+        ICDResponse mockResponse = getMockMapRules("terminologyServices/icdRules_MultipleMapGroups.json");
         when(restTemplate.exchange(any(), any(), any(), eq(ICDResponse.class))).thenReturn(mockIcdResponse);
         when(mockIcdResponse.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
         when(mockIcdResponse.getBody()).thenReturn(mockResponse);
-        List<ICDRule> sortedRules = icd10LookupService.getRules(dummyCode, offset, limit, termActive);
+        List<ICDRule> sortedRules = icd10LookupService.getRules(SNOMED_CODE);
         Assert.assertNotNull(sortedRules);
         Assert.assertEquals(4, sortedRules.size());
         Assert.assertEquals("1", sortedRules.get(0).getMapGroup());
@@ -64,30 +59,23 @@ public class Icd10LookupServiceImplTest {
     }
 
     @Test
-    public void shouldReturnEmptyListWhenInvokedAndResponseCodeIsNot2xx() {
-        String dummyCode = "dummy";
-        Integer offset = 0;
-        Integer limit = 100;
-        Boolean termActive = true;
+    public void shouldReturnEmptyListWhenInvalidSnomedCodeIsPassed() {
         when(restTemplate.exchange(any(), any(), any(), eq(ICDResponse.class))).thenReturn(mockIcdResponse);
         when(mockIcdResponse.getStatusCode()).thenReturn(HttpStatus.BAD_REQUEST);
-        List<ICDRule> sortedRules = icd10LookupService.getRules(dummyCode, offset, limit, termActive);
+        List<ICDRule> sortedRules = icd10LookupService.getRules(SNOMED_CODE);
         Assert.assertNotNull(sortedRules);
         Assert.assertEquals(0, sortedRules.size());
     }
+
     @Test
-    public void shouldGetCalledFourTimesWhenLimitIsOneAndTotalIsFour() {
-        String dummyCode = "dummy";
-        Integer offset = 0;
-        Integer limit = 1;
-        Boolean termActive = true;
-        ICDResponse mockResponse = getMockMapRules("ts/icd-response2.json");
+    public void shouldInvokePaginatedCallsForIcdRulesWithLargeResultSet() {
+        ICDResponse mockResponse = getMockMapRules("terminologyServices/icdRules_WithLargeResultSet.json");
         when(restTemplate.exchange(any(), any(), any(), eq(ICDResponse.class))).thenReturn(mockIcdResponse);
         when(mockIcdResponse.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
         when(mockIcdResponse.getBody()).thenReturn(mockResponse);
-        List<ICDRule> sortedRules = icd10LookupService.getRules(dummyCode, offset, limit, termActive);
+        List<ICDRule> sortedRules = icd10LookupService.getRules(SNOMED_CODE);
         Assert.assertNotNull(sortedRules);
-        verify(restTemplate, times(4)).exchange(any(), any(), any(), eq(ICDResponse.class));
+        verify(restTemplate, times(2)).exchange(any(), any(), any(), eq(ICDResponse.class));
     }
 
     private ICDResponse getMockMapRules(String relativePath) {

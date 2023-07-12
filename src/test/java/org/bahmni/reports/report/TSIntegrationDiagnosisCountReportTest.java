@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 @RunWith(PowerMockRunner.class)
@@ -250,7 +249,7 @@ public class TSIntegrationDiagnosisCountReportTest {
     }
 
     private String getMockTerminologyDescendants() throws URISyntaxException, IOException {
-        return readFileAsStr("ts/descendantCodes.json");
+        return readFileAsStr("terminologyServices/descendantCodes.json");
     }
 
     private String readFileAsStr(String relativePath) throws URISyntaxException, IOException {
