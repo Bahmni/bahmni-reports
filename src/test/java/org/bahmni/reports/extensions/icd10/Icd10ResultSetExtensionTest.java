@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.util.FileReaderUtil;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +18,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*", "javax.script.*"})
@@ -40,13 +41,14 @@ public class Icd10ResultSetExtensionTest {
         when(mockIcd10Evaluator.getMatchingIcdCodes(anyString(), anyInt(), anyString())).thenReturn("dummyIcdCode");
         List<Map<String, ?>> collection = getMockDiagnosisResultSetCollection();
         for (Map<String, ?> rowMap : collection) {
-            Assert.assertEquals(7, rowMap.size());
+            assertEquals(7, rowMap.size());
         }
         icd10ResultSetExtension.enrich(collection, new JasperReportBuilder());
         for (Map<String, ?> rowMap : collection) {
-            Assert.assertEquals(8, rowMap.size());
+            assertEquals(8, rowMap.size());
             String icd10Value = (String) rowMap.get(Icd10ResultSetExtension.ICD_10_COLUMN_NAME);
-            Assert.assertTrue(StringUtils.isNotBlank(icd10Value));
+            assertTrue(StringUtils.isNotBlank(icd10Value));
+            assertEquals("dummyIcdCode", icd10Value);
         }
     }
 
@@ -55,13 +57,13 @@ public class Icd10ResultSetExtensionTest {
         when(mockIcd10Evaluator.getMatchingIcdCodes(anyString(), anyInt(), anyString())).thenReturn(" ");
         List<Map<String, ?>> collection = getMockDiagnosisResultSetCollection();
         for (Map<String, ?> rowMap : collection) {
-            Assert.assertEquals(7, rowMap.size());
+            assertEquals(7, rowMap.size());
         }
         icd10ResultSetExtension.enrich(collection, new JasperReportBuilder());
         for (Map<String, ?> rowMap : collection) {
-            Assert.assertEquals(8, rowMap.size());
+            assertEquals(8, rowMap.size());
             String icd10Value = (String) rowMap.get(Icd10ResultSetExtension.ICD_10_COLUMN_NAME);
-            Assert.assertTrue(StringUtils.isEmpty(icd10Value));
+            assertTrue(StringUtils.isEmpty(icd10Value));
         }
     }
 
@@ -70,13 +72,13 @@ public class Icd10ResultSetExtensionTest {
         when(mockIcd10Evaluator.getMatchingIcdCodes(anyString(), anyInt(), anyString())).thenReturn("");
         List<Map<String, ?>> collection = getMockDiagnosisResultSetCollection();
         for (Map<String, ?> rowMap : collection) {
-            Assert.assertEquals(7, rowMap.size());
+            assertEquals(7, rowMap.size());
         }
         icd10ResultSetExtension.enrich(collection, new JasperReportBuilder());
         for (Map<String, ?> rowMap : collection) {
-            Assert.assertEquals(8, rowMap.size());
+            assertEquals(8, rowMap.size());
             String icd10Value = (String) rowMap.get(Icd10ResultSetExtension.ICD_10_COLUMN_NAME);
-            Assert.assertTrue(StringUtils.isEmpty(icd10Value));
+            assertTrue(StringUtils.isEmpty(icd10Value));
         }
     }
 
@@ -85,13 +87,13 @@ public class Icd10ResultSetExtensionTest {
         when(mockIcd10Evaluator.getMatchingIcdCodes(anyString(), anyInt(), anyString())).thenReturn(null);
         List<Map<String, ?>> collection = getMockDiagnosisResultSetCollection();
         for (Map<String, ?> rowMap : collection) {
-            Assert.assertEquals(7, rowMap.size());
+            assertEquals(7, rowMap.size());
         }
         icd10ResultSetExtension.enrich(collection, new JasperReportBuilder());
         for (Map<String, ?> rowMap : collection) {
-            Assert.assertEquals(8, rowMap.size());
+            assertEquals(8, rowMap.size());
             String icd10Value = (String) rowMap.get(Icd10ResultSetExtension.ICD_10_COLUMN_NAME);
-            Assert.assertTrue(StringUtils.isEmpty(icd10Value));
+            assertTrue(StringUtils.isEmpty(icd10Value));
         }
     }
 

@@ -5,7 +5,6 @@ import org.bahmni.reports.extensions.icd10.Impl.Icd10LookupServiceImpl;
 import org.bahmni.reports.extensions.icd10.Impl.Icd10LookupServiceImplTest;
 import org.bahmni.reports.extensions.icd10.bean.IcdResponse;
 import org.bahmni.reports.extensions.icd10.bean.IcdRule;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +17,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -39,8 +40,8 @@ public class Icd10EvaluatorTest {
         List<IcdRule> mockSortedRules = getMockMapRules("terminologyServices/icdRules_SingleMapGroup.json");
         when(icd10Service.getRules(any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getMatchingIcdCodes("dummycode", 34, "M");
-        Assert.assertNotNull(codes);
-        Assert.assertEquals("J45.9", codes);
+        assertNotNull(codes);
+        assertEquals("J45.9", codes);
     }
 
     @Test
@@ -48,8 +49,8 @@ public class Icd10EvaluatorTest {
         List<IcdRule> mockSortedRules = getMockMapRules("terminologyServices/icdRules_MultipleMapGroups.json");
         when(icd10Service.getRules(any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getMatchingIcdCodes("dummycode", 34, "M");
-        Assert.assertNotNull(codes);
-        Assert.assertEquals("J45.9,N45.9", codes);
+        assertNotNull(codes);
+        assertEquals("J45.9,N45.9", codes);
     }
 
     @Test
@@ -57,8 +58,8 @@ public class Icd10EvaluatorTest {
         List<IcdRule> mockSortedRules = getMockMapRules("terminologyServices/icdRules_Age.json");
         when(icd10Service.getRules(any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getMatchingIcdCodes("dummycode", 90, "M");
-        Assert.assertNotNull(codes);
-        Assert.assertEquals("M83.19", codes);
+        assertNotNull(codes);
+        assertEquals("M83.19", codes);
     }
 
     @Test
@@ -66,8 +67,8 @@ public class Icd10EvaluatorTest {
         List<IcdRule> mockSortedRules = getMockMapRules("terminologyServices/icdRules_Age.json");
         when(icd10Service.getRules(any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getMatchingIcdCodes("dummycode", 10, "M");
-        Assert.assertNotNull(codes);
-        Assert.assertEquals("E55.0", codes);
+        assertNotNull(codes);
+        assertEquals("E55.0", codes);
     }
 
     @Test
@@ -75,8 +76,8 @@ public class Icd10EvaluatorTest {
         List<IcdRule> mockSortedRules = getMockMapRules("terminologyServices/icdRules_Age.json");
         when(icd10Service.getRules(any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getMatchingIcdCodes("dummycode", 14, "M");
-        Assert.assertNotNull(codes);
-        Assert.assertEquals("E55.0,M87.19", codes);
+        assertNotNull(codes);
+        assertEquals("E55.0,M87.19", codes);
     }
 
     @Test
@@ -84,8 +85,8 @@ public class Icd10EvaluatorTest {
         List<IcdRule> mockSortedRules = getMockMapRules("terminologyServices/icdRules_Gender.json");
         when(icd10Service.getRules(any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getMatchingIcdCodes("dummycode", 34, "M");
-        Assert.assertNotNull(codes);
-        Assert.assertEquals("N46", codes);
+        assertNotNull(codes);
+        assertEquals("N46", codes);
     }
 
     @Test
@@ -93,8 +94,8 @@ public class Icd10EvaluatorTest {
         List<IcdRule> mockSortedRules = getMockMapRules("terminologyServices/icdRules_Gender.json");
         when(icd10Service.getRules(any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getMatchingIcdCodes("dummycode", 34, "F");
-        Assert.assertNotNull(codes);
-        Assert.assertEquals("N97.9", codes);
+        assertNotNull(codes);
+        assertEquals("N97.9", codes);
     }
 
     @Test
@@ -102,18 +103,18 @@ public class Icd10EvaluatorTest {
         List<IcdRule> mockSortedRules = getMockMapRules("terminologyServices/icdRules_Gender.json");
         when(icd10Service.getRules(any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getMatchingIcdCodes("dummycode", 34, "OTHER");
-        Assert.assertNotNull(codes);
-        Assert.assertEquals("", codes);
+        assertNotNull(codes);
+        assertEquals("", codes);
     }
 
 
     @Test
-    public void shouldReturnEmptyICDCode_PerMapGroupForMultipleMapGroups_WhenMapTargetIsEmpty() {
+    public void shouldReturnEmptyICDCode_PerMapGroupForMultipleMapGroups_WhenMatchingMapTargetIsEmpty() {
         List<IcdRule> mockSortedRules = getMockMapRules("terminologyServices/icdRules_WithEmptyMapTargets.json");
         when(icd10Service.getRules(any())).thenReturn(mockSortedRules);
         String codes = icd10Evaluator.getMatchingIcdCodes("dummycode", 34, "OTHER");
-        Assert.assertNotNull(codes);
-        Assert.assertEquals("", codes);
+        assertNotNull(codes);
+        assertEquals("", codes);
     }
 
 

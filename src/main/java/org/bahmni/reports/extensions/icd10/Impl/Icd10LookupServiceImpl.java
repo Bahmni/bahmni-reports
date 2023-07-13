@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.extensions.icd10.Icd10LookupService;
 import org.bahmni.reports.extensions.icd10.bean.IcdResponse;
 import org.bahmni.reports.extensions.icd10.bean.IcdRule;
+import org.bahmni.reports.util.PropertyUtil;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -12,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
@@ -29,14 +28,7 @@ public class Icd10LookupServiceImpl implements Icd10LookupService {
     private RestTemplate restTemplate = new RestTemplate();
 
     static Properties loadIcdProperties() {
-        try (InputStream in = Icd10LookupServiceImpl.class.getClassLoader().getResourceAsStream(ICD_PROPERTIES_FILENAME)) {
-            Properties p = new Properties();
-            p.load(in);
-            return p;
-        } catch (IOException exception) {
-            logger.error("Could not load ICD service properties from: " + ICD_PROPERTIES_FILENAME, exception);
-            throw new RuntimeException(exception);
-        }
+        return PropertyUtil.loadProperties(ICD_PROPERTIES_FILENAME);
     }
 
     @Override

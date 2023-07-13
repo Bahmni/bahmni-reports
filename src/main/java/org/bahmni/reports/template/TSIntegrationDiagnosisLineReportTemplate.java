@@ -84,16 +84,16 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
         List<String> extensions = report.getConfig().getExtensions();
         if (extensions == null || extensions.isEmpty()) {
             jasperReport.setDataSource(resultSet);
-        }else{
+        } else {
             Collection<Map<String, ?>> collection = convertResultSetToCollection(resultSet);
-            extensions.stream().forEach(extensionClassStr -> enrichUsingReflection(collection, extensionClassStr, jasperReport));
+            extensions.forEach(extensionClassStr -> enrichUsingReflection(extensionClassStr, collection, jasperReport));
             jasperReport.setDataSource(new JRMapCollectionDataSource(collection));
         }
         jasperReport.setShowColumnTitle(true).setWhenNoDataType(WhenNoDataType.ALL_SECTIONS_NO_DETAIL);
         return new BahmniReportBuilder(jasperReport);
     }
 
-    private void enrichUsingReflection(Collection<Map<String, ?>> collection, String extensionClassStr, JasperReportBuilder jasperReport) {
+    private void enrichUsingReflection(String extensionClassStr, Collection<Map<String, ?>> collection, JasperReportBuilder jasperReport) {
         try {
             Class<?> extensionClass = Class.forName(extensionClassStr);
             Constructor constructor = extensionClass.getDeclaredConstructor();
