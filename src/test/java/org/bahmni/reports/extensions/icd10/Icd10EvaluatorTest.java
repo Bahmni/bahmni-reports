@@ -113,6 +113,15 @@ public class Icd10EvaluatorTest {
         Assert.assertEquals("", codes);
     }
 
+    @Test
+    public void shouldReturnEmptyICDCodeWhenMultipleMapGroupRulesHaveEmptyMapTarget() {
+        List<ICDRule> mockSortedRules = getMockMapRules("terminologyServices/icdRules_WithEmptyMapTargets.json");
+        when(icd10Service.getRules(any())).thenReturn(mockSortedRules);
+        String codes = icd10Evaluator.getMatchingIcdCodes("dummycode", 34, "OTHER");
+        Assert.assertNotNull(codes);
+        Assert.assertEquals("", codes);
+    }
+
     private List<ICDRule> getMockMapRules(String filePath) {
         try {
             ICDResponse icdResponse = objectMapper.readValue(readFileAsStr(filePath), ICDResponse.class);
