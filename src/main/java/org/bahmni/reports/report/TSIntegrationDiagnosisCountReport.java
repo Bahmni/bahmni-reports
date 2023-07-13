@@ -17,7 +17,7 @@ public class TSIntegrationDiagnosisCountReport extends Report<TSIntegrationDiagn
     public BaseReportTemplate getTemplate(BahmniReportsProperties bahmniReportsProperties) {
         HttpClient httpClient = getHttpClient(bahmniReportsProperties);
         Properties tsProperties = PropertyUtil.loadProperties(TS_PROPERTIES_FILENAME);
-        String tsEndpointTemplate = bahmniReportsProperties.getOpenmrsRootUrl() + tsProperties.getProperty("ts.endpoint");
+        String tsEndpointTemplate = bahmniReportsProperties.getOpenmrsRootUrl() + tsProperties.getProperty(TERMINOLOGY_SERVER_ENDPOINT_PROP);
         return new TSIntegrationDiagnosisCountReportTemplate(httpClient, tsProperties, tsEndpointTemplate);
     }
 }
