@@ -6,6 +6,7 @@ import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.TSIntegrationDiagnosisLineReportConfig;
 import org.bahmni.reports.template.TSIntegrationDiagnosisLineReportTemplate;
+import org.bahmni.reports.util.FileReaderUtil;
 import org.bahmni.reports.util.SqlUtil;
 import org.bahmni.webclients.HttpClient;
 import org.junit.Before;
@@ -19,19 +20,12 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
@@ -294,13 +288,8 @@ public class TSIntegrationDiagnosisLineReportTest {
         return tsIntegrationDiagnosisLineReportConfig;
     }
 
-    private String getMockTerminologyDescendants() throws URISyntaxException, IOException {
-        return readFileAsStr("terminologyServices/descendantCodes.json");
-    }
-
-    private String readFileAsStr(String relativePath) throws URISyntaxException, IOException {
-        Path path = Paths.get(getClass().getClassLoader().getResource(relativePath).toURI());
-        return Files.lines(path, StandardCharsets.UTF_8).collect(Collectors.joining("\n"));
+    private String getMockTerminologyDescendants() {
+        return FileReaderUtil.getFileContent("terminologyServices/descendantCodes.json");
     }
 
 }

@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.extensions.icd10.Impl.Icd10LookupServiceImpl;
-import org.bahmni.reports.extensions.icd10.bean.ICDRule;
+import org.bahmni.reports.extensions.icd10.bean.IcdRule;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -29,7 +29,7 @@ public class Icd10Evaluator {
     public Icd10LookupService icd10LookUpService = new Icd10LookupServiceImpl();
     public ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("Nashorn");
 
-    private static int getMapGroup(ICDRule rule) {
+    private static int getMapGroup(IcdRule rule) {
         return Integer.parseInt(rule.getMapGroup());
     }
 
@@ -44,7 +44,7 @@ public class Icd10Evaluator {
         return rule;
     }
 
-    private static boolean isRuleWithNextMapGroup(int currentMapGroup, ICDRule rule) {
+    private static boolean isRuleWithNextMapGroup(int currentMapGroup, IcdRule rule) {
         int ruleMapGroup = getMapGroup(rule);
         return ruleMapGroup > currentMapGroup;
     }
@@ -52,10 +52,10 @@ public class Icd10Evaluator {
     public String getMatchingIcdCodes(String snomedCode, int age, String gender) {
         List<String> matchingICDCodes = new ArrayList<>();
         try {
-            List<ICDRule> orderedRules = icd10LookUpService.getRules(snomedCode);
+            List<IcdRule> orderedRules = icd10LookUpService.getRules(snomedCode);
             int currentMapGroup = 1;
             boolean isMapTargetFoundForCurrentMapGroup = false;
-            for (ICDRule rule : orderedRules) {
+            for (IcdRule rule : orderedRules) {
                 if (isRuleWithNextMapGroup(currentMapGroup, rule)) {
                     currentMapGroup = getMapGroup(rule);
                     isMapTargetFoundForCurrentMapGroup = false;

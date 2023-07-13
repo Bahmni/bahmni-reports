@@ -1,6 +1,6 @@
 package org.bahmni.reports.extensions.icd10.bean;
 
-public class ICDMap {
+public class IcdMap {
     String snomedCode;
     int age;
     String gender;

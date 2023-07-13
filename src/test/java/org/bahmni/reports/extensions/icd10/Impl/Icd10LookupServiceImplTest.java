@@ -1,8 +1,10 @@
 package org.bahmni.reports.extensions.icd10.Impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bahmni.reports.extensions.icd10.bean.ICDResponse;
-import org.bahmni.reports.extensions.icd10.bean.ICDRule;
+import org.bahmni.reports.extensions.icd10.bean.IcdRule;
+import org.bahmni.reports.extensions.icd10.bean.IcdResponse;
+import org.bahmni.reports.util.FileReaderUtil;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +18,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.InputStream;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -30,9 +31,11 @@ public class Icd10LookupServiceImplTest {
     @InjectMocks
     Icd10LookupServiceImpl icd10LookupService;
     @Mock
-    ResponseEntity<ICDResponse> mockIcdResponse;
+    ResponseEntity<IcdResponse> mockIcdResponse;
     @Mock
     RestTemplate restTemplate;
+
+    private static ObjectMapper mapper = new ObjectMapper();
 
     @Before
     public void setUp() {
@@ -41,11 +44,11 @@ public class Icd10LookupServiceImplTest {
 
     @Test
     public void shouldReturnIcdRulesOrderedByMapGroupAndMapPriorityWhenValidSnomedCodeIsPassed() {
-        ICDResponse mockResponse = getMockMapRules("terminologyServices/icdRules_MultipleMapGroups.json");
-        when(restTemplate.exchange(any(), any(), any(), eq(ICDResponse.class))).thenReturn(mockIcdResponse);
+        IcdResponse mockResponse = getMockIcdResponse("terminologyServices/icdRules_MultipleMapGroups.json");
+        when(restTemplate.exchange(any(), any(), any(), eq(IcdResponse.class))).thenReturn(mockIcdResponse);
         when(mockIcdResponse.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
         when(mockIcdResponse.getBody()).thenReturn(mockResponse);
-        List<ICDRule> sortedRules = icd10LookupService.getRules(SNOMED_CODE);
+        List<IcdRule> sortedRules = icd10LookupService.getRules(SNOMED_CODE);
         Assert.assertNotNull(sortedRules);
         Assert.assertEquals(4, sortedRules.size());
         Assert.assertEquals("1", sortedRules.get(0).getMapGroup());
@@ -60,33 +63,30 @@ public class Icd10LookupServiceImplTest {
 
     @Test
     public void shouldReturnEmptyListWhenInvalidSnomedCodeIsPassed() {
-        when(restTemplate.exchange(any(), any(), any(), eq(ICDResponse.class))).thenReturn(mockIcdResponse);
+        when(restTemplate.exchange(any(), any(), any(), eq(IcdResponse.class))).thenReturn(mockIcdResponse);
         when(mockIcdResponse.getStatusCode()).thenReturn(HttpStatus.BAD_REQUEST);
-        List<ICDRule> sortedRules = icd10LookupService.getRules(SNOMED_CODE);
+        List<IcdRule> sortedRules = icd10LookupService.getRules(SNOMED_CODE);
         Assert.assertNotNull(sortedRules);
         Assert.assertEquals(0, sortedRules.size());
     }
 
     @Test
     public void shouldInvokePaginatedCallsForIcdRulesWithLargeResultSet() {
-        ICDResponse mockResponse = getMockMapRules("terminologyServices/icdRules_WithLargeResultSet.json");
-        when(restTemplate.exchange(any(), any(), any(), eq(ICDResponse.class))).thenReturn(mockIcdResponse);
+        IcdResponse mockResponse = getMockIcdResponse("terminologyServices/icdRules_WithLargeResultSet.json");
+        when(restTemplate.exchange(any(), any(), any(), eq(IcdResponse.class))).thenReturn(mockIcdResponse);
         when(mockIcdResponse.getStatusCode()).thenReturn(HttpStatus.ACCEPTED);
         when(mockIcdResponse.getBody()).thenReturn(mockResponse);
-        List<ICDRule> sortedRules = icd10LookupService.getRules(SNOMED_CODE);
+        List<IcdRule> sortedRules = icd10LookupService.getRules(SNOMED_CODE);
         Assert.assertNotNull(sortedRules);
-        verify(restTemplate, times(2)).exchange(any(), any(), any(), eq(ICDResponse.class));
+        verify(restTemplate, times(2)).exchange(any(), any(), any(), eq(IcdResponse.class));
     }
 
-    private ICDResponse getMockMapRules(String relativePath) {
-        try (InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream(relativePath)) {
-            ObjectMapper mapper = new ObjectMapper();
-            return mapper.readValue(in, ICDResponse.class);
-
-        } catch (Exception ignored) {
-
+    public static IcdResponse getMockIcdResponse(String relativePath) {
+        try {
+            return mapper.readValue(FileReaderUtil.getFileContent(relativePath), IcdResponse.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
-        return new ICDResponse();
     }
 
 }

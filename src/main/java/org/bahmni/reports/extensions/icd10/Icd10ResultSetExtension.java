@@ -2,6 +2,7 @@ package org.bahmni.reports.extensions.icd10;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
+import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.extensions.ResultSetExtension;
 import org.bahmni.reports.template.TSIntegrationDiagnosisLineReportTemplate;
 
@@ -21,7 +22,7 @@ public class Icd10ResultSetExtension implements ResultSetExtension {
 
     public Icd10Evaluator icd10Evaluator = new Icd10Evaluator();
 
-    public void enrich(Collection<Map<String, ?>> collection, JasperReportBuilder jasperReport) throws SQLException {
+    public void enrich(Collection<Map<String, ?>> collection, JasperReportBuilder jasperReport){
         for (Map<String, ?> rowMap : collection) {
             String terminologyCode = (String) rowMap.get(TSIntegrationDiagnosisLineReportTemplate.TERMINOLOGY_COLUMN_NAME);
             int age = getAgeFromDob((String) rowMap.get(TSIntegrationDiagnosisLineReportTemplate.PATIENT_DATE_OF_BIRTH_COLUMN_NAME));

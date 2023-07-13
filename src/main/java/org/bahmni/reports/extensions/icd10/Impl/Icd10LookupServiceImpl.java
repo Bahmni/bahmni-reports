@@ -3,8 +3,8 @@ package org.bahmni.reports.extensions.icd10.Impl;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.extensions.icd10.Icd10LookupService;
-import org.bahmni.reports.extensions.icd10.bean.ICDResponse;
-import org.bahmni.reports.extensions.icd10.bean.ICDRule;
+import org.bahmni.reports.extensions.icd10.bean.IcdResponse;
+import org.bahmni.reports.extensions.icd10.bean.IcdRule;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
@@ -22,7 +22,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Icd10LookupServiceImpl implements Icd10LookupService {
-    public static final Comparator<ICDRule> customComparator = Comparator.comparingInt((ICDRule rule) -> Integer.parseInt(rule.mapGroup)).thenComparingInt(rule -> Integer.parseInt(rule.mapPriority));
+    public static final Comparator<IcdRule> customComparator = Comparator.comparingInt((IcdRule rule) -> Integer.parseInt(rule.mapGroup)).thenComparingInt(rule -> Integer.parseInt(rule.mapPriority));
     private static final Logger logger = LogManager.getLogger(Icd10LookupServiceImpl.class);
     private static final String ICD_PROPERTIES_FILENAME = "icd-service-config.properties";
     private static final Properties icd10Properties = loadIcdProperties();
@@ -40,10 +40,10 @@ public class Icd10LookupServiceImpl implements Icd10LookupService {
     }
 
     @Override
-    public List<ICDRule> getRules(String snomedCode) {
+    public List<IcdRule> getRules(String snomedCode) {
         try {
-            ICDResponse icdResponse;
-            List<ICDRule> icdRules = new ArrayList<>();
+            IcdResponse icdResponse;
+            List<IcdRule> icdRules = new ArrayList<>();
             int offset = 0, limit = 100;
             do {
                 URI encodedURI = getEndPoint(snomedCode, offset, limit);
@@ -67,12 +67,12 @@ public class Icd10LookupServiceImpl implements Icd10LookupService {
         return URLEncoder.encode(rawStr, StandardCharsets.UTF_8.name());
     }
 
-    private ICDResponse getResponse(URI encodedURI) {
-        ResponseEntity<ICDResponse> responseEntity = restTemplate.exchange(encodedURI, HttpMethod.GET, new org.springframework.http.HttpEntity<>(null, getHeaders()), ICDResponse.class);
+    private IcdResponse getResponse(URI encodedURI) {
+        ResponseEntity<IcdResponse> responseEntity = restTemplate.exchange(encodedURI, HttpMethod.GET, new org.springframework.http.HttpEntity<>(null, getHeaders()), IcdResponse.class);
         if (responseEntity.getStatusCode().is2xxSuccessful()) {
             return responseEntity.getBody();
         }
-        return new ICDResponse();
+        return new IcdResponse();
     }
 
     private URI getEndPoint(String snomedCode, Integer offset, Integer limit) {

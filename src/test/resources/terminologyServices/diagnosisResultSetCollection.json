@@ -1,0 +1,20 @@
+[
+  {
+    "Patient Id": "11111111",
+    "Patient Name": "dummy1",
+    "Date of Birth": "2013-06-29",
+    "Date & Time of Diagnosis": "11-Jul-2023 16:17",
+    "Gender": "M",
+    "Diagnosis": "Pneumonia with AIDS (acquired immunodeficiency syndrome)",
+    "Terminology Code": "987654321"
+  },
+  {
+    "Patient Id": "2222222",
+    "Patient Name": "dummy2",
+    "Date of Birth": "2003-06-29",
+    "Date & Time of Diagnosis": "12-Jul-2023 16:17",
+    "Gender": "F",
+    "Diagnosis": "Peritonitis",
+    "Terminology Code": "987654321"
+  }
+]

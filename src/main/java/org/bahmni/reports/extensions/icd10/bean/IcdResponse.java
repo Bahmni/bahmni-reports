@@ -5,20 +5,20 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ICDResponse {
-    List<ICDRule> items;
+public class IcdResponse {
+    List<IcdRule> items;
 
     int total;
 
-    public ICDResponse() {
+    public IcdResponse() {
 
     }
 
-    public List<ICDRule> getItems() {
+    public List<IcdRule> getItems() {
         return items;
     }
 
-    public void setItems(List<ICDRule> items) {
+    public void setItems(List<IcdRule> items) {
         this.items = items;
     }
 

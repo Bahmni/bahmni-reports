@@ -3,7 +3,7 @@ package org.bahmni.reports.extensions.icd10.bean;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ICDRule {
+public class IcdRule {
     public String mapPriority;
     public String mapGroup;
     public String mapRule;
