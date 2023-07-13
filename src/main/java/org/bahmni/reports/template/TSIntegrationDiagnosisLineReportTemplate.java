@@ -82,7 +82,7 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
         ResultSet resultSet = getResultSet(sql, report.getConfig().getTsConceptSource(), startDate, endDate, tempTableName, report.getConfig(), connection);
 
         List<String> extensions = report.getConfig().getExtensions();
-        if (extensions == null) {
+        if (extensions == null || extensions.isEmpty()) {
             jasperReport.setDataSource(resultSet);
         }else{
             Collection<Map<String, ?>> collection = convertResultSetToCollection(resultSet);

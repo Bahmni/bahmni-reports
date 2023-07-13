@@ -1,5 +1,6 @@
 package org.bahmni.reports.extensions.icd10;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.extensions.icd10.Impl.Icd10LookupServiceImpl;
@@ -70,7 +71,7 @@ public class Icd10Evaluator {
         } catch (Exception exception) {
             logger.error("Error occurred when extracting Icd10 codes for snomed code: " + snomedCode, exception);
         }
-        return matchingICDCodes.stream().collect(Collectors.joining(","));
+        return matchingICDCodes.stream().filter(StringUtils::isNotBlank).collect(Collectors.joining(","));
     }
 
     boolean evaluateRule(String rule) {
