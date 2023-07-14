@@ -100,9 +100,9 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
             constructor.setAccessible(true);
             ResultSetExtension extension = (ResultSetExtension) constructor.newInstance();
             extension.enrich(collection, jasperReport);
-        } catch (Exception ex) {
-            logger.error(String.format("Error caused during reflection in enrichUsingReflection method: %s", ex.getMessage()));
-            throw new RuntimeException();
+        } catch (Exception e) {
+            logger.error(String.format("Error caused during reflection in enrichUsingReflection method: %s", e.getMessage()));
+            throw new RuntimeException(e);
         }
     }
 

@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
 
 public interface ResultSetExtension {
     static final String EMPTY_STRING = "";

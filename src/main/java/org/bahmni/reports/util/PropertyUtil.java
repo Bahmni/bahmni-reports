@@ -17,7 +17,7 @@ public class PropertyUtil {
             return p;
         } catch (IOException e) {
             logger.error("Could not load properties from: " + propertiesFileName, e);
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 }

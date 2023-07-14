@@ -2,11 +2,9 @@ package org.bahmni.reports.extensions.icd10;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import org.apache.commons.lang3.StringUtils;
 import org.bahmni.reports.extensions.ResultSetExtension;
 import org.bahmni.reports.template.TSIntegrationDiagnosisLineReportTemplate;
 
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Collection;
@@ -22,7 +20,7 @@ public class Icd10ResultSetExtension implements ResultSetExtension {
 
     public Icd10Evaluator icd10Evaluator = new Icd10Evaluator();
 
-    public void enrich(Collection<Map<String, ?>> collection, JasperReportBuilder jasperReport){
+    public void enrich(Collection<Map<String, ?>> collection, JasperReportBuilder jasperReport) {
         collection.forEach(this::enrichRowWithIcdCode);
         jasperReport.addColumn(col.column(ICD_10_COLUMN_NAME, ICD_10_COLUMN_NAME, type.stringType()).setStyle(columnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER));
     }

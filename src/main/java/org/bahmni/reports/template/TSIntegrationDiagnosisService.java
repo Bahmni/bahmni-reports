@@ -53,11 +53,7 @@ public interface TSIntegrationDiagnosisService {
 
                 TSPageObject pageObject = null;
                 do {
-                    try {
-                        pageObject = fetchDescendantsByPagination(parentCode, pageSize, offset, "en", httpClient, descendantsUrlTemplate);
-                    } catch (IOException e) {
-                        throw new RuntimeException();
-                    }
+                    pageObject = fetchDescendantsByPagination(parentCode, pageSize, offset, "en", httpClient, descendantsUrlTemplate);
                     List<String> codes = pageObject.getCodes();
                     for (int batchcount = 0; batchcount < codes.size(); batchcount++) {
                         pstmtInsert.setString(1, codes.get(batchcount));
@@ -67,9 +63,9 @@ public interface TSIntegrationDiagnosisService {
                     offset += pageSize;
                 } while (offset < pageObject.getTotal());
             }
-        } catch (SQLException e) {
-            logger.error("Error occured while making database call to " + tempTableName + " table");
-            throw new RuntimeException();
+        } catch (SQLException | IOException e) {
+            logger.error("Error occurred while making database call to " + tempTableName + " table");
+            throw new RuntimeException(e);
         }
     }
 
@@ -80,7 +76,8 @@ public interface TSIntegrationDiagnosisService {
         try {
             return mapper.readValue(responseStr, TSPageObject.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException();
+            logger.error("Error occurred while converting response to page object in fetchDescendantsByPagination");
+            throw new RuntimeException(e);
         }
     }
 
