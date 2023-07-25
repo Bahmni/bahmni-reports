@@ -1,0 +1,617 @@
+{
+  "items": [
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "1",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "1",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "1",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "2",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "2",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "2",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "3",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "3",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "3",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "4",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "4",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "4",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "5",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "5",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "5",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "6",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "6",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "6",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "7",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "7",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "7",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "8",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "8",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "8",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "9",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "9",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "9",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "10",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "10",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "10",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "11",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "11",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "11",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "12",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "12",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "12",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "13",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "13",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "13",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "14",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "14",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "14",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "15",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "15",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "15",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "16",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "16",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "16",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "17",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "17",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "17",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "18",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "18",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "18",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "19",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "19",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "19",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "20",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "20",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "20",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "21",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "21",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "21",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "22",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "22",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "22",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "23",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "23",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "23",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "24",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "24",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "24",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "25",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "25",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "25",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "26",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "26",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "26",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "27",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "27",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "27",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "28",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "28",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "28",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "29",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "29",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "29",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "30",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "30",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "30",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "31",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "31",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "31",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "32",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "32",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "32",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "33",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "33",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "33",
+      "mapTarget": "N97.9"
+    },
+    {
+      "mapRule": "OTHERWISE TRUE",
+      "mapPriority": "3",
+      "mapGroup": "34",
+      "mapTarget": ""
+    },
+    {
+      "mapRule": "IFA 248153007 | Male (finding) |",
+      "mapPriority": "2",
+      "mapGroup": "34",
+      "mapTarget": "N46"
+    },
+    {
+      "mapRule": "IFA 248152002 | Female (finding) |",
+      "mapPriority": "1",
+      "mapGroup": "34",
+      "mapTarget": "N97.9"
+    }
+  ],
+  "total": 102
+}

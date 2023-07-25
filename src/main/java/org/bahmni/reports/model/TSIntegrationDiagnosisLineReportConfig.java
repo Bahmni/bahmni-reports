@@ -9,6 +9,8 @@ import java.util.List;
 public class TSIntegrationDiagnosisLineReportConfig extends TSIntegrationDiagnosisReportConfig implements Config {
     private List<String> patientAttributes;
     private List<String> patientAddresses;
+    private List<String> extensions;
+
     public List<String> getPatientAttributes() {
         return patientAttributes;
     }
@@ -25,4 +27,11 @@ public class TSIntegrationDiagnosisLineReportConfig extends TSIntegrationDiagnos
         this.patientAddresses = patientAddresses;
     }
 
+    public List<String> getExtensions() {
+        return extensions;
+    }
+
+    public void setExtensions(List<String> extensions) {
+        this.extensions = extensions;
+    }
 }
