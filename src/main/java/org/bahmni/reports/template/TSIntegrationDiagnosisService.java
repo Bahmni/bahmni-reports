@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.builder.column.TextColumnBuilder;
 import net.sf.dynamicreports.report.constant.HorizontalAlignment;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.model.TSIntegrationDiagnosisLineReportConfig;
@@ -30,7 +29,7 @@ import static org.bahmni.reports.template.Templates.columnStyle;
 public interface TSIntegrationDiagnosisService {
     final static String CREATE_SQL_TEMPLATE = "create temporary table {0}(code varchar(100) not null)";
     final static String INSERT_SQL_TEMPLATE = "insert into {0} values (?)";
-    final static String TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE = "20";
+    final static int TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE = 20;
     Logger logger = LogManager.getLogger(TSIntegrationDiagnosisService.class);
 
     static List<String> getPatientAttributes(TSIntegrationDiagnosisLineReportConfig config) {
@@ -54,11 +53,7 @@ public interface TSIntegrationDiagnosisService {
 
                 TSPageObject pageObject = null;
                 do {
-                    try {
-                        pageObject = fetchDescendantsByPagination(parentCode, pageSize, offset, "en", httpClient, descendantsUrlTemplate);
-                    } catch (IOException e) {
-                        throw new RuntimeException();
-                    }
+                    pageObject = fetchDescendantsByPagination(parentCode, pageSize, offset, "en", httpClient, descendantsUrlTemplate);
                     List<String> codes = pageObject.getCodes();
                     for (int batchcount = 0; batchcount < codes.size(); batchcount++) {
                         pstmtInsert.setString(1, codes.get(batchcount));
@@ -68,9 +63,9 @@ public interface TSIntegrationDiagnosisService {
                     offset += pageSize;
                 } while (offset < pageObject.getTotal());
             }
-        } catch (SQLException e) {
-            logger.error("Error occured while making database call to " + tempTableName + " table");
-            throw new RuntimeException();
+        } catch (SQLException | IOException e) {
+            logger.error("Error occurred while making database call to " + tempTableName + " table");
+            throw new RuntimeException(e);
         }
     }
 
@@ -81,13 +76,18 @@ public interface TSIntegrationDiagnosisService {
         try {
             return mapper.readValue(responseStr, TSPageObject.class);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException();
+            logger.error("Error occurred while converting response to page object in fetchDescendantsByPagination");
+            throw new RuntimeException(e);
         }
     }
 
     default int getDefaultPageSize(Properties tsProperties) {
-        String pageSize = StringUtils.firstNonBlank(System.getenv("REPORTS_TS_PAGE_SIZE"), tsProperties.getProperty("terminologyServer.defaultPageSize"), TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE);
-        return Integer.parseInt(pageSize);
+        String pageSize = System.getenv("REPORTS_TS_PAGE_SIZE");
+        if (pageSize == null) pageSize = tsProperties.getProperty("ts.defaultPageSize");
+        if (pageSize != null) {
+            return Integer.parseInt(pageSize);
+        }
+        return TS_DIAGNOSIS_LOOKUP_DEFAULT_PAGE_SIZE;
     }
 
     default void createAndAddPatientAddressColumns(JasperReportBuilder jasperReport, TSIntegrationDiagnosisLineReportConfig config) {
