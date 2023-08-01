@@ -99,7 +99,7 @@ public class TSIntegrationDiagnosisLineReportTemplate extends BaseReportTemplate
             Constructor constructor = extensionClass.getDeclaredConstructor();
             constructor.setAccessible(true);
             ResultSetExtension extension = (ResultSetExtension) constructor.newInstance();
-            extension.enrich(collection, jasperReport);
+            extension.enrich(collection, jasperReport);//enrich
         } catch (Exception e) {
             logger.error(String.format("Error caused during reflection in enrichUsingReflection method: %s", e.getMessage()));
             throw new RuntimeException(e);
