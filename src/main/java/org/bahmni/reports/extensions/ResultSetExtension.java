@@ -2,7 +2,6 @@ package org.bahmni.reports.extensions;
 
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import org.apache.commons.lang3.StringUtils;
-
 import java.util.Collection;
 import java.util.Map;
 
