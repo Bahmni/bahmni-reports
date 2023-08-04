@@ -25,7 +25,7 @@ RUN cd ${WAR_DIRECTORY} && jar xvf /etc/bahmni-reports/bahmnireports.war
 
 ADD https://repo.mybahmni.org/packages/build/bahmni-embedded-tomcat-8.0.42.jar /opt/bahmni-reports/lib/bahmni-embedded-tomcat.jar
 RUN cd /opt/ && git clone https://github.com/Bahmni/bahmni-reports-extension-icd10.git
-RUN cd /opt/bahmni-reports-extension-icd10 && git checkout BS-123 && mvn clean install
+RUN cd /opt/bahmni-reports-extension-icd10 && mvn clean install
 
 RUN cp /opt/bahmni-reports-extension-icd10/target/extensions-1.0-SNAPSHOT.jar ${WAR_DIRECTORY}/WEB-INF/lib/extensions-1.0-SNAPSHOT.jar
 COPY package/resources/log4j2.properties ${WAR_DIRECTORY}/WEB-INF/classes/
