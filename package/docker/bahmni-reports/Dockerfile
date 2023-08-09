@@ -13,8 +13,6 @@ RUN mkdir -p ${WAR_DIRECTORY}
 RUN mkdir -p ${HOME}/.bahmni-reports/
 RUN mkdir -p /var/log/bahmni-reports/
 RUN yum install -y gettext unzip
-RUN yum install -y git
-RUN yum install -y maven
 
 ADD https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for /etc/wait-for
 RUN yum install -y nc
@@ -24,10 +22,7 @@ COPY target/bahmnireports.war /etc/bahmni-reports/bahmnireports.war
 RUN cd ${WAR_DIRECTORY} && jar xvf /etc/bahmni-reports/bahmnireports.war
 
 ADD https://repo.mybahmni.org/packages/build/bahmni-embedded-tomcat-8.0.42.jar /opt/bahmni-reports/lib/bahmni-embedded-tomcat.jar
-RUN cd /opt/ && git clone https://github.com/Bahmni/bahmni-reports-extension-icd10.git
-RUN cd /opt/bahmni-reports-extension-icd10 && mvn clean install
 
-RUN cp /opt/bahmni-reports-extension-icd10/target/extensions-1.0-SNAPSHOT.jar ${WAR_DIRECTORY}/WEB-INF/lib/extensions-1.0-SNAPSHOT.jar
 COPY package/resources/log4j2.properties ${WAR_DIRECTORY}/WEB-INF/classes/
 COPY package/resources/run-liquibase.sh /etc/bahmni-reports/
 COPY package/docker/bahmni-reports/template/bahmni-reports.properties.template /etc/bahmni-reports/
