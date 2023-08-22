@@ -17,8 +17,8 @@ config.file.path=/var/www/bahmni_config/openmrs/apps/reports/reports.json
 openmrs.service.rootUrl=http://localhost:8050/openmrs/ws/rest/v1
 openmrs.service.user=admin
 openmrs.service.password=test
-openmrs.connectionTimeoutInMilliseconds=30000
-openmrs.replyTimeoutInMilliseconds=120000
+openmrs.connectionTimeoutInMilliseconds=1800000
+openmrs.replyTimeoutInMilliseconds=1800000
 macrotemplates.temp.directory=/tmp/
 reports.timezone=Asia/Kolkata
 bahmnireports.db.url=jdbc:mysql://localhost:3306/bahmni_reports?allowMultiQueries=true
@@ -37,8 +37,8 @@ config.file.path=/var/www/bahmni_config/openmrs/apps/reports/reports.json
 openmrs.service.rootUrl=http://localhost:8050/openmrs/ws/rest/v1
 openmrs.service.user=admin
 openmrs.service.password=test
-openmrs.connectionTimeoutInMilliseconds=30000
-openmrs.replyTimeoutInMilliseconds=120000
+openmrs.connectionTimeoutInMilliseconds=1800000
+openmrs.replyTimeoutInMilliseconds=1800000
 macrotemplates.temp.directory=/tmp/
 reports.timezone=Asia/Kolkata
 bahmnireports.db.url=jdbc:mysql://localhost:3306/bahmni_reports_it?allowMultiQueries=true
