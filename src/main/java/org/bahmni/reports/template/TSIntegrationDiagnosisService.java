@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -52,8 +53,10 @@ public interface TSIntegrationDiagnosisService {
             try (PreparedStatement pstmtInsert = connection.prepareStatement(insertSqlStmt)) {
 
                 TSPageObject pageObject = null;
+                System.out.println(new Date() + "Starting pagination ");
                 do {
                     pageObject = fetchDescendantsByPagination(parentCode, pageSize, offset, "en", httpClient, descendantsUrlTemplate);
+                    System.out.println(new Date() + "pageSize : " + pageSize + " offset " + offset + " total : " + pageObject.getTotal());
                     List<String> codes = pageObject.getCodes();
                     for (int batchcount = 0; batchcount < codes.size(); batchcount++) {
                         pstmtInsert.setString(1, codes.get(batchcount));
@@ -67,6 +70,7 @@ public interface TSIntegrationDiagnosisService {
             logger.error("Error occurred while making database call to " + tempTableName + " table");
             throw new RuntimeException(e);
         }
+        System.out.println(new Date() + " pagination completed");
     }
 
     default TSPageObject fetchDescendantsByPagination(String terminologyCode, int pageSize, int offset, String localeLanguage, HttpClient httpClient, String descendantsUrlTemplate) throws IOException {
@@ -83,7 +87,7 @@ public interface TSIntegrationDiagnosisService {
 
     default int getDefaultPageSize(Properties tsProperties) {
         String pageSize = System.getenv("REPORTS_TS_PAGE_SIZE");
-        if (pageSize == null) pageSize = tsProperties.getProperty("ts.defaultPageSize");
+        if (pageSize == null) pageSize = tsProperties.getProperty("terminologyServer.defaultPageSize");
         if (pageSize != null) {
             return Integer.parseInt(pageSize);
         }
