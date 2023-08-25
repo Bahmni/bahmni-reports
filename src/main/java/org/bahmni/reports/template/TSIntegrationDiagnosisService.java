@@ -50,7 +50,6 @@ public interface TSIntegrationDiagnosisService {
             Statement statement = connection.createStatement();
             statement.execute(createSqlStmt);
             try (PreparedStatement pstmtInsert = connection.prepareStatement(insertSqlStmt)) {
-
                 TSPageObject pageObject = null;
                 do {
                     pageObject = fetchDescendantsByPagination(parentCode, pageSize, offset, "en", httpClient, descendantsUrlTemplate);
@@ -83,7 +82,7 @@ public interface TSIntegrationDiagnosisService {
 
     default int getDefaultPageSize(Properties tsProperties) {
         String pageSize = System.getenv("REPORTS_TS_PAGE_SIZE");
-        if (pageSize == null) pageSize = tsProperties.getProperty("ts.defaultPageSize");
+        if (pageSize == null) pageSize = tsProperties.getProperty("terminologyServer.defaultPageSize");
         if (pageSize != null) {
             return Integer.parseInt(pageSize);
         }
