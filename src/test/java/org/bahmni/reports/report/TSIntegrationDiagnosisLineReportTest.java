@@ -262,7 +262,7 @@ public class TSIntegrationDiagnosisLineReportTest {
 
         tsIntegrationDiagnosisLineReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
-        verify(mockJasperReport, times(9)).addColumn(any());
+        verify(mockJasperReport, times(8)).addColumn(any());
     }
 
     private TSIntegrationDiagnosisLineReportConfig getMockTerminologyDiagnosisLineReportConfig(boolean displayTerminologyCodeFlag, boolean shortNamePreferredFlag, boolean icd10ExtensionFlag) {
@@ -272,7 +272,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         if (shortNamePreferredFlag)
             tsIntegrationDiagnosisLineReportConfig.setConceptNameDisplayFormat("shortNamePreferred");
         if (icd10ExtensionFlag)
-            tsIntegrationDiagnosisLineReportConfig.setExtensions(Arrays.asList("org.bahmni.reports.extensions.icd10.Icd10ResultSetExtension", "org.bahmni.reports.extensions.sample.SampleResultSetExtension"));
+            tsIntegrationDiagnosisLineReportConfig.setExtensions(Arrays.asList("org.bahmni.reports.extensions.sample.SampleResultSetExtension"));
         return tsIntegrationDiagnosisLineReportConfig;
     }
 
