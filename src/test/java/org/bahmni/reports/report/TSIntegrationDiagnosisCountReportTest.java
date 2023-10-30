@@ -4,8 +4,9 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.report.constant.PageType;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.Report;
-import org.bahmni.reports.model.TSIntegrationDiagnosisReportConfig;
-import org.bahmni.reports.template.TSIntegrationDiagnosisReportTemplate;
+import org.bahmni.reports.model.TSIntegrationDiagnosisCountReportConfig;
+import org.bahmni.reports.template.TSIntegrationDiagnosisCountReportTemplate;
+import org.bahmni.reports.util.FileReaderUtil;
 import org.bahmni.webclients.HttpClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,31 +17,23 @@ import org.mockito.MockitoAnnotations;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.Properties;
-import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
 
 @PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
 @RunWith(PowerMockRunner.class)
-public class TSIntegrationDiagnosisReportTest {
+public class TSIntegrationDiagnosisCountReportTest {
     @InjectMocks
-    TSIntegrationDiagnosisReportTemplate tsIntegrationDiagnosisReportTemplate;
+    TSIntegrationDiagnosisCountReportTemplate tsIntegrationDiagnosisCountReportTemplate;
     @Mock
-    Report<TSIntegrationDiagnosisReportConfig> mockReport;
+    Report<TSIntegrationDiagnosisCountReportConfig> mockReport;
     @Mock
     private HttpClient mockHttpClient;
     @Mock
@@ -58,15 +51,15 @@ public class TSIntegrationDiagnosisReportTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        tsIntegrationDiagnosisReportTemplate.setDescendantsUrlTemplate("dummyUrlTemplate");
+        tsIntegrationDiagnosisCountReportTemplate.setDescendantsUrlTemplate("dummyUrlTemplate");
     }
 
     @Test
-    public void shouldFetchTSDiagnosisReportTemplateWhenTSDiagnosisReportTypeIsInvoked() {
-        TSIntegrationDiagnosisReportConfig tsIntegrationDiagnosisReportConfig = new TSIntegrationDiagnosisReportConfig();
-        TSIntegrationDiagnosisReport tsIntegrationDiagnosisReport = new TSIntegrationDiagnosisReport();
-        tsIntegrationDiagnosisReport.setConfig(tsIntegrationDiagnosisReportConfig);
-        assertTrue(tsIntegrationDiagnosisReport.getTemplate(new BahmniReportsProperties()).getClass().isAssignableFrom(TSIntegrationDiagnosisReportTemplate.class));
+    public void shouldFetchTSDiagnosisCountReportTemplateWhenTSDiagnosisCountReportTypeIsInvoked() {
+        TSIntegrationDiagnosisCountReportConfig tsIntegrationDiagnosisCountReportConfig = new TSIntegrationDiagnosisCountReportConfig();
+        TSIntegrationDiagnosisCountReport tsIntegrationDiagnosisCountReport = new TSIntegrationDiagnosisCountReport();
+        tsIntegrationDiagnosisCountReport.setConfig(tsIntegrationDiagnosisCountReportConfig);
+        assertTrue(tsIntegrationDiagnosisCountReport.getTemplate(new BahmniReportsProperties()).getClass().isAssignableFrom(TSIntegrationDiagnosisCountReportTemplate.class));
     }
 
     @Test
@@ -76,7 +69,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, true, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(true, true, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -88,7 +81,7 @@ public class TSIntegrationDiagnosisReportTest {
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
-        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        tsIntegrationDiagnosisCountReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
         //Two Descendant Codes
         verify(mockPreparedStatement, times(2)).setString(eq(1), anyString());
@@ -104,7 +97,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, true, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(true, true, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -116,7 +109,7 @@ public class TSIntegrationDiagnosisReportTest {
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
-        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        tsIntegrationDiagnosisCountReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
         verify(mockJasperReport, times(7)).addColumn(any());
     }
@@ -128,7 +121,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(true, false, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(true, false, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -140,7 +133,7 @@ public class TSIntegrationDiagnosisReportTest {
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
-        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        tsIntegrationDiagnosisCountReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
         verify(mockJasperReport, times(3)).addColumn(any());
     }
@@ -152,7 +145,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, true, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(false, true, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -164,7 +157,7 @@ public class TSIntegrationDiagnosisReportTest {
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
-        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        tsIntegrationDiagnosisCountReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
         verify(mockJasperReport, times(6)).addColumn(any());
     }
@@ -176,7 +169,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, false, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(false, false, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -188,7 +181,7 @@ public class TSIntegrationDiagnosisReportTest {
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
-        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        tsIntegrationDiagnosisCountReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
         verify(mockJasperReport, times(2)).addColumn(any());
     }
@@ -200,7 +193,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, false, true));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(false, false, true));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -212,7 +205,7 @@ public class TSIntegrationDiagnosisReportTest {
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
-        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        tsIntegrationDiagnosisCountReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
         verify(mockJasperReport, times(1)).setDataSource(contains("AND cn.concept_name_type = 'SHORT'"), any());
     }
 
@@ -223,7 +216,7 @@ public class TSIntegrationDiagnosisReportTest {
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
         when(mockReport.getName()).thenReturn("dummyReport");
-        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisReportConfig(false, false, false));
+        when(mockReport.getConfig()).thenReturn(getMockTerminologyDiagnosisCountReportConfig(false, false, false));
 
         when(mockJasperReport.setPageFormat(any(), any())).thenReturn(mockJasperReport);
         when(mockJasperReport.setReportName(anyString())).thenReturn(mockJasperReport);
@@ -235,27 +228,22 @@ public class TSIntegrationDiagnosisReportTest {
 
         when(mockHttpClient.get(any(URI.class))).thenReturn(getMockTerminologyDescendants());
 
-        tsIntegrationDiagnosisReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
+        tsIntegrationDiagnosisCountReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
         verify(mockJasperReport, times(1)).setDataSource(contains("AND cn.concept_name_type = 'FULLY_SPECIFIED'"), any());
     }
 
-    private TSIntegrationDiagnosisReportConfig getMockTerminologyDiagnosisReportConfig(boolean displayTerminologyCodeFlag, boolean displayGenderFlag, boolean shortNamePreferredFlag) {
-        TSIntegrationDiagnosisReportConfig tsIntegrationDiagnosisReportConfig = new TSIntegrationDiagnosisReportConfig();
-        tsIntegrationDiagnosisReportConfig.setDisplayTerminologyCode(displayTerminologyCodeFlag);
-        tsIntegrationDiagnosisReportConfig.setDisplayGenderGroup(displayGenderFlag);
-        tsIntegrationDiagnosisReportConfig.setTerminologyParentCode("dummyCode");
+    private TSIntegrationDiagnosisCountReportConfig getMockTerminologyDiagnosisCountReportConfig(boolean displayTerminologyCodeFlag, boolean displayGenderFlag, boolean shortNamePreferredFlag) {
+        TSIntegrationDiagnosisCountReportConfig tsIntegrationDiagnosisCountReportConfig = new TSIntegrationDiagnosisCountReportConfig();
+        tsIntegrationDiagnosisCountReportConfig.setDisplayTerminologyCode(displayTerminologyCodeFlag);
+        tsIntegrationDiagnosisCountReportConfig.setDisplayGenderGroup(displayGenderFlag);
+        tsIntegrationDiagnosisCountReportConfig.setTerminologyParentCode("dummyCode");
         if (shortNamePreferredFlag)
-            tsIntegrationDiagnosisReportConfig.setConceptNameDisplayFormat("shortNamePreferred");
-        return tsIntegrationDiagnosisReportConfig;
+            tsIntegrationDiagnosisCountReportConfig.setConceptNameDisplayFormat("shortNamePreferred");
+        return tsIntegrationDiagnosisCountReportConfig;
     }
 
-    private String getMockTerminologyDescendants() throws URISyntaxException, IOException {
-        return readFileAsStr("ts/descendantCodes.json");
+    private String getMockTerminologyDescendants() {
+        return FileReaderUtil.getFileContent("terminologyServices/descendantCodes.json");
     }
 
-    private String readFileAsStr(String relativePath) throws URISyntaxException, IOException {
-        Path path = Paths.get(getClass().getClassLoader()
-                .getResource(relativePath).toURI());
-        return Files.lines(path, StandardCharsets.UTF_8).collect(Collectors.joining("\n"));
-    }
 }
