@@ -28,4 +28,8 @@ We are mutating global and session sql_mode as workaround to make 5.7 almost sim
 
 ### SNOMED Integration Support
 
-bahmni-reports also integrates with SNOMED for descendant based reporting by looking up terminology server. More details can be found in [this](https://bahmni.atlassian.net/wiki/spaces/BAH/pages/90472551/Reports) Reports documentation and also [this](https://bahmni.atlassian.net/wiki/spaces/BAH/pages/3132686337/SNOMED+FHIR+Terminology+Server+Integration+with+Bahmni) Wiki link
+bahmni-reports also integrates with SNOMED for descendant-based reporting by querying the terminology server. More details can be found in [this](https://bahmni.atlassian.net/wiki/spaces/BAH/pages/90472551/Reports) Reports documentation and also [this](https://bahmni.atlassian.net/wiki/spaces/BAH/pages/3132686337/SNOMED+FHIR+Terminology+Server+Integration+with+Bahmni) Wiki link
+
+### Integration of Third-Party Extensions
+
+Discover how bahmni-reports effortlessly integrates third-party extensions. Check [this](https://bahmni.atlassian.net/wiki/spaces/BAH/pages/3230760978/SNOMED+to+ICD10+Mapping) documentation for details.
