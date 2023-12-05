@@ -66,9 +66,14 @@ spec:
           volumeMounts:
             - mountPath: /etc/bahmni_config
               name: bahmni-config
+            - mountPath: /home/bahmni/reports
+              name: bahmni-queued-reports
       volumes:
         - name: bahmni-config
           persistentVolumeClaim:
             claimName: bahmni-config-pvc
+        - name: bahmni-queued-reports
+          persistentVolumeClaim:
+            claimName: bahmni-queued-reports-pvc
 
       restartPolicy: Always

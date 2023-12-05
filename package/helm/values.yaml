@@ -37,6 +37,10 @@ secrets:
   ODOO_DB_USERNAME: ""
   ODOO_DB_PASSWORD: ""
 
+volumes:
+  queuedReports:
+    capacity: "2Gi"
+
 autoscaling:
   enabled: false
   #  minReplicas: 1
