@@ -1,7 +1,8 @@
 #!/bin/sh
 set -e
-
-sh /etc/wait-for ${REPORTS_DB_SERVER}:3306
+echo "Waiting for ${REPORTS_DB_SERVER} for 3600 seconds.."
+sh /etc/wait-for --timeout=3600 ${REPORTS_DB_SERVER}:3306
+echo "Waiting for ${OPENMRS_DB_HOST} for 3600 seconds.."
 sh /etc/wait-for --timeout=3600 ${OPENMRS_DB_HOST}:3306
 
 echo "[INFO] Substituting Environment Variables"
