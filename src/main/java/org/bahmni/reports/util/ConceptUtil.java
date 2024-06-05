@@ -4,8 +4,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bahmni.webclients.HttpClient;
 import org.bahmni.webclients.WebClientsException;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -28,7 +28,7 @@ public class ConceptUtil {
             JsonNode rootNode = objectMapper.readTree(response);
 
             JsonNode nameNode = rootNode.path("datatype");
-            String type = nameNode.path("display").getTextValue();
+            String type = nameNode.path("display").asText();
             try {
                 return ConceptDataTypes.valueOf(type);
             } catch (IllegalArgumentException e) {

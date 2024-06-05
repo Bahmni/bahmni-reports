@@ -12,8 +12,8 @@ import org.bahmni.reports.model.GenericObservationReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.webclients.HttpClient;
 import org.bahmni.webclients.WebClientsException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.net.URI;
 import java.util.ArrayList;

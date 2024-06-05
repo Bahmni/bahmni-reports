@@ -13,7 +13,7 @@ import org.bahmni.reports.model.UsingDatasource;
 import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.stringtemplate.v4.ST;
 
 import java.io.IOException;

@@ -3,7 +3,7 @@ package org.bahmni.reports.report;
 import org.bahmni.reports.model.ConceptName;
 import org.bahmni.reports.report.integrationtests.BaseIntegrationTest;
 import org.bahmni.reports.wrapper.CsvReport;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
