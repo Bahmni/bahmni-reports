@@ -9,8 +9,8 @@ import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.GenericLabOrderReportConfig;
 import org.bahmni.reports.model.Report;
 import org.bahmni.webclients.HttpClient;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
