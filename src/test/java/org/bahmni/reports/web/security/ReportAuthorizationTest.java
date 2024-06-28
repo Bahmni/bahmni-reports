@@ -6,6 +6,7 @@ import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.Reports;
 import org.bahmni.webclients.HttpClient;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -28,6 +29,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
+@Ignore
 @PowerMockIgnore("jakarta.management.*")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Reports.class)

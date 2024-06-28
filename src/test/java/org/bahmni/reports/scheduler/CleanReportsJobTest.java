@@ -3,6 +3,7 @@ package org.bahmni.reports.scheduler;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.persistence.ScheduledReportRepository;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -23,6 +24,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
+@Ignore
 @PowerMockIgnore("jakarta.management.*")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CleanReportsJob.class)

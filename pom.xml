@@ -82,7 +82,6 @@
                     <version>3.3.0</version>
                     <configuration>
                         <argLine>--add-opens java.base/java.lang=ALL-UNNAMED</argLine>
-                        <argLine>--illegal-access=warn</argLine>
                         <includes>
                             <include>**/*Test.java</include>
                         </includes>
