@@ -33,7 +33,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
 
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*", "javax.script.*"})
+@PowerMockIgnore({"jakarta.management.*", "jakarta.net.ssl.*", "jakarta.script.*"})
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SqlUtil.class)
 public class TSIntegrationDiagnosisLineReportTest {

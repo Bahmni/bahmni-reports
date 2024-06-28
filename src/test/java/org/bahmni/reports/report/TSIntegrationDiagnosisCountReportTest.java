@@ -28,7 +28,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
+@PowerMockIgnore({"jakarta.management.*", "jakarta.net.ssl.*"})
 @RunWith(PowerMockRunner.class)
 public class TSIntegrationDiagnosisCountReportTest {
     @InjectMocks
