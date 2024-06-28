@@ -22,4 +22,4 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
       - name: Test and build package
-        run: ./mvnw -T 4 --no-transfer-progress clean install -U -DskipTests
+        run: ./mvnw -T 4 --no-transfer-progress clean install -U
