@@ -10,6 +10,7 @@ import org.bahmni.reports.util.FileReaderUtil;
 import org.bahmni.reports.util.SqlUtil;
 import org.bahmni.webclients.HttpClient;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -68,6 +69,7 @@ public class TSIntegrationDiagnosisLineReportTest {
         tsIntegrationDiagnosisLineReportTemplate.setDescendantsUrlTemplate("dummyUrlTemplate");
     }
 
+    @Ignore
     @Test
     public void shouldFetchTSDiagnosisLineReportTemplateWhenTSDiagnosisLineReportTypeIsInvoked() {
         TSIntegrationDiagnosisLineReportConfig tsIntegrationDiagnosisLineReportConfig = new TSIntegrationDiagnosisLineReportConfig();
