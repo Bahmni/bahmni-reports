@@ -51,7 +51,8 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
             stringBuilder.append(" AND ").append(table).append(".locale = ").append(locale);
             return stringBuilder.toString();
         }
-    }
+    } //TODO to be removed
+
     public static String constructConceptDisplayFormatBasedFilter(GenericObservationReportConfig config) {
         String preferredLocale = config.getPreferredLocale();
         StringBuilder stringBuilder = new StringBuilder();
@@ -60,6 +61,13 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         String conceptNameType = isShortConceptNameDisplayFormatPreferred ? "SHORT" : "FULLY_SPECIFIED";
         String tableName = isShortConceptNameDisplayFormatPreferred ? "coded_scn" : "coded_fscn";
         stringBuilder.append("LEFT JOIN concept_name ").append(tableName).append(" ON ").append(tableName).append(".concept_id = o.value_coded").append(" AND ").append(tableName).append(".concept_name_type = \"").append(conceptNameType).append("\"").append(" AND ").append(tableName).append(".voided IS false").append(preferredLocaleToFilter);
+        return stringBuilder.toString();
+    }
+
+    public static String constructPreferredLocaleToFilter(GenericObservationReportConfig config) {
+        String preferredLocale = config.getPreferredLocale();
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("AND coded_fscn.locale = ").append("\"").append(preferredLocale).append("\"");
         return stringBuilder.toString();
     }
 
