@@ -1,4 +1,4 @@
-FROM amazoncorretto:11
+FROM amazoncorretto:17
 
 ENV SERVER_PORT=8051
 ENV BASE_DIR=/var/run/bahmni-reports
