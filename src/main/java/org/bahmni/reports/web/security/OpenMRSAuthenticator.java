@@ -27,7 +27,7 @@ public class OpenMRSAuthenticator {
 
     public AuthenticationResponse authenticate(String sessionId) {
         ResponseEntity<Privileges> response = callOpenMRS(sessionId);
-        HttpStatus status = response.getStatusCode();
+        HttpStatus status = HttpStatus.valueOf(response.getStatusCode().value());
 
         if (status.series() == HttpStatus.Series.SUCCESSFUL) {
             return response.getBody().hasReportingPrivilege()?

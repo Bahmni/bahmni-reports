@@ -38,7 +38,7 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 import static org.junit.Assert.assertThat;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"org.hibernate.*", "org.springframework.*", "javax.management.*"})
+@PowerMockIgnore({"org.hibernate.*", "org.springframework.*", "jakarta.management.*"})
 @PrepareForTest({JobBuilder.class, TriggerBuilder.class, ReportsScheduler.class})
 public class ReportsSchedulerTest {
     @Mock

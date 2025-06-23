@@ -19,11 +19,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore("jakarta.management.*")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CleanReportsJob.class)
 public class CleanReportsJobTest {

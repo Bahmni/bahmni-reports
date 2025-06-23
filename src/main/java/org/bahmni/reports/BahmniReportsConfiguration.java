@@ -18,7 +18,8 @@ import org.postgresql.Driver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 
 import java.beans.PropertyVetoException;
 
@@ -122,11 +123,12 @@ public class BahmniReportsConfiguration {
     }
 
     @Bean
-    public CommonsMultipartResolver multipartResolver() {
-        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
-        commonsMultipartResolver.setDefaultEncoding("utf-8");
-        commonsMultipartResolver.setMaxUploadSize(getFileUploadMaxSize());
-        return commonsMultipartResolver;
+    public MultipartResolver multipartResolver() {
+//        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver();
+//        commonsMultipartResolver.setDefaultEncoding("utf-8");
+//        commonsMultipartResolver.setMaxUploadSize(getFileUploadMaxSize());
+//        return commonsMultipartResolver;
+        return new StandardServletMultipartResolver();
     }
 
     @Bean
