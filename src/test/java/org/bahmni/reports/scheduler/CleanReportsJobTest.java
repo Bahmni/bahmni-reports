@@ -22,7 +22,7 @@ import java.util.List;
 import static org.mockito.Mockito.*;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-@PowerMockIgnore("jakarta.management.*")
+@PowerMockIgnore("javax.management.*")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(CleanReportsJob.class)
 public class CleanReportsJobTest {

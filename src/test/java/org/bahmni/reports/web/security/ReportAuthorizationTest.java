@@ -28,7 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
-@PowerMockIgnore("jakarta.management.*")
+@PowerMockIgnore("javax.management.*")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(Reports.class)
 public class ReportAuthorizationTest {
