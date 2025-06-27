@@ -569,8 +569,21 @@
                                 <include>**/*Test.java</include>
                             </includes>
                             <excludes>
-                                <exclude>**/integrationtests/*.java</exclude>
-                                <exclude>**/report/*.java</exclude>
+                                <!-- Base Integration Test class -->
+                                <exclude>**/integrationtests/BaseIntegrationTest.java</exclude>
+
+                                <!-- Test classes that extend BaseIntegrationTest -->
+                                <exclude>**/integrationtests/OrderFulfillmentReportTest.java</exclude>
+                                <exclude>**/integrationtests/DrugOrderReportTest.java</exclude>
+                                <exclude>**/integrationtests/MedicationLogReportTest.java</exclude>
+                                <exclude>**/integrationtests/OpenmrsConcatenatedReportTest.java</exclude>
+                                <exclude>**/report/ObservationFormReportTest.java</exclude>
+                                <exclude>**/report/GenericObservationReportTest.java</exclude>
+                                <exclude>**/report/GenericVisitReportTest.java</exclude>
+                                <exclude>**/report/GenericLabOrderReportTest.java</exclude>
+                                <exclude>**/report/AggregationReportTest.java</exclude>
+                                <exclude>**/report/GenericObservationFormReportTest.java</exclude>
+                                <exclude>**/report/GenericProgramReportTest.java</exclude>
                                 <exclude>**/template/SqlReportTemplateTest.java</exclude>
                             </excludes>
                             <argLine>
