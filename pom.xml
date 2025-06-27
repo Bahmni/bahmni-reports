@@ -10,12 +10,12 @@
     <version>1.2.0-SNAPSHOT</version>
 
     <properties>
-        <spring.version>6.1.5</spring.version>
+        <spring.version>6.2.8</spring.version>
         <dynamicreports.version>4.0.0</dynamicreports.version>
         <jackson.version>2.17.0</jackson.version>
         <skipDump>true</skipDump>
         <skipConfig>true</skipConfig>
-        <openMRSVersion>2.5.7</openMRSVersion>
+        <openMRSVersion>2.7.4</openMRSVersion>
         <log4jVersion>2.23.1</log4jVersion>
         <bahmniJavaUtils.version>1.0.0</bahmniJavaUtils.version>
         <junitVersion>4.13.2</junitVersion>
@@ -24,6 +24,8 @@
         <jakartaPersistenceVersion>3.1.0</jakartaPersistenceVersion>
         <dbunitVersion>2.7.3</dbunitVersion>
         <spring-data.version>3.2.3</spring-data.version>
+        <mockitoVersion>4.8.1</mockitoVersion>
+        <bytebuddyVersion>1.12.19</bytebuddyVersion>
     </properties>
 
     <build>
@@ -69,7 +71,6 @@
                         <target>17</target>
                         <source>17</source>
                         <compilerArgument>-proc:none</compilerArgument>
-
                     </configuration>
                 </plugin>
                 <plugin>
@@ -92,6 +93,15 @@
                         <excludes>
                             <exclude>**/BaseIntegrationTest.java</exclude>
                         </excludes>
+                        <argLine>
+                            --add-opens java.base/java.lang=ALL-UNNAMED
+                            --add-opens java.base/java.nio=ALL-UNNAMED
+                            --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+                            --add-modules java.desktop
+                        </argLine>
+                        <environmentVariables>
+                            <TESTCONTAINERS_RYUK_DISABLED>true</TESTCONTAINERS_RYUK_DISABLED>
+                        </environmentVariables>
                     </configuration>
                 </plugin>
             </plugins>
@@ -284,8 +294,8 @@
             <groupId>org.openmrs.api</groupId>
             <artifactId>openmrs-api</artifactId>
             <version>${openMRSVersion}</version>
-            <scope>test</scope>
             <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs.api</groupId>
@@ -328,21 +338,26 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-core</artifactId>
-            <version>${powerMockVersion}</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockitoVersion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>${powerMockVersion}</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>${mockitoVersion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito2</artifactId>
-            <version>${powerMockVersion}</version>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>${bytebuddyVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
+            <version>${bytebuddyVersion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -400,12 +415,6 @@
             <version>${jakartaPersistenceVersion}</version>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>5.17.0</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
             <version>3.0</version>
@@ -413,7 +422,8 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.8.0</version>
+            <version>4.31.0</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
@@ -429,6 +439,14 @@
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
             <version>2.4.9</version>
+        </dependency>
+
+        <!-- Dependencies to resolve unit test failures in OpenMRS -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <version>1.19.7</version> <!-- Use the latest or compatible version -->
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
