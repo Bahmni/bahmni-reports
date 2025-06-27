@@ -11,7 +11,7 @@
 
     <properties>
         <spring.version>6.2.8</spring.version>
-        <dynamicreports.version>4.0.0</dynamicreports.version>
+        <dynamicreports.version>6.12.1</dynamicreports.version>
         <jackson.version>2.17.0</jackson.version>
         <skipDump>true</skipDump>
         <skipConfig>true</skipConfig>
@@ -26,6 +26,7 @@
         <spring-data.version>3.2.3</spring-data.version>
         <mockitoVersion>4.8.1</mockitoVersion>
         <bytebuddyVersion>1.12.19</bytebuddyVersion>
+        <apachePoi.version>4.1.2</apachePoi.version>
     </properties>
 
     <build>
@@ -238,7 +239,12 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>5.2.1</version>
+            <version>${apachePoi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>${apachePoi.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -380,7 +386,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.2.1</version>
+            <version>${apachePoi.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.commons</groupId>
