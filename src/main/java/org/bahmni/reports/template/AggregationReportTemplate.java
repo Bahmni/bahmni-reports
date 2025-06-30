@@ -68,7 +68,7 @@ public class AggregationReportTemplate extends BaseReportTemplate<AggregationRep
 
         if (distinctGroups.size() == 1) {
             crosstab.measures(
-                    ctab.measure("", distinctGroups.get(0), Object.class, Calculation.DISTINCT_COUNT).setTitleStyle(stl.style().setFontSize(0)));
+                    ctab.measure("", distinctGroups.getFirst(), Object.class, Calculation.DISTINCT_COUNT).setTitleStyle(stl.style().setFontSize(0)));
         } else {
             for (String distinctgroup : distinctGroups) {
                 crosstab.measures(

@@ -203,6 +203,6 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         perform.andReturn();
         perform.andExpect(status().isOk());
         List<JasperReportBuilder> value = reportBuilderArgumentCaptor.getValue();
-        return value.get(0);
+        return value.getFirst();
     }
 }

@@ -63,7 +63,7 @@ public class CleanReportsJobTest {
 
         // Verify
         verify(mockFile, never()).delete();
-        verify(scheduledReportRepository).delete(scheduledReports.get(0));
+        verify(scheduledReportRepository).delete(scheduledReports.getFirst());
     }
 
     @Test
@@ -89,7 +89,7 @@ public class CleanReportsJobTest {
 
         // Verify
         verify(mockFile, times(1)).delete();
-        verify(scheduledReportRepository).delete(scheduledReports.get(0));
+        verify(scheduledReportRepository).delete(scheduledReports.getFirst());
     }
 
     @Test
