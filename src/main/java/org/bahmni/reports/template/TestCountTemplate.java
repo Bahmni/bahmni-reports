@@ -51,7 +51,7 @@ public class TestCountTemplate extends BaseReportTemplate<Config> {
         jasperReport.setShowColumnTitle(false)
                 .columns(departmentColumn, testColumn, totalCountColumn, positiveCountColumn, negativeCountColumn)
                 .groupBy(departmentGroup)
-                .setDataSource(String.format(sql, startDate, endDate),
+                .setDataSource(sql.formatted(startDate, endDate),
                         connection);
         return new BahmniReportBuilder(jasperReport);
     }

@@ -57,10 +57,10 @@ public class BahmniReportUtil {
     }
 
     private static void orderColumns(Config config, JasperReportBuilder reportBuilder){
-        if (config instanceof GenericReportsConfig) {
-            List<String> allColumns = ((GenericReportsConfig) config).getPreferredColumns();
+        if (config instanceof GenericReportsConfig reportsConfig) {
+            List<String> allColumns = reportsConfig.getPreferredColumns();
             List<String> columns = removeDuplicatesFrom(allColumns);
-            List<String> excludeColumns = ((GenericReportsConfig) config).getExcludeColumns();
+            List<String> excludeColumns = reportsConfig.getExcludeColumns();
             if (columns != null && columns.size() > 0) {
                 DRReport drReport = reportBuilder.getReport();
                 List<DRColumn<?>> jasperReportColumns = drReport.getColumns();
@@ -90,8 +90,7 @@ public class BahmniReportUtil {
         return reportColumns;
     }
     private static void excludeColumns(Config config, JasperReportBuilder reportBuilder) {
-        if (config instanceof GenericReportsConfig) {
-            GenericReportsConfig genericReportsConfig = (GenericReportsConfig) config;
+        if (config instanceof GenericReportsConfig genericReportsConfig) {
             List<String> excludeColumnsList = genericReportsConfig.getExcludeColumns();
             if (CollectionUtils.isNotEmpty(excludeColumnsList)) {
                 filterColumns(reportBuilder.getReport(), excludeColumnsList);

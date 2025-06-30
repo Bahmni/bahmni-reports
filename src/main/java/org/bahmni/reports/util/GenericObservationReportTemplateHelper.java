@@ -233,7 +233,7 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         if (config.isEncounterPerRow()) {
             String helperString = "GROUP_CONCAT(DISTINCT(IF(obs_fscn.name = \\'%s\\', coalesce(o.value_numeric, o.value_text, o.value_datetime, coded_scn.name, coded_fscn.name), NULL)) ORDER BY o.obs_id DESC) AS \\'%s\\'";
             for (String conceptName : conceptNamesToFilter) {
-                conceptNamesWithDoubleQuote.add(String.format(helperString, conceptName.replace("'", "\\\\\\\'"), conceptName.replace("'", "\\\\\\\'")));
+                conceptNamesWithDoubleQuote.add(helperString.formatted(conceptName.replace("'", "\\\\\\\'"), conceptName.replace("'", "\\\\\\\'")));
             }
         }
         return StringUtils.join(conceptNamesWithDoubleQuote, ',');
@@ -335,12 +335,12 @@ public class GenericObservationReportTemplateHelper extends GenericReportsHelper
         for (String value : listOfConfig) {
             if (isNumericRange(value)) {
                 if (value.startsWith("..")) {
-                    stringBuilder.append(String.format(" OR (o.value_numeric <= %s)", StringUtils.strip(value, "..")));
+                    stringBuilder.append(" OR (o.value_numeric <= %s)".formatted(StringUtils.strip(value, "..")));
                 } else if (value.endsWith("..")) {
-                    stringBuilder.append(String.format(" OR (o.value_numeric >= %s)", StringUtils.strip(value, "..")));
+                    stringBuilder.append(" OR (o.value_numeric >= %s)".formatted(StringUtils.strip(value, "..")));
                 } else {
                     String[] range = value.split("\\.\\.");
-                    stringBuilder.append(String.format(" OR (o.value_numeric BETWEEN %s AND %s)", range[0], range[1]));
+                    stringBuilder.append(" OR (o.value_numeric BETWEEN %s AND %s)".formatted(range[0], range[1]));
                 }
             }
         }

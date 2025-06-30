@@ -48,8 +48,8 @@ public class PatientBuilder {
     }
 
     public PatientBuilder birthdate(Object birthdate, boolean estimated) {
-        if (birthdate instanceof Date)
-            this.patient.setBirthdate((Date) birthdate);
+        if (birthdate instanceof Date date)
+            this.patient.setBirthdate(date);
         else
             this.patient.setBirthdate(DateUtil.parseDate((String) birthdate));
         this.patient.setBirthdateEstimated(estimated);

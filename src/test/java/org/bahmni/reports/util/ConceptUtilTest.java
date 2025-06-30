@@ -18,16 +18,18 @@ public class ConceptUtilTest {
     @Mock
     HttpClient httpClient;
 
-    private static String responseBoolean = "{\"datatype\": {\n" +
-            "        \"uuid\": \"8d4a5cca-c2cc-11de-8d13-0010c6dffd0f\",\n" +
-            "        \"display\": \"Boolean\",\n" +
-            "        \"links\": [\n" +
-            "            {\n" +
-            "                \"uri\": \"NEED-TO-CONFIGURE/ws/rest/v1/conceptdatatype/8d4a5cca-c2cc-11de-8d13-0010c6dffd0f\",\n" +
-            "                \"rel\": \"self\"\n" +
-            "            }\n" +
-            "        ]\n" +
-            "    }}";
+    private static String responseBoolean = """
+            {"datatype": {
+                    "uuid": "8d4a5cca-c2cc-11de-8d13-0010c6dffd0f",
+                    "display": "Boolean",
+                    "links": [
+                        {
+                            "uri": "NEED-TO-CONFIGURE/ws/rest/v1/conceptdatatype/8d4a5cca-c2cc-11de-8d13-0010c6dffd0f",
+                            "rel": "self"
+                        }
+                    ]
+                }}\
+            """;
 
 
     private String openmrsRootUrl = "http://localhost:8080/openmrs/ws/rest/v1";
