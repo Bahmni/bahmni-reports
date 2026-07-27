@@ -10,7 +10,7 @@
     <version>1.2.0-SNAPSHOT</version>
 
     <properties>
-        <spring.version>5.3.39</spring.version>
+        <spring.version>6.2.19</spring.version>
         <dynamicreports.version>4.0.0</dynamicreports.version>
         <jackson.version>2.17.0</jackson.version>
         <skipDump>true</skipDump>
@@ -62,8 +62,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.1</version>
                     <configuration>
-                        <target>11</target>
-                        <source>11</source>
+                        <target>17</target>
+                        <source>17</source>
                         <compilerArgument>-proc:none</compilerArgument>
 
                     </configuration>
