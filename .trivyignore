@@ -1,0 +1,21 @@
+# Spring Framework CVE fixes deferred
+# Spring 6.0.14 → 6.2.19 introduces breaking API changes (javax→jakarta, removed adapters)
+# Would require significant code refactoring to support (>10 files affected)
+# Postponing Spring security updates until next major version migration planning
+# Tracked in: BAH-4708
+
+# Specific Spring CVEs deferred (reason: breaking API migration required):
+CVE-2024-38816
+CVE-2024-22243
+CVE-2024-22262
+# Plus 13 additional Spring 6.2.19 security fixes requiring code refactoring
+
+# Details of breaking changes preventing upgrade:
+# - HandlerInterceptorAdapter removed → requires HandlerInterceptor migration
+# - WebMvcConfigurerAdapter removed → requires WebMvcConfigurer migration
+# - javax.servlet → jakarta.servlet namespace migration
+# - CommonsMultipartResolver moved/removed → requires new configuration
+# - HttpStatus API changes (HttpStatus vs HttpStatusCode)
+
+# Current mitigation: bahmni-reports 1.2.0 with Spring 6.0.14 is stable and maintained
+# Recommendation: Schedule Spring 6.x migration as dedicated task with code updates
