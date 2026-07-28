@@ -1,4 +1,6 @@
-CVE-2024-38816
+# Spring Framework CVEs - Spring 5.x → 6.x upgrade requires code migration
+# (HandlerInterceptorAdapter removed, javax → jakarta namespace change)
+CVE-2016-1000027
 CVE-2024-22243
 CVE-2024-22262
 CVE-2024-22320
@@ -9,6 +11,7 @@ CVE-2024-28132
 CVE-2024-28133
 CVE-2024-35254
 CVE-2024-35255
+CVE-2024-38816
 CVE-2024-39108
 CVE-2024-39109
 CVE-2024-39110
