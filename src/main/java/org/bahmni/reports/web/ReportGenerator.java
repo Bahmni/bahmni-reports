@@ -18,7 +18,6 @@ import org.bahmni.webclients.HttpClient;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +70,7 @@ public class ReportGenerator {
 
     private void validateReport(Report report) throws UnsupportedEncodingException {
         if (report == null) {
-            logger.error(String.format("Invalid report name or definition. Name: %s", reportParams.getName()));
+            logger.error("Invalid report name or definition. Name: %s".formatted(reportParams.getName()));
             throw new RuntimeException(EX_UNIDENTIFIED_REPORT);
         }
     }
@@ -80,18 +79,18 @@ public class ReportGenerator {
 
         if (!StringUtils.isBlank(reportParams.getMacroTemplateLocation())) {
             String templatePath = bahmniReportsProperties.getMacroTemplatesTempDirectory();
-            logger.debug(String.format(" template path: %s", templatePath));
-            logger.debug(String.format(" template specified: %s",  reportParams.getMacroTemplateLocation()));
+            logger.debug(" template path: %s".formatted(templatePath));
+            logger.debug(" template specified: %s".formatted(reportParams.getMacroTemplateLocation()));
 
             if (StringUtils.isBlank(templatePath)) {
                 logger.error(ERROR_MACRO_TEMPLATE_LOCATION_UNDEFINED);
                 throw new RuntimeException(EX_MACRO_TEMPLATE_LOCATiON_UNDEFINED);
             }
 
-            Path templateLocation = Paths.get(templatePath);
-            Path normalizedTemplatePath = Paths.get(templatePath, reportParams.getMacroTemplateLocation()).normalize();
+            Path templateLocation = Path.of(templatePath);
+            Path normalizedTemplatePath = Path.of(templatePath, reportParams.getMacroTemplateLocation()).normalize();
             if (!normalizedTemplatePath.startsWith(templateLocation)) {
-                logger.error(String.format("Invalid Macro Template Location: %s", reportParams.getMacroTemplateLocation()));
+                logger.error("Invalid Macro Template Location: %s".formatted(reportParams.getMacroTemplateLocation()));
                 throw new RuntimeException(EX_INVALID_MACRO_TEMPLATE);
             }
         }

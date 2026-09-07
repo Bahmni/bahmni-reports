@@ -163,7 +163,7 @@ public class GenericObservationFormReportTemplateHelper extends GenericReportsHe
         String tableName = config.isShortConceptNameDisplayFormatPreferred() ? "coded_scn" : "coded_fscn";
         String helperString = "GROUP_CONCAT(DISTINCT(IF(obs_fscn.name = \\'%s\\', coalesce(o.value_numeric, o.value_text, o.value_datetime, " + tableName + ".name), NULL)) ORDER BY o.obs_id DESC) AS \\'%s\\'";
         for (String conceptName : formNamesToFilter) {
-            conceptNamesWithDoubleQuote.add(String.format(helperString, conceptName.replace("'", "\\\\\\\'"), conceptName.replace("'", "\\\\\\\'")));
+            conceptNamesWithDoubleQuote.add(helperString.formatted(conceptName.replace("'", "\\\\\\\'"), conceptName.replace("'", "\\\\\\\'")));
         }
         return StringUtils.join(conceptNamesWithDoubleQuote, ',');
     }
@@ -175,7 +175,7 @@ public class GenericObservationFormReportTemplateHelper extends GenericReportsHe
         String date_format = "%d-%b-%Y";
         List<String> programAttributes = getProgramAttributes(config);
         for (String programAttribute : programAttributes) {
-            programAttributesWithDoubelQuotes.add(String.format(helperString, programAttribute.replace("'", "\\\\\\\'"), date_format, programAttribute.replace("'", "\\\\\\\'")));
+            programAttributesWithDoubelQuotes.add(helperString.formatted(programAttribute.replace("'", "\\\\\\\'"), date_format, programAttribute.replace("'", "\\\\\\\'")));
         }
         return StringUtils.join(programAttributesWithDoubelQuotes, ',');
     }

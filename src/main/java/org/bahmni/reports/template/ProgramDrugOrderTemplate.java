@@ -205,7 +205,7 @@ public class ProgramDrugOrderTemplate extends BaseReportTemplate<ProgramDrugOrde
         String helperString = "MAX(IF(o.patient_attribute_name = \\'%s\\', o.patient_attribute_value, NULL)) AS \\'%s\\'";
 
         for (String patientAttribute : patientAttributes) {
-            parts.add(String.format(helperString, patientAttribute, patientAttribute));
+            parts.add(helperString.formatted(patientAttribute, patientAttribute));
         }
 
         return StringUtils.join(parts, ", ");
@@ -216,7 +216,7 @@ public class ProgramDrugOrderTemplate extends BaseReportTemplate<ProgramDrugOrde
         String helperString = "MAX(IF(o.program_attribute_name = \\'%s\\', o.program_attribute_value, NULL)) AS \\'%s\\'";
 
         for (String programAttribute : programAttributes) {
-            parts.add(String.format(helperString, programAttribute, programAttribute));
+            parts.add(helperString.formatted(programAttribute, programAttribute));
         }
 
         return StringUtils.join(parts, ", ");

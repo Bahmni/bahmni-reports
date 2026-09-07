@@ -8,7 +8,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.stream.Collectors;
 
 public class FileReaderUtil {
@@ -17,7 +16,7 @@ public class FileReaderUtil {
     public static String getFileContent(String relativePath) {
         Path path = null;
         try {
-            path = Paths.get(FileReaderUtil.class.getClassLoader().getResource(relativePath).toURI());
+            path = Path.of(FileReaderUtil.class.getClassLoader().getResource(relativePath).toURI());
             return Files.lines(path, StandardCharsets.UTF_8).collect(Collectors.joining("\n"));
         } catch (IOException | URISyntaxException e) {
             logger.error("Error reading file at location {} - {}", relativePath, e);
@@ -30,7 +29,7 @@ public class FileReaderUtil {
             return getFileContent(filePath);
         }
         try {
-            return new String(Files.readAllBytes(Paths.get(filePath)), StandardCharsets.UTF_8);
+            return new String(Files.readAllBytes(Path.of(filePath)), StandardCharsets.UTF_8);
         } catch (IOException e) {
             logger.error("File at location {} not found {}", filePath, e);
         }

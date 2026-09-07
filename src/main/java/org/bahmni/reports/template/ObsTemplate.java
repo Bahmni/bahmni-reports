@@ -166,10 +166,10 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         for (ConceptDetails conceptDetails : conceptDetailsList) {
             String conceptName = escapeQuotes(encloseWithQuotes(conceptDetails.getFullName()));
             String unknownValueConceptName = (String) conceptDetails.getAttribute(UNKNOWN_CONCEPT_ATTRIBUTE_KEY);
-            String clauseText = String.format(helperString, conceptName, "NULL", conceptName);
+            String clauseText = helperString.formatted(conceptName, "NULL", conceptName);
             if(unknownValueConceptName != null) {
-                String unknownConceptClauseString = String.format(unknownConceptClause, escapeQuotes(encloseWithQuotes(unknownValueConceptName)));
-                clauseText = String.format(helperString, conceptName, unknownConceptClauseString, conceptName);
+                String unknownConceptClauseString = unknownConceptClause.formatted(escapeQuotes(encloseWithQuotes(unknownValueConceptName)));
+                clauseText = helperString.formatted(conceptName, unknownConceptClauseString, conceptName);
             }
 
             parts.add(clauseText);
@@ -183,7 +183,7 @@ public class ObsTemplate extends BaseReportTemplate<ObsTemplateConfig> {
         String helperString = "GROUP_CONCAT(DISTINCT(IF(o.patient_attr_name = \\'%s\\', o.patient_attr_value, NULL))) AS \\'%s\\'";
 
         for (String patientAttribute : patientAttributes) {
-            parts.add(String.format(helperString, patientAttribute, patientAttribute));
+            parts.add(helperString.formatted(patientAttribute, patientAttribute));
         }
 
         return StringUtils.join(parts, ", ");

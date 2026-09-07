@@ -34,7 +34,7 @@ public class GenericReportsHelper {
         String helperString = "GROUP_CONCAT(DISTINCT(IF(pit.name = \\'%s\\', pi.identifier, NULL))) AS \\'%s\\'";
 
         for (String patientIdentifierType : getExtraPatientIdentifierTypes(config)) {
-            parts.add(String.format(helperString, patientIdentifierType.replace("'", "\\\\\\\'"), patientIdentifierType.replace("'", "\\\\\\\'")));
+            parts.add(helperString.formatted(patientIdentifierType.replace("'", "\\\\\\\'"), patientIdentifierType.replace("'", "\\\\\\\'")));
         }
         return StringUtils.join(parts, ", ");
     }
@@ -74,7 +74,7 @@ public class GenericReportsHelper {
         String helperString = "GROUP_CONCAT(DISTINCT(IF(pat.name = \\'%s\\', IF(pat.format = \\'org.openmrs.Concept\\',coalesce(scn.name, fscn.name),pa.value), NULL))) AS \\'%s\\'";
 
         for (String patientAttribute : patientAttributes) {
-            parts.add(String.format(helperString, patientAttribute.replace("'", "\\\\\\\'"), patientAttribute.replace("'", "\\\\\\\'")));
+            parts.add(helperString.formatted(patientAttribute.replace("'", "\\\\\\\'"), patientAttribute.replace("'", "\\\\\\\'")));
         }
 
         return StringUtils.join(parts, ", ");
@@ -101,7 +101,7 @@ public class GenericReportsHelper {
         String helperString = "GROUP_CONCAT(DISTINCT(IF(vat.name = \\'%s\\', va.value_reference, NULL))) AS \\'%s\\'";
 
         for (String visitAttribute : visitAttributes) {
-            parts.add(String.format(helperString, visitAttribute.replace("'", "\\\\\\\'"), visitAttribute.replace("'", "\\\\\\\'")));
+            parts.add(helperString.formatted(visitAttribute.replace("'", "\\\\\\\'"), visitAttribute.replace("'", "\\\\\\\'")));
         }
 
         return StringUtils.join(parts, ", ");

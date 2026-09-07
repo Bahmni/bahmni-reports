@@ -1,6 +1,7 @@
 package org.bahmni.reports.wrapper;
 
 import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
@@ -39,27 +40,30 @@ public class CsvReport {
     }
 
     private void process() throws IOException {
-        String[] row;
-        reportName = joinStringArray(csvReader.readNext(), "");
-        joinStringArray(csvReader.readNext(), "");
-        joinStringArray(csvReader.readNext(), "");
-        columnHeaders = csvReader.readNext();
-        if (columnHeaders != null)
-            columnMap = buildIndexMap(columnHeaders);
-        boolean pageStart = false;
-        while ((row = csvReader.readNext()) != null) {
-            if (pageStart) {
-                csvReader.readNext();
-                pageStart = false;
-            } else {
-                if (joinStringArray(row, ",").matches(footerPattern)) {
-                    footers.add(joinStringArray(row, ""));
-                    pageStart = true;
-                } else
-                    rows.add(row);
+        try {
+            String[] row;
+            reportName = joinStringArray(csvReader.readNext(), "");
+            joinStringArray(csvReader.readNext(), "");
+            joinStringArray(csvReader.readNext(), "");
+            columnHeaders = csvReader.readNext();
+            if (columnHeaders != null)
+                columnMap = buildIndexMap(columnHeaders);
+            boolean pageStart = false;
+            while ((row = csvReader.readNext()) != null) {
+                if (pageStart) {
+                    csvReader.readNext();
+                    pageStart = false;
+                } else {
+                    if (joinStringArray(row, ",").matches(footerPattern)) {
+                        footers.add(joinStringArray(row, ""));
+                        pageStart = true;
+                    } else
+                        rows.add(row);
+                }
             }
+        } catch (CsvValidationException e) {
+            throw new IOException(e);
         }
-
     }
 
     public int rowsCount() {

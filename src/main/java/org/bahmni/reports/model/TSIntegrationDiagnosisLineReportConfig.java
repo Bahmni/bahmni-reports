@@ -10,6 +10,7 @@ public class TSIntegrationDiagnosisLineReportConfig extends TSIntegrationDiagnos
     private List<String> patientAttributes;
     private List<String> patientAddresses;
     private List<String> extensions;
+    private String conceptSource;
 
     public List<String> getPatientAttributes() {
         return patientAttributes;
@@ -33,5 +34,13 @@ public class TSIntegrationDiagnosisLineReportConfig extends TSIntegrationDiagnos
 
     public void setExtensions(List<String> extensions) {
         this.extensions = extensions;
+    }
+
+    public String getConceptSource() {
+        return conceptSource;
+    }
+
+    public void setConceptSource(String conceptSource) {
+        this.conceptSource = conceptSource;
     }
 }

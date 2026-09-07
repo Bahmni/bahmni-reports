@@ -10,16 +10,23 @@
     <version>1.2.0</version>
 
     <properties>
-        <spring.version>5.3.39</spring.version>
-        <dynamicreports.version>4.0.0</dynamicreports.version>
+        <spring.version>6.2.8</spring.version>
+        <dynamicreports.version>6.12.1</dynamicreports.version>
         <jackson.version>2.17.0</jackson.version>
         <skipDump>true</skipDump>
         <skipConfig>true</skipConfig>
-        <openMRSVersion>2.5.7</openMRSVersion>
+        <openMRSVersion>2.6.1</openMRSVersion>
         <log4jVersion>2.23.1</log4jVersion>
         <bahmniJavaUtils.version>1.0.0</bahmniJavaUtils.version>
-        <junitVersion>4.13</junitVersion>
+        <junitVersion>4.13.2</junitVersion>
         <powerMockVersion>2.0.7</powerMockVersion>
+        <hibernateVersion>5.6.15.Final</hibernateVersion>
+        <jakartaPersistenceVersion>3.1.0</jakartaPersistenceVersion>
+        <dbunitVersion>2.7.3</dbunitVersion>
+        <spring-data.version>3.2.3</spring-data.version>
+        <mockitoVersion>4.8.1</mockitoVersion>
+        <bytebuddyVersion>1.17.6</bytebuddyVersion>
+        <apachePoi.version>4.1.2</apachePoi.version>
     </properties>
 
     <build>
@@ -60,12 +67,10 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>3.14.0</version>
                     <configuration>
-                        <target>11</target>
-                        <source>11</source>
                         <compilerArgument>-proc:none</compilerArgument>
-
+                        <release>21</release>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -79,7 +84,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.18.1</version>
+                    <version>3.2.5</version>
                     <configuration>
                         <argLine>-Xmx1024m -XX:MaxMetaspaceSize=2056m</argLine>
                         <includes>
@@ -88,6 +93,15 @@
                         <excludes>
                             <exclude>**/BaseIntegrationTest.java</exclude>
                         </excludes>
+                        <argLine>
+                            --add-opens java.base/java.lang=ALL-UNNAMED
+                            --add-opens java.base/java.nio=ALL-UNNAMED
+                            --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+                            --add-opens java.xml/org.w3c.dom=ALL-UNNAMED
+                            --add-opens java.xml/javax.xml.parsers=ALL-UNNAMED
+                            --add-opens java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED
+                            --add-modules java.desktop
+                        </argLine>
                     </configuration>
                 </plugin>
             </plugins>
@@ -110,6 +124,31 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-jpa</artifactId>
+            <version>${spring-data.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
             <version>${spring.version}</version>
         </dependency>
         <dependency>
@@ -160,6 +199,12 @@
             <version>${dynamicreports.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.14.0</version>
+        </dependency>
+        <!-- This is for backward compatibility with other Bahmni dependencies -->
+        <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
@@ -193,7 +238,12 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
-            <version>5.2.1</version>
+            <version>${apachePoi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-scratchpad</artifactId>
+            <version>${apachePoi.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -228,7 +278,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.7</version>
+            <version>2.19.0</version>
         </dependency>
         <dependency>
             <groupId>commons-fileupload</groupId>
@@ -249,8 +299,8 @@
             <groupId>org.openmrs.api</groupId>
             <artifactId>openmrs-api</artifactId>
             <version>${openMRSVersion}</version>
-            <scope>test</scope>
             <type>jar</type>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.openmrs.api</groupId>
@@ -278,12 +328,12 @@
         <dependency>
             <groupId>org.dbunit</groupId>
             <artifactId>dbunit</artifactId>
-            <version>2.4.7</version>
+            <version>${dbunitVersion}</version>
         </dependency>
         <dependency>
             <groupId>com.github.springtestdbunit</groupId>
             <artifactId>spring-test-dbunit</artifactId>
-            <version>1.0.0</version>
+            <version>1.3.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -293,32 +343,37 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-core</artifactId>
-            <version>${powerMockVersion}</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>${mockitoVersion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>${powerMockVersion}</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>${mockitoVersion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito2</artifactId>
-            <version>${powerMockVersion}</version>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>${bytebuddyVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy-agent</artifactId>
+            <version>${bytebuddyVersion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
-            <version>3.4</version>
+            <version>5.9</version>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
+            <groupId>jakarta.servlet</groupId>
+            <artifactId>jakarta.servlet-api</artifactId>
+            <version>6.1.0</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -330,7 +385,7 @@
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
-            <version>5.2.1</version>
+            <version>${apachePoi.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.apache.commons</groupId>
@@ -354,66 +409,26 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.data</groupId>
-            <artifactId>spring-data-jpa</artifactId>
-            <version>2.4.8</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-            <version>5.6.0.Final</version>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate.javax.persistence</groupId>
-                    <artifactId>hibernate-jpa-2.0-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.jboss.logging</groupId>
-                    <artifactId>jboss-logging</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>hibernate-core-jakarta</artifactId>
+            <version>${hibernateVersion}</version>
+
         </dependency>
         <dependency>
-            <groupId>org.hibernate.javax.persistence</groupId>
-            <artifactId>hibernate-jpa-2.1-api</artifactId>
-            <version>1.0.0.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>3.5.11</version>
-            <scope>test</scope>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>${jakartaPersistenceVersion}</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-all</artifactId>
-            <version>1.3</version>
+            <artifactId>hamcrest</artifactId>
+            <version>3.0</version>
         </dependency>
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>4.8.0</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
@@ -429,6 +444,14 @@
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
             <version>2.4.9</version>
+        </dependency>
+
+        <!-- Dependencies to resolve unit test failures in OpenMRS -->
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <version>1.19.7</version> <!-- Use the latest or compatible version -->
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -531,6 +554,51 @@
     </repositories>
 
     <profiles>
+        <profile>
+            <id>unit-test</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.2.5</version>
+                        <configuration>
+                            <argLine>-Xmx1024m -XX:MaxMetaspaceSize=2056m</argLine>
+                            <includes>
+                                <include>**/*Test.java</include>
+                            </includes>
+                            <excludes>
+                                <!-- Base Integration Test class -->
+                                <exclude>**/integrationtests/BaseIntegrationTest.java</exclude>
+
+                                <!-- Test classes that extend BaseIntegrationTest -->
+                                <exclude>**/integrationtests/OrderFulfillmentReportTest.java</exclude>
+                                <exclude>**/integrationtests/DrugOrderReportTest.java</exclude>
+                                <exclude>**/integrationtests/MedicationLogReportTest.java</exclude>
+                                <exclude>**/integrationtests/OpenmrsConcatenatedReportTest.java</exclude>
+                                <exclude>**/report/ObservationFormReportTest.java</exclude>
+                                <exclude>**/report/GenericObservationReportTest.java</exclude>
+                                <exclude>**/report/GenericVisitReportTest.java</exclude>
+                                <exclude>**/report/GenericLabOrderReportTest.java</exclude>
+                                <exclude>**/report/AggregationReportTest.java</exclude>
+                                <exclude>**/report/GenericObservationFormReportTest.java</exclude>
+                                <exclude>**/report/GenericProgramReportTest.java</exclude>
+                                <exclude>**/template/SqlReportTemplateTest.java</exclude>
+                            </excludes>
+                            <argLine>
+                                --add-opens java.base/java.lang=ALL-UNNAMED
+                                --add-opens java.base/java.nio=ALL-UNNAMED
+                                --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+                                --add-opens java.xml/org.w3c.dom=ALL-UNNAMED
+                                --add-opens java.xml/javax.xml.parsers=ALL-UNNAMED
+                                --add-opens java.xml/com.sun.org.apache.xerces.internal.jaxp=ALL-UNNAMED
+                                --add-modules java.desktop
+                            </argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>Windows</id>
             <activation>

@@ -1,5 +1,6 @@
 package org.bahmni.reports.filter;
 
+import jakarta.servlet.http.HttpServletResponse;
 import net.sf.dynamicreports.jasper.builder.JasperConcatenatedReportBuilder;
 import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.jasper.builder.export.Exporters;
@@ -11,11 +12,9 @@ import org.bahmni.reports.template.Templates;
 import org.bahmni.reports.web.ReportParams;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.OutputStream;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @Component
@@ -45,7 +44,7 @@ public class JasperResponseConverter {
                 Path macroTemplateFile = macroTemplateFilePath(macroTemplatesTempDirectory, reportParams.getMacroTemplateLocation());
                 File templateFile = macroTemplateFile.toFile();
                 if (!templateFile.exists()) {
-                    logger.error(String.format("Invalid Macro Template specified: %s", macroTemplateFile));
+                    logger.error("Invalid Macro Template specified: %s".formatted(macroTemplateFile));
                     throw new RuntimeException(EX_INVALID_MACRO_TEMPLATE);
                 }
                 JasperXlsExporterBuilder exporterBuilder = Exporters.xlsExporter(outputStream).setDetectCellType(true);
@@ -71,7 +70,7 @@ public class JasperResponseConverter {
     }
 
     private Path macroTemplateFilePath(String macroTemplatesTempDirectory, String macroTemplate) {
-        return Paths.get(macroTemplatesTempDirectory, macroTemplate);
+        return Path.of(macroTemplatesTempDirectory, macroTemplate);
     }
 
     public void applyReportTemplates(List<JasperReportBuilder> reports, String responseType) {
