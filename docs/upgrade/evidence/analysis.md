@@ -39,9 +39,8 @@ An incremental path buys no reduction in dependency floors, because the Liquibas
 | The JUnit 4 `BaseContextSensitiveTest` and `SkipBaseSetup` that the harness extends still exist at 2.8.9 | `openmrs-api-2.8.9-tests.jar` | listed the test-jar contents for 2.5.7, 2.7.9 and 2.8.9. Present in all three |
 | `xerces:xercesImpl` and `xml-apis` arrive only beneath the `openmrs-api` subtree, so excluding them there is sufficient | `dependency:tree` rows 100 to 101 | ran `dependency:tree` and read the subtree |
 | Neither CI workflow runs the test suite. Both pass `-DskipTests` while naming the step "Test and build package" and "Test and Package" | `.github/workflows/validate_pr.yml:25`, `.github/workflows/build_publish.yml:39` | read both files |
-| The prior attempt, PR #100, targeted OpenMRS 2.6.1 and not 2.8, and bundled an elective Spring 6 and jakarta migration across 50 files. It has no reviews, no comments and no CI checks, and has not been touched since it was opened on 2025-07-01 | [PR #100](https://github.com/Bahmni/bahmni-reports/pull/100) | ran `gh pr view 100` and `gh pr diff 100` |
 
-Institutional context is `PARTIAL: no institutional search available`. The Unblocked MCP rejected the query because the account is on a legacy plan that does not support MCP. Jira and the GitHub CLI were used instead. PR #100 carries no review discussion at all, so the reason it stalled is not recorded anywhere reachable and remains an open question in the register below.
+Institutional context is `PARTIAL: no institutional search available`. The Unblocked MCP rejected the query because the account is on a legacy plan that does not support MCP, so Jira and the GitHub CLI were used instead. There is an older unmerged branch attempting a similar upgrade, but it carries no review discussion and is not treated as evidence here.
 
 ## API surface in use
 

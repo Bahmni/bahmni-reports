@@ -92,12 +92,9 @@ blockers, all inside `BaseContextSensitiveTest.deleteAllData()`: a missing confi
 table-name ambiguity, and now views. That is the signature of a suite that has never run in this
 configuration, not one that regressed.
 
-Two pieces of evidence support that reading:
-
-1. CI has never run these tests. Both workflows pass `-DskipTests`.
-2. **PR #100 added a `unit-test` Maven profile that excludes exactly the 13 integration test
-   classes**, including every one failing here. The previous attempt hit this same wall and routed
-   around it rather than fixing it.
+The supporting evidence is that CI has never run these tests: both workflows pass `-DskipTests`.
+So there is no point in the project's recorded history at which this suite was demonstrably green,
+and nothing documents the environment it would need.
 
 ## Recommended next step, and it is a decision not a task
 
@@ -105,10 +102,10 @@ Before more debugging, someone should decide what "green baseline" means for thi
 options are materially different in cost:
 
 - **Split the suite.** Define the baseline as the unit tests, which are roughly 31 of the 341, and
-  quarantine the integration tests behind a profile with a tracked reason and a ticket. This is what
-  PR #100 did. It unblocks CP2 through CP9 within a day. The cost is that the 38 SQL reports lose
-  their only automated coverage, which makes CP7 manual verification the sole safety net rather than
-  a second one.
+  quarantine the integration tests behind a Maven profile with a tracked reason and a ticket. This
+  unblocks CP2 through CP9 within a day. The cost is that the 38 SQL reports lose their only
+  automated coverage, which makes CP7's manual verification the sole safety net rather than a
+  second one.
 - **Fix the integration harness.** Make `deleteAllData()` work, probably by getting dbunit to
   exclude views, which needs a hook into OpenMRS's own test base class. Unknown effort, possibly
   upstream. Keeps real coverage over the reports.
