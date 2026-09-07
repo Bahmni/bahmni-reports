@@ -49,7 +49,74 @@ The error total has not moved, but the **cause** has changed twice. Cause A, the
 file, is genuinely fixed and will not come back. This is exactly the situation the plan warns
 about: comparing counts would have shown no progress, comparing causes shows two layers peeled off.
 
-## What is still failing, and what it is not
+## Where it got to, 2026-09-07 late
+
+Applied and committed:
+
+- **Cause B**, `xerces`/`xml-apis` excluded from both `openmrs-api` entries in `pom.xml`. `dependency:tree` now shows neither.
+- **Cause C**, trailing `\n` removed from the two literals in `PatientAttributesHelperTest`.
+- **Cause D, partially.** Created a MySQL user `bahmnitest` with grants only on the two test databases, so `performance_schema` is invisible to it, and pointed the test properties at it.
+
+Measured effect:
+
+| | CP0 | end of 2026-09-07 |
+| --- | --- | --- |
+| Tests run | 341 | 341 |
+| Failures | 2 | **0** |
+| Errors | 327 | 327 |
+| Dominant error | missing config file | `NoSuchTableException: diagnosis_concept_view` |
+
+Failures are gone, which confirms cause C. `AmbiguousTableNameException` is gone entirely, which
+confirms the restricted-user hypothesis. The error count has not moved because each fix reveals the
+next layer in the same OpenMRS method.
+
+A full run takes about 10 minutes, because `mysql:5.6` runs under amd64 emulation on this machine.
+
+## The third layer, and what it probably means
+
+```
+org.dbunit.DatabaseUnitRuntimeException: org.dbunit.dataset.NoSuchTableException: diagnosis_concept_view
+    at org.openmrs.test.BaseContextSensitiveTest.deleteAllData(BaseContextSensitiveTest.java:880)
+```
+
+`reports_integration_tests` contains three **views**: `concept_reference_term_map_view`,
+`concept_view` and `diagnosis_concept_view`. dbunit 2.4.7 enumerates them through JDBC metadata,
+which lists views alongside tables, and then fails to treat them as tables.
+
+This is not a permissions problem. `bahmnitest` selects from `diagnosis_concept_view` successfully,
+returning 0 rows with no error. The views' `DEFINER` is `root@localhost` with `security_type
+DEFINER`, and that turned out to be a red herring.
+
+**The pattern matters more than this particular error.** Three independent environment-level
+blockers, all inside `BaseContextSensitiveTest.deleteAllData()`: a missing config file, cross-schema
+table-name ambiguity, and now views. That is the signature of a suite that has never run in this
+configuration, not one that regressed.
+
+Two pieces of evidence support that reading:
+
+1. CI has never run these tests. Both workflows pass `-DskipTests`.
+2. **PR #100 added a `unit-test` Maven profile that excludes exactly the 13 integration test
+   classes**, including every one failing here. The previous attempt hit this same wall and routed
+   around it rather than fixing it.
+
+## Recommended next step, and it is a decision not a task
+
+Before more debugging, someone should decide what "green baseline" means for this repo. The two
+options are materially different in cost:
+
+- **Split the suite.** Define the baseline as the unit tests, which are roughly 31 of the 341, and
+  quarantine the integration tests behind a profile with a tracked reason and a ticket. This is what
+  PR #100 did. It unblocks CP2 through CP9 within a day. The cost is that the 38 SQL reports lose
+  their only automated coverage, which makes CP7 manual verification the sole safety net rather than
+  a second one.
+- **Fix the integration harness.** Make `deleteAllData()` work, probably by getting dbunit to
+  exclude views, which needs a hook into OpenMRS's own test base class. Unknown effort, possibly
+  upstream. Keeps real coverage over the reports.
+
+This is a genuine trade-off about how much verification the upgrade deserves, so it belongs with a
+human rather than being settled by whoever is executing. Raise it before continuing.
+
+## What was still failing before tonight's fixes, and what it is not
 
 296 errors, all the same shape:
 
