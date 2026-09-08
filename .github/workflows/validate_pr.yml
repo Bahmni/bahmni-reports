@@ -2,6 +2,9 @@ name: Validate PR
 on:
   pull_request:
     branches: [ master ]
+concurrency:
+  group: validate-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 jobs:
   build-package:
     name: Build Package
