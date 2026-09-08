@@ -2236,11 +2236,20 @@ CREATE TABLE `global_property` (
   `handler_config` text,
   `date_changed` datetime DEFAULT NULL,
   `changed_by` int(11) DEFAULT NULL,
+  `view_privilege` varchar(255) DEFAULT NULL,
+  `edit_privilege` varchar(255) DEFAULT NULL,
+  `delete_privilege` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`property`),
   UNIQUE KEY `global_property_uuid_index` (`uuid`),
   KEY `global_property_property_index` (`property`),
   KEY `global_property_changed_by` (`changed_by`),
-  CONSTRAINT `global_property_changed_by` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`)
+  KEY `global_property_view_privilege_fk` (`view_privilege`),
+  KEY `global_property_edit_privilege_fk` (`edit_privilege`),
+  KEY `global_property_delete_privilege_fk` (`delete_privilege`),
+  CONSTRAINT `global_property_changed_by` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `global_property_view_privilege_fk` FOREIGN KEY (`view_privilege`) REFERENCES `privilege` (`privilege`),
+  CONSTRAINT `global_property_edit_privilege_fk` FOREIGN KEY (`edit_privilege`) REFERENCES `privilege` (`privilege`),
+  CONSTRAINT `global_property_delete_privilege_fk` FOREIGN KEY (`delete_privilege`) REFERENCES `privilege` (`privilege`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

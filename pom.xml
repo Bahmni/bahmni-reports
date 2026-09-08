@@ -15,7 +15,7 @@
         <jackson.version>2.17.0</jackson.version>
         <skipDump>true</skipDump>
         <skipConfig>true</skipConfig>
-        <openMRSVersion>2.5.7</openMRSVersion>
+        <openMRSVersion>2.8.9</openMRSVersion>
         <log4jVersion>2.23.1</log4jVersion>
         <bahmniJavaUtils.version>1.0.0</bahmniJavaUtils.version>
         <junitVersion>4.13</junitVersion>
@@ -179,6 +179,16 @@
             <artifactId>commons-text</artifactId>
             <version>1.11.0</version>
         </dependency>
+        <!-- commons-text 1.11.0 pulls commons-lang3 3.13.0 transitively, which wins over
+             commons-compress 1.28.0's own commons-lang3 3.18.0 requirement by declaration
+             order. Testcontainers' copyFileToContainer (exercised by OpenMRS's
+             Containers.ensureMySQLRunning() from 2.6.0 onward) needs commons-lang3's
+             ArrayFill, added in 3.18.0, so pin it explicitly. -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.18.0</version>
+        </dependency>
         <dependency>
             <groupId>net.sourceforge.dynamicreports</groupId>
             <artifactId>dynamicreports-adhoc</artifactId>
@@ -303,6 +313,12 @@
                     <artifactId>xml-apis</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mysql</artifactId>
+            <version>1.21.3</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
@@ -445,7 +461,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>4.8.0</version>
+            <version>4.32.0</version>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>

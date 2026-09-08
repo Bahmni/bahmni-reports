@@ -23,6 +23,7 @@ import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.DefaultDataSet;
 import org.dbunit.dataset.DefaultTable;
 import org.dbunit.ext.h2.H2DataTypeFactory;
+import org.dbunit.ext.mysql.MySqlDataTypeFactory;
 import org.dbunit.operation.DatabaseOperation;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -32,6 +33,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.openmrs.api.context.Context;
 import org.openmrs.test.BaseContextSensitiveTest;
+import org.openmrs.util.OpenmrsConstants;
 import org.openmrs.test.SkipBaseSetup;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -142,17 +144,21 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     /*
      * BaseContextSensitiveTest.deleteAllData() enumerates tables via
-     * DatabaseMetaData.getTables(null, "PUBLIC", "%", null): a null catalog, which the
-     * root user create_configuration.sh connects as can see every database on the server
-     * (including the sibling bahmni_reports_it, and performance_schema on a plain MySQL
-     * install), turning that into "every database visible to this connection" instead of
-     * just this one, and a null table-type filter, which includes VIEW. This schema has
-     * non-updatable joined views (e.g. diagnosis_concept_view) that the reports query
-     * directly, so they must stay in the schema but must never be handed to DELETE_ALL, and
-     * tables from the sibling bahmni_reports_it database (e.g. scheduled_report) must not
-     * appear at all. deleteAllData() is not overridable, so the fix intercepts at
-     * getConnection(), which it does call virtually, and narrows both null arguments only
-     * for that one unscoped lookup.
+     * DatabaseMetaData.getTables(catalog, "PUBLIC", "%", null). At openmrs-api 2.5.7 the
+     * catalog argument was null, which the root user create_configuration.sh connects as
+     * can see every database on the server (including the sibling bahmni_reports_it, and
+     * performance_schema on a plain MySQL install), turning that into "every database
+     * visible to this connection" instead of just this one. From 2.6.0 the catalog argument
+     * is System.getProperty("databaseName") instead of null (see getRuntimeProperties()
+     * below, which sets it to match this project's actual database), so that half of the
+     * problem no longer applies -- but the table-type filter is still null in both versions,
+     * which includes VIEW. This schema has non-updatable joined views (e.g.
+     * diagnosis_concept_view) that the reports query directly, so they must stay in the
+     * schema but must never be handed to DELETE_ALL, and tables from the sibling
+     * bahmni_reports_it database (e.g. scheduled_report) must not appear at all.
+     * deleteAllData() is not overridable, so the fix intercepts at getConnection(), which it
+     * does call virtually, and narrows the table-type filter for that one unscoped lookup,
+     * falling back to the connection's own catalog only when the caller passed none.
      */
     @Override
     public Connection getConnection() {
@@ -186,6 +192,20 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     }
 
     /*
+     * BaseContextSensitiveTest.setupDatabaseConnection() never registers a MySQL-aware
+     * DatabaseConfig.PROPERTY_DATATYPE_FACTORY for the real-database path (only the
+     * in-memory H2 path gets one), so DBUnit falls back to DefaultDataTypeFactory and warns
+     * on every table it inspects that "MySQL" isn't in its list of recognised products.
+     * Harmless, but it drowns real signal in test output across hundreds of tables.
+     */
+    @Override
+    protected IDatabaseConnection setupDatabaseConnection(Connection connection) throws DatabaseUnitException {
+        IDatabaseConnection dbUnitConnection = super.setupDatabaseConnection(connection);
+        dbUnitConnection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, new MySqlDataTypeFactory());
+        return dbUnitConnection;
+    }
+
+    /*
      * deleteAllData() always finishes with a Lucene reindex over ConceptName, Drug,
      * PersonName, PersonAttribute and PatientIdentifier. Drug's mapping in openmrs-api
      * 2.5.7 reads drug.dose_limit_units, a column this schema fixture (captured at the
@@ -202,16 +222,28 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
                 getClass().getClassLoader(),
                 new Class<?>[]{DatabaseMetaData.class},
                 (proxy, method, args) -> {
-                    boolean isUnscopedTableScan = "getTables".equals(method.getName())
-                            && args != null && args.length == 4 && args[0] == null && args[3] == null;
-                    if (isUnscopedTableScan) {
-                        Object[] scoped = {realMetaData.getConnection().getCatalog(), args[1], args[2], new String[]{"TABLE"}};
+                    boolean isUnscopedTableTypeScan = "getTables".equals(method.getName())
+                            && args != null && args.length == 4 && args[3] == null;
+                    if (isUnscopedTableTypeScan) {
+                        Object catalog = args[0] != null ? args[0] : realMetaData.getConnection().getCatalog();
+                        Object[] scoped = {catalog, args[1], args[2], new String[]{"TABLE"}};
                         return invokeReal(method, realMetaData, scoped);
                     }
                     return invokeReal(method, realMetaData, args);
                 });
     }
 
+    /*
+     * From openmrs-api 2.6.0 onward, BaseContextSensitiveTest.deleteAllData() and the
+     * OpenmrsMetadataHandler DBUnit uses for every real-database test both scope their
+     * DatabaseMetaData.getTables() catalog lookup to a fixed database name -- respectively
+     * System.getProperty("databaseName") and the mutable OpenmrsConstants.DATABASE_NAME --
+     * instead of the connection's own catalog. Both default to "openmrs", the name
+     * Containers.ensureMySQLRunning() gives its own throwaway Testcontainers database. This
+     * project's actual schema lives in whatever database connection.url points to (see
+     * bahmni-reports-test.properties), so both must be set to match or every table lookup
+     * silently scopes to a catalog that doesn't exist, surfacing as NoSuchTableException.
+     */
     @Override
     public Properties getRuntimeProperties() {
         dbProperties = new BahmniReportsProperties("bahmni-reports-test.properties");
@@ -219,6 +251,10 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         properties.put("connection.url", dbProperties.getOpenmrsUrl());
         properties.put("connection.username", dbProperties.getOpenmrsUser());
         properties.put("connection.password", dbProperties.getOpenmrsPassword());
+        String urlWithoutQuery = dbProperties.getOpenmrsUrl().split("\\?", 2)[0];
+        String databaseName = urlWithoutQuery.substring(urlWithoutQuery.lastIndexOf('/') + 1);
+        OpenmrsConstants.DATABASE_NAME = databaseName;
+        System.setProperty("databaseName", databaseName);
         return properties;
     }
 
