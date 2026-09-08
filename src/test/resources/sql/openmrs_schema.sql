@@ -1544,6 +1544,7 @@ CREATE TABLE `drug` (
   `retire_reason` varchar(255) DEFAULT NULL,
   `uuid` char(38) NOT NULL,
   `strength` varchar(255) DEFAULT NULL,
+  `dose_limit_units` int(11) DEFAULT NULL,
   PRIMARY KEY (`drug_id`),
   UNIQUE KEY `drug_uuid_index` (`uuid`),
   KEY `primary_drug_concept` (`concept_id`),
@@ -1552,12 +1553,14 @@ CREATE TABLE `drug` (
   KEY `dosage_form_concept` (`dosage_form`),
   KEY `drug_retired_by` (`retired_by`),
   KEY `route_concept` (`route`),
+  KEY `dose_limit_units_concept` (`dose_limit_units`),
   CONSTRAINT `dosage_form_concept` FOREIGN KEY (`dosage_form`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `drug_changed_by` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `drug_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `drug_retired_by` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `primary_drug_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
-  CONSTRAINT `route_concept` FOREIGN KEY (`route`) REFERENCES `concept` (`concept_id`)
+  CONSTRAINT `route_concept` FOREIGN KEY (`route`) REFERENCES `concept` (`concept_id`),
+  CONSTRAINT `dose_limit_units_concept` FOREIGN KEY (`dose_limit_units`) REFERENCES `concept` (`concept_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=346 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3932,6 +3935,7 @@ CREATE TABLE `person` (
   `uuid` char(38) NOT NULL,
   `deathdate_estimated` tinyint(1) NOT NULL DEFAULT '0',
   `birthtime` time DEFAULT NULL,
+  `cause_of_death_non_coded` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`person_id`),
   UNIQUE KEY `person_uuid_index` (`uuid`),
   KEY `person_birthdate` (`birthdate`),
@@ -5141,7 +5145,9 @@ CREATE TABLE `users` (
   `date_retired` datetime DEFAULT NULL,
   `retire_reason` varchar(255) DEFAULT NULL,
   `uuid` char(38) NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
+  UNIQUE KEY `user_email` (`email`),
   KEY `user_who_changed_user` (`changed_by`),
   KEY `user_creator` (`creator`),
   KEY `user_who_retired_this_user` (`retired_by`),
