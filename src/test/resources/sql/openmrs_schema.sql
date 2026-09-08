@@ -4335,6 +4335,7 @@ CREATE TABLE `provider` (
   `retire_reason` varchar(255) DEFAULT NULL,
   `uuid` char(38) NOT NULL,
   `provider_role_id` int(11) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`provider_id`),
   UNIQUE KEY `uuid` (`uuid`),
   KEY `provider_changed_by_fk` (`changed_by`),
@@ -4342,11 +4343,13 @@ CREATE TABLE `provider` (
   KEY `provider_retired_by_fk` (`retired_by`),
   KEY `provider_creator_fk` (`creator`),
   KEY `provider_role_id` (`provider_role_id`),
+  KEY `provider_role` (`role_id`),
   CONSTRAINT `provider_changed_by_fk` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `provider_creator_fk` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `provider_ibfk_1` FOREIGN KEY (`provider_role_id`) REFERENCES `providermanagement_provider_role` (`provider_role_id`),
   CONSTRAINT `provider_person_id_fk` FOREIGN KEY (`person_id`) REFERENCES `person` (`person_id`),
-  CONSTRAINT `provider_retired_by_fk` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
+  CONSTRAINT `provider_retired_by_fk` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `provider_role` FOREIGN KEY (`role_id`) REFERENCES `concept` (`concept_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
