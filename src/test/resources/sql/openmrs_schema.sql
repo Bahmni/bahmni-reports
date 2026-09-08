@@ -3660,6 +3660,9 @@ CREATE TABLE `orders` (
   `scheduled_date` datetime DEFAULT NULL,
   `order_group_id` int(11) DEFAULT NULL,
   `sort_weight` double DEFAULT NULL,
+  `fulfiller_comment` varchar(1024) DEFAULT NULL,
+  `fulfiller_status` varchar(50) DEFAULT NULL,
+  `form_namespace_and_path` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`order_id`),
   UNIQUE KEY `orders_uuid_index` (`uuid`),
   KEY `order_creator` (`creator`),
@@ -5063,12 +5066,41 @@ CREATE TABLE `test_order` (
   `clinical_history` text,
   `frequency` int(11) DEFAULT NULL,
   `number_of_repeats` int(11) DEFAULT NULL,
+  `location` int(11) DEFAULT NULL,
   PRIMARY KEY (`order_id`),
   KEY `test_order_specimen_source_fk` (`specimen_source`),
   KEY `test_order_frequency_fk` (`frequency`),
+  KEY `test_order_location_fk` (`location`),
   CONSTRAINT `test_order_frequency_fk` FOREIGN KEY (`frequency`) REFERENCES `order_frequency` (`order_frequency_id`),
   CONSTRAINT `test_order_order_id_fk` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
-  CONSTRAINT `test_order_specimen_source_fk` FOREIGN KEY (`specimen_source`) REFERENCES `concept` (`concept_id`)
+  CONSTRAINT `test_order_specimen_source_fk` FOREIGN KEY (`specimen_source`) REFERENCES `concept` (`concept_id`),
+  CONSTRAINT `test_order_location_fk` FOREIGN KEY (`location`) REFERENCES `concept` (`concept_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `referral_order`
+--
+
+DROP TABLE IF EXISTS `referral_order`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `referral_order` (
+  `order_id` int(11) NOT NULL DEFAULT '0',
+  `specimen_source` int(11) DEFAULT NULL,
+  `laterality` varchar(20) DEFAULT NULL,
+  `clinical_history` text,
+  `frequency` int(11) DEFAULT NULL,
+  `number_of_repeats` int(11) DEFAULT NULL,
+  `location` int(11) DEFAULT NULL,
+  PRIMARY KEY (`order_id`),
+  KEY `referral_order_specimen_source_fk` (`specimen_source`),
+  KEY `referral_order_frequency_fk` (`frequency`),
+  KEY `referral_order_location_fk` (`location`),
+  CONSTRAINT `referral_order_frequency_fk` FOREIGN KEY (`frequency`) REFERENCES `order_frequency` (`order_frequency_id`),
+  CONSTRAINT `referral_order_order_id_fk` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
+  CONSTRAINT `referral_order_specimen_source_fk` FOREIGN KEY (`specimen_source`) REFERENCES `concept` (`concept_id`),
+  CONSTRAINT `referral_order_location_fk` FOREIGN KEY (`location`) REFERENCES `concept` (`concept_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
