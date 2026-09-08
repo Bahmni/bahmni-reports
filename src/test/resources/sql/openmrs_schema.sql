@@ -1544,6 +1544,7 @@ CREATE TABLE `drug` (
   `retire_reason` varchar(255) DEFAULT NULL,
   `uuid` char(38) NOT NULL,
   `strength` varchar(255) DEFAULT NULL,
+  `dose_limit_units` int(11) DEFAULT NULL,
   PRIMARY KEY (`drug_id`),
   UNIQUE KEY `drug_uuid_index` (`uuid`),
   KEY `primary_drug_concept` (`concept_id`),
@@ -1552,12 +1553,14 @@ CREATE TABLE `drug` (
   KEY `dosage_form_concept` (`dosage_form`),
   KEY `drug_retired_by` (`retired_by`),
   KEY `route_concept` (`route`),
+  KEY `dose_limit_units_concept` (`dose_limit_units`),
   CONSTRAINT `dosage_form_concept` FOREIGN KEY (`dosage_form`) REFERENCES `concept` (`concept_id`),
   CONSTRAINT `drug_changed_by` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `drug_creator` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `drug_retired_by` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `primary_drug_concept` FOREIGN KEY (`concept_id`) REFERENCES `concept` (`concept_id`),
-  CONSTRAINT `route_concept` FOREIGN KEY (`route`) REFERENCES `concept` (`concept_id`)
+  CONSTRAINT `route_concept` FOREIGN KEY (`route`) REFERENCES `concept` (`concept_id`),
+  CONSTRAINT `dose_limit_units_concept` FOREIGN KEY (`dose_limit_units`) REFERENCES `concept` (`concept_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=346 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -3657,6 +3660,9 @@ CREATE TABLE `orders` (
   `scheduled_date` datetime DEFAULT NULL,
   `order_group_id` int(11) DEFAULT NULL,
   `sort_weight` double DEFAULT NULL,
+  `fulfiller_comment` varchar(1024) DEFAULT NULL,
+  `fulfiller_status` varchar(50) DEFAULT NULL,
+  `form_namespace_and_path` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`order_id`),
   UNIQUE KEY `orders_uuid_index` (`uuid`),
   KEY `order_creator` (`creator`),
@@ -3932,6 +3938,7 @@ CREATE TABLE `person` (
   `uuid` char(38) NOT NULL,
   `deathdate_estimated` tinyint(1) NOT NULL DEFAULT '0',
   `birthtime` time DEFAULT NULL,
+  `cause_of_death_non_coded` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`person_id`),
   UNIQUE KEY `person_uuid_index` (`uuid`),
   KEY `person_birthdate` (`birthdate`),
@@ -4331,6 +4338,8 @@ CREATE TABLE `provider` (
   `retire_reason` varchar(255) DEFAULT NULL,
   `uuid` char(38) NOT NULL,
   `provider_role_id` int(11) DEFAULT NULL,
+  `role_id` int(11) DEFAULT NULL,
+  `speciality_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`provider_id`),
   UNIQUE KEY `uuid` (`uuid`),
   KEY `provider_changed_by_fk` (`changed_by`),
@@ -4338,11 +4347,15 @@ CREATE TABLE `provider` (
   KEY `provider_retired_by_fk` (`retired_by`),
   KEY `provider_creator_fk` (`creator`),
   KEY `provider_role_id` (`provider_role_id`),
+  KEY `provider_role` (`role_id`),
+  KEY `provider_speciality` (`speciality_id`),
   CONSTRAINT `provider_changed_by_fk` FOREIGN KEY (`changed_by`) REFERENCES `users` (`user_id`),
   CONSTRAINT `provider_creator_fk` FOREIGN KEY (`creator`) REFERENCES `users` (`user_id`),
   CONSTRAINT `provider_ibfk_1` FOREIGN KEY (`provider_role_id`) REFERENCES `providermanagement_provider_role` (`provider_role_id`),
   CONSTRAINT `provider_person_id_fk` FOREIGN KEY (`person_id`) REFERENCES `person` (`person_id`),
-  CONSTRAINT `provider_retired_by_fk` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`)
+  CONSTRAINT `provider_retired_by_fk` FOREIGN KEY (`retired_by`) REFERENCES `users` (`user_id`),
+  CONSTRAINT `provider_role` FOREIGN KEY (`role_id`) REFERENCES `concept` (`concept_id`),
+  CONSTRAINT `provider_speciality` FOREIGN KEY (`speciality_id`) REFERENCES `concept` (`concept_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=23 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -5053,12 +5066,41 @@ CREATE TABLE `test_order` (
   `clinical_history` text,
   `frequency` int(11) DEFAULT NULL,
   `number_of_repeats` int(11) DEFAULT NULL,
+  `location` int(11) DEFAULT NULL,
   PRIMARY KEY (`order_id`),
   KEY `test_order_specimen_source_fk` (`specimen_source`),
   KEY `test_order_frequency_fk` (`frequency`),
+  KEY `test_order_location_fk` (`location`),
   CONSTRAINT `test_order_frequency_fk` FOREIGN KEY (`frequency`) REFERENCES `order_frequency` (`order_frequency_id`),
   CONSTRAINT `test_order_order_id_fk` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
-  CONSTRAINT `test_order_specimen_source_fk` FOREIGN KEY (`specimen_source`) REFERENCES `concept` (`concept_id`)
+  CONSTRAINT `test_order_specimen_source_fk` FOREIGN KEY (`specimen_source`) REFERENCES `concept` (`concept_id`),
+  CONSTRAINT `test_order_location_fk` FOREIGN KEY (`location`) REFERENCES `concept` (`concept_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `referral_order`
+--
+
+DROP TABLE IF EXISTS `referral_order`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `referral_order` (
+  `order_id` int(11) NOT NULL DEFAULT '0',
+  `specimen_source` int(11) DEFAULT NULL,
+  `laterality` varchar(20) DEFAULT NULL,
+  `clinical_history` text,
+  `frequency` int(11) DEFAULT NULL,
+  `number_of_repeats` int(11) DEFAULT NULL,
+  `location` int(11) DEFAULT NULL,
+  PRIMARY KEY (`order_id`),
+  KEY `referral_order_specimen_source_fk` (`specimen_source`),
+  KEY `referral_order_frequency_fk` (`frequency`),
+  KEY `referral_order_location_fk` (`location`),
+  CONSTRAINT `referral_order_frequency_fk` FOREIGN KEY (`frequency`) REFERENCES `order_frequency` (`order_frequency_id`),
+  CONSTRAINT `referral_order_order_id_fk` FOREIGN KEY (`order_id`) REFERENCES `orders` (`order_id`),
+  CONSTRAINT `referral_order_specimen_source_fk` FOREIGN KEY (`specimen_source`) REFERENCES `concept` (`concept_id`),
+  CONSTRAINT `referral_order_location_fk` FOREIGN KEY (`location`) REFERENCES `concept` (`concept_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -5141,7 +5183,9 @@ CREATE TABLE `users` (
   `date_retired` datetime DEFAULT NULL,
   `retire_reason` varchar(255) DEFAULT NULL,
   `uuid` char(38) NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`user_id`),
+  UNIQUE KEY `user_email` (`email`),
   KEY `user_who_changed_user` (`changed_by`),
   KEY `user_creator` (`creator`),
   KEY `user_who_retired_this_user` (`retired_by`),

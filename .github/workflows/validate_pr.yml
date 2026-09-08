@@ -2,6 +2,9 @@ name: Validate PR
 on:
   pull_request:
     branches: [ master ]
+concurrency:
+  group: validate-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 jobs:
   build-package:
     name: Build Package
@@ -21,5 +24,23 @@ jobs:
           java-version: '11'
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Install mysql client
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
+      - name: Wait for MySQL
+        run: |
+          for i in $(seq 1 30); do
+            mysqladmin ping -h127.0.0.1 -P3306 -uroot -proot --silent && break
+            sleep 2
+          done
+          mysqladmin ping -h127.0.0.1 -P3306 -uroot -proot --silent || { echo "STOP: MySQL never became ready"; exit 1; }
+      - name: Generate test configuration
+        run: |
+          ./scripts/create_configuration.sh
+          test -f "$HOME/.bahmni-reports/bahmni-reports-test.properties"
+      - name: Provision test databases
+        run: |
+          sh src/test/resources/create_db.sh || echo "create_db.sh reported failure, checking actual state"
+          test "$(mysql --protocol tcp -uroot -proot -N -e 'SHOW TABLES IN reports_integration_tests' | wc -l)" -gt 0
+          test "$(mysql --protocol tcp -uroot -proot -N -e 'SHOW TABLES IN bahmni_reports_it' | wc -l)" -gt 0
       - name: Test and build package
-        run: ./mvnw -T 4 --no-transfer-progress clean install -U -DskipTests
+        run: ./mvnw -T 4 --no-transfer-progress clean install -U

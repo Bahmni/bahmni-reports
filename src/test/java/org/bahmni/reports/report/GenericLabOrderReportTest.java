@@ -460,8 +460,8 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 Hg     No No 2022-03-16 12:34:31.0", report.getRowAsString(1, " "));
-        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 BP_Level high Normal 12  No No 2022-03-16 12:34:31.0", report.getRowAsString(2, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 Hg     No No 2022-03-16 12:34:31", report.getRowAsString(1, " "));
+        assertEquals("PatientIdentifier3 PatientName3 familyname3 31 04-Mar-1991 M 16-Mar-2022 BP_Level high Normal 12  No No 2022-03-16 12:34:31", report.getRowAsString(2, " "));
     }
 
 
