@@ -1,181 +1,160 @@
-# CP1, in progress
+# CP1, done
 
-Reference material for `../2.8.9-upgrade-plan.md`. CP1 is **not complete**. This records what was
-done on 2026-09-07, what it changed, and what is still failing, so the next session does not
-repeat any of it.
+Reference material for `../2.8.9-upgrade-plan.md`. Shipped together with CP2 as
+[PR #106](https://github.com/Bahmni/bahmni-reports/pull/106) (branch
+`BAH-5073-fix-integration-tests`, off `master`, under ticket **BAH-5073**), not as
+commits on `BAH-5058`. See the note in the plan's Branching section for why, and what
+that means for resuming this plan.
 
-## Environment set up, all verified by running things
+## Result
 
-| Step | Result |
-| --- | --- |
-| `brew install mysql-client` | 26.7.0 installed. Keg-only, so it needs `export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"`. |
-| MySQL root credentials | Set to password `root` with plugin `mysql_native_password`. |
-| `scripts/create_configuration.sh` | Run. `~/.bahmni-reports/` holds both properties files. |
-| Database engine | Switched from brew `mysql@8.0` to Docker `mysql:5.6.51`, matching CI. `brew services stop mysql@8.0` was run, so port 3306 is the container's. |
-| `src/test/resources/create_db.sh` | Run against 5.6. `reports_integration_tests` 184 tables, `bahmni_reports_it` 12 tables. |
+341 tests, **0 failures, 0 errors**, 4 skipped. Confirmed twice in CI on `mysql:5.6`
+(native, GitHub-hosted runner): once at 341/57/0/4 (two classes not yet fixed), once
+fully green after the remaining two were fixed. CI wall time ~7.5-12 minutes; a local
+run on this dev machine took 40+ minutes because Docker was emulating `mysql:5.6`
+under qemu (arm64 host, amd64-only image) while the machine was also swapping under
+memory pressure from other apps. Neither condition applies to CI.
 
-The Docker container is `bahmni-reports-mysql`. It survives a laptop restart only if Docker is set
-to start it, so expect to run `docker start bahmni-reports-mysql` tomorrow.
+## The four layers under cause D
 
-```bash
-docker run -d --name bahmni-reports-mysql --platform linux/amd64 \
-  -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:5.6
-```
+Cause D in the plan ("dbunit `AmbiguousTableNameException: USERS`") turned out to be
+the first of four independent, stacked problems, each hidden behind the one before it
+because CI has never run this suite (both workflows passed `-DskipTests` since Travis
+was introduced in 2017 -- confirmed by reading the full `.travis.yml` and
+`validate_pr.yml` history, not assumed).
 
-`mysql:5.6` is published for amd64 only, so on this aarch64 machine it runs under emulation.
-That is fine in practice: it accepted connections about 15 seconds after start.
+**Layer 1: `deleteAllData()`'s unscoped JDBC metadata scan.**
+`BaseContextSensitiveTest.deleteAllData()` (openmrs-api's own test base class, not
+this repo's code) calls `DatabaseMetaData.getTables(null, "PUBLIC", "%", null)` --
+disassembled via `javap` against `openmrs-api-2.5.7-tests.jar` to confirm, rather than
+guessed. A null catalog returns every database visible to the connecting user, and a
+null table-type filter returns views alongside tables. Against `root` (what
+`create_configuration.sh` actually connects as), that pulled in tables from the
+sibling `bahmni_reports_it` database (e.g. `scheduled_report`) and views this schema's
+own reports query directly (e.g. `diagnosis_concept_view`), which then failed
+`DELETE_ALL` because non-updatable joined views can't be deleted from.
 
-Two details that matter and cost time to find:
+Fix: `deleteAllData()` isn't overridable, but it calls `this.getConnection()`
+virtually, so `BaseIntegrationTest.getConnection()` now returns a dynamic proxy
+(`java.lang.reflect.Proxy`) that narrows exactly that one unscoped `getTables` call
+to the current catalog and `TABLE`-only, and leaves every other call untouched.
 
-- The `mysql_native_password` plugin is not cosmetic. With MySQL 8's default
-  `caching_sha2_password`, Connector/J 8.0.28 fails against a plaintext JDBC URL with
-  "Public Key Retrieval is not allowed", because `create_configuration.sh` does not set
-  `allowPublicKeyRetrieval=true`. MySQL 5.6 only offers native password, so on the container
-  this is moot, but it matters if anyone goes back to the brew 8.0 server.
-- `create_db.sh` exits 0 even when its `DROP DATABASE` calls fail, because it has no `set -e` and
-  those calls lack `IF EXISTS`. Always verify with table counts, never with its exit code.
+**Layer 2: a Lucene reindex with no relevance here.**
+`deleteAllData()` always finishes with `updateSearchIndex()`, reindexing
+`ConceptName`, `Drug`, `PersonName`, `PersonAttribute`, `PatientIdentifier`. `Drug`'s
+mapping in openmrs-api 2.5.7 (`Drug.hbm.xml`, extracted from
+`openmrs-api-2.5.7-sources.jar`) reads `drug.dose_limit_units`, a column the schema
+fixture didn't have. None of this app's reports go through OpenMRS's search API --
+they run raw SQL against the tables directly -- so `updateSearchIndex()` is now a
+no-op override rather than a reason to patch the schema for a reindex nothing needs.
 
-## Progress against the suite
+**Layer 3: the schema fixture is stale, not just missing one column.**
+`src/test/resources/sql/openmrs_schema.sql` was captured once around 2016
+("Upgrading openmrs to 2.1.0-SNAPSHOT") and never refreshed as the pinned
+`openMRSVersion` moved to 2.5.7. Each missing column/table was found by running one
+test, reading the exact `Unknown column`/`doesn't exist` error, and verifying the
+correct name/type/nullability against the real `.hbm.xml` mapping in
+`openmrs-api-2.5.7-sources.jar` -- never guessed. Found and added, in the order they
+surfaced:
 
-All runs on JDK 11.0.28, which matches CI.
-
-| Run | Result | Dominant cause |
+| Table | Column/addition | Source mapping |
 | --- | --- | --- |
-| CP0 baseline, no config, brew MySQL 8 | 341 tests, 2 failures, 327 errors | 296 `FileNotFoundException` plus `NullPointerException`, missing config file |
-| Config generated, databases provisioned, MySQL 8 | 341 tests, 2 failures, 327 errors | 296 `DatabaseUnitRuntimeException`, `AmbiguousTableNameException: REPLICATION_ASYNCHRONOUS_CONNECTION_FAILOVER` |
-| Same, on Docker MySQL 5.6 | 341 tests, 2 failures, 327 errors | 296 `DatabaseUnitRuntimeException`, `AmbiguousTableNameException: USERS` |
+| `users` | `email` | `User.hbm.xml` |
+| `drug` | `dose_limit_units` | `Drug.hbm.xml` |
+| `person` | `cause_of_death_non_coded` | `Person.hbm.xml` |
+| `provider` | `role_id`, `speciality_id` | `Provider.hbm.xml` |
+| `orders` | `fulfiller_comment`, `fulfiller_status`, `form_namespace_and_path` | `Order.hbm.xml` |
+| `test_order` | `location` | `Order.hbm.xml` (`TestOrder` joined-subclass) |
+| `referral_order` | whole table, mirroring `test_order` plus `location` | `Order.hbm.xml` (`ReferralOrder` joined-subclass) |
 
-The error total has not moved, but the **cause** has changed twice. Cause A, the missing config
-file, is genuinely fixed and will not come back. This is exactly the situation the plan warns
-about: comparing counts would have shown no progress, comparing causes shows two layers peeled off.
+These columns are genuine OpenMRS core columns confirmed against the real jar, not
+invented to satisfy an assertion. `src/test/resources/sql/openmrs_schema.sql` has no
+path to production: it is read only by `create_db.sh`, which stands up a disposable
+local database purely for tests. Production builds its schema from OpenMRS's own
+Liquibase changesets, entirely independent of this file.
 
-## Where it got to, 2026-09-07 late
+**Layer 4: an actual production bug, exposed once setup stopped failing first.**
+`ReportAuthorization.getSessionId()` iterated `request.getCookies()` without a null
+check. `getCookies()` returns `null`, not an empty array, when a request carries no
+cookies -- true for a real first-time request in production and for every
+`MockMvc`-driven test here. This NPE was never caught because no test had gotten this
+far into request handling before. Fixed with a null guard; no other behaviour change.
 
-Applied and committed:
+## Two more bugs found once the suite could run for real
 
-- **Cause B**, `xerces`/`xml-apis` excluded from both `openmrs-api` entries in `pom.xml`. `dependency:tree` now shows neither.
-- **Cause C**, trailing `\n` removed from the two literals in `PatientAttributesHelperTest`.
-- **Cause D, partially.** Created a MySQL user `bahmnitest` with grants only on the two test databases, so `performance_schema` is invisible to it, and pointed the test properties at it.
+**`genericLabOrderReport.sql`'s "Obs Id" is a `GROUP_CONCAT`.** It returns a
+comma-joined string (e.g. `"2011,2012"`) whenever an order has more than one
+non-excluded obs. `GenericLabOrderReportTemplateHelper` typed that Jasper column as
+`Long`, so any such order threw a `JRException`, surfacing to callers as an HTTP 500.
+Retyped to `String`. Confirmed `genericObservationReport.sql`'s own, differently-named
+"Obs Id" column is a plain, unaggregated value and left that helper untouched.
 
-Measured effect:
+**Stale `.0` in test literals, the same pattern as `PatientAttributesHelperTest`
+(cause C).** Many assertions in `GenericLabOrderReportTest` and
+`GenericObservationReportTest` asserted on `Timestamp.toString()`'s trailing `.0`.
+Confirmed via `SHOW COLUMNS` that the backing columns (`orders.date_activated`,
+`obs.obs_datetime`, `visit.date_started`, etc.) are plain `DATETIME` with no
+fractional-seconds precision, so `.0` carries no information. Never checked before
+because CI never ran. Fixed by stripping `.0` only when it immediately follows an
+`HH:mm:ss` timestamp in the literal, so no unrelated decimal in either file was
+touched -- confirmed by a scoped regex, not a blind find-and-replace.
 
-| | CP0 | end of 2026-09-07 |
-| --- | --- | --- |
-| Tests run | 341 | 341 |
-| Failures | 2 | **0** |
-| Errors | 327 | 327 |
-| Dominant error | missing config file | `NoSuchTableException: diagnosis_concept_view` |
+## A cheap side effect worth keeping: quiet test logs
 
-Failures are gone, which confirms cause C. `AmbiguousTableNameException` is gone entirely, which
-confirms the restricted-user hypothesis. The error count has not moved because each fix reveals the
-next layer in the same OpenMRS method.
+No test-scoped logging config existed, so `logback-classic` (added to the classpath in
+an earlier, unrelated security-dependency bump) fell back to its default and every
+test run emitted DEBUG-level output for `org.dbunit`, `org.hibernate`, `org.openmrs`.
+A single class's run log ran past 100,000 lines; the full suite produced multiple
+gigabytes and made CI logs unreadable. Added `src/test/resources/logback-test.xml`
+at `WARN` -- Logback's own mechanism for a test-only override, with no effect on the
+application's own `log4j2.properties` used at runtime.
 
-A full run takes about 10 minutes, because `mysql:5.6` runs under amd64 emulation on this machine.
+## Also fixed along the way, not part of any layer above
 
-## The third layer, and what it probably means
+- `xerces`/`xml-apis` excluded from both `openmrs-api` entries in `pom.xml` (cause B,
+  already diagnosed before this session; applied here).
+- `commons-compress` had been excluded from `poi-ooxml` entirely (`BAH-3884`, dodging
+  a CVE) instead of pinned to a patched version, which silently broke every `.xlsx`
+  read/write path -- in production as well as tests, since nothing had ever exercised
+  it. Pinned `commons-compress:1.28.0` (well past the `1.26.0` fix for
+  `CVE-2024-25710`) and bumped `commons-io` `2.7` -> `2.20.0` to match (`1.28.0` needs
+  `IOIterator`, added in `commons-io` `2.12.0`).
 
-```
-org.dbunit.DatabaseUnitRuntimeException: org.dbunit.dataset.NoSuchTableException: diagnosis_concept_view
-    at org.openmrs.test.BaseContextSensitiveTest.deleteAllData(BaseContextSensitiveTest.java:880)
-```
+## Hypotheses tested and rejected earlier, before this session's schema-drift work
 
-`reports_integration_tests` contains three **views**: `concept_reference_term_map_view`,
-`concept_view` and `diagnosis_concept_view`. dbunit 2.4.7 enumerates them through JDBC metadata,
-which lists views alongside tables, and then fails to treat them as tables.
+Kept for anyone re-deriving this: do not spend time on these again.
 
-This is not a permissions problem. `bahmnitest` selects from `diagnosis_concept_view` successfully,
-returning 0 rows with no error. The views' `DEFINER` is `root@localhost` with `security_type
-DEFINER`, and that turned out to be a red herring.
+- **MySQL 8 is the problem.** Rejected: moving to MySQL 5.6 only changed which table
+  name dbunit reported (`REPLICATION_ASYNCHRONOUS_CONNECTION_FAILOVER` to `USERS`),
+  not the failure or its count.
+- **`nullCatalogMeansCurrent=true` on the JDBC URL.** Rejected: this is the textbook
+  Connector/J 8 explanation and looked like an exact match, but adding it made no
+  difference to the counts. The real fix needed code (the `getConnection()` proxy),
+  not a connection property.
+- **A restricted MySQL user (`bahmnitest`) that can't see `performance_schema`.**
+  This was tried mid-investigation and genuinely fixed the *first* symptom
+  (`AmbiguousTableNameException: USERS`), but was superseded once the `getConnection()`
+  proxy fix landed, which scopes the catalog in code and works correctly with the
+  plain `root` user that `create_configuration.sh` actually configures -- what CI and
+  any fresh local setup use. No custom MySQL user is needed.
 
-**The pattern matters more than this particular error.** Three independent environment-level
-blockers, all inside `BaseContextSensitiveTest.deleteAllData()`: a missing config file, cross-schema
-table-name ambiguity, and now views. That is the signature of a suite that has never run in this
-configuration, not one that regressed.
+## Adversarial review, applied
 
-The supporting evidence is that CI has never run these tests: both workflows pass `-DskipTests`.
-So there is no point in the project's recorded history at which this suite was demonstrably green,
-and nothing documents the environment it would need.
+A medium-effort review of the diff's production-facing files
+(`ReportAuthorization.java`, `pom.xml`'s dependency changes,
+`GenericLabOrderReportTemplateHelper.java`, `validate_pr.yml`) plus a lighter pass over
+`BaseIntegrationTest.java`'s new proxy found two real issues, both fixed before merge:
 
-## Recommended next step, and it is a decision not a task
+- The proxy's `InvocationHandler`s called `method.invoke(...)` directly. JDK dynamic
+  proxies wrap any checked exception the handler throws that isn't declared by the
+  invoked interface method into `UndeclaredThrowableException` -- and
+  `Method.invoke`'s own `InvocationTargetException` is never one of those declared
+  types. Any real `SQLException` through the proxy (a constraint violation, a dropped
+  connection) would have surfaced as the wrong exception type. Added an `invokeReal()`
+  helper that catches `InvocationTargetException` and rethrows `getCause()`.
+- A comment on `getConnection()` attributed the cross-database visibility problem to
+  the `bahmnitest` user from the rejected-hypothesis investigation above, but the real
+  config connects as `root`. Corrected.
 
-Before more debugging, someone should decide what "green baseline" means for this repo. The two
-options are materially different in cost:
-
-- **Split the suite.** Define the baseline as the unit tests, which are roughly 31 of the 341, and
-  quarantine the integration tests behind a Maven profile with a tracked reason and a ticket. This
-  unblocks CP2 through CP9 within a day. The cost is that the 38 SQL reports lose their only
-  automated coverage, which makes CP7's manual verification the sole safety net rather than a
-  second one.
-- **Fix the integration harness.** Make `deleteAllData()` work, probably by getting dbunit to
-  exclude views, which needs a hook into OpenMRS's own test base class. Unknown effort, possibly
-  upstream. Keeps real coverage over the reports.
-
-This is a genuine trade-off about how much verification the upgrade deserves, so it belongs with a
-human rather than being settled by whoever is executing. Raise it before continuing.
-
-## What was still failing before tonight's fixes, and what it is not
-
-296 errors, all the same shape:
-
-```
-org.dbunit.DatabaseUnitRuntimeException: org.dbunit.database.AmbiguousTableNameException: USERS
-    at org.openmrs.test.BaseContextSensitiveTest.deleteAllData(BaseContextSensitiveTest.java:880)
-    at org.bahmni.reports.report.integrationtests.BaseIntegrationTest.setUpTestData(BaseIntegrationTest.java:125)
-    at org.bahmni.reports.report.integrationtests.BaseIntegrationTest.beforeBaseIntegrationTest(BaseIntegrationTest.java:113)
-```
-
-dbunit 2.4.7 enumerates tables through JDBC metadata without a schema qualifier, so it sees `users`
-in more than one schema and refuses to proceed. Confirmed by query: `users` exists in both
-`performance_schema` and `reports_integration_tests`.
-
-The failing call is inside OpenMRS's own `BaseContextSensitiveTest`, which builds its own dbunit
-connection, so it cannot be fixed from this repo's test code alone.
-
-### Hypotheses already tested and rejected
-
-Do not spend time on these again.
-
-- **MySQL 8 is the problem.** Rejected. Moving to MySQL 5.6 changed which table name was reported,
-  from `REPLICATION_ASYNCHRONOUS_CONNECTION_FAILOVER` to `USERS`, but the failure and its count are
-  unchanged. The MySQL 8 table was a symptom, not the cause. Keeping 5.6 is still right because it
-  matches CI, but it does not fix this.
-- **`nullCatalogMeansCurrent=true` on the JDBC URL.** Rejected. This is the documented Connector/J 8
-  behaviour change that makes `getTables(null, ...)` span all databases, so it looked like an exact
-  match. Added to `openmrs.url` in the test properties and the suite still reported 341 tests,
-  2 failures, 327 errors with 296 dbunit errors. The local properties edit has been reverted.
-
-### Hypotheses not yet tried, roughly in order of promise
-
-1. Grant the JDBC user access only to the two test databases, so `performance_schema` is invisible
-   and the duplicate name disappears. Blocked by `create_configuration.sh` hardcoding `root`, so it
-   needs either a script change or a properties override.
-2. Check how OpenMRS 2.5.7's `BaseContextSensitiveTest.deleteAllData` constructs its
-   `DatabaseConnection`, at line 880, and whether any system property or OpenMRS runtime property
-   sets a dbunit schema. Read the class from the test-jar rather than guessing.
-3. dbunit's `FEATURE_QUALIFIED_TABLE_NAMES`, if OpenMRS exposes any hook to set dbunit features.
-4. Check whether `BaseIntegrationTest.useInMemoryDatabase()` returning `false` is the intended
-   configuration here. Everything else in this suite assumes a real database, but it is worth
-   confirming this is how the suite was ever meant to run, given CI has never run it.
-
-Worth keeping in mind: this suite has never run green in CI, so there is no evidence it ever passed
-in this configuration. Establishing whether it *ever* worked, and in what environment, may be faster
-than assuming it did and hunting a regression.
-
-## Cause C, settled but not yet applied
-
-The 2 failures are `PatientAttributesHelperTest` asserting on strings that end in `\n` while
-`getSql()` emits none. The resource it renders, `src/main/resources/sql/helper/patientAttributes.sql`,
-has never ended with a newline: its only commit, `f4e44a7`, carries a
-`\ No newline at end of file` marker. So the expected literals have been wrong since they were
-written. Fix is to drop the trailing `\n` from the two literals at `PatientAttributesHelperTest.java:15`
-and `:22`. Not yet done.
-
-## Cause B, not yet applied
-
-The `xerces`/`xml-apis` exclusions on the `openmrs-api` dependency have not been added. That work
-accounts for the 26 `NoClassDefFoundError` plus 4 `IllegalAccessError` still in the run.
-
-## No repository files were changed
-
-Everything above is environment setup plus diagnosis. `git status` shows no modifications to
-tracked files beyond the plan documents themselves.
+It also found two CI-only issues, folded into CP2's evidence since that's where they
+live.
