@@ -19,7 +19,11 @@
         <log4jVersion>2.23.1</log4jVersion>
         <bahmniJavaUtils.version>1.0.0</bahmniJavaUtils.version>
         <junitVersion>4.13</junitVersion>
-        <powerMockVersion>2.0.7</powerMockVersion>
+        <!-- Capped at 5.7.0: it is the newest Mockito 5 built against byte-buddy 1.14.9, the
+             version jackson-databind 2.17.0 pins at compile scope. A newer Mockito resolves
+             byte-buddy-agent ahead of byte-buddy and would need a production-classpath bump. -->
+        <mockitoVersion>5.7.0</mockitoVersion>
+        <byteBuddyVersion>1.14.9</byteBuddyVersion>
     </properties>
 
     <build>
@@ -100,6 +104,27 @@
             </extension>
         </extensions>
     </build>
+
+    <dependencyManagement>
+        <dependencies>
+            <!-- byte-buddy arrives transitively at compile scope (jackson-databind) while
+                 byte-buddy-agent arrives from mockito-core at test scope. Mockito's inline mock
+                 maker needs the two to match, so pin byte-buddy rather than letting a future
+                 jackson bump move it out from under the agent and break every static and inline
+                 mock with an opaque error. Keep this equal to the byte-buddy version that the
+                 mockitoVersion property's Mockito release was built against. -->
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy</artifactId>
+                <version>${byteBuddyVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.bytebuddy</groupId>
+                <artifactId>byte-buddy-agent</artifactId>
+                <version>${byteBuddyVersion}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -313,24 +338,6 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-core</artifactId>
-            <version>${powerMockVersion}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-module-junit4</artifactId>
-            <version>${powerMockVersion}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-mockito2</artifactId>
-            <version>${powerMockVersion}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>3.4</version>
@@ -427,7 +434,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>3.5.11</version>
+            <version>${mockitoVersion}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
