@@ -245,6 +245,26 @@ The cost is per test **method**, not per class:
 `getConnection().commit()`. `useInMemoryDatabase()` returns `false`, so that is a real
 MySQL round trip, and each test then renders a real Jasper report through `MockMvc`.
 
+**The root cause is that one `commit()`.** `BaseIntegrationTest` is annotated
+`@Transactional`, so Spring would normally roll each test back and the fixture data
+would cost nothing to undo. `setUpTestData()`'s explicit `getConnection().commit()`
+defeats that rollback, which is precisely *why* every test then has to `deleteAllData()`
+and reload both datasets from scratch. The slowness is a consequence of that commit, not
+of the datasets being large. Anyone shortening this loop has to deal with the commit
+first, and then choose between:
+
+- **Per-fork databases**, keeping the commit and the per-test reload but running forks
+  concurrently under surefire 3.x (`forkCount=2C`, `reuseForks=true`, with
+  `${surefire.forkNumber}` in the JDBC URL). Lowest semantic risk, because each test
+  still sees a freshly loaded schema. This is the CP8 option.
+- **Per-class setup**, dropping the commit and leaning on transactional rollback, or
+  moving the load to `@BeforeClass`. Much larger win, but it introduces order dependence
+  between tests within a class, which none of these tests were written to tolerate.
+
+Nothing about this was changed at CP4, and the runtime numbers did not move: the 5:36
+and 4:52 figures are two runs of the same unchanged harness, differing only by warm
+Docker page cache and a warm Maven repository.
+
 Nothing about it was changed here. Options, for CP8 where the surefire bump lives:
 
 - Surefire 2.18.1 has no usable parallelism. Surefire 3.x supports `forkCount=2C` with
