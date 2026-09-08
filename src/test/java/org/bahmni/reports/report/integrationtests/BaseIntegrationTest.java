@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.OutputStream;
+import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.sql.*;
 import java.util.List;
@@ -135,6 +136,59 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     @Override
     public Boolean useInMemoryDatabase() {
         return false;
+    }
+
+    /*
+     * BaseContextSensitiveTest.deleteAllData() enumerates tables via
+     * DatabaseMetaData.getTables(null, "PUBLIC", "%", null): a null catalog, which the
+     * bahmnitest user's cross-database grants (see cause D) turn into "every database this
+     * user can see" instead of just this one, and a null table-type filter, which includes
+     * VIEW. This schema has non-updatable joined views (e.g. diagnosis_concept_view) that
+     * the reports query directly, so they must stay in the schema but must never be handed
+     * to DELETE_ALL, and tables from the sibling bahmni_reports_it database (e.g.
+     * scheduled_report) must not appear at all. deleteAllData() is not overridable, so the
+     * fix intercepts at getConnection(), which it does call virtually, and narrows both
+     * null arguments only for that one unscoped lookup.
+     */
+    @Override
+    public Connection getConnection() {
+        final Connection realConnection = super.getConnection();
+        return (Connection) Proxy.newProxyInstance(
+                getClass().getClassLoader(),
+                new Class<?>[]{Connection.class},
+                (proxy, method, args) -> {
+                    if ("getMetaData".equals(method.getName())) {
+                        return wrapMetaDataExcludingViews(realConnection.getMetaData());
+                    }
+                    return method.invoke(realConnection, args);
+                });
+    }
+
+    /*
+     * deleteAllData() always finishes with a Lucene reindex over ConceptName, Drug,
+     * PersonName, PersonAttribute and PatientIdentifier. Drug's mapping in openmrs-api
+     * 2.5.7 reads drug.dose_limit_units, a column this schema fixture (captured at the
+     * 2.1.x era) does not have, so every single test errors here regardless of what it
+     * actually exercises. None of this app's reports go through OpenMRS's search API, they
+     * run raw SQL against the tables directly, so the reindex has nothing to verify here.
+     */
+    @Override
+    public void updateSearchIndex() {
+    }
+
+    private DatabaseMetaData wrapMetaDataExcludingViews(final DatabaseMetaData realMetaData) {
+        return (DatabaseMetaData) Proxy.newProxyInstance(
+                getClass().getClassLoader(),
+                new Class<?>[]{DatabaseMetaData.class},
+                (proxy, method, args) -> {
+                    boolean isUnscopedTableScan = "getTables".equals(method.getName())
+                            && args != null && args.length == 4 && args[0] == null && args[3] == null;
+                    if (isUnscopedTableScan) {
+                        Object[] scoped = {realMetaData.getConnection().getCatalog(), args[1], args[2], new String[]{"TABLE"}};
+                        return method.invoke(realMetaData, scoped);
+                    }
+                    return method.invoke(realMetaData, args);
+                });
     }
 
     @Override
