@@ -47,6 +47,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.sql.*;
@@ -141,14 +143,16 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
     /*
      * BaseContextSensitiveTest.deleteAllData() enumerates tables via
      * DatabaseMetaData.getTables(null, "PUBLIC", "%", null): a null catalog, which the
-     * bahmnitest user's cross-database grants (see cause D) turn into "every database this
-     * user can see" instead of just this one, and a null table-type filter, which includes
-     * VIEW. This schema has non-updatable joined views (e.g. diagnosis_concept_view) that
-     * the reports query directly, so they must stay in the schema but must never be handed
-     * to DELETE_ALL, and tables from the sibling bahmni_reports_it database (e.g.
-     * scheduled_report) must not appear at all. deleteAllData() is not overridable, so the
-     * fix intercepts at getConnection(), which it does call virtually, and narrows both
-     * null arguments only for that one unscoped lookup.
+     * root user create_configuration.sh connects as can see every database on the server
+     * (including the sibling bahmni_reports_it, and performance_schema on a plain MySQL
+     * install), turning that into "every database visible to this connection" instead of
+     * just this one, and a null table-type filter, which includes VIEW. This schema has
+     * non-updatable joined views (e.g. diagnosis_concept_view) that the reports query
+     * directly, so they must stay in the schema but must never be handed to DELETE_ALL, and
+     * tables from the sibling bahmni_reports_it database (e.g. scheduled_report) must not
+     * appear at all. deleteAllData() is not overridable, so the fix intercepts at
+     * getConnection(), which it does call virtually, and narrows both null arguments only
+     * for that one unscoped lookup.
      */
     @Override
     public Connection getConnection() {
@@ -160,8 +164,25 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
                     if ("getMetaData".equals(method.getName())) {
                         return wrapMetaDataExcludingViews(realConnection.getMetaData());
                     }
-                    return method.invoke(realConnection, args);
+                    return invokeReal(method, realConnection, args);
                 });
+    }
+
+    /*
+     * Proxy.newProxyInstance requires the handler to throw only what the invoked interface
+     * method itself declares (plus unchecked exceptions); anything else is wrapped in an
+     * UndeclaredThrowableException by the JDK. Method.invoke's own checked exception,
+     * InvocationTargetException, is never one of those declared types, so calling it
+     * directly here would turn every real SQLException from the proxied Connection or
+     * DatabaseMetaData into an UndeclaredThrowableException instead. Unwrap it back to the
+     * real cause before it leaves the handler.
+     */
+    private static Object invokeReal(Method method, Object target, Object[] args) throws Throwable {
+        try {
+            return method.invoke(target, args);
+        } catch (InvocationTargetException e) {
+            throw e.getCause();
+        }
     }
 
     /*
@@ -185,9 +206,9 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
                             && args != null && args.length == 4 && args[0] == null && args[3] == null;
                     if (isUnscopedTableScan) {
                         Object[] scoped = {realMetaData.getConnection().getCatalog(), args[1], args[2], new String[]{"TABLE"}};
-                        return method.invoke(realMetaData, scoped);
+                        return invokeReal(method, realMetaData, scoped);
                     }
-                    return method.invoke(realMetaData, args);
+                    return invokeReal(method, realMetaData, args);
                 });
     }
 
