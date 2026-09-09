@@ -9,13 +9,22 @@ DRIVER="com.mysql.cj.jdbc.Driver"
 find_one_jar() {
     pattern="$1"
     label="$2"
-    matches=$(ls $pattern 2>/dev/null)
-    count=$(echo "$matches" | grep -c .)
+    match=""
+    count=0
+    old_ifs="$IFS"
+    IFS=
+    for candidate in $pattern; do
+        if [ -e "$candidate" ]; then
+            count=$((count + 1))
+            match="$candidate"
+        fi
+    done
+    IFS="$old_ifs"
     if [ "$count" -ne 1 ]; then
         echo "expected exactly one $label jar matching $pattern, found $count"
         exit 1
     fi
-    echo "$matches"
+    echo "$match"
 }
 
 LIQUIBASE_JAR=$(find_one_jar "${WAR_DIRECTORY}/WEB-INF/lib/liquibase-core-*.jar" "liquibase")
