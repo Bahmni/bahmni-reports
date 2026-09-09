@@ -204,7 +204,7 @@ public class GenericLabOrderReportTest extends BaseIntegrationTest {
     public void shouldFilterByPrograms() throws Exception {
         String reportName = "LabOrder report filtered by program name";
 
-        CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2017-02-30");
+        CsvReport report = fetchCsvReport(reportName, "2016-01-01", "2017-02-28");
 
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());

@@ -111,7 +111,16 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         when(bahmniReportsProperties.getOpenmrsConnectionTimeout()).thenReturn(dbProperties.getOpenmrsConnectionTimeout());
         when(bahmniReportsProperties.getOpenmrsReplyTimeout()).thenReturn(dbProperties.getOpenmrsReplyTimeout());
         when(bahmniReportsProperties.getMacroTemplatesTempDirectory()).thenReturn("/tmp");
-        when(allDatasources.getConnectionFromDatasource(any(BaseReportTemplate.class))).thenReturn(getDatabaseConnection());
+        /*
+         * A fresh connection per call, not one shared instance. Report rendering closes the
+         * connection it was handed, so thenReturn(...) -- which hands every caller the same
+         * object -- only works while a test runs exactly one report. The second report in the
+         * same test method gets a closed connection and fails with "No operations allowed
+         * after connection closed", or with a JRException wrapping it. A real DataSource hands
+         * out a connection per call, so this also matches production more closely.
+         */
+        when(allDatasources.getConnectionFromDatasource(any(BaseReportTemplate.class)))
+                .thenAnswer(invocation -> getDatabaseConnection());
 
         String fileData=FileUtils.readFileToString(new File(configFileUrl));
         when(httpClient.get(any(URI.class))).thenReturn(fileData);
@@ -207,11 +216,15 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
 
     /*
      * deleteAllData() always finishes with a Lucene reindex over ConceptName, Drug,
-     * PersonName, PersonAttribute and PatientIdentifier. Drug's mapping in openmrs-api
-     * 2.5.7 reads drug.dose_limit_units, a column this schema fixture (captured at the
-     * 2.1.x era) does not have, so every single test errors here regardless of what it
-     * actually exercises. None of this app's reports go through OpenMRS's search API, they
-     * run raw SQL against the tables directly, so the reindex has nothing to verify here.
+     * PersonName, PersonAttribute and PatientIdentifier. It is suppressed because none of
+     * this app's reports go through OpenMRS's search API: they run raw SQL against the
+     * tables directly, so the reindex verifies nothing here and costs time in every
+     * test's @Before.
+     *
+     * It originally existed for a different reason, now dead: the old 2.1.x-era fixture
+     * lacked drug.dose_limit_units, which Drug's Hibernate mapping reads, so the reindex
+     * errored in every test. The 2.8.9 capture has that column. Keep the override anyway,
+     * for the reason above, rather than removing it because that reason no longer applies.
      */
     @Override
     public void updateSearchIndex() {
@@ -258,14 +271,18 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
         return properties;
     }
 
+    /*
+     * Throws rather than returning null. This is now on the per-render path (see the
+     * thenAnswer stub above), so a transient connection failure used to surface as an NPE
+     * inside whichever report happened to run next, blaming the wrong thing entirely.
+     */
     protected Connection getDatabaseConnection() {
         try {
-            Connection connection = DriverManager.getConnection(dbProperties.getOpenmrsUrl(),
+            return DriverManager.getConnection(dbProperties.getOpenmrsUrl(),
                     dbProperties.getOpenmrsUser(), dbProperties.getOpenmrsPassword());
-            return connection;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return null;
+            throw new IllegalStateException("could not open a connection to "
+                    + dbProperties.getOpenmrsUrl() + ". Is the MySQL container running?", e);
         }
     }
 

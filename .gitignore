@@ -28,3 +28,6 @@ README.html
 
 # Claude Code local config/skills, never shared #
 .claude/
+
+# Upgrade plan and evidence: local working notes, never shared #
+/docs/upgrade/
