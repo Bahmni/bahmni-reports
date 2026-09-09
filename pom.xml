@@ -106,12 +106,15 @@
 
     <dependencyManagement>
         <dependencies>
-            <!-- byte-buddy arrives transitively at compile scope (jackson-databind) while
-                 byte-buddy-agent arrives from mockito-core at test scope. Mockito's inline mock
-                 maker needs the two to match, so pin byte-buddy rather than letting a future
-                 jackson bump move it out from under the agent and break every static and inline
-                 mock with an opaque error. Keep this equal to the byte-buddy version that the
-                 mockitoVersion property's Mockito release was built against. -->
+            <!-- byte-buddy arrives transitively at compile scope (jackson-databind); mockito-core
+                 already sits at exactly this version with no conflict, so it is openmrs-api's own
+                 transitive graph (hibernate-core, hibernate-search, hibernate-entitymanager) that
+                 naturally wants an older byte-buddy/byte-buddy-agent and gets overridden here.
+                 Mockito's inline mock maker needs byte-buddy and byte-buddy-agent to match, so pin
+                 both rather than letting a future jackson or openmrs-api bump move one out from
+                 under the other and break every static and inline mock with an opaque error. Keep
+                 this equal to the byte-buddy version that the mockitoVersion property's Mockito
+                 release was built against. -->
             <dependency>
                 <groupId>net.bytebuddy</groupId>
                 <artifactId>byte-buddy</artifactId>

@@ -39,8 +39,8 @@ jobs:
           test -f "$HOME/.bahmni-reports/bahmni-reports-test.properties"
       - name: Provision test databases
         run: |
-          sh src/test/resources/create_db.sh || echo "create_db.sh reported failure, checking actual state"
-          test "$(mysql --protocol tcp -uroot -proot -N -e 'SHOW TABLES IN reports_integration_tests' | wc -l)" -gt 0
-          test "$(mysql --protocol tcp -uroot -proot -N -e 'SHOW TABLES IN bahmni_reports_it' | wc -l)" -gt 0
+          sh src/test/resources/create_db.sh
+          test "$(mysql --protocol tcp -uroot -proot -N -e 'SHOW TABLES IN reports_integration_tests' | wc -l)" -gt 100
+          test "$(mysql --protocol tcp -uroot -proot -N -e 'SHOW TABLES IN bahmni_reports_it' | wc -l)" -gt 10
       - name: Test and build package
         run: ./mvnw -T 4 --no-transfer-progress clean install -U

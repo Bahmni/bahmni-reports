@@ -54,6 +54,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URI;
 import java.sql.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -235,15 +236,40 @@ public class BaseIntegrationTest extends BaseContextSensitiveTest {
                 getClass().getClassLoader(),
                 new Class<?>[]{DatabaseMetaData.class},
                 (proxy, method, args) -> {
-                    boolean isUnscopedTableTypeScan = "getTables".equals(method.getName())
-                            && args != null && args.length == 4 && args[3] == null;
-                    if (isUnscopedTableTypeScan) {
+                    boolean isViewInclusiveTableTypeScan = "getTables".equals(method.getName())
+                            && args != null && args.length == 4 && includesViews(args[3]);
+                    if (isViewInclusiveTableTypeScan) {
                         Object catalog = args[0] != null ? args[0] : realMetaData.getConnection().getCatalog();
-                        Object[] scoped = {catalog, args[1], args[2], new String[]{"TABLE"}};
+                        String[] withoutViews = args[3] == null
+                                ? new String[]{"TABLE"}
+                                : Arrays.stream((String[]) args[3])
+                                        .filter(type -> !"VIEW".equalsIgnoreCase(type))
+                                        .toArray(String[]::new);
+                        Object[] scoped = {catalog, args[1], args[2], withoutViews};
                         return invokeReal(method, realMetaData, scoped);
                     }
                     return invokeReal(method, realMetaData, args);
                 });
+    }
+
+    /*
+     * A null type filter means "every type", which includes VIEW; an explicit filter that
+     * still lists VIEW alongside other types has the same effect. Either shape must be
+     * narrowed above, not just the null case deleteAllData() happens to use today.
+     */
+    private static boolean includesViews(Object typeFilterArg) {
+        if (typeFilterArg == null) {
+            return true;
+        }
+        if (!(typeFilterArg instanceof String[])) {
+            return false;
+        }
+        for (String type : (String[]) typeFilterArg) {
+            if ("VIEW".equalsIgnoreCase(type)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /*
