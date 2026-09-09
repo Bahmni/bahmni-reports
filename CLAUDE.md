@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-`bahmni-reports` is the reporting backend for [Bahmni](http://www.bahmni.org/): a standalone Java/Maven **WAR** with its own embedded Tomcat (`amazoncorretto:11` base image, `bahmni-embedded-tomcat-8.0.42.jar` fetched at Docker build time), deployed as its own container, not as an OpenMRS module (OMOD) loaded by an OpenMRS host. It generates reports (visits, observations, forms, programs, lab orders, aggregations, custom SQL, SNOMED-based diagnosis counts) and renders them as HTML, PDF, Excel (including macro-templated Excel), CSV, or ODF.
+`bahmni-reports` is the reporting backend for [Bahmni](http://www.bahmni.org/): a standalone Java/Maven **WAR** with its own embedded Tomcat (`amazoncorretto:21` base image, `bahmni-embedded-tomcat-8.0.42.jar` fetched at Docker build time), deployed as its own container, not as an OpenMRS module (OMOD) loaded by an OpenMRS host. It generates reports (visits, observations, forms, programs, lab orders, aggregations, custom SQL, SNOMED-based diagnosis counts) and renders them as HTML, PDF, Excel (including macro-templated Excel), CSV, or ODF.
 
 **It never calls the OpenMRS Java API.** All of `src/main/java` talks to OpenMRS purely via raw JDBC/SQL (`src/main/resources/sql/*.sql`) and the OpenMRS REST API (for auth/privilege checks). `org.openmrs.api:openmrs-api` is a **test-scope-only** dependency, used exclusively to run integration tests against a real, Hibernate-mapped OpenMRS-shaped schema. Never assume a production code path exercises OpenMRS Java classes.
 
@@ -32,7 +32,7 @@ export PATH="/opt/homebrew/opt/mysql-client/bin:$PATH"   # mysql client is keg-o
 sh src/test/resources/create_db.sh
 ```
 
-**JDK: must be 11.** The shell's default JDK is far newer than what CI uses; always `export JAVA_HOME` to a JDK 11 install explicitly before running Maven, don't rely on the ambient default.
+**JDK: must be 21.** The shell's default JDK may not match what CI uses; always `export JAVA_HOME` to a JDK 21 install explicitly before running Maven, don't rely on the ambient default.
 
 **Running integration tests locally (from the README):** the `skipConfig`/`skipDump` pom properties gate two `exec-maven-plugin` steps bound to `test-compile` (`scripts/create_configuration.sh` and `src/test/resources/create_db.sh`); both default to `true` (skipped). Either pass `-DskipConfig=false -DskipDump=false` to `./mvnw clean package`, or run both scripts manually once before `./mvnw clean test`. `create_configuration.sh` always writes `openmrs.username=root`/`openmrs.password=root` into the generated properties file (matching CI's `MYSQL_ROOT_PASSWORD=root` service container) — if a stale hand-edited properties file is lying around with different credentials, regenerate it rather than trusting it, since a non-root user lacks the `SUPER` privilege the schema dump's `DEFINER` views need.
 
