@@ -17,7 +17,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Compile only (also runs the config/schema-generation exec-plugin steps below)
 ./mvnw clean test-compile
 
-# Full test suite -- requires MySQL 8.0 running on localhost:3306 (root/root) and the
+# Full test suite -- requires MySQL 8.0 on localhost:3306 (root/root), a running Docker
+# daemon (the OpenMRS harness starts its own throwaway container regardless), and the
 # test config + schema fixtures already generated (see "Running integration tests" below)
 ./mvnw clean test
 
@@ -82,8 +83,14 @@ Two MySQL schemas back the suite (both created by `create_db.sh` from files unde
 
 Under JDK 21 the suite logs `WARNING: A Java agent has been loaded dynamically` and `Dynamic loading of agents will be disallowed by default in a future release`, from Mockito's `byte-buddy-agent`. It passes today. When a future JDK enforces that, the fix is `-XX:+EnableDynamicAgentLoading` on the surefire `argLine`, or a Mockito version that attaches the agent at startup. Not a current failure, so it is deliberately not fixed here; this note is the record of it.
 
-## An OpenMRS platform upgrade is in flight
+## The platform versions, and why they moved as one piece of work
 
-The test-scope `openmrs-api` dependency is being moved from 2.5.7 to 2.8.9, along with the Liquibase version it ships and the `run-liquibase.sh` fragility mentioned above. Real forced changes exist between those versions (a live Docker daemon becoming a hard test-time dependency, OpenMRS's DBUnit harness hardcoding a database name, schema columns added mid-range, dependency version floors) and they are easy to rediscover the hard way.
+Test-scope `openmrs-api` is on **2.8.9** (from 2.5.7), Liquibase on **4.32.0** (from 4.8.0), the JDK on **21** (from 11), and the test and CI database on **MySQL 8.0** (from 5.6). Those are not four independent choices. Each forces the next: 2.6.0 makes Testcontainers a hard test-time dependency, 2.7.0 raises the Liquibase floor, PowerMock has no working version above JDK 17 so removing it is a precondition for the JDK move, and MySQL 8.0 is what Bahmni deploys.
 
-The checkpointed plan and its evidence live in `docs/upgrade/`, which is **git-ignored and local to a working copy** — it is deliberately not committed, so a fresh clone will not have it. If you are working on the OpenMRS version, Liquibase, the JDK version, or the test harness and that directory is present, read it first; it is the source of truth for those decisions. If it is absent, ask for it rather than re-deriving it.
+Several things that look arbitrary are consequences of that, not preferences:
+
+- **A running Docker daemon is required to run the tests.** `BaseIntegrationTest.useInMemoryDatabase()` returns `false`, so `BaseContextSensitiveTest` unconditionally starts a throwaway Testcontainers MySQL, regardless of the real database the tests are pointed at. There is no hook to skip it; the gating field is private. `src/test/resources/docker-java.properties` pins `api.version=1.44` because Testcontainers' bundled client otherwise fails API negotiation against recent Docker Engine.
+- The `OpenmrsConstants.DATABASE_NAME` assignment in `BaseIntegrationTest` exists because OpenMRS's DBUnit harness scopes its catalog lookup to fixed configuration rather than the connection's actual catalog.
+- The `sessionVariables` in the JDBC URL, and the deterministic `ORDER BY` now present in every report SQL file that groups, are MySQL 8 requirements rather than tidiness.
+
+The checkpointed plan and its per-checkpoint evidence live in `docs/upgrade/`, which is **git-ignored and local to a working copy**, so a fresh clone will not have it. If you are changing the OpenMRS version, Liquibase, the JDK or the test harness and that directory is present, read it first. If it is absent, ask for it rather than re-deriving it.

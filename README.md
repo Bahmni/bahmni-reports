@@ -1,8 +1,40 @@
 # Bahmni Reports
 
-Hosts the reports web application for the [Bahmni project](http://www.bahmni.org/)
+The reporting backend for the [Bahmni project](http://www.bahmni.org/).
 
-[![Build Status](https://travis-ci.org/Bahmni/bahmni-reports.svg?branch=master)](https://travis-ci.org/Bahmni/bahmni-reports)
+[![Validate PR](https://github.com/Bahmni/bahmni-reports/actions/workflows/validate_pr.yml/badge.svg)](https://github.com/Bahmni/bahmni-reports/actions/workflows/validate_pr.yml)
+
+# What this is
+
+A standalone Java/Maven WAR with its own embedded Tomcat, shipped as its own Docker container. It
+is **not** an OpenMRS module (OMOD) loaded by an OpenMRS host, so it picks its own Java version
+and is deployed and restarted independently of OpenMRS.
+
+It generates reports over clinical data (visits, observations, observation forms, programs, lab
+orders, aggregations, implementation-supplied SQL, and SNOMED descendant-based diagnosis counts)
+and renders each one as HTML, PDF, Excel including macro-driven templates, CSV or ODF. It also
+schedules reports to run later and serves the generated files.
+
+Two things about it are worth knowing before reading the code:
+
+- **The report definitions do not live here.** A deployment's `reports.json`, in its own config
+  module, is fetched over HTTP at request time and decides which reports exist, what SQL some of
+  them run, and who is allowed to see them. This repository provides the report *types* that
+  configuration selects from.
+- **It never calls the OpenMRS Java API.** It reads the OpenMRS database directly through raw SQL
+  over JDBC, and calls the OpenMRS REST API only to check the caller's privileges. The same code
+  path also queries OpenELIS, Odoo and BahmniMart through one datasource abstraction. So the
+  coupling that actually matters is the OpenMRS *database schema*, not a Java dependency version.
+
+# Prerequisites
+
+- **JDK 21.** Required to build and to run. Your shell's default JDK may be older, so set
+  `JAVA_HOME` explicitly rather than relying on it.
+- **MySQL 8.0**, for the integration tests. See Running Integration tests below.
+- **A running Docker daemon**, also for the integration tests. The OpenMRS test harness this
+  suite extends starts a throwaway MySQL container of its own on every run, whether or not you
+  point the tests at your own database, and there is no switch to skip it. Without Docker the
+  suite fails before any test body executes.
 
 # Installing the application
 
@@ -10,7 +42,8 @@ Hosts the reports web application for the [Bahmni project](http://www.bahmni.org
 
 2. Run `./mvnw clean install -DskipTests` to build it
 
-3. Deploy the WAR file in `target/bahmnireports.war`
+3. Deploy the WAR file in `target/bahmnireports.war`, or build the container image under
+   `package/docker/bahmni-reports/`, which is how Bahmni actually ships it
 
 # Running Integration tests
 
@@ -38,9 +71,14 @@ Two server settings matter, and both are handled rather than assumed:
 
 Creating the `obsParent` function needs either `SUPER` or `log_bin_trust_function_creators=1`
 when binary logging is on, which it is by default on MySQL 8. `create_db.sh` connects as `root`,
-which holds `SUPER`, so local and CI runs are unaffected. Deployments that run this service's
-Liquibase against a MySQL 8 OpenMRS database as a non-`SUPER` user need that flag set
-server-side.
+which holds `SUPER`, so local and CI runs are unaffected.
+
+A deployment hits this only if its OpenMRS database has no `liquibasechangelog` row for that
+changeset *and* the connecting user lacks `SUPER`. A distro install is not that case: the
+shipped `openmrs-db` images restore a dump that already records the changeset as applied, so
+Liquibase skips the `CREATE FUNCTION`. It bites a hand-built OpenMRS database on plain
+`mysql:8.0`, or an existing MySQL 8 instance that has never run this service before, where the
+flag needs setting on the database server.
 
 ### SNOMED Integration Support
 
