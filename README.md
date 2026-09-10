@@ -20,11 +20,27 @@ Hosts the reports web application for the [Bahmni project](http://www.bahmni.org
 
 **Note:**
 
-OpenMRS 2.1.6 and its corresponding schema dump is on MySql 5.6(**preferred**). There are breaking changes between 5.6 and 5.7
+The tests run against **MySQL 8.0**, matching what Bahmni deploys. The schema fixture in
+`src/test/resources/sql/openmrs_schema.sql` is a dump from OpenMRS 2.8.9 and loads on 8.0 with
+the same object counts it produces on 5.6.
 
-E.g. only_full_group_by is enabled by default 
+Two server settings matter, and both are handled rather than assumed:
 
-We are mutating global and session sql_mode as workaround to make 5.7 almost similar to 5.6. For reference check github action workflow. 
+- `sql_mode` must not include `ONLY_FULL_GROUP_BY`, which MySQL 8 enables by default and the
+  report SQL does not satisfy. Set it to the same value `bahmni-docker` uses
+  (`OPENMRS_DB_SQL_MODES`); the CI workflow does this explicitly and fails loudly if the mode is
+  still present.
+- `optimizer_search_depth` is set to `0` on the OpenMRS connection, via `sessionVariables` in the
+  JDBC URL. Left at the MySQL 8 default of 62, `observationFormReport.sql` (a 22-table join)
+  spends 370+ seconds in join-order planning rather than execution, which reads as a hang rather
+  than a failure. `0` lets MySQL pick the depth and brings the same query back to about a second.
+  This lives in the JDBC URL so it does not depend on each deployment configuring its server.
+
+Creating the `obsParent` function needs either `SUPER` or `log_bin_trust_function_creators=1`
+when binary logging is on, which it is by default on MySQL 8. `create_db.sh` connects as `root`,
+which holds `SUPER`, so local and CI runs are unaffected. Deployments that run this service's
+Liquibase against a MySQL 8 OpenMRS database as a non-`SUPER` user need that flag set
+server-side.
 
 ### SNOMED Integration Support
 

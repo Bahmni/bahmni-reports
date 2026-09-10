@@ -88,7 +88,7 @@ SET @sql = CONCAT('SELECT
                         LEFT JOIN person_name pn ON pn.person_id = provider.person_id
                         LEFT JOIN concept_view answer ON o.value_coded = answer.concept_id',
                         IF(@conceptSourceId IS NULL, '', @conceptRefMapSql),
-                      ' GROUP BY pi.identifier, e.encounter_id,root_obs.root_obs_id');
+                      ' GROUP BY pi.identifier, e.encounter_id,root_obs.root_obs_id ORDER BY pi.identifier, e.encounter_id, root_obs.root_obs_id');
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;

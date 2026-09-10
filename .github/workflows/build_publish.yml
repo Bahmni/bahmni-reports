@@ -14,13 +14,10 @@ jobs:
   build-publish-docker-helm:
     name: Build & Publish Docker Image & Helm Chart
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.6
-        env:
-          MYSQL_ROOT_PASSWORD: root
-        ports:
-          - 3306:3306
+    # No database service: this job runs -DskipTests. If tests are ever enabled here, copy the
+    # "Wait for MySQL", "Match the distro's sql_mode" and "Provision test databases" steps from
+    # validate_pr.yml; a bare mysql:8.0 service defaults to ONLY_FULL_GROUP_BY, which the report
+    # SQL does not satisfy.
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2

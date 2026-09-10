@@ -17,7 +17,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Compile only (also runs the config/schema-generation exec-plugin steps below)
 ./mvnw clean test-compile
 
-# Full test suite -- requires MySQL 5.6 running on localhost:3306 (root/root) and the
+# Full test suite -- requires MySQL 8.0 running on localhost:3306 (root/root) and the
 # test config + schema fixtures already generated (see "Running integration tests" below)
 ./mvnw clean test
 
@@ -36,7 +36,12 @@ sh src/test/resources/create_db.sh
 
 **Running integration tests locally (from the README):** the `skipConfig`/`skipDump` pom properties gate two `exec-maven-plugin` steps bound to `test-compile` (`scripts/create_configuration.sh` and `src/test/resources/create_db.sh`); both default to `true` (skipped). Either pass `-DskipConfig=false -DskipDump=false` to `./mvnw clean package`, or run both scripts manually once before `./mvnw clean test`. `create_configuration.sh` always writes `openmrs.username=root`/`openmrs.password=root` into the generated properties file, matching CI's `MYSQL_ROOT_PASSWORD=root` service container — if a stale hand-edited properties file is lying around with different credentials, regenerate it rather than trusting it. The schema dump's 3 views (`concept_reference_term_map_view`, `concept_view`, `diagnosis_concept_view`) carry no explicit `DEFINER` clause, so whichever user runs `create_db.sh` becomes `CURRENT_USER` at `CREATE VIEW` time; using root there is what keeps that consistent with CI rather than a `SUPER`-privilege requirement.
 
-**MySQL 5.6 specifically**, not 5.7+ — `only_full_group_by` and other 5.7 defaults break the existing SQL (see README and the CI workflow's session-variable workarounds).
+**MySQL 8.0**, matching what Bahmni deploys. Two server-side facts are load-bearing and both are handled explicitly rather than inherited from defaults:
+
+- `sql_mode` must **not** contain `ONLY_FULL_GROUP_BY`. MySQL 8 enables it by default and the report SQL does not satisfy it. `validate_pr.yml` sets the mode to the same value `bahmni-docker` uses (`OPENMRS_DB_SQL_MODES`) and fails loudly if the flag survives. Locally, start MySQL with the same `--sql-mode`.
+- `optimizer_search_depth=0` is set on the OpenMRS connection through `sessionVariables` in the JDBC URL (`create_configuration.sh` and `bahmni-reports.properties.template`). **Do not remove it.** At MySQL 8's default of 62, `observationFormReport.sql` renders a 22-table join that spends 370+ seconds in join-order *planning* — `state=statistics`, not execution — so it presents as a hang, not a failure. `ObservationFormReportTest` goes from unfinishable to 45 tests in 86s with it set. It is in the URL, not the server config, so it does not depend on each deployment getting its server right.
+
+Creating the `obsParent` function requires `SUPER` or `log_bin_trust_function_creators=1` when binary logging is on, which is the MySQL 8 default. `create_db.sh` connects as `root`, which has `SUPER`, so local and CI runs are fine. This bites deployments only, where the connecting user is not `root`; the fix belongs in `bahmni-docker`. Note also that `bahmni/openmrs-db:3.0.0-lite-mysql8.0` records all 8 `Reports-*` changesets as applied but ships **no** `obsParent` function, because `mysqldump` omits routines without `--routines`. Nothing in `src/main/resources/sql/` or in the reference `clinic-config` calls it, so this is latent rather than breaking.
 
 ## Request-handling architecture
 

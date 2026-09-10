@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: mysql:5.6
+        image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
@@ -33,6 +33,20 @@ jobs:
             sleep 2
           done
           mysqladmin ping -h127.0.0.1 -P3306 -uroot -proot --silent || { echo "STOP: MySQL never became ready"; exit 1; }
+      - name: Match the distro's sql_mode
+        # GitHub Actions service containers cannot pass mysqld arguments, so the mode is set
+        # server-side here instead. It mirrors OPENMRS_DB_SQL_MODES in bahmni-docker, whose
+        # defining feature is that ONLY_FULL_GROUP_BY is absent -- the report SQL relies on
+        # that, and MySQL 8 enables it by default.
+        run: |
+          set -eo pipefail
+          MODE='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+          mysql --protocol tcp -uroot -proot -e "SET GLOBAL sql_mode='$MODE'"
+          ACTUAL=$(mysql --protocol tcp -uroot -proot -N -e "SELECT @@global.sql_mode")
+          test "$ACTUAL" = "$MODE" || {
+            echo "STOP: sql_mode is '$ACTUAL', expected '$MODE'"
+            exit 1
+          }
       - name: Generate test configuration
         run: |
           ./scripts/create_configuration.sh
