@@ -80,6 +80,8 @@ Two MySQL schemas back the suite (both created by `create_db.sh` from files unde
 
 `mockito-core` is pinned to `5.7.0` because `jackson-databind`'s pinned `byte-buddy` version caps it — don't bump either independently; check `pom.xml`'s comments first.
 
+Under JDK 21 the suite logs `WARNING: A Java agent has been loaded dynamically` and `Dynamic loading of agents will be disallowed by default in a future release`, from Mockito's `byte-buddy-agent`. It passes today. When a future JDK enforces that, the fix is `-XX:+EnableDynamicAgentLoading` on the surefire `argLine`, or a Mockito version that attaches the agent at startup. Not a current failure, so it is deliberately not fixed here; this note is the record of it.
+
 ## An OpenMRS platform upgrade is in flight
 
 The test-scope `openmrs-api` dependency is being moved from 2.5.7 to 2.8.9, along with the Liquibase version it ships and the `run-liquibase.sh` fragility mentioned above. Real forced changes exist between those versions (a live Docker daemon becoming a hard test-time dependency, OpenMRS's DBUnit harness hardcoding a database name, schema columns added mid-range, dependency version floors) and they are easy to rediscover the hard way.
