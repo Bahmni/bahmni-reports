@@ -49,6 +49,7 @@ public class ReportGenerator {
 
     public void invoke() throws Exception {
         ArrayList<AutoCloseable> resources = new ArrayList<>();
+        Connection connection = null;
         try {
             validateParams();
             Report report = Reports.find(reportParams.getName(), bahmniReportsProperties.getConfigFileUrl(),httpClient);
@@ -56,15 +57,20 @@ public class ReportGenerator {
             report.setHttpClient(httpClient);
             validateResponseTypeSupportedFor(report, reportParams.getResponseType());
             BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
-            Connection connection = allDatasources.getConnectionFromDatasource(reportTemplate);
+            connection = allDatasources.getConnectionFromDatasource(reportTemplate);
             BahmniReportBuilder reportBuilder = BahmniReportUtil.build(report, connection, reportParams.getStartDate(),
                     reportParams.getEndDate(), resources, reportParams.getPaperSize(), bahmniReportsProperties);
             List<JasperReportBuilder> reports = reportBuilder.getReportBuilders();
             JasperConcatenatedReportBuilder concatenatedReportBuilder = concatenatedReport().concatenate(reports.toArray(new JasperReportBuilder[reports.size()]));
             converter.applyReportTemplates(reports, reportParams.getResponseType());
             converter.convertToResponseType(reportParams, bahmniReportsProperties.getMacroTemplatesTempDirectory(), outputStream, concatenatedReportBuilder);
-            resources.add(connection);
         } finally {
+            // Registered here rather than at the end of the try, so a report that fails to
+            // build or render still releases its connection. Added last, so it is still closed
+            // last, after the statements and result sets BahmniReportUtil.build registered
+            // against it. closeResources skips nulls, which is the case where the failure
+            // happened before a connection was ever handed out.
+            resources.add(connection);
             closeResources(resources);
         }
     }

@@ -3,30 +3,34 @@ package org.bahmni.reports.scheduler;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.persistence.ScheduledReportRepository;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@PowerMockIgnore("javax.management.*")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(CleanReportsJob.class)
+@RunWith(MockitoJUnitRunner.class)
 public class CleanReportsJobTest {
+
+    @Rule
+    public TemporaryFolder reportsDirectory = new TemporaryFolder();
 
     @Mock
     private BahmniReportsProperties bahmniReportsProperties;
@@ -43,45 +47,50 @@ public class CleanReportsJobTest {
     @Test
     public void shouldNotDeleteFileWhenTheDBReportFileNameIsNull() throws Exception {
         when(bahmniReportsProperties.getDaysForHistoryReportsCleanup()).thenReturn("60");
-        File mockFile = mock(File.class);
-        whenNew(File.class).withArguments("directory", "null").thenReturn(mockFile);
         List<ScheduledReport> scheduledReports = new ArrayList<>();
-        scheduledReports.add(new ScheduledReport("1", "testReport", "super", null, new Date(), new Date(), "test", "test", new Date()));
-        when(bahmniReportsProperties.getReportsSaveDirectory()).thenReturn("directory");
+        scheduledReports.add(scheduledReport("1", "testReport", null));
         when(scheduledReportRepository.findByRequestDateTime(any(Date.class))).thenReturn(scheduledReports);
+
         cleanReportsJob.execute(jobExecutionContext);
-        verify(mockFile, never()).delete();
+
+        // Never reading the save directory is the whole assertion: it is the only way the job
+        // could reach a file, so not reading it proves no delete was attempted.
+        verify(bahmniReportsProperties, never()).getReportsSaveDirectory();
         verify(scheduledReportRepository).delete(scheduledReports.get(0));
     }
 
     @Test
     public void testCleanupJobDeletesFileAndDbReportWhenTriggers() throws Exception {
         when(bahmniReportsProperties.getDaysForHistoryReportsCleanup()).thenReturn("60");
-        File mockFile = mock(File.class);
-        whenNew(File.class).withArguments("directory", "testFileName").thenReturn(mockFile);
+        givenReportsSaveDirectory();
+        File reportFile = reportsDirectory.newFile("testFileName");
         List<ScheduledReport> scheduledReports = new ArrayList<>();
-        scheduledReports.add(new ScheduledReport("1", "testReport", "super", "testFileName", new Date(), new Date(), "test", "test", new Date()));
-        when(bahmniReportsProperties.getReportsSaveDirectory()).thenReturn("directory");
+        scheduledReports.add(scheduledReport("1", "testReport", "testFileName"));
         when(scheduledReportRepository.findByRequestDateTime(any(Date.class))).thenReturn(scheduledReports);
+
         cleanReportsJob.execute(jobExecutionContext);
-        verify(mockFile, times(1)).delete();
+
+        assertFalse(reportFile.exists());
         verify(scheduledReportRepository).delete(scheduledReports.get(0));
     }
 
     @Test
     public void testCleanupJobDeletesMultipleFileAndDbReportWhenTriggers() throws Exception {
         when(bahmniReportsProperties.getDaysForHistoryReportsCleanup()).thenReturn(null);
-        File mockFile = mock(File.class);
-        whenNew(File.class).withArguments("directory", "testFileName1").thenReturn(mockFile);
-        whenNew(File.class).withArguments("directory", "testFileName2").thenReturn(mockFile);
+        givenReportsSaveDirectory();
+        File firstReportFile = reportsDirectory.newFile("testFileName1");
+        File secondReportFile = reportsDirectory.newFile("testFileName2");
         List<ScheduledReport> scheduledReports = new ArrayList<>();
-        scheduledReports.add(new ScheduledReport("1", "testReport1", "super", "testFileName1", new Date(), new Date(), "test", "test", new Date()));
-        scheduledReports.add(new ScheduledReport("2", "testReport2", "super", "testFileName2", new Date(), new Date(), "test", "test", new Date()));
-        when(bahmniReportsProperties.getReportsSaveDirectory()).thenReturn("directory");
+        scheduledReports.add(scheduledReport("1", "testReport1", "testFileName1"));
+        scheduledReports.add(scheduledReport("2", "testReport2", "testFileName2"));
         when(scheduledReportRepository.findByRequestDateTime(any(Date.class))).thenReturn(scheduledReports);
+
         cleanReportsJob.execute(jobExecutionContext);
-        verify(mockFile, times(2)).delete();
+
+        assertFalse(firstReportFile.exists());
+        assertFalse(secondReportFile.exists());
         verify(scheduledReportRepository).delete(scheduledReports.get(0));
+        verify(scheduledReportRepository).delete(scheduledReports.get(1));
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -93,11 +102,32 @@ public class CleanReportsJobTest {
     @Test
     public void shouldReturnProperCleupDate() throws Exception {
         when(bahmniReportsProperties.getDaysForHistoryReportsCleanup()).thenReturn("10");
-        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        Date currentDate = simpleDate.parse("2016-09-21 12:00:00");
-        Date oldDate = simpleDate.parse("2016-09-11 12:00:00");
-        whenNew(Date.class).withNoArguments().thenReturn(currentDate);
+
+        Date beforeExecution = new Date();
         cleanReportsJob.execute(jobExecutionContext);
-        verify(scheduledReportRepository).findByRequestDateTime(oldDate);
+        Date afterExecution = new Date();
+
+        ArgumentCaptor<Date> cleanupDate = ArgumentCaptor.forClass(Date.class);
+        verify(scheduledReportRepository).findByRequestDateTime(cleanupDate.capture());
+        // The job cleans up reports older than "now minus ten days". Bounding the captured date by
+        // the same calendar arithmetic applied to the instants either side of the call pins the ten
+        // days exactly, without needing to mock the clock.
+        assertFalse(cleanupDate.getValue().before(daysBefore(beforeExecution, 10)));
+        assertFalse(cleanupDate.getValue().after(daysBefore(afterExecution, 10)));
+    }
+
+    private void givenReportsSaveDirectory() {
+        when(bahmniReportsProperties.getReportsSaveDirectory()).thenReturn(reportsDirectory.getRoot().getAbsolutePath());
+    }
+
+    private ScheduledReport scheduledReport(String id, String name, String fileName) {
+        return new ScheduledReport(id, name, "super", fileName, new Date(), new Date(), "test", "test", new Date());
+    }
+
+    private Date daysBefore(Date date, int days) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DATE, -days);
+        return calendar.getTime();
     }
 }

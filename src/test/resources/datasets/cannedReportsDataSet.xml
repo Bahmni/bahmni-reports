@@ -1,0 +1,262 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<!--
+  A self-contained clinical world for AllReportsSmokeTest, built so that every report type
+  served off the OpenMRS datasource has data to return and can be asserted on by value.
+
+  Every id here is in the 5000+ range. That is deliberate: the eight per-report datasets in
+  this directory all reuse the same low id space (patient 1000, obs 1000, ...) for different
+  scenarios, so they cannot be loaded together. This one is disjoint from all of them, and
+  from the metadata in testDataSet.xml, which it builds on rather than repeats.
+
+  Reuses from testDataSet.xml: concept_class (1 Test, 4 Diagnosis, 7 Question, 8 LabSet,
+  10 ConvSet, 16 Program, 17 Workflow, 18 State, 19 Frequency), concept_datatype (1 Numeric,
+  2 Coded, 3 Text, 4 N/A, 6 Date), visit_type (1 Initial HIV Clinic Visit, 3 Hospitalization),
+  visit_attribute_type (1 Audit Date, 2 Visit Status, 3 Admission Status),
+  patient_identifier_type 3 (Bahmni Id), person_attribute_type (1 caste, 5 class),
+  order_type (17 Plain Order, 18 DrugOrder), care_setting (1 OUTPATIENT, 2 INPATIENT),
+  encounter_type (6 Laboratory, 7 Consultation), location 1, provider 1, encounter_role 1,
+  and the "Observation Age Group" rows in reporting_age_group.
+
+  Patient 5000 is an adult (born 1990) with an OPD visit; patient 5001 is a child (born 2015)
+  with an inpatient visit, so the two "Observation Age Group" buckets are both exercised.
+-->
+<dataset>
+
+    <!-- ============ concepts ============ -->
+    <!-- observation template (a set) and its two numeric members -->
+    <concept concept_id="5000" retired="false" datatype_id="4" class_id="10" is_set="true" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5000"/>
+    <concept concept_id="5001" retired="false" datatype_id="1" class_id="1" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5001"/>
+    <concept concept_id="5002" retired="false" datatype_id="1" class_id="1" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5002"/>
+    <!-- a coded question and two diagnosis-class answers -->
+    <concept concept_id="5003" retired="false" datatype_id="2" class_id="7" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5003"/>
+    <concept concept_id="5004" retired="false" datatype_id="4" class_id="4" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5004"/>
+    <concept concept_id="5005" retired="false" datatype_id="4" class_id="4" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5005"/>
+    <!-- a date question -->
+    <concept concept_id="5006" retired="false" datatype_id="6" class_id="7" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5006"/>
+    <!-- a lab panel (set) and its test member -->
+    <concept concept_id="5007" retired="false" datatype_id="4" class_id="8" is_set="true" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5007"/>
+    <concept concept_id="5008" retired="false" datatype_id="1" class_id="1" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5008"/>
+    <!-- program, workflow, two states -->
+    <concept concept_id="5009" retired="false" datatype_id="4" class_id="16" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5009"/>
+    <concept concept_id="5010" retired="false" datatype_id="4" class_id="18" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5010"/>
+    <concept concept_id="5011" retired="false" datatype_id="4" class_id="18" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5011"/>
+    <concept concept_id="5012" retired="false" datatype_id="4" class_id="17" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5012"/>
+    <!-- drug concept and an order frequency concept -->
+    <concept concept_id="5013" retired="false" datatype_id="4" class_id="3" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5013"/>
+    <concept concept_id="5014" retired="false" datatype_id="4" class_id="19" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5014"/>
+    <!-- a free-text question -->
+    <concept concept_id="5015" retired="false" datatype_id="3" class_id="7" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5015"/>
+    <!-- a Boolean question and the two concepts the concept.true / concept.false global
+         properties point at. multipleCodedObsByCodedObs.sql pairs a Coded question with a
+         Boolean one, resolving the Boolean's answers through those two properties. -->
+    <concept concept_id="5016" retired="false" datatype_id="10" class_id="7" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5016"/>
+    <concept concept_id="5017" retired="false" datatype_id="4" class_id="11" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5017"/>
+    <concept concept_id="5018" retired="false" datatype_id="4" class_id="11" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5018"/>
+    <!-- diagnosisSummary.sql and diagnosisCountWithoutAgeGroup.sql both require a diagnosis obs
+         grouped under a "Visit Diagnoses" parent, confirmed by a sibling obs whose value_coded
+         names a concept called "Confirmed"; that structure, not just a Diagnosis-class
+         value_coded, is what those two files (and diagnosisCountByAgeGroup.sql) match on. -->
+    <concept concept_id="5019" retired="false" datatype_id="4" class_id="11" is_set="true" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5019"/>
+    <concept concept_id="5020" retired="false" datatype_id="4" class_id="11" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5020"/>
+    <!-- diagnosisSummary.sql's crosstab is driven by a two-level concept_set hierarchy under
+         the configured root concept (root to header to leaf), matched against Diagnosis-class
+         obs by leaf concept id. The leaf reuses Canned Diagnosis A (5004) below. -->
+    <concept concept_id="5021" retired="false" datatype_id="4" class_id="11" is_set="true" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5021"/>
+    <concept concept_id="5022" retired="false" datatype_id="4" class_id="11" is_set="true" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5022"/>
+
+    <concept_name concept_id="5000" concept_name_id="5000" name="Canned Vitals" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5000"/>
+    <concept_name concept_id="5001" concept_name_id="5001" name="Canned Height" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5001"/>
+    <concept_name concept_id="5002" concept_name_id="5002" name="Canned Weight" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5002"/>
+    <concept_name concept_id="5003" concept_name_id="5003" name="Canned Coded Question" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5003"/>
+    <concept_name concept_id="5004" concept_name_id="5004" name="Canned Diagnosis A" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5004"/>
+    <concept_name concept_id="5005" concept_name_id="5005" name="Canned Diagnosis B" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5005"/>
+    <concept_name concept_id="5006" concept_name_id="5006" name="Canned Date Question" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5006"/>
+    <concept_name concept_id="5007" concept_name_id="5007" name="Canned Lab Panel" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5007"/>
+    <concept_name concept_id="5008" concept_name_id="5008" name="Canned Lab Test" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5008"/>
+    <concept_name concept_id="5009" concept_name_id="5009" name="CANNED PROGRAM" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5009"/>
+    <concept_name concept_id="5010" concept_name_id="5010" name="Canned State A" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5010"/>
+    <concept_name concept_id="5011" concept_name_id="5011" name="Canned State B" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5011"/>
+    <concept_name concept_id="5012" concept_name_id="5012" name="Canned Workflow" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5012"/>
+    <concept_name concept_id="5013" concept_name_id="5013" name="Canned Drug Concept" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5013"/>
+    <concept_name concept_id="5014" concept_name_id="5014" name="Canned Frequency" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5014"/>
+    <concept_name concept_id="5015" concept_name_id="5015" name="Canned Text Question" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5015"/>
+    <concept_name concept_id="5016" concept_name_id="5016" name="Canned Boolean Question" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5016"/>
+    <concept_name concept_id="5017" concept_name_id="5017" name="Canned True" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5017"/>
+    <concept_name concept_id="5018" concept_name_id="5018" name="Canned False" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5018"/>
+    <concept_name concept_id="5019" concept_name_id="5019" name="Visit Diagnoses" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5019"/>
+    <concept_name concept_id="5020" concept_name_id="5020" name="Confirmed" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5020"/>
+    <concept_name concept_id="5021" concept_name_id="5021" name="Canned Diagnosis Root" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5021"/>
+    <concept_name concept_id="5022" concept_name_id="5022" name="Canned Diagnosis Header" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5022"/>
+    <!-- booleanConceptsCount.sql matches an obs's value_coded against a concept_name literally
+         named 'True' or 'False' (not the concept.true/concept.false global property), so give
+         the existing answer concepts a second, non-preferred name with those exact strings
+         rather than adding new concepts or obs. -->
+    <concept_name concept_id="5017" concept_name_id="5023" name="True" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" locale_preferred="0" voided="false" uuid="canned-cn-5023"/>
+    <concept_name concept_id="5018" concept_name_id="5024" name="False" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" locale_preferred="0" voided="false" uuid="canned-cn-5024"/>
+
+    <!-- template members, and the lab panel's member -->
+    <concept_set concept_set_id="5000" concept_id="5001" concept_set="5000" sort_weight="1" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5000"/>
+    <concept_set concept_set_id="5001" concept_id="5002" concept_set="5000" sort_weight="2" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5001"/>
+    <concept_set concept_set_id="5002" concept_id="5006" concept_set="5000" sort_weight="3" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5002"/>
+    <concept_set concept_set_id="5003" concept_id="5003" concept_set="5000" sort_weight="4" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5003"/>
+    <concept_set concept_set_id="5004" concept_id="5008" concept_set="5007" sort_weight="1" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5004"/>
+    <concept_set concept_set_id="5005" concept_id="5015" concept_set="5000" sort_weight="5" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5005"/>
+    <!-- diagnosisSummary.sql's root (5021) -> header (5022) -> leaf (5004, Canned Diagnosis A) -->
+    <concept_set concept_set_id="5006" concept_id="5022" concept_set="5021" sort_weight="1" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5006"/>
+    <concept_set concept_set_id="5007" concept_id="5004" concept_set="5022" sort_weight="1" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5007"/>
+
+    <concept_answer concept_answer_id="5000" concept_id="5003" answer_concept="5004" creator="1" date_created="2017-01-01 00:00:00.0" sort_weight="1" uuid="canned-ca-5000"/>
+    <concept_answer concept_answer_id="5001" concept_id="5003" answer_concept="5005" creator="1" date_created="2017-01-01 00:00:00.0" sort_weight="2" uuid="canned-ca-5001"/>
+
+    <!-- ICD-10 mapping, so the diagnosis reports' icd10_code join resolves -->
+    <!-- concept_map_type "SAME-AS" is concept_map_type_id 1 in testDataSet.xml and its name is
+         unique, so reuse it rather than inserting a second one. -->
+    <concept_reference_source concept_source_id="5000" name="ICD-10-WHO" description="Canned ICD-10" creator="1" date_created="2017-01-01 00:00:00.0" retired="false" uuid="canned-crs-5000"/>
+    <concept_reference_term concept_reference_term_id="5000" concept_source_id="5000" code="A00.1" name="Canned ICD Term" creator="1" date_created="2017-01-01 00:00:00.0" retired="false" uuid="canned-crt-5000"/>
+    <concept_reference_map concept_map_id="5000" concept_reference_term_id="5000" concept_map_type_id="1" concept_id="5004" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-crm-5000"/>
+
+    <global_property property="concept.true" property_value="5017" uuid="canned-gp-true"/>
+    <global_property property="concept.false" property_value="5018" uuid="canned-gp-false"/>
+
+    <!-- ============ people ============ -->
+    <person person_id="5000" gender="M" dead="false" creator="1" birthdate="1990-01-01" birthdate_estimated="0" date_created="2017-01-01 00:00:00.0" voided="false" uuid="canned-person-5000"/>
+    <person person_id="5001" gender="F" dead="false" creator="1" birthdate="2015-01-01" birthdate_estimated="0" date_created="2017-01-01 00:00:00.0" voided="false" uuid="canned-person-5001"/>
+
+    <person_name person_name_id="5000" preferred="true" person_id="5000" given_name="Canned" middle_name="" family_name="Adult" creator="1" date_created="2017-01-01 00:00:00.0" voided="false" uuid="canned-pn-5000"/>
+    <person_name person_name_id="5001" preferred="true" person_id="5001" given_name="Canned" middle_name="" family_name="Child" creator="1" date_created="2017-01-01 00:00:00.0" voided="false" uuid="canned-pn-5001"/>
+
+    <person_address person_address_id="5000" person_id="5000" preferred="true" city_village="Cannedville" state_province="Cannedshire" county_district="Canned District" address3="Canned Tehsil" creator="1" date_created="2017-01-01 00:00:00.0" voided="false" uuid="canned-pa-5000"/>
+    <person_address person_address_id="5001" person_id="5001" preferred="true" city_village="Cannedville" state_province="Cannedshire" county_district="Canned District" address3="Canned Tehsil" creator="1" date_created="2017-01-01 00:00:00.0" voided="false" uuid="canned-pa-5001"/>
+
+    <!-- a plain string attribute, and a concept-valued one (person_attribute_type 5 "class",
+         whose format is org.openmrs.Concept, the literal the reports match on) -->
+    <person_attribute person_attribute_id="5000" person_id="5000" value="Canned Caste" person_attribute_type_id="1" creator="1" date_created="2017-01-01 00:00:00.0" voided="false" uuid="canned-pattr-5000"/>
+    <person_attribute person_attribute_id="5001" person_id="5000" value="3" person_attribute_type_id="5" creator="1" date_created="2017-01-01 00:00:00.0" voided="false" uuid="canned-pattr-5001"/>
+    <person_attribute person_attribute_id="5002" person_id="5001" value="Canned Caste" person_attribute_type_id="1" creator="1" date_created="2017-01-01 00:00:00.0" voided="false" uuid="canned-pattr-5002"/>
+
+    <patient patient_id="5000" creator="1" date_created="2017-01-01 00:00:00.0" voided="false"/>
+    <patient patient_id="5001" creator="1" date_created="2017-01-01 00:00:00.0" voided="false"/>
+
+    <patient_identifier patient_identifier_id="5000" patient_id="5000" identifier="CAN5000" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2017-01-01 00:00:00.0" voided="false" uuid="canned-pi-5000"/>
+    <patient_identifier patient_identifier_id="5001" patient_id="5001" identifier="CAN5001" identifier_type="3" preferred="1" location_id="1" creator="1" date_created="2017-01-01 00:00:00.0" voided="false" uuid="canned-pi-5001"/>
+
+    <!-- ============ visits ============ -->
+    <!-- OPD visit for the adult -->
+    <visit visit_id="5000" patient_id="5000" visit_type_id="1" date_started="2017-01-10 09:00:00.0" date_stopped="2017-01-10 17:00:00.0" location_id="1" creator="1" date_created="2017-01-10 09:00:00.0" voided="false" uuid="canned-visit-5000"/>
+    <!-- inpatient visit for the child, admitted then discharged -->
+    <visit visit_id="5001" patient_id="5001" visit_type_id="3" date_started="2017-01-15 09:00:00.0" date_stopped="2017-01-20 11:00:00.0" location_id="1" creator="1" date_created="2017-01-15 09:00:00.0" voided="false" uuid="canned-visit-5001"/>
+
+    <visit_attribute visit_attribute_id="5000" visit_id="5001" attribute_type_id="3" value_reference="Admitted" creator="1" date_created="2017-01-15 09:00:00.0" changed_by="1" date_changed="2017-01-20 11:00:00.0" voided="0" uuid="canned-vattr-5000"/>
+    <visit_attribute visit_attribute_id="5001" visit_id="5000" attribute_type_id="2" value_reference="OPD" creator="1" date_created="2017-01-10 09:00:00.0" voided="0" uuid="canned-vattr-5001"/>
+    <visit_attribute visit_attribute_id="5002" visit_id="5000" attribute_type_id="1" value_reference="2017-01-10" creator="1" date_created="2017-01-10 09:00:00.0" voided="0" uuid="canned-vattr-5002"/>
+
+    <!-- observationFormReport.sql inner joins visit_type on "retired is false", and
+         testDataSet.xml marks visit type 3 (Hospitalization) retired, so observations on the
+         inpatient visit above can never reach that report. This third visit uses visit type 1
+         and carries the form-builder observations instead. -->
+    <visit visit_id="5002" patient_id="5000" visit_type_id="1" date_started="2017-01-11 09:00:00.0" date_stopped="2017-01-11 17:00:00.0" location_id="1" creator="1" date_created="2017-01-11 09:00:00.0" voided="false" uuid="canned-visit-5002"/>
+
+    <!-- ============ encounters ============ -->
+    <encounter encounter_id="5000" encounter_type="7" patient_id="5000" visit_id="5000" location_id="1" encounter_datetime="2017-01-10 10:00:00.0" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-enc-5000"/>
+    <encounter encounter_id="5001" encounter_type="7" patient_id="5001" visit_id="5001" location_id="1" encounter_datetime="2017-01-15 10:00:00.0" creator="1" date_created="2017-01-15 10:00:00.0" voided="false" uuid="canned-enc-5001"/>
+    <encounter encounter_id="5002" encounter_type="6" patient_id="5000" visit_id="5000" location_id="1" encounter_datetime="2017-01-10 11:00:00.0" creator="1" date_created="2017-01-10 11:00:00.0" voided="false" uuid="canned-enc-5002"/>
+
+    <encounter_provider encounter_provider_id="5000" encounter_id="5000" provider_id="1" encounter_role_id="1" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-ep-5000"/>
+    <encounter_provider encounter_provider_id="5001" encounter_id="5001" provider_id="1" encounter_role_id="1" creator="1" date_created="2017-01-15 10:00:00.0" voided="false" uuid="canned-ep-5001"/>
+    <encounter encounter_id="5003" encounter_type="7" patient_id="5000" visit_id="5002" location_id="1" encounter_datetime="2017-01-11 10:00:00.0" creator="1" date_created="2017-01-11 10:00:00.0" voided="false" uuid="canned-enc-5003"/>
+
+    <encounter_provider encounter_provider_id="5002" encounter_id="5002" provider_id="1" encounter_role_id="1" creator="1" date_created="2017-01-10 11:00:00.0" voided="false" uuid="canned-ep-5002"/>
+    <encounter_provider encounter_provider_id="5003" encounter_id="5003" provider_id="1" encounter_role_id="1" creator="1" date_created="2017-01-11 10:00:00.0" voided="false" uuid="canned-ep-5003"/>
+
+    <!-- ============ orders ============ -->
+    <!-- Written before the observations below on purpose: DBUnit inserts one table at a
+         time in the order each table first appears, so orders has to exist before any obs
+         row can reference it through order_id. -->
+    <!-- genericLabOrderReport.sql looks up the order type by the exact name 'Lab Order',
+         which testDataSet.xml does not define. -->
+    <order_type order_type_id="5000" name="Lab Order" java_class_name="org.openmrs.TestOrder" description="Canned lab order type" creator="1" date_created="2017-01-01 00:00:00.0" retired="0" uuid="canned-ordertype-5000"/>
+
+    <order_frequency order_frequency_id="5000" concept_id="5014" frequency_per_day="2" creator="1" date_created="2017-01-01 00:00:00.0" retired="false" uuid="canned-of-5000"/>
+    <drug drug_id="5000" concept_id="5013" name="Canned Drug" combination="false" creator="1" date_created="2017-01-01 00:00:00.0" retired="false" uuid="canned-drug-5000"/>
+
+    <!-- a plain (lab) order, for OrderFulfillmentReport and the lab order report -->
+    <orders order_id="5000" order_type_id="17" concept_id="5008" orderer="1" encounter_id="5002" patient_id="5000" care_setting="1" order_number="CANNED-ORD-5000" order_action="NEW" urgency="ROUTINE" date_activated="2017-01-10 11:00:00.0" creator="1" date_created="2017-01-10 11:00:00.0" voided="false" uuid="canned-order-5000"/>
+    <!-- a drug order, for DrugOrder and ProgramDrugOrder -->
+    <orders order_id="5001" order_type_id="18" concept_id="5013" orderer="1" encounter_id="5000" patient_id="5000" care_setting="1" order_number="CANNED-ORD-5001" order_action="NEW" urgency="ROUTINE" date_activated="2017-01-10 10:00:00.0" scheduled_date="2017-01-10 10:00:00.0" auto_expire_date="2017-01-20 10:00:00.0" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-order-5001"/>
+    <!-- the lab order the lab-order report reports on -->
+    <orders order_id="5002" order_type_id="5000" concept_id="5008" orderer="1" encounter_id="5002" patient_id="5000" care_setting="1" order_number="CANNED-ORD-5002" order_action="NEW" urgency="ROUTINE" date_activated="2017-01-10 11:00:00.0" creator="1" date_created="2017-01-10 11:00:00.0" voided="false" uuid="canned-order-5002"/>
+
+    <drug_order order_id="5001" drug_inventory_id="5000" dose="1" dose_units="5014" frequency="5000" quantity="10" quantity_units="5014" route="5014" duration="10" duration_units="5014" dosing_type="org.openmrs.SimpleDosingInstructions" num_refills="0"/>
+
+    <!-- ============ observations ============ -->
+    <!-- adult: template group with height, weight, a date answer, a coded answer, free text -->
+    <obs obs_id="5000" form_namespace_and_path="canned-concept-5000^" person_id="5000" concept_id="5000" encounter_id="5000" obs_datetime="2017-01-10 10:00:00.0" location_id="1" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5000"/>
+    <obs obs_id="5001" form_namespace_and_path="canned-concept-5000^" person_id="5000" concept_id="5001" encounter_id="5000" obs_group_id="5000" obs_datetime="2017-01-10 10:00:00.0" location_id="1" value_numeric="172" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5001"/>
+    <obs obs_id="5002" form_namespace_and_path="canned-concept-5000^" person_id="5000" concept_id="5002" encounter_id="5000" obs_group_id="5000" obs_datetime="2017-01-10 10:00:00.0" location_id="1" value_numeric="68" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5002"/>
+    <obs obs_id="5003" form_namespace_and_path="canned-concept-5000^" person_id="5000" concept_id="5006" encounter_id="5000" obs_group_id="5000" obs_datetime="2017-01-10 10:00:00.0" location_id="1" value_datetime="2017-01-09 00:00:00.0" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5003"/>
+    <obs obs_id="5004" form_namespace_and_path="canned-concept-5000^" person_id="5000" concept_id="5003" encounter_id="5000" obs_group_id="5000" obs_datetime="2017-01-10 10:00:00.0" location_id="1" value_coded="5004" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5004"/>
+    <obs obs_id="5005" form_namespace_and_path="canned-concept-5000^" person_id="5000" concept_id="5015" encounter_id="5000" obs_group_id="5000" obs_datetime="2017-01-10 10:00:00.0" location_id="1" value_text="Canned free text" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5005"/>
+    <!-- adult: lab result in the laboratory encounter -->
+    <obs obs_id="5006" person_id="5000" concept_id="5008" encounter_id="5002" obs_datetime="2017-01-10 11:00:00.0" location_id="1" value_numeric="12.5" creator="1" date_created="2017-01-10 11:00:00.0" voided="false" uuid="canned-obs-5006"/>
+    <!-- child: template group with height and the other coded answer -->
+    <obs obs_id="5007" form_namespace_and_path="Bahmni~Canned Vitals.1/1-0" person_id="5001" concept_id="5000" encounter_id="5001" obs_datetime="2017-01-15 10:00:00.0" location_id="1" creator="1" date_created="2017-01-15 10:00:00.0" voided="false" uuid="canned-obs-5007"/>
+    <obs obs_id="5008" form_namespace_and_path="Bahmni~Canned Vitals.1/1-0" person_id="5001" concept_id="5001" encounter_id="5001" obs_group_id="5007" obs_datetime="2017-01-15 10:00:00.0" location_id="1" value_numeric="92" creator="1" date_created="2017-01-15 10:00:00.0" voided="false" uuid="canned-obs-5008"/>
+    <obs obs_id="5009" form_namespace_and_path="Bahmni~Canned Vitals.1/1-0" person_id="5001" concept_id="5003" encounter_id="5001" obs_group_id="5007" obs_datetime="2017-01-15 10:00:00.0" location_id="1" value_coded="5005" creator="1" date_created="2017-01-15 10:00:00.0" voided="false" uuid="canned-obs-5009"/>
+    <!-- lab panel parent obs with the ordered result underneath it. genericLabOrderReport.sql
+         matches obs whose order_id is a 'Lab Order', then walks up to the parent by obs_group_id. -->
+    <obs obs_id="5010" person_id="5000" concept_id="5007" encounter_id="5002" obs_datetime="2017-01-10 11:00:00.0" location_id="1" creator="1" date_created="2017-01-10 11:00:00.0" voided="false" uuid="canned-obs-5010"/>
+    <obs obs_id="5011" person_id="5000" concept_id="5008" encounter_id="5002" obs_group_id="5010" order_id="5002" obs_datetime="2017-01-10 11:00:00.0" location_id="1" value_numeric="13.2" creator="1" date_created="2017-01-10 11:00:00.0" voided="false" uuid="canned-obs-5011"/>
+    <!-- form-builder observations, on the non-retired visit type -->
+    <obs obs_id="5013" person_id="5000" concept_id="5000" encounter_id="5003" form_namespace_and_path="Bahmni~Canned Vitals.1/1-0" obs_datetime="2017-01-11 10:00:00.0" location_id="1" creator="1" date_created="2017-01-11 10:00:00.0" voided="false" uuid="canned-obs-5013"/>
+    <obs obs_id="5014" person_id="5000" concept_id="5001" encounter_id="5003" obs_group_id="5013" form_namespace_and_path="Bahmni~Canned Vitals.1/1-0" obs_datetime="2017-01-11 10:00:00.0" location_id="1" value_numeric="171" creator="1" date_created="2017-01-11 10:00:00.0" voided="false" uuid="canned-obs-5014"/>
+    <obs obs_id="5015" person_id="5000" concept_id="5002" encounter_id="5003" obs_group_id="5013" form_namespace_and_path="Bahmni~Canned Vitals.1/1-0" obs_datetime="2017-01-11 10:00:00.0" location_id="1" value_numeric="69" creator="1" date_created="2017-01-11 10:00:00.0" voided="false" uuid="canned-obs-5015"/>
+
+    <!-- Boolean answer, paired with the coded question above by multipleCodedObsByCodedObs.sql -->
+    <obs obs_id="5012" person_id="5000" concept_id="5016" encounter_id="5000" obs_datetime="2017-01-10 10:00:00.0" location_id="1" value_coded="5017" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5012"/>
+
+    <!-- A confirmed diagnosis, for diagnosisSummary.sql and diagnosisCountWithoutAgeGroup.sql:
+         a "Visit Diagnoses" parent (5016) grouping a "Confirmed" status child (5017) and the
+         actual diagnosis value (5018, Canned Diagnosis A) as siblings, on the adult's OPD visit
+         so the visit_attribute "Visit Status" = "OPD" join in diagnosisCountWithoutAgeGroup.sql
+         also matches. -->
+    <obs obs_id="5016" person_id="5000" concept_id="5019" encounter_id="5000" obs_datetime="2017-01-10 10:00:00.0" location_id="1" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5016"/>
+    <obs obs_id="5017" person_id="5000" concept_id="5020" encounter_id="5000" obs_group_id="5016" obs_datetime="2017-01-10 10:00:00.0" location_id="1" value_coded="5020" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5017"/>
+    <obs obs_id="5018" person_id="5000" concept_id="5003" encounter_id="5000" obs_group_id="5016" obs_datetime="2017-01-10 10:00:00.0" location_id="1" value_coded="5004" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5018"/>
+
+    <!-- ============ program enrolment ============ -->
+    <program program_id="5000" concept_id="5009" name="CANNED PROGRAM" description="Canned program" creator="1" date_created="2017-01-01 00:00:00.0" retired="false" uuid="canned-program-5000"/>
+    <program_workflow program_workflow_id="5000" program_id="5000" concept_id="5012" creator="1" date_created="2017-01-01 00:00:00.0" retired="false" uuid="canned-pw-5000"/>
+    <program_workflow_state program_workflow_state_id="5000" program_workflow_id="5000" concept_id="5010" initial="true" terminal="false" creator="1" date_created="2017-01-01 00:00:00.0" retired="false" uuid="canned-pws-5000"/>
+    <program_workflow_state program_workflow_state_id="5001" program_workflow_id="5000" concept_id="5011" initial="false" terminal="true" creator="1" date_created="2017-01-01 00:00:00.0" retired="false" uuid="canned-pws-5001"/>
+
+    <program_attribute_type program_attribute_type_id="5000" name="Canned Program Attribute" description="Canned Program Attribute" datatype="org.openmrs.customdatatype.datatype.FreeTextDatatype" min_occurs="0" creator="1" date_created="2017-01-01 00:00:00.0" retired="0" uuid="canned-pat-5000"/>
+
+    <patient_program patient_program_id="5000" patient_id="5000" program_id="5000" date_enrolled="2017-01-10 00:00:00.0" creator="1" date_created="2017-01-10 00:00:00.0" voided="false" uuid="canned-pp-5000"/>
+    <patient_program patient_program_id="5001" patient_id="5001" program_id="5000" date_enrolled="2017-01-15 00:00:00.0" date_completed="2017-01-20 00:00:00.0" creator="1" date_created="2017-01-15 00:00:00.0" voided="false" uuid="canned-pp-5001"/>
+
+    <patient_program_attribute patient_program_attribute_id="5000" patient_program_id="5000" attribute_type_id="5000" value_reference="Canned attribute value" creator="1" date_created="2017-01-10 00:00:00.0" voided="false" uuid="canned-ppa-5000"/>
+
+    <!-- a state transition: A closed on the 12th, B open from then -->
+    <patient_state patient_state_id="5000" patient_program_id="5000" state="5000" start_date="2017-01-10 00:00:00.0" end_date="2017-01-12 00:00:00.0" creator="1" date_created="2017-01-10 00:00:00.0" voided="false" uuid="canned-ps-5000"/>
+    <patient_state patient_state_id="5001" patient_program_id="5000" state="5001" start_date="2017-01-12 00:00:00.0" creator="1" date_created="2017-01-12 00:00:00.0" voided="false" uuid="canned-ps-5001"/>
+    <patient_state patient_state_id="5002" patient_program_id="5001" state="5000" start_date="2017-01-15 00:00:00.0" creator="1" date_created="2017-01-15 00:00:00.0" voided="false" uuid="canned-ps-5002"/>
+
+    <!-- episodes, from the Bahmni episodes omod: the program reports join through these -->
+    <episode episode_id="5000" creator="1" date_created="2017-01-10 00:00:00.0" voided="false" uuid="canned-episode-5000"/>
+    <episode episode_id="5001" creator="1" date_created="2017-01-15 00:00:00.0" voided="false" uuid="canned-episode-5001"/>
+    <episode_patient_program episode_id="5000" patient_program_id="5000"/>
+    <episode_patient_program episode_id="5001" patient_program_id="5001"/>
+    <episode_encounter episode_id="5000" encounter_id="5000"/>
+    <episode_encounter episode_id="5000" encounter_id="5002"/>
+    <episode_encounter episode_id="5001" encounter_id="5001"/>
+
+    <!-- ============ this project's own reporting tables ============ -->
+    <!-- reporting_concept_range is joined by numericConceptValuesCount.sql, but no changeset
+         in this repository creates it and it is absent from the Bahmni distribution's own
+         database image, so the table only exists in the test fixture. Seeded here so the
+         report has ranges to bucket values into. -->
+    <reporting_concept_range id="5000" name="Canned Low" concept_name="Canned Height" low_value="0" high_value="100" sort_order="1"/>
+    <reporting_concept_range id="5001" name="Canned High" concept_name="Canned Height" low_value="100" high_value="300" sort_order="2"/>
+
+</dataset>

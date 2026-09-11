@@ -1,0 +1,388 @@
+{
+  "obsCount": {
+    "name": "Smoke obsCount",
+    "type": "obsCount",
+    "minRows": 4,
+    "config": {
+      "conceptNames": [
+        "Canned Vitals"
+      ],
+      "ageGroupName": "Observation Age Group"
+    }
+  },
+  "obsValueCount": {
+    "name": "Smoke ObsValueCount",
+    "type": "ObsValueCount",
+    "minRows": 3,
+    "config": {
+      "conceptNames": [
+        "Canned Coded Question"
+      ]
+    }
+  },
+  "obsCountByConceptClass": {
+    "name": "Smoke ObsCountByConceptClass",
+    "type": "ObsCountByConceptClass",
+    "minRows": 9,
+    "config": {
+      "conceptClassNames": [
+        "Test",
+        "Question"
+      ]
+    }
+  },
+  "numericConceptValuesCount": {
+    "name": "Smoke NumericConceptValuesCount",
+    "type": "NumericConceptValuesCount",
+    "minRows": 5,
+    "config": {
+      "conceptNames": [
+        "Canned Height"
+      ],
+      "ageGroupName": "Observation Age Group",
+      "rangeGroupName": "Canned Height",
+      "countOncePerPatient": false
+    }
+  },
+  "dateConceptValuesPatientsList": {
+    "name": "Smoke DateConceptValuesPatientsList",
+    "type": "DateConceptValuesPatientsList",
+    "minRows": 1,
+    "config": {
+      "conceptNames": [
+        "Canned Date Question"
+      ],
+      "templateName": "Canned Vitals"
+    }
+  },
+  "codedObsByCodedObs": {
+    "name": "Smoke CodedObsByCodedObs",
+    "type": "CodedObsByCodedObs",
+    "minRows": 4,
+    "config": {
+      "ageGroupName": "Observation Age Group",
+      "conceptPair": [
+        "Canned Coded Question",
+        "Canned Coded Question"
+      ],
+      "rowsGroupBy": [
+        "Canned Coded Question"
+      ],
+      "columnsGroupBy": [
+        "Canned Coded Question"
+      ],
+      "locationTagNames": []
+    }
+  },
+  "multipleCodedObsByCodedObs": {
+    "name": "Smoke MultipleCodedObsByCodedObs",
+    "type": "MultipleCodedObsByCodedObs",
+    "minRows": 5,
+    "config": {
+      "ageGroupName": "Observation Age Group",
+      "rowsGroupBy": [
+        "Canned Coded Question"
+      ],
+      "columnsGroupBy": [
+        "Canned Boolean Question",
+        "Canned Coded Question"
+      ]
+    }
+  },
+  "patientsWithLabtestResults": {
+    "name": "Smoke PatientsWithLabtestResults",
+    "type": "PatientsWithLabtestResults",
+    "minRows": 2,
+    "config": {
+      "conceptNames": [
+        "Canned Lab Test"
+      ],
+      "testOutcome": [
+        "Normal",
+        "Abnormal"
+      ]
+    }
+  },
+  "obsTemplate": {
+    "name": "Smoke obsTemplate",
+    "type": "obsTemplate",
+    "minRows": 3,
+    "config": {
+      "templateName": "Canned Vitals",
+      "patientAttributes": [
+        "caste"
+      ],
+      "locationTagNames": [],
+      "applyDateRangeFor": "encounterCreateDate",
+      "conceptSource": "ICD-10-WHO"
+    }
+  },
+  "programObsTemplate": {
+    "name": "Smoke programObsTemplate",
+    "type": "programObsTemplate",
+    "minRows": 1,
+    "config": {
+      "templateName": "Canned Vitals",
+      "patientAttributes": [
+        "caste"
+      ],
+      "locationTagNames": [],
+      "applyDateRangeFor": "encounterCreateDate",
+      "conceptSource": "ICD-10-WHO",
+      "programAttributes": [
+        "Canned Program Attribute"
+      ],
+      "programNames": [
+        "CANNED PROGRAM"
+      ],
+      "addressAttributes": []
+    }
+  },
+  "obsCannedReport": {
+    "name": "Smoke obsCannedReport",
+    "type": "obsCannedReport",
+    "minRows": 3,
+    "config": {
+      "templateName": "Canned Vitals",
+      "patientAttributes": [
+        "caste"
+      ],
+      "applyDateRangeFor": "encounterCreateDate",
+      "addressAttributes": [
+        "city_village"
+      ],
+      "conceptNames": [
+        "Canned Height"
+      ],
+      "visitIndependentConcept": [
+        "Canned Text Question"
+      ],
+      "enrolledProgram": "CANNED PROGRAM",
+      "showObsOnlyForProgramDuration": false,
+      "conceptSource": "ICD-10-WHO"
+    }
+  },
+  "drugOrder": {
+    "name": "Smoke DrugOrder",
+    "type": "DrugOrder",
+    "minRows": 1
+  },
+  "programDrugOrder": {
+    "name": "Smoke ProgramDrugOrder",
+    "type": "ProgramDrugOrder",
+    "minRows": 3,
+    "config": {
+      "templateName": "Canned Vitals",
+      "patientAttributes": [
+        "caste"
+      ],
+      "programAttributes": [
+        "Canned Program Attribute"
+      ],
+      "programs": [
+        "CANNED PROGRAM"
+      ]
+    }
+  },
+  "orderFulfillment": {
+    "name": "Smoke OrderFulfillmentReport",
+    "type": "OrderFulfillmentReport",
+    "minRows": 1,
+    "config": {
+      "type": "OrderFulfillmentReport",
+      "orderTypes": [
+        "Plain Order"
+      ]
+    }
+  },
+  "diagnosisCount": {
+    "name": "Smoke diagnosisCount",
+    "type": "diagnosisCount",
+    "minRows": 3,
+    "config": {
+      "ageGroupName": "Observation Age Group",
+      "visitTypes": [
+        "Initial HIV Clinic Visit",
+        "Hospitalization"
+      ],
+      "locationTagNames": []
+    }
+  },
+  "codedObsCount": {
+    "name": "Smoke CodedObsCount",
+    "type": "obsCount",
+    "minRows": 6,
+    "config": {
+      "conceptNames": [
+        "Canned Coded Question"
+      ],
+      "ageGroupName": "Observation Age Group",
+      "visitTypes": [
+        "OPD"
+      ]
+    }
+  },
+  "booleanConceptsCount": {
+    "name": "Smoke BooleanConceptsCount",
+    "type": "obsCount",
+    "minRows": 4,
+    "config": {
+      "conceptNames": [
+        "Canned Boolean Question"
+      ],
+      "ageGroupName": "Observation Age Group"
+    }
+  },
+  "diagnosisSummary": {
+    "name": "Smoke DiagnosisSummary",
+    "type": "diagnosisCount",
+    "minRows": 4,
+    "config": {
+      "concept": "Canned Diagnosis Root",
+      "ageGroupName": "Observation Age Group"
+    }
+  },
+  "diagnosisCountWithoutAgeGroup": {
+    "name": "Smoke DiagnosisCountWithoutAgeGroup",
+    "type": "diagnosisCount",
+    "minRows": 1,
+    "config": {
+      "visitTypes": [
+        "OPD"
+      ],
+      "icd10ConceptSource": "ICD-10-WHO"
+    }
+  },
+  "ipdOpdVisitCount": {
+    "name": "Smoke IpdOpdVisitCount",
+    "type": "IpdOpdVisitCount",
+    "minRows": 1
+  },
+  "ipdPatients": {
+    "name": "Smoke ipdPatients",
+    "type": "ipdPatients",
+    "minRows": 1,
+    "config": {
+      "patientAttributes": [
+        "caste"
+      ],
+      "conceptNames": [
+        "Canned Height"
+      ],
+      "addressAttributes": [],
+      "locationTagNames": [],
+      "filterBy": ""
+    }
+  },
+  "visitAggregateCount": {
+    "name": "Smoke VisitAggregateCount",
+    "type": "VisitAggregateCount",
+    "minRows": 1,
+    "config": {
+      "visitTypes": "'Initial HIV Clinic Visit','Hospitalization'",
+      "locationTagNames": []
+    }
+  },
+  "visitReport": {
+    "name": "Smoke visitReport",
+    "type": "visitReport",
+    "minRows": 3,
+    "config": {
+      "personAttributes": [
+        "caste",
+        "education"
+      ],
+      "visitAttributes": [
+        "Visit Status",
+        "Admission Status"
+      ]
+    }
+  },
+  "patientReport": {
+    "name": "Smoke PatientReport",
+    "type": "PatientReport",
+    "minRows": 3
+  },
+  "patientProgramReport": {
+    "name": "Smoke PatientProgramReport",
+    "type": "PatientProgramReport",
+    "minRows": 3,
+    "config": {
+      "programName": "CANNED PROGRAM"
+    }
+  },
+  "programEnrollmentReport": {
+    "name": "Smoke ProgramEnrollmentReport",
+    "type": "ProgramEnrollmentReport",
+    "minRows": 2
+  },
+  "programStateCount": {
+    "name": "Smoke programStateCount",
+    "type": "programStateCount",
+    "minRows": 2,
+    "config": {
+      "programName": "CANNED PROGRAM"
+    }
+  },
+  "programStateTransitionReport": {
+    "name": "Smoke programStateTransitionReport",
+    "type": "programStateTransitionReport",
+    "minRows": 2,
+    "config": {
+      "programName": "CANNED PROGRAM"
+    }
+  },
+  "mrsGeneric": {
+    "name": "Smoke MRSGeneric",
+    "type": "MRSGeneric",
+    "minRows": 5,
+    "config": {
+      "sqlPath": "src/test/resources/sql/obsData.sql"
+    }
+  },
+  "genericVisits": {
+    "name": "Smoke visits",
+    "type": "visits",
+    "minRows": 3
+  },
+  "genericObservations": {
+    "name": "Smoke observations",
+    "type": "observations",
+    "minRows": 13,
+    "config": {
+      "templateName": "Canned Vitals"
+    }
+  },
+  "genericForms": {
+    "name": "Smoke forms",
+    "type": "forms",
+    "minRows": 2,
+    "config": {
+      "programAttributes": [],
+      "formNamesToFilter": [
+        "Canned Vitals"
+      ]
+    }
+  },
+  "genericPrograms": {
+    "name": "Smoke programs",
+    "type": "programs",
+    "minRows": 2
+  },
+  "genericLabOrders": {
+    "name": "Smoke labOrders",
+    "type": "labOrders",
+    "minRows": 1
+  },
+  "formBuilderForms": {
+    "name": "Smoke formBuilder",
+    "type": "formBuilder",
+    "minRows": 1,
+    "config": {
+      "programAttributes": [],
+      "formNamesToFilter": [
+        "Canned Vitals"
+      ]
+    }
+  }
+}

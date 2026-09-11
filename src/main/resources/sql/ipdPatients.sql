@@ -87,7 +87,7 @@ SET @sql = CONCAT('SELECT
         LEFT JOIN concept_name as obsConcept on obs.concept_id = obsConcept.concept_id and obsConcept.concept_name_type = "FULLY_SPECIFIED" and obs.voided=0 and obsConcept.name in (#conceptNames#)
         LEFT JOIN concept_name as coded_value on obs.value_coded = coded_value.concept_id and coded_value.concept_name_type = "SHORT"
 
-  GROUP BY pi.identifier');
+  GROUP BY pi.identifier ORDER BY pi.identifier');
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;

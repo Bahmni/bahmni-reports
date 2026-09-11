@@ -14,4 +14,4 @@ WHERE vat.name = 'Admission Status'
            date(va.date_changed) BETWEEN "#startDate#" AND "#endDate#")
       AND va.voided = 0 AND v.voided = 0
       AND vt.name IN (#visitTypes#)
-GROUP BY vt.name;
+GROUP BY vt.name ORDER BY vt.name;
