@@ -208,6 +208,51 @@
       "locationTagNames": []
     }
   },
+  "codedObsCount": {
+    "name": "Smoke CodedObsCount",
+    "type": "obsCount",
+    "minRows": 6,
+    "config": {
+      "conceptNames": [
+        "Canned Coded Question"
+      ],
+      "ageGroupName": "Observation Age Group",
+      "visitTypes": [
+        "OPD"
+      ]
+    }
+  },
+  "booleanConceptsCount": {
+    "name": "Smoke BooleanConceptsCount",
+    "type": "obsCount",
+    "minRows": 4,
+    "config": {
+      "conceptNames": [
+        "Canned Boolean Question"
+      ],
+      "ageGroupName": "Observation Age Group"
+    }
+  },
+  "diagnosisSummary": {
+    "name": "Smoke DiagnosisSummary",
+    "type": "diagnosisCount",
+    "minRows": 4,
+    "config": {
+      "concept": "Canned Diagnosis Root",
+      "ageGroupName": "Observation Age Group"
+    }
+  },
+  "diagnosisCountWithoutAgeGroup": {
+    "name": "Smoke DiagnosisCountWithoutAgeGroup",
+    "type": "diagnosisCount",
+    "minRows": 1,
+    "config": {
+      "visitTypes": [
+        "OPD"
+      ],
+      "icd10ConceptSource": "ICD-10-WHO"
+    }
+  },
   "ipdOpdVisitCount": {
     "name": "Smoke IpdOpdVisitCount",
     "type": "IpdOpdVisitCount",

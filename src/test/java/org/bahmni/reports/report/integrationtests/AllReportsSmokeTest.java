@@ -144,6 +144,17 @@ public class AllReportsSmokeTest extends BaseIntegrationTest {
         URI byFormNameUri = new URI(root + "/reference-data/leafConceptNames?"
                 + getConceptNamesParameter(Collections.singletonList(TEMPLATE_NAME)));
         when(httpClient.get(byFormNameUri)).thenReturn(formLeafConceptsJson);
+
+        /* obsCount picks its template by fetching the concept's datatype over HTTP
+         * (ConceptUtil.getConceptDataType), before it runs any SQL. */
+        stubConceptDataType(root, "Canned Coded Question", "Coded");
+        stubConceptDataType(root, "Canned Boolean Question", "Boolean");
+    }
+
+    private void stubConceptDataType(String root, String conceptName, String datatypeDisplay) throws Exception {
+        URI conceptUri = new URI(new URI(null, root + "/concept/" + conceptName, null).toASCIIString());
+        when(httpClient.get(conceptUri)).thenReturn(
+                "{\"datatype\":{\"display\":\"" + datatypeDisplay + "\"}}");
     }
 
     /*

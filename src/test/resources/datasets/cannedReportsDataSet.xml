@@ -53,6 +53,17 @@
     <concept concept_id="5016" retired="false" datatype_id="10" class_id="7" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5016"/>
     <concept concept_id="5017" retired="false" datatype_id="4" class_id="11" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5017"/>
     <concept concept_id="5018" retired="false" datatype_id="4" class_id="11" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5018"/>
+    <!-- diagnosisSummary.sql and diagnosisCountWithoutAgeGroup.sql both require a diagnosis obs
+         grouped under a "Visit Diagnoses" parent, confirmed by a sibling obs whose value_coded
+         names a concept called "Confirmed"; that structure, not just a Diagnosis-class
+         value_coded, is what those two files (and diagnosisCountByAgeGroup.sql) match on. -->
+    <concept concept_id="5019" retired="false" datatype_id="4" class_id="11" is_set="true" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5019"/>
+    <concept concept_id="5020" retired="false" datatype_id="4" class_id="11" is_set="false" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5020"/>
+    <!-- diagnosisSummary.sql's crosstab is driven by a two-level concept_set hierarchy under
+         the configured root concept (root to header to leaf), matched against Diagnosis-class
+         obs by leaf concept id. The leaf reuses Canned Diagnosis A (5004) below. -->
+    <concept concept_id="5021" retired="false" datatype_id="4" class_id="11" is_set="true" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5021"/>
+    <concept concept_id="5022" retired="false" datatype_id="4" class_id="11" is_set="true" creator="1" date_created="2017-01-01 00:00:00.0" version="" uuid="canned-concept-5022"/>
 
     <concept_name concept_id="5000" concept_name_id="5000" name="Canned Vitals" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5000"/>
     <concept_name concept_id="5001" concept_name_id="5001" name="Canned Height" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5001"/>
@@ -73,6 +84,16 @@
     <concept_name concept_id="5016" concept_name_id="5016" name="Canned Boolean Question" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5016"/>
     <concept_name concept_id="5017" concept_name_id="5017" name="Canned True" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5017"/>
     <concept_name concept_id="5018" concept_name_id="5018" name="Canned False" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5018"/>
+    <concept_name concept_id="5019" concept_name_id="5019" name="Visit Diagnoses" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5019"/>
+    <concept_name concept_id="5020" concept_name_id="5020" name="Confirmed" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5020"/>
+    <concept_name concept_id="5021" concept_name_id="5021" name="Canned Diagnosis Root" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5021"/>
+    <concept_name concept_id="5022" concept_name_id="5022" name="Canned Diagnosis Header" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" concept_name_type="FULLY_SPECIFIED" locale_preferred="1" voided="false" uuid="canned-cn-5022"/>
+    <!-- booleanConceptsCount.sql matches an obs's value_coded against a concept_name literally
+         named 'True' or 'False' (not the concept.true/concept.false global property), so give
+         the existing answer concepts a second, non-preferred name with those exact strings
+         rather than adding new concepts or obs. -->
+    <concept_name concept_id="5017" concept_name_id="5023" name="True" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" locale_preferred="0" voided="false" uuid="canned-cn-5023"/>
+    <concept_name concept_id="5018" concept_name_id="5024" name="False" locale="en" creator="1" date_created="2017-01-01 00:00:00.0" locale_preferred="0" voided="false" uuid="canned-cn-5024"/>
 
     <!-- template members, and the lab panel's member -->
     <concept_set concept_set_id="5000" concept_id="5001" concept_set="5000" sort_weight="1" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5000"/>
@@ -81,6 +102,9 @@
     <concept_set concept_set_id="5003" concept_id="5003" concept_set="5000" sort_weight="4" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5003"/>
     <concept_set concept_set_id="5004" concept_id="5008" concept_set="5007" sort_weight="1" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5004"/>
     <concept_set concept_set_id="5005" concept_id="5015" concept_set="5000" sort_weight="5" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5005"/>
+    <!-- diagnosisSummary.sql's root (5021) -> header (5022) -> leaf (5004, Canned Diagnosis A) -->
+    <concept_set concept_set_id="5006" concept_id="5022" concept_set="5021" sort_weight="1" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5006"/>
+    <concept_set concept_set_id="5007" concept_id="5004" concept_set="5022" sort_weight="1" creator="1" date_created="2017-01-01 00:00:00.0" uuid="canned-cs-5007"/>
 
     <concept_answer concept_answer_id="5000" concept_id="5003" answer_concept="5004" creator="1" date_created="2017-01-01 00:00:00.0" sort_weight="1" uuid="canned-ca-5000"/>
     <concept_answer concept_answer_id="5001" concept_id="5003" answer_concept="5005" creator="1" date_created="2017-01-01 00:00:00.0" sort_weight="2" uuid="canned-ca-5001"/>
@@ -190,6 +214,15 @@
 
     <!-- Boolean answer, paired with the coded question above by multipleCodedObsByCodedObs.sql -->
     <obs obs_id="5012" person_id="5000" concept_id="5016" encounter_id="5000" obs_datetime="2017-01-10 10:00:00.0" location_id="1" value_coded="5017" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5012"/>
+
+    <!-- A confirmed diagnosis, for diagnosisSummary.sql and diagnosisCountWithoutAgeGroup.sql:
+         a "Visit Diagnoses" parent (5016) grouping a "Confirmed" status child (5017) and the
+         actual diagnosis value (5018, Canned Diagnosis A) as siblings, on the adult's OPD visit
+         so the visit_attribute "Visit Status" = "OPD" join in diagnosisCountWithoutAgeGroup.sql
+         also matches. -->
+    <obs obs_id="5016" person_id="5000" concept_id="5019" encounter_id="5000" obs_datetime="2017-01-10 10:00:00.0" location_id="1" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5016"/>
+    <obs obs_id="5017" person_id="5000" concept_id="5020" encounter_id="5000" obs_group_id="5016" obs_datetime="2017-01-10 10:00:00.0" location_id="1" value_coded="5020" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5017"/>
+    <obs obs_id="5018" person_id="5000" concept_id="5003" encounter_id="5000" obs_group_id="5016" obs_datetime="2017-01-10 10:00:00.0" location_id="1" value_coded="5004" creator="1" date_created="2017-01-10 10:00:00.0" voided="false" uuid="canned-obs-5018"/>
 
     <!-- ============ program enrolment ============ -->
     <program program_id="5000" concept_id="5009" name="CANNED PROGRAM" description="Canned program" creator="1" date_created="2017-01-01 00:00:00.0" retired="false" uuid="canned-program-5000"/>
