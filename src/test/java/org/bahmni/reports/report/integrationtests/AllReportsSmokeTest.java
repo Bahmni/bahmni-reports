@@ -72,9 +72,15 @@ public class AllReportsSmokeTest extends BaseIntegrationTest {
              * httpClient mock in BaseIntegrationTest answers every URI with reports.json, so
              * these need their own stub rather than a config entry. */
             "fhirTSLookupDiagnosisCount", "fhirTSLookupDiagnosisLine",
-            /* Composite types: they name other reports rather than carrying SQL of their own,
-             * and both already have dedicated tests (AggregationReportTest,
-             * OpenmrsConcatenatedReportTest) with their own multi-entry configs. */
+            /* Composite types: they name other reports rather than carrying a SQL file of
+             * their own, so they add nothing to the 38-file coverage count regardless. Both
+             * are exercised by dedicated tests -- AggregationReportTest and
+             * OpenmrsConcatenatedReportTest -- that extend this same BaseIntegrationTest and
+             * go through the identical real-JDBC, full-mockMvc round trip as every test in
+             * this class; neither is a template-selection-only unit test.
+             * AggregationReportTest lives outside this package (org.bahmni.reports.report,
+             * not .integrationtests), which looks like it might not touch a database, but the
+             * class hierarchy is what wires the real connection, not the package. */
             "aggregation", "concatenated"));
 
     public AllReportsSmokeTest() {
