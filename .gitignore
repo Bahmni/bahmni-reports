@@ -25,3 +25,9 @@ README.html
 
 # OS X auto-generated files #
 .DS_Store
+
+# Claude Code local config/skills, never shared #
+.claude/
+
+# Upgrade plan and evidence: local working notes, never shared #
+/docs/upgrade/

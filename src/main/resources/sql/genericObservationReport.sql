@@ -28,7 +28,7 @@ SET @conceptNamesToFilterSql = ' AND obs_fscn.name IN (#conceptNamesToFilter#)';
 SET @filterByConceptValuesSql = IF(@filterByConceptValues='','', IF(@filterByEmptyValues='',' AND
                                       ((binary o.value_numeric IN (#noValueFilter##conceptValuesToFilter#) OR
                                        o.value_text IN (#noValueFilter##conceptValuesToFilter#) OR
-                                       o.value_datetime IN (#noValueFilter##conceptValuesToFilter#) OR
+                                       (CAST(o.value_datetime AS CHAR) IN (#noValueFilter##conceptValuesToFilter#) OR DATE_FORMAT(o.value_datetime,"%Y-%m-%d") IN (#noValueFilter##conceptValuesToFilter#)) OR
                                        coded_scn.name IN (#noValueFilter##conceptValuesToFilter#) OR
                                        coded_fscn.name IN (#noValueFilter##conceptValuesToFilter#)) #numericRangesFilterSql#)',
                                                                     ' AND
@@ -39,7 +39,7 @@ SET @filterByConceptValuesSql = IF(@filterByConceptValues='','', IF(@filterByEmp
                                                                      coded_fscn.name IS NULL) OR
                                        (binary o.value_numeric IN (#noValueFilter##conceptValuesToFilter#) OR
                                        o.value_text IN (#noValueFilter##conceptValuesToFilter#) OR
-                                       o.value_datetime IN (#noValueFilter##conceptValuesToFilter#) OR
+                                       (CAST(o.value_datetime AS CHAR) IN (#noValueFilter##conceptValuesToFilter#) OR DATE_FORMAT(o.value_datetime,"%Y-%m-%d") IN (#noValueFilter##conceptValuesToFilter#)) OR
                                        coded_scn.name IN (#noValueFilter##conceptValuesToFilter#) OR
                                        coded_fscn.name IN (#noValueFilter##conceptValuesToFilter#)) #numericRangesFilterSql#)'));
 
@@ -134,7 +134,7 @@ WHERE o.voided is false
   ',@dateRangeSql,IF(@visitTypesToFilterSql = '', '', 'AND vt.name in (#visitTypesToFilter#)'),
   IF(@filterByConceptValues = '', '', @filterByConceptValuesSql),
                   ' GROUP BY o.obs_id ',IF(@ignoreEmptyValues = '', '', @ignoreEmptyValues),'
-                  ', IF(@sortByColumns != '', @sortByColumns, ''), ';');
+                  ', IF(@sortByColumns != '', @sortByColumns, ' ORDER BY o.obs_id'), ';');
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;

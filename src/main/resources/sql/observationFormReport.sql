@@ -113,7 +113,7 @@ WHERE o.voided is false
   ',@dateRangeSql,'
   ',IF(@visitTypesToFilterSql = '', '', 'AND vt.name in (#visitTypesToFilter#)'),'
 GROUP BY e.encounter_id
-',IF(@sortByColumns != '', @sortByColumns, ''));
+',IF(@sortByColumns != '', @sortByColumns, ' ORDER BY e.encounter_id'));
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;

@@ -1,4 +1,4 @@
-FROM amazoncorretto:11
+FROM amazoncorretto:21
 
 ENV SERVER_PORT=8051
 ENV BASE_DIR=/var/run/bahmni-reports
@@ -16,8 +16,8 @@ RUN yum install -y gettext unzip
 
 ADD https://raw.githubusercontent.com/eficode/wait-for/v2.2.3/wait-for /etc/wait-for
 RUN yum install -y nc \
-    elfutils-libelf-0.176-2.amzn2.0.1 \
-    libnghttp2-1.41.0-1.amzn2.0.1
+    elfutils-libelf \
+    libnghttp2
 
 RUN chmod +x /etc/wait-for
 

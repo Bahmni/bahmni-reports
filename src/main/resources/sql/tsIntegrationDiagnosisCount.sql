@@ -114,4 +114,6 @@ from
   )
   INNER JOIN #tempTable# tmp on tmp.code = crt.code
 group by
+  cn.name
+order by
   cn.name;

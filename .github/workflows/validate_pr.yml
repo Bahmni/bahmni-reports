@@ -2,24 +2,59 @@ name: Validate PR
 on:
   pull_request:
     branches: [ master ]
+concurrency:
+  group: validate-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 jobs:
   build-package:
     name: Build Package
     runs-on: ubuntu-latest
     services:
       mysql:
-        image: mysql:5.6
+        image: mysql:8.0
         env:
           MYSQL_ROOT_PASSWORD: root
         ports:
           - 3306:3306
     steps:
-      - name: Setup Java 11
+      - name: Setup Java 21
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '11'
+          java-version: '21'
       - name: Checkout Repository
         uses: actions/checkout@v2
+      - name: Install mysql client
+        run: sudo apt-get update && sudo apt-get install -y mysql-client
+      - name: Wait for MySQL
+        run: |
+          for i in $(seq 1 30); do
+            mysqladmin ping -h127.0.0.1 -P3306 -uroot -proot --silent && break
+            sleep 2
+          done
+          mysqladmin ping -h127.0.0.1 -P3306 -uroot -proot --silent || { echo "STOP: MySQL never became ready"; exit 1; }
+      - name: Match the distro's sql_mode
+        # GitHub Actions service containers cannot pass mysqld arguments, so the mode is set
+        # server-side here instead. It mirrors OPENMRS_DB_SQL_MODES in bahmni-docker, whose
+        # defining feature is that ONLY_FULL_GROUP_BY is absent -- the report SQL relies on
+        # that, and MySQL 8 enables it by default.
+        run: |
+          set -eo pipefail
+          MODE='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+          mysql --protocol tcp -uroot -proot -e "SET GLOBAL sql_mode='$MODE'"
+          ACTUAL=$(mysql --protocol tcp -uroot -proot -N -e "SELECT @@global.sql_mode")
+          test "$ACTUAL" = "$MODE" || {
+            echo "STOP: sql_mode is '$ACTUAL', expected '$MODE'"
+            exit 1
+          }
+      - name: Generate test configuration
+        run: |
+          ./scripts/create_configuration.sh
+          test -f "$HOME/.bahmni-reports/bahmni-reports-test.properties"
+      - name: Provision test databases
+        run: |
+          sh src/test/resources/create_db.sh
+          test "$(mysql --protocol tcp -uroot -proot -N -e 'SHOW TABLES IN reports_integration_tests' | wc -l)" -gt 100
+          test "$(mysql --protocol tcp -uroot -proot -N -e 'SHOW TABLES IN bahmni_reports_it' | wc -l)" -gt 10
       - name: Test and build package
-        run: ./mvnw -T 4 --no-transfer-progress clean install -U -DskipTests
+        run: ./mvnw -T 4 --no-transfer-progress clean install -U

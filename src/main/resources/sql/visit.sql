@@ -31,7 +31,7 @@ SET @sql = CONCAT('SELECT pi.identifier, CONCAT(pn.given_name, " ", ifnull(pn.fa
   left outer join concept_name
   on person_attribute_type.format = "org.openmrs.Concept" and person_attribute.value = concept_name.concept_id
     and concept_name.concept_name_type = "SHORT" and concept_name.voided is false
-  where date(v.date_started) between "#startDate#" AND "#endDate#" GROUP BY v.visit_id;');
+  where date(v.date_started) between "#startDate#" AND "#endDate#" GROUP BY v.visit_id ORDER BY v.visit_id;');
 
 
 PREPARE stmt FROM @sql;

@@ -14,13 +14,10 @@ jobs:
   build-publish-docker-helm:
     name: Build & Publish Docker Image & Helm Chart
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql:5.6
-        env:
-          MYSQL_ROOT_PASSWORD: root
-        ports:
-          - 3306:3306
+    # No database service: this job runs -DskipTests. If tests are ever enabled here, copy the
+    # "Wait for MySQL", "Match the distro's sql_mode" and "Provision test databases" steps from
+    # validate_pr.yml; a bare mysql:8.0 service defaults to ONLY_FULL_GROUP_BY, which the report
+    # SQL does not satisfy.
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -29,11 +26,11 @@ jobs:
           wget -q https://raw.githubusercontent.com/Bahmni/bahmni-infra-utils/main/setArtifactVersion.sh && chmod +x setArtifactVersion.sh
           ./setArtifactVersion.sh
           rm setArtifactVersion.sh
-      - name: Setup Java 11
+      - name: Setup Java 21
         uses: actions/setup-java@v3
         with:
           distribution: 'corretto'
-          java-version: '11'
+          java-version: '21'
       - name: Test and Package
         run:
           ./mvnw -T 4 --no-transfer-progress -DskipTests clean package -U
