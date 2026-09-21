@@ -33,10 +33,11 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
+import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @PowerMockIgnore("javax.management.*")
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(Reports.class)
+@PrepareForTest({Reports.class, MainReportController.class})
 public class MainReportControllerTest {
 
     private static final String SESSION_ID = "sessionId";
@@ -123,8 +124,13 @@ public class MainReportControllerTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
+        ReportGenerator reportGenerator = mock(ReportGenerator.class);
+        whenNew(ReportGenerator.class).withAnyArguments().thenReturn(reportGenerator);
+
         controller.getReport(reportParams, response, request);
 
         verify(converter).applyHttpHeaders(anyString(), any(HttpServletResponse.class), anyString());
+        verify(reportGenerator).invoke();
+        assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
 }
