@@ -29,11 +29,47 @@ public class BahmniReportUtil {
                                             BahmniReportsProperties bahmniReportsProperties) throws Exception {
         BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
         JasperReportBuilder reportBuilder = report();
+        // The header shows what the caller asked for; the SQL gets a version that is safe to
+        // interpolate into a date comparison. See sqlSafeDateRange.
         reportBuilder = new ReportHeader().add(reportBuilder, report.getName(), startDate, endDate);
-        BahmniReportBuilder build = reportTemplate.build(connection, reportBuilder, report, startDate, endDate, resources, pageType);
+        String[] sqlDates = sqlSafeDateRange(startDate, endDate);
+        BahmniReportBuilder build = reportTemplate.build(connection, reportBuilder, report, sqlDates[0], sqlDates[1], resources, pageType);
         excludeColumns(report.getConfig(), reportBuilder);
         orderColumns(report.getConfig(), reportBuilder);
         return build;
+    }
+
+    /*
+     * All 36 report SQL files interpolate #startDate#/#endDate# straight into a date comparison,
+     * and nothing in the request path validates or defaults them, so a caller can put any string
+     * there. MySQL 5.6 coerced a blank to 0000-00-00 with a warning, which made "<= ''" match
+     * nothing and ">= ''" match everything: silently asymmetric, and different per report
+     * depending on which way its comparison happened to point. MySQL 8 raises ERROR 1525 instead,
+     * turning the same request into an HTTP 500.
+     *
+     * Rather than guard 36 templates individually -- each is a StringTemplate assembled into
+     * dynamic SQL with its own quoting rules -- an absent bound is replaced here with a real date
+     * that no row can satisfy, in whichever direction the comparison points. An inverted range
+     * matches nothing for every shape the SQL uses: BETWEEN start AND end, <= end, and >= start.
+     *
+     * Blank input therefore yields an empty report rather than an error or a partial answer.
+     * That is what GenericProgramReportTest.shouldNotThrowErrorIfStartAndEndDatesAreEmpty
+     * asserts. Note this deliberately also empties the one-sided case (a blank start with a real
+     * end), where 5.6 would have returned a skewed subset; a subset produced by an unstated rule
+     * is worse than no rows.
+     */
+    private static final String NO_ROWS_START = "9999-12-31";
+    private static final String NO_ROWS_END = "0001-01-01";
+
+    static String[] sqlSafeDateRange(String startDate, String endDate) {
+        if (isUsableDateBound(startDate) && isUsableDateBound(endDate)) {
+            return new String[]{startDate, endDate};
+        }
+        return new String[]{NO_ROWS_START, NO_ROWS_END};
+    }
+
+    private static boolean isUsableDateBound(String date) {
+        return date != null && !date.trim().isEmpty() && !"null".equalsIgnoreCase(date.trim());
     }
 
     private static boolean contains(List<String> columns, String searchColumn) {

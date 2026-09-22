@@ -1,0 +1,7 @@
+{
+  "resources": [
+    {
+      "value": "{\"name\":\"Canned Vitals\",\"id\":5000,\"uuid\":\"canned-form-uuid-5000\",\"controls\":[{\"type\":\"obsControl\",\"label\":{\"type\":\"label\",\"value\":\"Canned Height\"},\"id\":\"1\",\"concept\":{\"name\":\"Canned Height\",\"uuid\":\"canned-concept-5001\",\"datatype\":\"Numeric\",\"conceptClass\":\"Test\"}},{\"type\":\"obsControl\",\"label\":{\"type\":\"label\",\"value\":\"Canned Weight\"},\"id\":\"2\",\"concept\":{\"name\":\"Canned Weight\",\"uuid\":\"canned-concept-5002\",\"datatype\":\"Numeric\",\"conceptClass\":\"Test\"}}]}"
+    }
+  ]
+}

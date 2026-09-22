@@ -9,9 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.Cookie;
@@ -25,12 +24,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
-@PowerMockIgnore("javax.management.*")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(Reports.class)
+@RunWith(MockitoJUnitRunner.class)
 public class ReportAuthorizationTest {
 
     private static final String SESSION_ID = "sessionId";
@@ -93,10 +90,12 @@ public class ReportAuthorizationTest {
                 Collections.singletonList(privilegeName), true);
         Report report = mock(Report.class);
         when(report.getRequiredPrivilege()).thenReturn("privilege");
-        mockStatic(Reports.class);
-        when(Reports.find(any(), any(), any())).thenReturn(report);
 
-        boolean hasPrivilege = reportAuthorization.hasPrivilege("reportName");
+        boolean hasPrivilege;
+        try (MockedStatic<Reports> reports = mockStatic(Reports.class)) {
+            reports.when(() -> Reports.find(any(), any(), any())).thenReturn(report);
+            hasPrivilege = reportAuthorization.hasPrivilege("reportName");
+        }
 
         assertTrue(hasPrivilege);
     }
@@ -110,10 +109,12 @@ public class ReportAuthorizationTest {
                 Collections.singletonList("userPrivilege"), true);
         Report report = mock(Report.class);
         when(report.getRequiredPrivilege()).thenReturn("otherPrivilege");
-        mockStatic(Reports.class);
-        when(Reports.find(any(), any(), any())).thenReturn(report);
 
-        boolean hasPrivilege = reportAuthorization.hasPrivilege("reportName");
+        boolean hasPrivilege;
+        try (MockedStatic<Reports> reports = mockStatic(Reports.class)) {
+            reports.when(() -> Reports.find(any(), any(), any())).thenReturn(report);
+            hasPrivilege = reportAuthorization.hasPrivilege("reportName");
+        }
 
         assertFalse(hasPrivilege);
     }
@@ -127,10 +128,12 @@ public class ReportAuthorizationTest {
                 Collections.singletonList("userPrivilege"), true);
         Report report = mock(Report.class);
         when(report.getRequiredPrivilege()).thenReturn(null);
-        mockStatic(Reports.class);
-        when(Reports.find(any(), any(), any())).thenReturn(report);
 
-        boolean hasPrivilege = reportAuthorization.hasPrivilege("reportName");
+        boolean hasPrivilege;
+        try (MockedStatic<Reports> reports = mockStatic(Reports.class)) {
+            reports.when(() -> Reports.find(any(), any(), any())).thenReturn(report);
+            hasPrivilege = reportAuthorization.hasPrivilege("reportName");
+        }
 
         assertTrue(hasPrivilege);
     }

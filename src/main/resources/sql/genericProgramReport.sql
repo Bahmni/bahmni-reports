@@ -73,7 +73,7 @@ FROM patient_program pprog
   ', IF(@programAttributesJoinSql = '', '', @programAttributesJoinSql), '
   WHERE pprog.voided is false AND cast(pprog.date_enrolled AS DATE) <= "#endDate#"  AND (cast(pprog.date_completed AS DATE) >= "#startDate#" OR  pprog.date_completed is NULL)
   GROUP BY pprog.patient_program_id, ps.state
- ' ,IF(@sortByColumns = '','',@sortByColumns),';');
+ ' ,IF(@sortByColumns = '',' ORDER BY pprog.patient_program_id, ps.state',@sortByColumns),';');
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;

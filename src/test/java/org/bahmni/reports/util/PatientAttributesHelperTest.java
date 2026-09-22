@@ -12,14 +12,14 @@ public class PatientAttributesHelperTest {
         "INNER JOIN person_attribute_type ON person_attribute_type.person_attribute_type_id = person_attribute.person_attribute_type_id\n" +
         "LEFT JOIN concept_name person_attribute_cn ON person_attribute.value = person_attribute_cn.concept_id AND person_attribute_cn.concept_name_type = \"FULLY_SPECIFIED\"\n" +
         "WHERE person_attribute_type.name IN (\"caste\", \"education\")\n" +
-        "GROUP BY person_id\n";
+        "GROUP BY person_id";
 
     private String sqlWithCaste = "select person_attribute.person_id,GROUP_CONCAT(DISTINCT (IF(person_attribute_type.name = \"caste\", IFNULL(person_attribute_cn.name, person_attribute.value), NULL))) as \"caste\"\n" +
             "from person_attribute\n" +
             "INNER JOIN person_attribute_type ON person_attribute_type.person_attribute_type_id = person_attribute.person_attribute_type_id\n" +
             "LEFT JOIN concept_name person_attribute_cn ON person_attribute.value = person_attribute_cn.concept_id AND person_attribute_cn.concept_name_type = \"FULLY_SPECIFIED\"\n" +
             "WHERE person_attribute_type.name IN (\"caste\")\n" +
-            "GROUP BY person_id\n";
+            "GROUP BY person_id";
 
     @Test
     public void ensureTwoPatientAttributesAreProperlyConstructed(){

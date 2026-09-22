@@ -1,4 +1,5 @@
 #!/bin/sh
+set -e
 
 HOST=$(grep openmrs.url $HOME/.bahmni-reports/bahmni-reports-test.properties | cut -d '/' -f 3 | cut -d ':' -f 1)
 PORT=$(grep openmrs.url $HOME/.bahmni-reports/bahmni-reports-test.properties | cut -d ':' -f 4 | cut -d '/' -f 1)
@@ -13,8 +14,8 @@ PASSWORD=$(grep openmrs.password $HOME/.bahmni-reports/bahmni-reports-test.prope
 
 
 echo "Dropping databases for integration tests ..."
-mysql --protocol tcp -u$USER_NAME -p$PASSWORD -h$HOST -P$PORT -e "DROP DATABASE $TARGET_DB"
-mysql --protocol tcp -u$USER_NAME -p$PASSWORD -h$HOST -P$PORT -e "DROP DATABASE $TARGET_DB2"
+mysql --protocol tcp -u$USER_NAME -p$PASSWORD -h$HOST -P$PORT -e "DROP DATABASE IF EXISTS $TARGET_DB"
+mysql --protocol tcp -u$USER_NAME -p$PASSWORD -h$HOST -P$PORT -e "DROP DATABASE IF EXISTS $TARGET_DB2"
 
 echo "Creating databases for integration tests ..."
 mysql --protocol tcp -u$USER_NAME -p$PASSWORD -h$HOST -P$PORT -e "CREATE DATABASE $TARGET_DB"
