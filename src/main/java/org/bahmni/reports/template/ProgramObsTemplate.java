@@ -174,7 +174,7 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
             return "";
         }
 
-        return String.format("AND prog.name IN (%s)", SqlUtil.toEscapedCommaSeparatedSqlString(programNames));
+        return "AND prog.name IN (%s)".formatted(SqlUtil.toEscapedCommaSeparatedSqlString(programNames));
     }
 
 
@@ -212,10 +212,10 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
         for (ConceptDetails conceptDetails : conceptDetailsList) {
             String conceptName = escapeQuotes(encloseWithQuotes(conceptDetails.getFullName()));
             String unknownValueConceptName = (String) conceptDetails.getAttribute(UNKNOWN_CONCEPT_ATTRIBUTE_KEY);
-            String clauseText = String.format(helperString, conceptName, "NULL", conceptName);
+            String clauseText = helperString.formatted(conceptName, "NULL", conceptName);
             if(unknownValueConceptName != null) {
-                String unknownConceptClauseString = String.format(unknownConceptClause, escapeQuotes(encloseWithQuotes(unknownValueConceptName)));
-                clauseText = String.format(helperString, conceptName, unknownConceptClauseString, conceptName);
+                String unknownConceptClauseString = unknownConceptClause.formatted(escapeQuotes(encloseWithQuotes(unknownValueConceptName)));
+                clauseText = helperString.formatted(conceptName, unknownConceptClauseString, conceptName);
             }
 
             parts.add(clauseText);
@@ -229,7 +229,7 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
         String helperString = "GROUP_CONCAT(DISTINCT(IF(pat.name = \\'%s\\', coalesce(person_attribute_cn.concept_short_name, person_attribute_cn.concept_full_name, pattr.value), NULL))) AS \\'%s\\'";
 
         for (String patientAttribute : patientAttributes) {
-            parts.add(String.format(helperString, patientAttribute, patientAttribute));
+            parts.add(helperString.formatted(patientAttribute, patientAttribute));
         }
 
         return StringUtils.join(parts, ", ");
@@ -240,7 +240,7 @@ public class ProgramObsTemplate extends BaseReportTemplate<ProgramObsTemplateCon
         String helperString = "GROUP_CONCAT(DISTINCT(IF(pg_at.name = \\'%s\\', coalesce(pg_attr_cn.concept_short_name, pg_attr_cn.concept_full_name, pg_attr.value_reference), NULL))) AS \\'%s\\' ";
 
         for (String programAttribute : programAttributes) {
-            parts.add(String.format(helperString, programAttribute, toCamelCase(programAttribute)));
+            parts.add(helperString.formatted(programAttribute, toCamelCase(programAttribute)));
         }
 
         return StringUtils.join(parts, ", ");

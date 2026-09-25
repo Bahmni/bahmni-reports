@@ -25,6 +25,9 @@ public class CleanReportsJob implements Job {
 
     private static final Logger logger = LogManager.getLogger(CleanReportsJob.class);
 
+    // Added for better testability
+    private FileSystem fileSystem = new FileSystem() {};
+    private ClockUtil clock = new ClockUtil();
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -32,15 +35,21 @@ public class CleanReportsJob implements Job {
             logger.info("Cleanup job triggered.");
             int days = bahmniReportsProperties.getDaysForHistoryReportsCleanup() != null ?
                     Integer.parseInt(bahmniReportsProperties.getDaysForHistoryReportsCleanup()) : 60;
+
+            if (days < 0) {
+                throw new IllegalArgumentException("Days for history reports cleanup cannot be negative");
+            }
+
             Date cleanupDate = getCleanupDate(days);
             List<ScheduledReport> scheduledReportList = scheduledReportRepository.findByRequestDateTime(cleanupDate);
-            for (int i = 0; i < scheduledReportList.size(); i++) {
-                if (scheduledReportList.get(i).getFileName() != null) {
-                    File file = new File(bahmniReportsProperties.getReportsSaveDirectory(), scheduledReportList.get(i).getFileName());
+
+            for (ScheduledReport report : scheduledReportList) {
+                if (report.getFileName() != null) {
+                    File file = fileSystem.getFile(bahmniReportsProperties.getReportsSaveDirectory(), report.getFileName());
                     file.delete();
-                    logger.info("Cleanup job removed report.{}",scheduledReportList.get(i).getFileName());
+                    logger.info("Cleanup job removed report.{}", report.getFileName());
                 }
-                scheduledReportRepository.delete(scheduledReportList.get(i));
+                scheduledReportRepository.delete(report);
             }
 
         } catch (Exception e) {
@@ -50,17 +59,19 @@ public class CleanReportsJob implements Job {
     }
 
     private Date getCleanupDate(int days) {
-        isValid(days);
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(new Date());
-        cal.add(Calendar.DATE, -days);
-        return cal.getTime();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(clock.now());
+        calendar.add(Calendar.DAY_OF_MONTH, -days);
+        return calendar.getTime();
     }
 
-    private void isValid(int days) {
-        if (days < 0) {
-            throw new IllegalArgumentException("Days must be positive");
-        }
+    // For testing purposes
+    void setFileSystem(FileSystem fileSystem) {
+        this.fileSystem = fileSystem;
     }
 
+    // For testing purposes
+    void setClock(ClockUtil clock) {
+        this.clock = clock;
+    }
 }

@@ -30,7 +30,7 @@ public class PatientAttributesHelper {
     private String constructPatientAttributeColumns(){
         List<String> personAttributes = new ArrayList<>();
         for(String attribute: attributes){
-            personAttributes.add(String.format(PERSON_ATTRIBUTE_COLUMN,attribute,attribute));
+            personAttributes.add(PERSON_ATTRIBUTE_COLUMN.formatted(attribute, attribute));
         }
         return StringUtils.join(personAttributes,',');
     }

@@ -126,7 +126,7 @@ public class ObservationFormReportTemplate extends BaseReportTemplate<GenericObs
             String json = httpClient.get(new URI(url));
 
             JSONArray read = JsonPath.read(json, "$..value");
-            ReadContext parse = JsonPath.parse(read.get(0).toString());
+            ReadContext parse = JsonPath.parse(read.getFirst().toString());
             List<Map<String, String>> concepts = parse.read("$..concept");
 
             List<String> conceptSets = new ArrayList<>();

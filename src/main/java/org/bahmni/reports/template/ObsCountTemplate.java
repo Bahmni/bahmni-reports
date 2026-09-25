@@ -65,7 +65,7 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
         if (StringUtils.isNotBlank(visitType)) {
             crosstab = crosstab.rowGroups(sortOrderGroup, ageGroup, visitAttributeGroup);
-            visitType = String.format(VISIT_TYPE_CRITERIA, visitType, sortOrderGroup);
+            visitType = VISIT_TYPE_CRITERIA.formatted(visitType, sortOrderGroup);
         } else {
             crosstab = crosstab.rowGroups(sortOrderGroup, ageGroup);
             visitType = "";

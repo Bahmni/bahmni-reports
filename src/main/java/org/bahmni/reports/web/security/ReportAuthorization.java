@@ -1,12 +1,12 @@
 package org.bahmni.reports.web.security;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.model.Report;
 import org.bahmni.reports.model.Reports;
 import org.bahmni.webclients.HttpClient;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;

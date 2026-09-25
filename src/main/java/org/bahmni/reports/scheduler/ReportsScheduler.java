@@ -44,6 +44,7 @@ public class ReportsScheduler {
     @Autowired
     private BahmniReportsProperties bahmniReportsProperties;
 
+    private FileSystem fileSystem = new FileSystem() {};
 
     public void schedule(ReportParams reportParams) throws ParseException, SchedulerException, UnsupportedEncodingException {
         logger.info("Starting to schedule report {}", reportParams.getName());
@@ -111,27 +112,23 @@ public class ReportsScheduler {
 
     public void deleteScheduledReport(String id) throws SchedulerException {
         ScheduledReport scheduledReport = scheduledReportRepository.findScheduledReportById(id);
-        switch (scheduledReport.getStatus()) {
-            case PROCESSING:
-                break;
-            case QUEUED:
-                scheduler.deleteJob(jobKey(id));
-                scheduledReportRepository.delete(scheduledReport);
-                logger.info("Deleted scheduled report job {}", scheduledReport.getId());
-                break;
-            case ERROR:
-            case COMPLETED:
-                deleteFileOfReport(scheduledReport);
-                scheduledReportRepository.delete(scheduledReport);
-                logger.info("Deleted the completed report file {}", scheduledReport.getFileName());
-                break;
+        if (scheduledReport.getStatus().equals(QUEUED)) {
+            scheduler.deleteJob(JobKey.jobKey(id));
         }
-    }
 
-    private void deleteFileOfReport(ScheduledReport scheduledReport) {
-        if (scheduledReport.getFileName() != null) {
-            File file = new File(getFilePath(scheduledReport));
+        String fileName = scheduledReport.getFileName();
+        if (fileName != null && (scheduledReport.getStatus().equals(COMPLETED) ||
+                               scheduledReport.getStatus().equals(ERROR))) {
+            String reportDirectory = bahmniReportsProperties.getReportsSaveDirectory();
+            File file = fileSystem.getFile(reportDirectory + "/" + fileName);
             file.delete();
         }
+
+        scheduledReportRepository.delete(scheduledReport);
+    }
+
+    // For testing purposes
+    void setFileSystem(FileSystem fileSystem) {
+        this.fileSystem = fileSystem;
     }
 }

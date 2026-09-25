@@ -20,7 +20,7 @@ public class GenericProgramReportTemplateHelper extends GenericReportsHelper{
         List<String> parts = new ArrayList<>();
         String helperString = "GROUP_CONCAT(DISTINCT(IF(prat.name = \\'%s\\', IF(prat.datatype = \\'org.bahmni.module.bahmnicore.customdatatype.datatype.CodedConceptDatatype\\',coalesce(pratsn.name, pratfn.name),ppa.value_reference), NULL))) AS \\'%s\\'";
         for (String patientAttribute : programAttributes) {
-            parts.add(String.format(helperString, patientAttribute, patientAttribute));
+            parts.add(helperString.formatted(patientAttribute, patientAttribute));
         }
 
         return StringUtils.join(parts, ", ");

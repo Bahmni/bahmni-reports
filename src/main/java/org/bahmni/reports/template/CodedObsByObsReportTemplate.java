@@ -60,8 +60,8 @@ public class CodedObsByObsReportTemplate extends BaseReportTemplate<CodedObsByCo
         StyleBuilder textStyle = stl.style(Templates.columnStyle).setBorder(stl.pen1Point());
 
         StringBuilder subHeader = new StringBuilder();
-        subHeader.append(reportSpecificConfig.getRowsGroupBy().get(0)).append(" vs ").append(reportSpecificConfig.getColumnsGroupBy().get
-                (0));
+        subHeader.append(reportSpecificConfig.getRowsGroupBy().getFirst()).append(" vs ").append(reportSpecificConfig.getColumnsGroupBy().getFirst
+                ());
         jasperReport.addTitle(cmp.horizontalList()
                         .add(cmp.text(subHeader.toString())
                                 .setStyle(Templates.boldStyle)

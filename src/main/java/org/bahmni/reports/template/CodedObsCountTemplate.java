@@ -94,7 +94,7 @@ public class CodedObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
         String visitFilterTemplate = "on visit_type.type in (%s)";
 
         if (StringUtils.isNotBlank(visitTypes)) {
-            visitFilterTemplate = String.format(visitFilterTemplate, visitTypes);
+            visitFilterTemplate = visitFilterTemplate.formatted(visitTypes);
         } else {
             visitFilterTemplate = "";
         }

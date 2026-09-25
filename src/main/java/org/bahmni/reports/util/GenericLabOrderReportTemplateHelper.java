@@ -171,12 +171,12 @@ public class GenericLabOrderReportTemplateHelper extends GenericReportsHelper{
         for (String value : listOfConfig) {
             if (isNumericRange(value)) {
                 if (value.startsWith("..")) {
-                    stringBuilder.append(String.format(" OR (bigTable.value_numeric <= %s)", StringUtils.strip(value, "..")));
+                    stringBuilder.append(" OR (bigTable.value_numeric <= %s)".formatted(StringUtils.strip(value, "..")));
                 } else if (value.endsWith("..")) {
-                    stringBuilder.append(String.format(" OR (bigTable.value_numeric >= %s)", StringUtils.strip(value, "..")));
+                    stringBuilder.append(" OR (bigTable.value_numeric >= %s)".formatted(StringUtils.strip(value, "..")));
                 } else {
                     String[] range = value.split("\\.\\.");
-                    stringBuilder.append(String.format(" OR (bigTable.value_numeric BETWEEN %s AND %s)", range[0], range[1]));
+                    stringBuilder.append(" OR (bigTable.value_numeric BETWEEN %s AND %s)".formatted(range[0], range[1]));
                 }
             }
         }

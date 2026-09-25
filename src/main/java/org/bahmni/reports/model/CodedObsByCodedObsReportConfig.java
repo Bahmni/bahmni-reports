@@ -48,7 +48,7 @@ public class CodedObsByCodedObsReportConfig implements Config {
     }
 
     public String firstConcept() {
-        return conceptPair.get(0);
+        return conceptPair.getFirst();
     }
 
     public String secondConcept() {

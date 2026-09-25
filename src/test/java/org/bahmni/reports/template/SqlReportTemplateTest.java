@@ -30,7 +30,7 @@ public class SqlReportTemplateTest extends BaseIntegrationTest {
 		JasperReportBuilder reportBuilder = fetchReportBuilder(reportName, "2016-04-01", "2016-04-30");
 
 		//obs_id
-		DRColumn<?> drColumn = reportBuilder.getReport().getColumns().get(0);
+		DRColumn<?> drColumn = reportBuilder.getReport().getColumns().getFirst();
 		DRIComponent field1 = drColumn.getComponent();
 		assertTrue(field1 instanceof DRITextField);
 		assertTrue(((DRITextField)field1).getDataType() instanceof IntegerType);
