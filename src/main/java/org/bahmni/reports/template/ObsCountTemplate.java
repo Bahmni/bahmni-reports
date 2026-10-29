@@ -29,7 +29,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
-    private final String VISIT_TYPE_CRITERIA = "and va.value_reference in (%s)";
+    private final String VISIT_TYPE_CRITERIA = "and COALESCE(va.value_reference, vt.name) in (%s)";
 
     @Override
     public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String
