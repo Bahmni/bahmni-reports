@@ -81,6 +81,20 @@ SET @sql = CONCAT('SELECT
                     AND confirmed_concept.concept_name_type = "FULLY_SPECIFIED"
                     AND confirmed_concept.name = "Confirmed"
                     AND confirmed_concept.voided IS FALSE
+               /* UNION ALL reads FHIR diagnoses from encounter_diagnosis. It also keeps this derived table from being merged into the outer query: merged, MySQL spends about a minute planning the 20 table join. Do not collapse it back into a single SELECT. */
+               UNION ALL
+               SELECT
+                 fhir_diagnosis_name.name  diagnosis_name,
+                 NULL                      diagnosis_status,
+                 fhir_diagnosis.encounter_id encounter_id
+               FROM encounter_diagnosis fhir_diagnosis
+               JOIN concept_name fhir_diagnosis_name
+                 ON fhir_diagnosis.diagnosis_coded = fhir_diagnosis_name.concept_id
+                    AND fhir_diagnosis_name.concept_name_type = "FULLY_SPECIFIED"
+                    AND fhir_diagnosis_name.locale = "en"
+                    AND fhir_diagnosis_name.voided IS FALSE
+               WHERE fhir_diagnosis.certainty = "CONFIRMED"
+                 AND fhir_diagnosis.voided IS FALSE
               ) diagnoses
         ON e.encounter_id = diagnoses.encounter_id AND diagnoses.diagnosis_status IS NULL
         LEFT JOIN obs on e.encounter_id = obs.encounter_id
