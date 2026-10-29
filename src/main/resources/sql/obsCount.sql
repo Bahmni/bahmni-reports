@@ -18,9 +18,15 @@ FROM (SELECT
            cn.name  AS concept_name,
            rag.sort_order,
            va.value_reference
-         FROM reporting_age_group rag, concept_name cn, (SELECT DISTINCT value_reference
-                                                         FROM visit_attribute va
-                                                         WHERE va.visit_attribute_id IS NOT NULL #visitType#) va
+         FROM reporting_age_group rag, concept_name cn, (SELECT DISTINCT COALESCE(va.value_reference, vt.name) AS value_reference
+                                                         FROM visit v
+                                                           INNER JOIN visit_type vt ON vt.visit_type_id = v.visit_type_id
+                                                           LEFT OUTER JOIN (SELECT va.visit_id, va.value_reference, va.visit_attribute_id
+                                                                            FROM visit_attribute va
+                                                                              INNER JOIN visit_attribute_type vat
+                                                                                ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.name = 'Visit Status') va
+                                                           ON va.visit_id = v.visit_id
+                                                         WHERE v.voided = 0 #visitType#) va
          WHERE rag.report_group_name = '#ageGroupName#' AND cn.name IN (#conceptNames#) AND
                cn.concept_name_type = 'FULLY_SPECIFIED') base
         LEFT OUTER JOIN
@@ -39,7 +45,7 @@ FROM (SELECT
                  #countOncePerPatient#(IF(p.gender = 'F', 1, 0)) AS female,
                  #countOncePerPatient#(IF(p.gender = 'M', 1, 0)) AS male,
                  #countOncePerPatient#(IF(p.gender = 'O', 1, 0)) AS other,
-                 va.value_reference                              AS visit_type,
+                 COALESCE(va.value_reference, vt.name)             AS visit_type,
                  rag.name                                        AS age_group,
                  p.person_id                                     AS person_id,
                  rag.sort_order                                  AS sort_order
@@ -50,9 +56,12 @@ FROM (SELECT
                  INNER JOIN encounter e ON obs.encounter_id = e.encounter_id
                  #countOnlyTaggedLocationsJoin#
                  INNER JOIN visit v ON v.visit_id = e.visit_id
-                 INNER JOIN visit_attribute va ON va.visit_id = v.visit_id
-                 INNER JOIN visit_attribute_type vat
-                   ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.name = 'Visit Status'
+                 INNER JOIN visit_type vt ON vt.visit_type_id = v.visit_type_id
+                 LEFT OUTER JOIN (SELECT va.visit_id, va.value_reference
+                                  FROM visit_attribute va
+                                    INNER JOIN visit_attribute_type vat
+                                      ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.name = 'Visit Status') va
+                   ON va.visit_id = v.visit_id
                  INNER JOIN person p ON p.person_id = obs.person_id
                  INNER JOIN reporting_age_group rag ON DATE(#endDateField#) BETWEEN (DATE_ADD(
                      DATE_ADD(birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(
@@ -61,7 +70,7 @@ FROM (SELECT
                WHERE
                  cn.name IN (#conceptNames#) AND cast(#endDateField# AS DATE) BETWEEN '#startDate#' AND '#endDate#' AND
                  obs.voided IS FALSE
-               GROUP BY cn.name, cn.concept_id, va.value_reference, rag.name, rag.sort_order, p.person_id) result
+               GROUP BY cn.name, cn.concept_id, COALESCE(va.value_reference, vt.name), rag.name, rag.sort_order, p.person_id) result
          GROUP BY concept_name, age_group, visit_type
          ORDER BY concept_name, result.sort_order) final
           ON final.age_group = base.age_group AND final.concept_id = base.concept_id AND
