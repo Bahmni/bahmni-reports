@@ -21,11 +21,7 @@ FROM (SELECT
          FROM reporting_age_group rag, concept_name cn, (SELECT DISTINCT COALESCE(va.value_reference, vt.name) AS value_reference
                                                          FROM visit v
                                                            INNER JOIN visit_type vt ON vt.visit_type_id = v.visit_type_id
-                                                           LEFT OUTER JOIN (SELECT va.visit_id, va.value_reference, va.visit_attribute_id
-                                                                            FROM visit_attribute va
-                                                                              INNER JOIN visit_attribute_type vat
-                                                                                ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.name = 'Visit Status') va
-                                                           ON va.visit_id = v.visit_id
+                                                           LEFT OUTER JOIN visit_attribute va ON va.visit_attribute_id = (SELECT MAX(va1.visit_attribute_id) FROM visit_attribute va1 INNER JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va1.attribute_type_id AND vat.name = '#visitStatusAttribute#' WHERE va1.visit_id = v.visit_id AND va1.voided = 0)
                                                          WHERE v.voided = 0 #visitType#) va
          WHERE rag.report_group_name = '#ageGroupName#' AND cn.name IN (#conceptNames#) AND
                cn.concept_name_type = 'FULLY_SPECIFIED') base
@@ -57,11 +53,7 @@ FROM (SELECT
                  #countOnlyTaggedLocationsJoin#
                  INNER JOIN visit v ON v.visit_id = e.visit_id
                  INNER JOIN visit_type vt ON vt.visit_type_id = v.visit_type_id
-                 LEFT OUTER JOIN (SELECT va.visit_id, va.value_reference
-                                  FROM visit_attribute va
-                                    INNER JOIN visit_attribute_type vat
-                                      ON vat.visit_attribute_type_id = va.attribute_type_id AND vat.name = 'Visit Status') va
-                   ON va.visit_id = v.visit_id
+                 LEFT OUTER JOIN visit_attribute va ON va.visit_attribute_id = (SELECT MAX(va1.visit_attribute_id) FROM visit_attribute va1 INNER JOIN visit_attribute_type vat ON vat.visit_attribute_type_id = va1.attribute_type_id AND vat.name = '#visitStatusAttribute#' WHERE va1.visit_id = v.visit_id AND va1.voided = 0)
                  INNER JOIN person p ON p.person_id = obs.person_id
                  INNER JOIN reporting_age_group rag ON DATE(#endDateField#) BETWEEN (DATE_ADD(
                      DATE_ADD(birthdate, INTERVAL rag.min_years YEAR), INTERVAL rag.min_days DAY)) AND (DATE_ADD(

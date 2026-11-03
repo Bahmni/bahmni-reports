@@ -18,6 +18,8 @@ import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 
 public class GenericReportsHelper {
 
+    public static final String VISIT_STATUS_ATTRIBUTE = "Visit Status";
+
     public static void createAndAddExtraPatientIdentifierTypes(JasperReportBuilder jasperReport, GenericReportsConfig config) {
         for (String patientIdentifierType : getExtraPatientIdentifierTypes(config)) {
             TextColumnBuilder<String> patientIdentifierColumn = col.column(patientIdentifierType, patientIdentifierType, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
@@ -104,7 +106,7 @@ public class GenericReportsHelper {
         String visitStatusHelperString = "COALESCE(GROUP_CONCAT(DISTINCT(IF(vat.name = \\'%s\\', va.value_reference, NULL))), MAX(vt.name)) AS \\'%s\\'";
 
         for (String visitAttribute : visitAttributes) {
-            String template = "Visit Status".equals(visitAttribute) ? visitStatusHelperString : helperString;
+            String template = visitAttribute != null && VISIT_STATUS_ATTRIBUTE.equalsIgnoreCase(visitAttribute.trim()) ? visitStatusHelperString : helperString;
             parts.add(String.format(template, visitAttribute.replace("'", "\\\\\\\'"), visitAttribute.replace("'", "\\\\\\\'")));
         }
 

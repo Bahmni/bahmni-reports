@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GenericReportsHelperTest {
 
@@ -32,5 +33,15 @@ public class GenericReportsHelperTest {
     @Test
     public void shouldReturnEmptyStringWhenNoVisitAttributesConfigured() {
         assertEquals("", GenericReportsHelper.constructVisitAttributeNamesToDisplay(new GenericReportsConfig()));
+    }
+
+    @Test
+    public void shouldMatchVisitStatusAttributeIgnoringCaseAndWhitespace() {
+        GenericReportsConfig config = new GenericReportsConfig();
+        config.setVisitAttributes(Arrays.asList(" visit status "));
+
+        String sql = GenericReportsHelper.constructVisitAttributeNamesToDisplay(config);
+
+        assertTrue(sql.startsWith("COALESCE(GROUP_CONCAT("));
     }
 }
