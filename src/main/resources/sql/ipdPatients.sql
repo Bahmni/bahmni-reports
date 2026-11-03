@@ -89,12 +89,16 @@ SET @sql = CONCAT('SELECT
                  NULL                      diagnosis_status,
                  fhir_diagnosis.encounter_id encounter_id
                FROM encounter_diagnosis fhir_diagnosis
+               /* One name per concept: the English FULLY_SPECIFIED name, or any other FULLY_SPECIFIED name when there is no English one. Keeps a diagnosis from being listed once per locale or dropped. */
                LEFT JOIN concept_name fhir_diagnosis_name
-                 ON fhir_diagnosis.diagnosis_coded = fhir_diagnosis_name.concept_id
-                    AND fhir_diagnosis_name.concept_name_type = "FULLY_SPECIFIED"
-                    /* English name only, so a diagnosis is not listed once per locale */
-                    AND fhir_diagnosis_name.locale = "en"
-                    AND fhir_diagnosis_name.voided IS FALSE
+                 ON fhir_diagnosis_name.concept_name_id = (
+                      SELECT preferred_name.concept_name_id
+                      FROM concept_name preferred_name
+                      WHERE preferred_name.concept_id = fhir_diagnosis.diagnosis_coded
+                        AND preferred_name.concept_name_type = "FULLY_SPECIFIED"
+                        AND preferred_name.voided IS FALSE
+                      ORDER BY (preferred_name.locale = "en") DESC, preferred_name.concept_name_id
+                      LIMIT 1)
                WHERE fhir_diagnosis.certainty = "CONFIRMED"
                  AND fhir_diagnosis.voided IS FALSE
               ) diagnoses
