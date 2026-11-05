@@ -3,7 +3,7 @@ SET @sql = NULL;
 SET @conceptObsPivot = NULL;
 SELECT
   GROUP_CONCAT(
-      CONCAT('GROUP_CONCAT(IF(obsConcept.name = \'', name, '\', coalesce(obs.value_numeric, obs.value_datetime, obs.value_text, coded_value.name), NULL)) as \'', name, '\''))
+      CONCAT('GROUP_CONCAT(DISTINCT IF(obsConcept.name = \'', name, '\', coalesce(obs.value_numeric, obs.value_datetime, obs.value_text, coded_value.name), NULL)) as \'', name, '\''))
 into @conceptObsPivot
 FROM concept_name where concept_name.name in (#conceptNames#) and concept_name_type = 'FULLY_SPECIFIED';
 
@@ -81,6 +81,26 @@ SET @sql = CONCAT('SELECT
                     AND confirmed_concept.concept_name_type = "FULLY_SPECIFIED"
                     AND confirmed_concept.name = "Confirmed"
                     AND confirmed_concept.voided IS FALSE
+               /* UNION ALL reads FHIR diagnoses from encounter_diagnosis. It also keeps MySQL from merging this derived table into the outer query. Check the report runtime before collapsing it back into a single SELECT. */
+               UNION ALL
+               SELECT
+                 COALESCE(fhir_diagnosis_name.name, fhir_diagnosis.diagnosis_non_coded) diagnosis_name,
+                 /* encounter_diagnosis has no revision tracking, so NULL here means every row passes the outer "diagnosis_status IS NULL" filter */
+                 NULL                      diagnosis_status,
+                 fhir_diagnosis.encounter_id encounter_id
+               FROM encounter_diagnosis fhir_diagnosis
+               /* One name per concept: the English FULLY_SPECIFIED name, or any other FULLY_SPECIFIED name when there is no English one. Keeps a diagnosis from being listed once per locale or dropped. */
+               LEFT JOIN concept_name fhir_diagnosis_name
+                 ON fhir_diagnosis_name.concept_name_id = (
+                      SELECT preferred_name.concept_name_id
+                      FROM concept_name preferred_name
+                      WHERE preferred_name.concept_id = fhir_diagnosis.diagnosis_coded
+                        AND preferred_name.concept_name_type = "FULLY_SPECIFIED"
+                        AND preferred_name.voided IS FALSE
+                      ORDER BY (preferred_name.locale = "en") DESC, preferred_name.concept_name_id
+                      LIMIT 1)
+               WHERE fhir_diagnosis.certainty = "CONFIRMED"
+                 AND fhir_diagnosis.voided IS FALSE
               ) diagnoses
         ON e.encounter_id = diagnoses.encounter_id AND diagnoses.diagnosis_status IS NULL
         LEFT JOIN obs on e.encounter_id = obs.encounter_id
