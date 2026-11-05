@@ -13,9 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.net.URI;
 import java.sql.Connection;
@@ -27,8 +25,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
-@RunWith(PowerMockRunner.class)
+@RunWith(MockitoJUnitRunner.class)
 public class TSIntegrationDiagnosisCountReportTest {
     @InjectMocks
     TSIntegrationDiagnosisCountReportTemplate tsIntegrationDiagnosisCountReportTemplate;
@@ -50,7 +47,6 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
         tsIntegrationDiagnosisCountReportTemplate.setDescendantsUrlTemplate("dummyUrlTemplate");
     }
 
@@ -64,7 +60,11 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldProcessTerminologyDescendantsWithPagination() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
+        // descendantCodes.json reports total=2 with 2 codes, and the mocked client returns it for
+        // every page. Page size 1 therefore drives two loop passes (offset 0, then 1, stopping at
+        // 2), which is what makes the configured page size observable at all: the hardcoded
+        // fallback is 20, so any value >= 2 is indistinguishable from not reading the property.
+        when(mockTsProperties.getProperty("terminologyServer.defaultPageSize")).thenReturn("1");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
@@ -83,16 +83,17 @@ public class TSIntegrationDiagnosisCountReportTest {
 
         tsIntegrationDiagnosisCountReportTemplate.build(mockConnection, mockJasperReport, mockReport, "dummyStartDate", "dummyEndDate", null, PageType.A4);
 
-        //Two Descendant Codes
-        verify(mockPreparedStatement, times(2)).setString(eq(1), anyString());
-        verify(mockPreparedStatement, times(2)).addBatch();
-        //Single Pagination
-        verify(mockPreparedStatement, times(1)).executeBatch();
+        // The configured page size, not the fallback, is what the loop ran on.
+        verify(mockTsProperties).getProperty("terminologyServer.defaultPageSize");
+        // Two pages, two descendant codes inserted per page.
+        verify(mockPreparedStatement, times(4)).setString(eq(1), anyString());
+        verify(mockPreparedStatement, times(4)).addBatch();
+        // One batch executed per page: ceil(total 2 / pageSize 1).
+        verify(mockPreparedStatement, times(2)).executeBatch();
     }
 
     @Test
     public void shouldIncludeBothTerminologyCodeAndGenderGroupColumnsInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
@@ -116,7 +117,6 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldIncludeTerminologyCodeAndExcludeGenderGroupColumnsInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
@@ -140,7 +140,6 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldExcludeTerminologyCodeAndIncludeGenderGroupColumnsInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
@@ -164,7 +163,6 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldExcludeBothTerminologyCodeAndGenderGroupColumnsInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
@@ -188,7 +186,6 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldDisplayShortWhenConceptNameDisplayFormatEqualsShortNamePreferredInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 
@@ -211,7 +208,6 @@ public class TSIntegrationDiagnosisCountReportTest {
 
     @Test
     public void shouldDisplayFullySpecifiedWhenConceptNameDisplayFormatNotEqualsShortNamePreferredInJasperReport() throws Exception {
-        when(mockTsProperties.getProperty("ts.defaultPageSize")).thenReturn("10000");
         when(mockConnection.createStatement()).thenReturn(mockStatement);
         when(mockConnection.prepareStatement(anyString())).thenReturn(mockPreparedStatement);
 

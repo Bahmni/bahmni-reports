@@ -36,9 +36,11 @@ public class ReportAuthorization {
     private String getSessionId(HttpServletRequest request) {
         String sessionId = "";
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals(REPORTING_COOKIE_NAME)) {
-                sessionId = cookie.getValue();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(REPORTING_COOKIE_NAME)) {
+                    sessionId = cookie.getValue();
+                }
             }
         }
         return sessionId;

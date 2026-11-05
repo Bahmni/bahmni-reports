@@ -68,7 +68,7 @@ WHERE v.voided is false
   AND cast(#applyDateRangeFor# AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'
   ',IF(@visitTypesToFilterSql = '', '', 'AND vt.name in (#visitTypesToFilter#)'),'
 GROUP BY v.visit_id
-',IF(@sortByColumns = '', '',@sortByColumns),';');
+',IF(@sortByColumns = '', ' ORDER BY v.visit_id',@sortByColumns),';');
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
