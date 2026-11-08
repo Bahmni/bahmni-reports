@@ -42,30 +42,31 @@ public class BahmniReportUtil {
     /*
      * All 36 report SQL files interpolate #startDate#/#endDate# straight into a date comparison,
      * and nothing in the request path validates or defaults them, so a caller can put any string
-     * there. MySQL 5.6 coerced a blank to 0000-00-00 with a warning, which made "<= ''" match
-     * nothing and ">= ''" match everything: silently asymmetric, and different per report
-     * depending on which way its comparison happened to point. MySQL 8 raises ERROR 1525 instead,
-     * turning the same request into an HTTP 500.
+     * there. MySQL 5.6 coerced a blank to 0000-00-00 with a warning; MySQL 8 raises ERROR 1525
+     * instead, turning the same request into an HTTP 500.
      *
-     * Rather than guard 36 templates individually -- each is a StringTemplate assembled into
-     * dynamic SQL with its own quoting rules -- an absent bound is replaced here with a real date
-     * that no row can satisfy, in whichever direction the comparison points. An inverted range
-     * matches nothing for every shape the SQL uses: BETWEEN start AND end, <= end, and >= start.
-     *
-     * Blank input therefore yields an empty report rather than an error or a partial answer.
-     * That is what GenericProgramReportTest.shouldNotThrowErrorIfStartAndEndDatesAreEmpty
-     * asserts. Note this deliberately also empties the one-sided case (a blank start with a real
-     * end), where 5.6 would have returned a skewed subset; a subset produced by an unstated rule
-     * is worse than no rows.
+     * A one-sided range keeps working as an open-ended one: only the missing bound is replaced,
+     * with the widest real date in its direction. If both bounds are absent there is no range to
+     * honour, so they are replaced with an inverted pair that matches nothing for every shape the
+     * SQL uses (BETWEEN start AND end, <= end, >= start). That is what
+     * GenericProgramReportTest.shouldNotThrowErrorIfStartAndEndDatesAreEmpty asserts.
      */
-    private static final String NO_ROWS_START = "9999-12-31";
-    private static final String NO_ROWS_END = "0001-01-01";
+    private static final String EARLIEST_DATE = "0001-01-01";
+    private static final String LATEST_DATE = "9999-12-31";
 
     static String[] sqlSafeDateRange(String startDate, String endDate) {
-        if (isUsableDateBound(startDate) && isUsableDateBound(endDate)) {
+        boolean hasStart = isUsableDateBound(startDate);
+        boolean hasEnd = isUsableDateBound(endDate);
+        if (hasStart && hasEnd) {
             return new String[]{startDate, endDate};
         }
-        return new String[]{NO_ROWS_START, NO_ROWS_END};
+        if (hasStart) {
+            return new String[]{startDate, LATEST_DATE};
+        }
+        if (hasEnd) {
+            return new String[]{EARLIEST_DATE, endDate};
+        }
+        return new String[]{LATEST_DATE, EARLIEST_DATE};
     }
 
     private static boolean isUsableDateBound(String date) {
