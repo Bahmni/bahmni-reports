@@ -61,6 +61,7 @@ public class MainReportController {
             if (!reportAuthorization.hasPrivilege(reportParams.getName())) {
                 response.sendError(HttpServletResponse.SC_BAD_REQUEST,
                         "Privileges is required to access report");
+                return;
             }
             converter.applyHttpHeaders(reportParams.getResponseType(), response, reportParams.getName());
             ReportGenerator reportGenerator = new ReportGenerator(reportParams, response.getOutputStream(), allDatasources,
