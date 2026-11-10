@@ -107,7 +107,7 @@ WHERE o.voided is false
   ',IF(@locationTagsToFilterSql = '', '', 'AND l.location_id in (SELECT ltm.location_id from location_tag_map ltm JOIN location_tag lt ON ltm.location_tag_id=lt.location_tag_id AND lt.retired is false AND lt.name in (#locationTagsToFilter#))'),'
   ',@dateRangeSql,IF(@visitTypesToFilterSql = '', '', 'AND vt.name in (#visitTypesToFilter#)'),'
 GROUP BY e.encounter_id
-',IF(@sortByColumns != '', @sortByColumns, ''));
+',IF(@sortByColumns != '', @sortByColumns, ' ORDER BY e.encounter_id'));
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;

@@ -86,7 +86,7 @@ public class BooleanConceptsCountTemplate extends BaseReportTemplate<ObsCountCon
     }
 
     private String appendCountOnceForPatient(String formattedSql, ObsCountConfig reportConfig) {
-        String temp = "GROUP BY age_group, concept_name, female, male, other, ";
+        String temp = " GROUP BY age_group, concept_name, female, male, other, ";
         if ("true".equalsIgnoreCase((reportConfig.getCountOncePerPatient()))) {
             formattedSql = formattedSql + temp + "concept_id, person_id;";
         } else {

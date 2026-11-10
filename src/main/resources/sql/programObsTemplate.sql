@@ -44,7 +44,7 @@ SET @conceptRefMapSql = ' LEFT JOIN (SELECT CRM.concept_id,  CRT.code
 
 SET @sql = CONCAT('SELECT
                       pi.identifier,
-                      concat(pat_name.given_name, '' '', ifnull(pat_name.family_name,'')) AS patient_name,
+                      concat(pat_name.given_name, '' '', ifnull(pat_name.family_name,'''')) AS patient_name,
                       floor(DATEDIFF(DATE(o.date_created), person.birthdate) / 365)   AS age,
                       person.gender,',
                       IF(@patientAttributesSql = '', '', @patientAttributesSelectClause),
@@ -54,7 +54,7 @@ SET @sql = CONCAT('SELECT
                       prog.name as program_name,
                       pp.date_completed,
                       pp.date_enrolled,
-                      GROUP_CONCAT(DISTINCT(concat(pn.given_name, '' '', ifnull(pn.family_name, '')) SEPARATOR \',\') as provider_name,
+                      GROUP_CONCAT(DISTINCT(concat(pn.given_name, '' '', ifnull(pn.family_name, ''''))) SEPARATOR \',\') as provider_name,
                       e.date_created,
                       e.encounter_datetime
                       #conceptNamesAndValue#
@@ -88,7 +88,7 @@ SET @sql = CONCAT('SELECT
                         LEFT JOIN person_name pn ON pn.person_id = provider.person_id
                         LEFT JOIN concept_view answer ON o.value_coded = answer.concept_id',
                         IF(@conceptSourceId IS NULL, '', @conceptRefMapSql),
-                      ' GROUP BY pi.identifier, e.encounter_id,root_obs.root_obs_id');
+                      ' GROUP BY pi.identifier, e.encounter_id,root_obs.root_obs_id ORDER BY pi.identifier, e.encounter_id, root_obs.root_obs_id');
 
 PREPARE stmt FROM @sql;
 EXECUTE stmt;

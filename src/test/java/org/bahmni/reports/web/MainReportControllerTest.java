@@ -14,9 +14,9 @@ import org.bahmni.webclients.HttpClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -29,15 +29,13 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.whenNew;
 
-@PowerMockIgnore("javax.management.*")
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({Reports.class, MainReportController.class})
+@RunWith(MockitoJUnitRunner.class)
 public class MainReportControllerTest {
 
     private static final String SESSION_ID = "sessionId";
@@ -88,15 +86,16 @@ public class MainReportControllerTest {
 
         Report report = mock(Report.class);
         when(report.getRequiredPrivilege()).thenReturn("RequiredPrivilege");
-        mockStatic(Reports.class);
-        when(Reports.find(any(), any(), any())).thenReturn(report);
 
         ReportParams reportParams = new ReportParams();
         reportParams.setName("someReport");
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        controller.getReport(reportParams, response, request);
+        try (MockedStatic<Reports> reports = mockStatic(Reports.class)) {
+            reports.when(() -> Reports.find(any(), any(), any())).thenReturn(report);
+            controller.getReport(reportParams, response, request);
+        }
 
         assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
         assertEquals("Privileges is required to access report", response.getErrorMessage());
@@ -115,8 +114,6 @@ public class MainReportControllerTest {
 
         Report report = mock(Report.class);
         when(report.getRequiredPrivilege()).thenReturn(null);
-        mockStatic(Reports.class);
-        when(Reports.find(any(), any(), any())).thenReturn(report);
 
         ReportParams reportParams = new ReportParams();
         reportParams.setName("someReport");
@@ -124,13 +121,17 @@ public class MainReportControllerTest {
 
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        ReportGenerator reportGenerator = mock(ReportGenerator.class);
-        whenNew(ReportGenerator.class).withAnyArguments().thenReturn(reportGenerator);
+        try (MockedStatic<Reports> reports = mockStatic(Reports.class);
+             MockedConstruction<ReportGenerator> generators = mockConstruction(ReportGenerator.class)) {
+            reports.when(() -> Reports.find(any(), any(), any())).thenReturn(report);
 
-        controller.getReport(reportParams, response, request);
+            controller.getReport(reportParams, response, request);
+
+            assertEquals(1, generators.constructed().size());
+            verify(generators.constructed().get(0)).invoke();
+        }
 
         verify(converter).applyHttpHeaders(anyString(), any(HttpServletResponse.class), anyString());
-        verify(reportGenerator).invoke();
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
     }
 }

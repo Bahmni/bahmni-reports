@@ -29,11 +29,48 @@ public class BahmniReportUtil {
                                             BahmniReportsProperties bahmniReportsProperties) throws Exception {
         BaseReportTemplate reportTemplate = report.getTemplate(bahmniReportsProperties);
         JasperReportBuilder reportBuilder = report();
+        // The header shows what the caller asked for; the SQL gets a version that is safe to
+        // interpolate into a date comparison. See sqlSafeDateRange.
         reportBuilder = new ReportHeader().add(reportBuilder, report.getName(), startDate, endDate);
-        BahmniReportBuilder build = reportTemplate.build(connection, reportBuilder, report, startDate, endDate, resources, pageType);
+        String[] sqlDates = sqlSafeDateRange(startDate, endDate);
+        BahmniReportBuilder build = reportTemplate.build(connection, reportBuilder, report, sqlDates[0], sqlDates[1], resources, pageType);
         excludeColumns(report.getConfig(), reportBuilder);
         orderColumns(report.getConfig(), reportBuilder);
         return build;
+    }
+
+    /*
+     * All 36 report SQL files interpolate #startDate#/#endDate# straight into a date comparison,
+     * and nothing in the request path validates or defaults them, so a caller can put any string
+     * there. MySQL 5.6 coerced a blank to 0000-00-00 with a warning; MySQL 8 raises ERROR 1525
+     * instead, turning the same request into an HTTP 500.
+     *
+     * A one-sided range keeps working as an open-ended one: only the missing bound is replaced,
+     * with the widest real date in its direction. If both bounds are absent there is no range to
+     * honour, so they are replaced with an inverted pair that matches nothing for every shape the
+     * SQL uses (BETWEEN start AND end, <= end, >= start). That is what
+     * GenericProgramReportTest.shouldNotThrowErrorIfStartAndEndDatesAreEmpty asserts.
+     */
+    private static final String EARLIEST_DATE = "0001-01-01";
+    private static final String LATEST_DATE = "9999-12-31";
+
+    static String[] sqlSafeDateRange(String startDate, String endDate) {
+        boolean hasStart = isUsableDateBound(startDate);
+        boolean hasEnd = isUsableDateBound(endDate);
+        if (hasStart && hasEnd) {
+            return new String[]{startDate, endDate};
+        }
+        if (hasStart) {
+            return new String[]{startDate, LATEST_DATE};
+        }
+        if (hasEnd) {
+            return new String[]{EARLIEST_DATE, endDate};
+        }
+        return new String[]{LATEST_DATE, EARLIEST_DATE};
+    }
+
+    private static boolean isUsableDateBound(String date) {
+        return date != null && !date.trim().isEmpty() && !"null".equalsIgnoreCase(date.trim());
     }
 
     private static boolean contains(List<String> columns, String searchColumn) {
