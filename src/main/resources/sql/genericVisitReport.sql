@@ -1,3 +1,20 @@
+-- BAH-5299: when the report is filtering by visitStopDate (applyOpenVisitFallback, set in
+-- GenericVisitDaoImpl from GenericVisitReportConfig.DateRange), the WHERE clause below also
+-- includes a visit whose v.date_stopped is NULL -- i.e. it is still open/ongoing -- as long as
+-- it had already started by endDate. Without this, "NULL BETWEEN x AND y" evaluates to NULL
+-- (not true) in SQL, so every open visit was silently excluded from same-day reports -- this,
+-- not a timezone bug, was the actual cause of "visits created today don't show up today".
+-- The fallback is scoped to visitStopDate only (not visitStartDate/dateOfAdmission/
+-- dateOfDischarge): date_started is never NULL for a visit that exists at all, so it needs no
+-- fallback, and admission/discharge dates come from an optional visit_attribute that is simply
+-- never recorded for plenty of ordinary visits (e.g. OPD visits) -- NULL there does not mean
+-- "still open" the way it does for date_stopped, and auditing whether dateOfDischarge deserves
+-- its own NULL-handling is intentionally left as a follow-up (see BAH-5299 discovery doc).
+-- This fix intentionally does NOT add any timezone-conversion logic (no ZoneId/TimeZone/Instant
+-- anywhere in this codebase). Report date filters assume a single, consistent deployment
+-- timezone shared by the OpenMRS and bahmni-reports containers (see BAH-3017, which wires the
+-- same TZ env var into both). A prior attempt to compensate for timezones on the reports side
+-- (BAH-2131) was reverted once that container-level TZ config landed -- see PR 73.
   set session group_concat_max_len = 20000;
 SET @sql = NULL;
 SET @patientAttributesSql = '#patientAttributes#';
@@ -65,7 +82,10 @@ FROM visit v
   ',IF(@patientAttributesSql = '', '', @patientAttributeJoinSql),'
   ',IF(@patientAddressesSql = '', '', @patientAddressJoinSql),'
 WHERE v.voided is false
-  AND cast(#applyDateRangeFor# AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'
+  AND (
+    cast(#applyDateRangeFor# AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'
+    #if(applyOpenVisitFallback)#OR (#applyDateRangeFor# IS NULL AND cast(v.date_started AS DATE) <= \'#endDate#\')#endif#
+  )
   ',IF(@visitTypesToFilterSql = '', '', 'AND vt.name in (#visitTypesToFilter#)'),'
 GROUP BY v.visit_id
 ',IF(@sortByColumns = '', ' ORDER BY v.visit_id',@sortByColumns),';');

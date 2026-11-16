@@ -57,6 +57,17 @@
            date_stopped="2008-10-1 00:00:00.0" location_id="5" creator="1" date_created="2008-08-15 15:57:09.0"
            voided="false" uuid="1e5d5da8-6b78-11e0-953c-09aad4ad4412"/>
 
+    <!--
+      BAH-5299 regression fixture: an open/ongoing visit. date_stopped is intentionally omitted
+      (DBUnit column-sensing treats the missing attribute as SQL NULL here, same as the existing
+      genericLabOrderReportDataSet.xml `orders` rows that omit date_stopped) to reproduce a visit
+      that has started but not yet closed. date_started is set well outside every date range used
+      by the other tests in GenericVisitReportTest, so it only appears in the new regression test.
+    -->
+    <visit visit_id="10" patient_id="2" visit_type_id="1" date_started="2026-11-10 09:00:00.0"
+           location_id="2" creator="1" date_created="2026-11-10 09:00:00.0"
+           voided="false" uuid="1e5d5da8-6b78-11e0-933c-18aad4ad5510"/>
+
     <visit_attribute visit_attribute_id="1" visit_id="2" attribute_type_id="3" value_reference="Admitted" creator="1" date_created="2005-01-01 00:00:00.0" date_changed="2005-01-01 00:00:00.0" voided="0" uuid="8770f6d6-7673-11e0-8f03-001e378eb6e7"/>
     <visit_attribute visit_attribute_id="2" visit_id="7" attribute_type_id="3" value_reference="Discharged" creator="1" date_created="2005-01-01 00:00:00.0" date_changed="2005-01-01 00:00:00.0" voided="0" uuid="8770f6d6-7673-11e0-8f03-001e3cseb6e7"/>
 
