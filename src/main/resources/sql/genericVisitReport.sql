@@ -82,6 +82,12 @@ FROM visit v
   ',IF(@patientAttributesSql = '', '', @patientAttributeJoinSql),'
   ',IF(@patientAddressesSql = '', '', @patientAddressJoinSql),'
 WHERE v.voided is false
+  -- The conditional two lines down is StringTemplate v4\'s own if/endif tag, not this file\'s
+  -- usual SET-a-variable-then-ask-MySQL\'s-IF-to-test-it pattern (see visitTypesToFilterSql a
+  -- few lines below). That is deliberate: applyOpenVisitFallback is a plain Java boolean (see
+  -- GenericVisitDaoImpl), not a string fragment to splice in, so there is nothing for a
+  -- MySQL-side IF to test -- the condition has to be resolved before this SQL text is even
+  -- built, which only StringTemplate itself can do.
   AND (
     cast(#applyDateRangeFor# AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'
     #if(applyOpenVisitFallback)#OR (#applyDateRangeFor# IS NULL AND cast(v.date_started AS DATE) <= \'#endDate#\')#endif#

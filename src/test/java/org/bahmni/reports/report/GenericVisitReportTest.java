@@ -117,6 +117,25 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         assertEquals("", report.getColumnValueInRow(1, "Date stopped"));
     }
 
+    /*
+     * BAH-5299 regression test: the open-visit fallback's upper bound must still exclude a visit
+     * that has not started yet as of the query's end date, even though it is open. Sibling to
+     * shouldIncludeOpenVisitWithNullStopDateWhenFilteringByVisitStopDate, which only proves the
+     * fallback includes an open visit whose date_started falls inside the window -- this proves
+     * it correctly excludes one whose date_started falls after it. See visit_id=11 in
+     * genericVisitReportDataSet.xml (date_started 2026-12-15, outside the 2026-11-01..30 window
+     * used here).
+     */
+    @Test
+    public void shouldExcludeOpenVisitStartedAfterTheDateRangeWhenFilteringByVisitStopDate() throws Exception {
+        String reportName = "Generic Visit Report With Visit Stopped Date For Date Range";
+
+        CsvReport report = fetchCsvReport(reportName, "2026-11-01", "2026-11-30");
+
+        assertEquals(1, report.rowsCount());
+        assertEquals("10-Nov-2026", report.getColumnValueInRow(1, "Date started"));
+    }
+
     @Test
     public void shouldConsiderDateOfAdmissionInDateRangeIfSpecified() throws Exception {
         String reportName = "Generic Visit Report With Date Of Admission For Date Range";

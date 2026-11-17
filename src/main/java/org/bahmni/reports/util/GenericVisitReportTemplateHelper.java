@@ -61,7 +61,7 @@ public class GenericVisitReportTemplateHelper extends GenericReportsHelper {
             return visitStartDate.getColumnName();
     }
 
-    /*
+    /**
      * BAH-5299: v.date_stopped is NULL for any visit that is still open, which otherwise makes
      * "cast(v.date_stopped AS DATE) BETWEEN startDate AND endDate" evaluate to NULL/false and
      * silently exclude the visit (see genericVisitReport.sql). The same NULL-tolerant fallback is
