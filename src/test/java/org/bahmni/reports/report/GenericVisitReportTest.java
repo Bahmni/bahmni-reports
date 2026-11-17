@@ -63,7 +63,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         assertEquals(14, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(1, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No  Admitted", report.getRowAsString(1, " "));
+        // BAH-5164: "Visit Status" falls back to the visit type name when the attribute is
+        // absent (this fixture never sets one for visit_id=2) -- see GenericReportsHelper
+        // .constructVisitAttributeNamesToDisplay.
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No Initial HIV Clinic Visit Admitted", report.getRowAsString(1, " "));
     }
 
     @Test
@@ -148,8 +151,10 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         assertEquals(23, report.columnsCount());
         assertEquals(reportName, report.getReportName());
         assertEquals(2, report.rowsCount());
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No  General 10th pass   Dindori Ramgarh  Admitted 2 2", report.getRowAsString(1, " "));
-        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Return TB Clinic Visit 20-Mar-2016 21-Apr-2016 01-Jan-2017  No  General 10th pass   Dindori Ramgarh  Admitted 2 3", report.getRowAsString(2, " "));
+        // BAH-5164: "Visit Status" falls back to the visit type name when the attribute is
+        // absent (visit_id=2 and visit_id=3 in the fixture never set one).
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Initial HIV Clinic Visit 20-Apr-2016 21-May-2016 01-Jan-2005  No  General 10th pass   Dindori Ramgarh Initial HIV Clinic Visit Admitted 2 2", report.getRowAsString(1, " "));
+        assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Return TB Clinic Visit 20-Mar-2016 21-Apr-2016 01-Jan-2017  No  General 10th pass   Dindori Ramgarh Return TB Clinic Visit Admitted 2 3", report.getRowAsString(2, " "));
     }
 
     @Test
