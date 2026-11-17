@@ -20,6 +20,7 @@ import org.bahmni.reports.util.CommonComponents;
 import org.bahmni.reports.util.SqlUtil;
 import org.stringtemplate.v4.ST;
 
+import org.bahmni.reports.util.GenericReportsHelper;
 import java.sql.Connection;
 import java.util.List;
 
@@ -29,7 +30,7 @@ import static org.bahmni.reports.util.FileReaderUtil.getFileContent;
 @UsingDatasource("openmrs")
 public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
 
-    private final String VISIT_TYPE_CRITERIA = "and va.value_reference in (%s)";
+    private final String VISIT_TYPE_CRITERIA = "and COALESCE(va.value_reference, vt.name) in (%s)";
 
     @Override
     public BahmniReportBuilder build(Connection connection, JasperReportBuilder jasperReport, Report<ObsCountConfig> report, String
@@ -101,6 +102,7 @@ public class ObsCountTemplate extends BaseReportTemplate<ObsCountConfig> {
             sqlTemplate.add("endDateField", "v.date_stopped");
         }
         sqlTemplate.add("visitType", visitType);
+        sqlTemplate.add("visitStatusAttribute", GenericReportsHelper.VISIT_STATUS_ATTRIBUTE);
         sqlTemplate.add("ageGroupName", reportConfig.getAgeGroupName());
         sqlTemplate.add("conceptNames", SqlUtil.toCommaSeparatedSqlString(reportConfig.getConceptNames()));
         sqlTemplate.add("startDate", startDate);

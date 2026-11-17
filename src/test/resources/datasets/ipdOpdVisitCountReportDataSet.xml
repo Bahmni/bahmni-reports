@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+
+<dataset>
+    <visit_type visit_type_id="10" name="OPD" description="OPD" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="aaaa0000-8e59-401d-8a4a-976a0b183519"/>
+    <visit_type visit_type_id="11" name="IPD" description="IPD" creator="1" date_created="2005-01-01 00:00:00.0" retired="false" uuid="aaaa0001-8e59-401d-8a4a-976a0b183519"/>
+
+    <!--no Visit Status attribute: falls back to visit type OPD-->
+    <visit visit_id="101" patient_id="2" visit_type_id="10" date_started="2016-04-20 00:00:00.0" location_id="2" creator="1" date_created="2016-04-20 00:00:00.0" voided="0" uuid="bbbb0101-6b78-11e0-933c-18a905e044cd"/>
+
+    <!--Visit Status attribute overrides visit type: counted as IPD-->
+    <visit visit_id="102" patient_id="2" visit_type_id="10" date_started="2016-04-21 00:00:00.0" location_id="2" creator="1" date_created="2016-04-21 00:00:00.0" voided="0" uuid="bbbb0102-6b78-11e0-933c-18a905e044cd"/>
+    <visit_attribute visit_attribute_id="101" visit_id="102" attribute_type_id="2" value_reference="IPD" creator="1" date_created="2016-04-21 00:00:00.0" voided="0" uuid="cccc0101-7673-11e0-8f03-001e378eb6e7"/>
+
+    <!--voided Visit Status attribute is ignored: falls back to visit type IPD-->
+    <visit visit_id="103" patient_id="2" visit_type_id="11" date_started="2016-04-22 00:00:00.0" location_id="2" creator="1" date_created="2016-04-22 00:00:00.0" voided="0" uuid="bbbb0103-6b78-11e0-933c-18a905e044cd"/>
+    <visit_attribute visit_attribute_id="102" visit_id="103" attribute_type_id="2" value_reference="OPD" creator="1" date_created="2016-04-22 00:00:00.0" voided="1" uuid="cccc0102-7673-11e0-8f03-001e378eb6e7"/>
+
+    <!--voided visit is excluded-->
+    <visit visit_id="104" patient_id="2" visit_type_id="10" date_started="2016-04-23 00:00:00.0" location_id="2" creator="1" date_created="2016-04-23 00:00:00.0" voided="1" uuid="bbbb0104-6b78-11e0-933c-18a905e044cd"/>
+</dataset>

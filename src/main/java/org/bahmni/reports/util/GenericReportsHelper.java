@@ -18,6 +18,8 @@ import static org.bahmni.reports.template.Templates.minimalColumnStyle;
 
 public class GenericReportsHelper {
 
+    public static final String VISIT_STATUS_ATTRIBUTE = "Visit Status";
+
     public static void createAndAddExtraPatientIdentifierTypes(JasperReportBuilder jasperReport, GenericReportsConfig config) {
         for (String patientIdentifierType : getExtraPatientIdentifierTypes(config)) {
             TextColumnBuilder<String> patientIdentifierColumn = col.column(patientIdentifierType, patientIdentifierType, type.stringType()).setStyle(minimalColumnStyle).setHorizontalAlignment(HorizontalAlignment.CENTER);
@@ -100,8 +102,12 @@ public class GenericReportsHelper {
         List<String> parts = new ArrayList<>();
         String helperString = "GROUP_CONCAT(DISTINCT(IF(vat.name = \\'%s\\', va.value_reference, NULL))) AS \\'%s\\'";
 
+        // Visits created through the FHIR/React frontend carry no "Visit Status" attribute, so fall back to the visit type
+        String visitStatusHelperString = "COALESCE(GROUP_CONCAT(DISTINCT(IF(vat.name = \\'%s\\', va.value_reference, NULL))), MAX(vt.name)) AS \\'%s\\'";
+
         for (String visitAttribute : visitAttributes) {
-            parts.add(String.format(helperString, visitAttribute.replace("'", "\\\\\\\'"), visitAttribute.replace("'", "\\\\\\\'")));
+            String template = visitAttribute != null && VISIT_STATUS_ATTRIBUTE.equalsIgnoreCase(visitAttribute.trim()) ? visitStatusHelperString : helperString;
+            parts.add(String.format(template, visitAttribute.replace("'", "\\\\\\\'"), visitAttribute.replace("'", "\\\\\\\'")));
         }
 
         return StringUtils.join(parts, ", ");

@@ -12,6 +12,7 @@ import org.bahmni.reports.report.BahmniReportBuilder;
 import org.bahmni.reports.util.CommonComponents;
 import org.stringtemplate.v4.ST;
 
+import org.bahmni.reports.util.GenericReportsHelper;
 import java.sql.Connection;
 import java.util.List;
 
@@ -57,6 +58,7 @@ public class IpdOpdVisitCount extends BaseReportTemplate<Config> {
 
     private String getFormattedSql(String formattedSql, String startDate, String endDate) {
         ST sqlTemplate = new ST(formattedSql, '#', '#');
+        sqlTemplate.add("visitStatusAttribute", GenericReportsHelper.VISIT_STATUS_ATTRIBUTE);
         sqlTemplate.add("startDate", startDate);
         sqlTemplate.add("endDate", endDate);
         return sqlTemplate.render();

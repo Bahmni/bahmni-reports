@@ -1,0 +1,6 @@
+{
+    "ipdOpdVisitCount": {
+        "name": "IPD OPD Visit Count",
+        "type": "IpdOpdVisitCount"
+    }
+}
