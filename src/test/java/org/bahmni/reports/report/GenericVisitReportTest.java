@@ -93,15 +93,6 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         assertEquals("GAN1234 Horatio Hornblower 22 02-Oct-1993 M 15-Aug-2008 Return TB Clinic Visit 20-Mar-2016 21-Apr-2016 01-Jan-2017  No", report.getRowAsString(1, " "));
     }
 
-    /*
-     * BAH-5299 regression test: an open visit (date_stopped is NULL because the visit hasn't
-     * closed yet) must still appear in a visitStopDate-ranged report whose window covers the
-     * visit's date_started. Before the fix, "cast(v.date_stopped AS DATE) BETWEEN x AND y"
-     * evaluated to NULL (not true) for such a visit, so it was silently excluded -- this, not a
-     * timezone mismatch, was the actual cause of "a visit created today doesn't show up in
-     * today's report". See src/main/resources/sql/genericVisitReport.sql and visit_id=10 in
-     * genericVisitReportDataSet.xml.
-     */
     @Test
     public void shouldIncludeOpenVisitWithNullStopDateWhenFilteringByVisitStopDate() throws Exception {
         String reportName = "Generic Visit Report With Visit Stopped Date For Date Range";
@@ -117,15 +108,6 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
         assertEquals("", report.getColumnValueInRow(1, "Date stopped"));
     }
 
-    /*
-     * BAH-5299 regression test: the open-visit fallback's upper bound must still exclude a visit
-     * that has not started yet as of the query's end date, even though it is open. Sibling to
-     * shouldIncludeOpenVisitWithNullStopDateWhenFilteringByVisitStopDate, which only proves the
-     * fallback includes an open visit whose date_started falls inside the window -- this proves
-     * it correctly excludes one whose date_started falls after it. See visit_id=11 in
-     * genericVisitReportDataSet.xml (date_started 2026-12-15, outside the 2026-11-01..30 window
-     * used here).
-     */
     @Test
     public void shouldExcludeOpenVisitStartedAfterTheDateRangeWhenFilteringByVisitStopDate() throws Exception {
         String reportName = "Generic Visit Report With Visit Stopped Date For Date Range";

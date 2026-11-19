@@ -12,12 +12,6 @@ import static org.junit.Assert.assertTrue;
 
 public class GenericVisitReportTemplateHelperTest {
 
-    /*
-     * BAH-5299: the NULL-tolerant open-visit fallback in genericVisitReport.sql must stay scoped
-     * to visitStopDate only. A future change that accidentally widens this gate (e.g. "!= null"
-     * instead of "== visitStopDate") would silently start including unrelated visits for
-     * dateOfAdmission/dateOfDischarge, which has no integration test covering it directly.
-     */
     @Test
     public void shouldReturnTrueOnlyForVisitStopDate() {
         assertTrue(GenericVisitReportTemplateHelper.shouldIncludeOpenVisitsInDateRange(configWith(visitStopDate)));

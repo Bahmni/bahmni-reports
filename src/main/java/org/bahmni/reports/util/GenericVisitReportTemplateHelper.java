@@ -62,14 +62,8 @@ public class GenericVisitReportTemplateHelper extends GenericReportsHelper {
     }
 
     /**
-     * BAH-5299: v.date_stopped is NULL for any visit that is still open, which otherwise makes
-     * "cast(v.date_stopped AS DATE) BETWEEN startDate AND endDate" evaluate to NULL/false and
-     * silently exclude the visit (see genericVisitReport.sql). The same NULL-tolerant fallback is
-     * deliberately NOT applied to the other three DateRange variants: v.date_started is NOT NULL
-     * for any visit that exists at all, and admission_details.admission_date/discharge_date come
-     * from an optional "Admission Status" visit_attribute that plenty of ordinary (e.g. OPD)
-     * visits simply never record -- a NULL there means "not tracked", not "still open", so
-     * applying the same fallback would incorrectly sweep in unrelated visits.
+     * BAH-5299: true only for visitStopDate, where NULL date_stopped means "still open".
+     * The other DateRange variants can be NULL for unrelated reasons, so they stay excluded.
      */
     public static boolean shouldIncludeOpenVisitsInDateRange(GenericVisitReportConfig config) {
         return config != null
