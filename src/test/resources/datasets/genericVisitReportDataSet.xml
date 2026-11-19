@@ -57,12 +57,12 @@
            date_stopped="2008-10-1 00:00:00.0" location_id="5" creator="1" date_created="2008-08-15 15:57:09.0"
            voided="false" uuid="1e5d5da8-6b78-11e0-953c-09aad4ad4412"/>
 
-    <!-- BAH-5299: open visit (date_stopped omitted -> NULL), started inside the test window -->
+    <!--open visit, started in range-->
     <visit visit_id="10" patient_id="2" visit_type_id="1" date_started="2026-11-10 09:00:00.0"
            location_id="2" creator="1" date_created="2026-11-10 09:00:00.0"
            voided="false" uuid="1e5d5da8-6b78-11e0-933c-18aad4ad5510"/>
 
-    <!-- BAH-5299: open visit started AFTER the test window, to check the fallback's upper bound -->
+    <!--open visit, started after range-->
     <visit visit_id="11" patient_id="2" visit_type_id="1" date_started="2026-12-15 09:00:00.0"
            location_id="2" creator="1" date_created="2026-12-15 09:00:00.0"
            voided="false" uuid="1e5d5da8-6b78-11e0-933c-18aad4ad5511"/>

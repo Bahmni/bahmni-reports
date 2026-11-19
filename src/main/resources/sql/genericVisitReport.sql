@@ -1,6 +1,3 @@
--- BAH-5299: NULL date_stopped (open visit) is now included when applyDateRangeFor is
--- visitStopDate, since "NULL BETWEEN x AND y" was silently excluding open visits. Not a
--- timezone fix; scoped to visitStopDate only (see applyOpenVisitFallback below).
   set session group_concat_max_len = 20000;
 SET @sql = NULL;
 SET @patientAttributesSql = '#patientAttributes#';
@@ -68,8 +65,7 @@ FROM visit v
   ',IF(@patientAttributesSql = '', '', @patientAttributeJoinSql),'
   ',IF(@patientAddressesSql = '', '', @patientAddressJoinSql),'
 WHERE v.voided is false
-  -- Uses StringTemplate native if/endif here, not the usual SET+IF pattern, because
-  -- applyOpenVisitFallback is a Java boolean, not a string fragment to splice in.
+  -- applyOpenVisitFallback is a Java boolean, so this needs StringTemplate native if/endif
   AND (
     cast(#applyDateRangeFor# AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'
     #if(applyOpenVisitFallback)#OR (#applyDateRangeFor# IS NULL AND cast(v.date_started AS DATE) <= \'#endDate#\')#endif#

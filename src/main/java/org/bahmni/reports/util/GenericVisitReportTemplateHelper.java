@@ -61,10 +61,6 @@ public class GenericVisitReportTemplateHelper extends GenericReportsHelper {
             return visitStartDate.getColumnName();
     }
 
-    /**
-     * BAH-5299: true only for visitStopDate, where NULL date_stopped means "still open".
-     * The other DateRange variants can be NULL for unrelated reasons, so they stay excluded.
-     */
     public static boolean shouldIncludeOpenVisitsInDateRange(GenericVisitReportConfig config) {
         return config != null
                 && config.getApplyDateRangeFor() == GenericVisitReportConfig.DateRange.visitStopDate;
