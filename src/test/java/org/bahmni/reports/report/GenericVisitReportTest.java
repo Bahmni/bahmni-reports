@@ -94,6 +94,31 @@ public class GenericVisitReportTest extends BaseIntegrationTest {
     }
 
     @Test
+    public void shouldIncludeOpenVisitWithNullStopDateWhenFilteringByVisitStopDate() throws Exception {
+        String reportName = "Generic Visit Report With Visit Stopped Date For Date Range";
+
+        CsvReport report = fetchCsvReport(reportName, "2026-11-01", "2026-11-30");
+
+        assertEquals(12, report.columnsCount());
+        assertEquals(reportName, report.getReportName());
+        assertEquals(1, report.rowsCount());
+        assertEquals("GAN1234", report.getColumnValueInRow(1, "Patient Identifier"));
+        assertEquals("Initial HIV Clinic Visit", report.getColumnValueInRow(1, "Visit Type"));
+        assertEquals("10-Nov-2026", report.getColumnValueInRow(1, "Date started"));
+        assertEquals("", report.getColumnValueInRow(1, "Date stopped"));
+    }
+
+    @Test
+    public void shouldExcludeOpenVisitStartedAfterTheDateRangeWhenFilteringByVisitStopDate() throws Exception {
+        String reportName = "Generic Visit Report With Visit Stopped Date For Date Range";
+
+        CsvReport report = fetchCsvReport(reportName, "2026-11-01", "2026-11-30");
+
+        assertEquals(1, report.rowsCount());
+        assertEquals("10-Nov-2026", report.getColumnValueInRow(1, "Date started"));
+    }
+
+    @Test
     public void shouldConsiderDateOfAdmissionInDateRangeIfSpecified() throws Exception {
         String reportName = "Generic Visit Report With Date Of Admission For Date Range";
 

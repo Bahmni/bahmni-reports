@@ -65,7 +65,11 @@ FROM visit v
   ',IF(@patientAttributesSql = '', '', @patientAttributeJoinSql),'
   ',IF(@patientAddressesSql = '', '', @patientAddressJoinSql),'
 WHERE v.voided is false
-  AND cast(#applyDateRangeFor# AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'
+  -- applyOpenVisitFallback is a Java boolean, so this needs StringTemplate native if/endif
+  AND (
+    cast(#applyDateRangeFor# AS DATE) BETWEEN \'#startDate#\' AND \'#endDate#\'
+    #if(applyOpenVisitFallback)#OR (#applyDateRangeFor# IS NULL AND cast(v.date_started AS DATE) <= \'#endDate#\')#endif#
+  )
   ',IF(@visitTypesToFilterSql = '', '', 'AND vt.name in (#visitTypesToFilter#)'),'
 GROUP BY v.visit_id
 ',IF(@sortByColumns = '', ' ORDER BY v.visit_id',@sortByColumns),';');

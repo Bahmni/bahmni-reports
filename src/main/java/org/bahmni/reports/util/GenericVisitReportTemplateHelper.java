@@ -61,4 +61,9 @@ public class GenericVisitReportTemplateHelper extends GenericReportsHelper {
             return visitStartDate.getColumnName();
     }
 
+    public static boolean shouldIncludeOpenVisitsInDateRange(GenericVisitReportConfig config) {
+        return config != null
+                && config.getApplyDateRangeFor() == GenericVisitReportConfig.DateRange.visitStopDate;
+    }
+
 }
