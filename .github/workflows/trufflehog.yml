@@ -27,4 +27,4 @@ jobs:
           # Only credentials TruffleHog confirmed live against the provider's API
           # fail the job. Unverified matches (vendored test fixtures, .env
           # placeholders, strings inside .jar/.zip/.omod archives) are ignored.
-          extra_args: --results=verified
+          extra_args: --results=verified,unverified
