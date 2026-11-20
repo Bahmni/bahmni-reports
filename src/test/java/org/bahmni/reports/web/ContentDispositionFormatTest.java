@@ -16,6 +16,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
@@ -73,7 +74,7 @@ public class ContentDispositionFormatTest {
     @Test
     public void downloadHeaderNamesStoredFileWithSingleExtension() throws Exception {
         String storedFileName = generateStoredFileName("Visit Report");
-        File savedFile = File.createTempFile("format-download", extension);
+        File savedFile = Files.createTempFile("format-download", extension).toFile();
         savedFile.deleteOnExit();
 
         ScheduledReport scheduledReport = new ScheduledReport("id-1", "Visit Report", "superman",
