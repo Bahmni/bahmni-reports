@@ -71,7 +71,7 @@ public class ContentDispositionTest {
 
     // Serves a saved report through the real controller and converter, and returns the file it serves.
     private FileSystemResource downloadScheduledReport(MockHttpServletResponse response) throws IOException {
-        File savedFile = File.createTempFile("content-disposition", ".pdf");
+        File savedFile = Files.createTempFile("content-disposition", ".pdf").toFile();
         savedFile.deleteOnExit();
         Files.writeString(savedFile.toPath(), SAVED_CONTENT, StandardCharsets.US_ASCII);
 
