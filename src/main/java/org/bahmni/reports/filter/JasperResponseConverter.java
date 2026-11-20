@@ -45,7 +45,7 @@ public class JasperResponseConverter {
                 Path macroTemplateFile = macroTemplateFilePath(macroTemplatesTempDirectory, reportParams.getMacroTemplateLocation());
                 File templateFile = macroTemplateFile.toFile();
                 if (!templateFile.exists()) {
-                    logger.error(String.format("Invalid Macro Template specified: %s", macroTemplateFile));
+                    logger.error("Invalid Macro Template specified: {}", sanitizeForLog(macroTemplateFile.toString()));
                     throw new RuntimeException(EX_INVALID_MACRO_TEMPLATE);
                 }
                 JasperXlsExporterBuilder exporterBuilder = Exporters.xlsExporter(outputStream).setDetectCellType(true);
@@ -53,10 +53,7 @@ public class JasperResponseConverter {
                 exporterBuilder.setWorkbookTemplate(macroTemplateFile.toString());
                 exporterBuilder.addSheetName("Report");
                 concatenatedReportBuilder.toXls(exporterBuilder);
-                // boolean delete = templateFile.delete();
-                // if (!delete) {
-                //    logger.warn(String.format("Uploaded report template file not deleted: %s", macroTemplateFile));
-                // }
+
                 break;
             case APPLICATION_PDF:
                 concatenatedReportBuilder.toPdf(outputStream);
@@ -74,31 +71,46 @@ public class JasperResponseConverter {
         return Paths.get(macroTemplatesTempDirectory, macroTemplate);
     }
 
+    private String sanitizeForLog(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replace('\r', '_').replace('\n', '_');
+    }
+
     public void applyReportTemplates(List<JasperReportBuilder> reports, String responseType) {
         for (JasperReportBuilder report : reports) {
             switch (responseType) {
-                case TEXT_HTML:
+                case TEXT_HTML, APPLICATION_PDF:
                     report.pageFooter(Templates.footerComponent);
                     break;
-                case APPLICATION_VND_MS_EXCEL:
-                    report.setTemplate(Templates.excelReportTemplate);
-                    break;
-                case APPLICATION_VND_MS_EXCEL_CUSTOM:
-                    report.setTemplate(Templates.excelReportTemplate);
-                    break;
-                case APPLICATION_PDF:
-                    report.pageFooter(Templates.footerComponent);
-                    break;
-                case TEXT_CSV:
-                    report.setTemplate(Templates.excelReportTemplate);
-                    break;
-                case APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
+                case APPLICATION_VND_MS_EXCEL, APPLICATION_VND_MS_EXCEL_CUSTOM, TEXT_CSV,
+                     APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
                     report.setTemplate(Templates.excelReportTemplate);
                     break;
             }
         }
     }
 
+    /**
+     * Sets the Content-Type and Content-Disposition headers for a report download.
+     *
+     * <p>The extension for {@code responseType} is appended to {@code fileName}, so pass the name
+     * without an extension. Passing a name that already ends with the extension produces a doubled
+     * extension (for example {@code report.pdf.pdf}).
+     *
+     * <p>Formats without a matching case (for example {@code text/html}, or an unknown type) set no
+     * Content-Disposition header. HTML only gets its Content-Type.
+     *
+     * @param responseType the MIME type of the response, one of the constants in this class, such as
+     *                     {@code application/pdf}. Selects the Content-Type and the extension to append.
+     * @param response     the response whose headers are set. Its Content-Type is set for every format
+     *                     except custom Excel, and its Content-Disposition for every format that has an
+     *                     extension.
+     * @param fileName     the download file name without an extension, for example
+     *                     {@code Visit Report}. Used as-is in the Content-Disposition header, so it is
+     *                     not quoted or escaped.
+     */
     public void applyHttpHeaders(String responseType, HttpServletResponse response, String fileName) {
         switch (responseType) {
             case TEXT_HTML:
@@ -127,21 +139,14 @@ public class JasperResponseConverter {
     }
 
     public static String getFileExtension(String responseType) {
-        switch (responseType) {
-            case TEXT_HTML:
-                return ".html";
-            case APPLICATION_VND_MS_EXCEL:
-                return ".xlsx";
-            case APPLICATION_VND_MS_EXCEL_CUSTOM:
-                return ".xls";
-            case APPLICATION_PDF:
-                return ".pdf";
-            case TEXT_CSV:
-                return ".csv";
-            case APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
-                return ".ods";
-            default:
-                return "";
-        }
+        return switch (responseType) {
+            case TEXT_HTML -> ".html";
+            case APPLICATION_VND_MS_EXCEL -> ".xlsx";
+            case APPLICATION_VND_MS_EXCEL_CUSTOM -> ".xls";
+            case APPLICATION_PDF -> ".pdf";
+            case TEXT_CSV -> ".csv";
+            case APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET -> ".ods";
+            default -> "";
+        };
     }
 }
