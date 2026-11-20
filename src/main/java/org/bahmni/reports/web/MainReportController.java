@@ -1,6 +1,5 @@
 package org.bahmni.reports.web;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,12 +34,12 @@ import java.util.stream.Collectors;
 public class MainReportController {
 
     private static final Logger logger = LogManager.getLogger(MainReportController.class);
-    private JasperResponseConverter converter;
-    private BahmniReportsProperties bahmniReportsProperties;
-    private AllDatasources allDatasources;
-    private HttpClient httpClient;
-    private ReportsScheduler reportsScheduler;
-    private OpenMRSAuthenticator openMRSAuthenticator;
+    private final JasperResponseConverter converter;
+    private final BahmniReportsProperties bahmniReportsProperties;
+    private final AllDatasources allDatasources;
+    private final HttpClient httpClient;
+    private final ReportsScheduler reportsScheduler;
+    private final OpenMRSAuthenticator openMRSAuthenticator;
 
     @Autowired
     public MainReportController(JasperResponseConverter converter,
@@ -82,7 +81,7 @@ public class MainReportController {
             catchBlock(response, e);
         } catch (SchedulerException e) {
             logger.error("Scheduling report failed", e);
-            e.printStackTrace();
+            //e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
@@ -125,17 +124,17 @@ public class MainReportController {
 
     private static void catchBlock(HttpServletResponse response, Throwable e) {
         response.reset();
-        e.printStackTrace();
+        //e.printStackTrace();
         logger.error("Error running report", e);
         try {
             String errorMessage = e.getMessage();
-            String content = "Incorrect Configuration " + errorMessage + "";
+            String content = "Incorrect Configuration " + errorMessage;
             if( e instanceof WebClientsException) {
                 content = "<h3>" + errorMessage + "</h3>";
             }
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, content);
         } catch (IOException e1) {
-            e1.printStackTrace();
+            logger.error("Sending error response failed", e1);
         }
     }
 }

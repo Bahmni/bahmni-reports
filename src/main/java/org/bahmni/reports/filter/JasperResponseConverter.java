@@ -45,7 +45,7 @@ public class JasperResponseConverter {
                 Path macroTemplateFile = macroTemplateFilePath(macroTemplatesTempDirectory, reportParams.getMacroTemplateLocation());
                 File templateFile = macroTemplateFile.toFile();
                 if (!templateFile.exists()) {
-                    logger.error(String.format("Invalid Macro Template specified: %s", macroTemplateFile));
+                    logger.error("Invalid Macro Template specified: {}", macroTemplateFile);
                     throw new RuntimeException(EX_INVALID_MACRO_TEMPLATE);
                 }
                 JasperXlsExporterBuilder exporterBuilder = Exporters.xlsExporter(outputStream).setDetectCellType(true);
@@ -53,10 +53,7 @@ public class JasperResponseConverter {
                 exporterBuilder.setWorkbookTemplate(macroTemplateFile.toString());
                 exporterBuilder.addSheetName("Report");
                 concatenatedReportBuilder.toXls(exporterBuilder);
-                // boolean delete = templateFile.delete();
-                // if (!delete) {
-                //    logger.warn(String.format("Uploaded report template file not deleted: %s", macroTemplateFile));
-                // }
+
                 break;
             case APPLICATION_PDF:
                 concatenatedReportBuilder.toPdf(outputStream);
@@ -77,22 +74,11 @@ public class JasperResponseConverter {
     public void applyReportTemplates(List<JasperReportBuilder> reports, String responseType) {
         for (JasperReportBuilder report : reports) {
             switch (responseType) {
-                case TEXT_HTML:
+                case TEXT_HTML, APPLICATION_PDF:
                     report.pageFooter(Templates.footerComponent);
                     break;
-                case APPLICATION_VND_MS_EXCEL:
-                    report.setTemplate(Templates.excelReportTemplate);
-                    break;
-                case APPLICATION_VND_MS_EXCEL_CUSTOM:
-                    report.setTemplate(Templates.excelReportTemplate);
-                    break;
-                case APPLICATION_PDF:
-                    report.pageFooter(Templates.footerComponent);
-                    break;
-                case TEXT_CSV:
-                    report.setTemplate(Templates.excelReportTemplate);
-                    break;
-                case APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
+                case APPLICATION_VND_MS_EXCEL, APPLICATION_VND_MS_EXCEL_CUSTOM, TEXT_CSV,
+                     APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
                     report.setTemplate(Templates.excelReportTemplate);
                     break;
             }
@@ -146,21 +132,14 @@ public class JasperResponseConverter {
     }
 
     public static String getFileExtension(String responseType) {
-        switch (responseType) {
-            case TEXT_HTML:
-                return ".html";
-            case APPLICATION_VND_MS_EXCEL:
-                return ".xlsx";
-            case APPLICATION_VND_MS_EXCEL_CUSTOM:
-                return ".xls";
-            case APPLICATION_PDF:
-                return ".pdf";
-            case TEXT_CSV:
-                return ".csv";
-            case APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
-                return ".ods";
-            default:
-                return "";
-        }
+        return switch (responseType) {
+            case TEXT_HTML -> ".html";
+            case APPLICATION_VND_MS_EXCEL -> ".xlsx";
+            case APPLICATION_VND_MS_EXCEL_CUSTOM -> ".xls";
+            case APPLICATION_PDF -> ".pdf";
+            case TEXT_CSV -> ".csv";
+            case APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET -> ".ods";
+            default -> "";
+        };
     }
 }
