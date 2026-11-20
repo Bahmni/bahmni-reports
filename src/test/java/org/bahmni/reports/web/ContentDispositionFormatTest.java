@@ -1,20 +1,30 @@
 package org.bahmni.reports.web;
 
+import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
+import org.bahmni.reports.model.AllDatasources;
+import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.scheduler.ReportsJob;
+import org.bahmni.reports.scheduler.ReportsScheduler;
+import org.bahmni.reports.web.security.OpenMRSAuthenticator;
+import org.bahmni.webclients.HttpClient;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 // Characterisation tests run once per storable format (BAH-5317).
 @RunWith(Parameterized.class)
@@ -58,6 +68,27 @@ public class ContentDispositionFormatTest {
         assertFalse(storedFileName, storedFileName.endsWith(extension + extension));
         assertTrue(storedFileName, storedFileName.startsWith("Visit_Report_Summary-"));
         assertFalse(storedFileName, storedFileName.contains(" ") || storedFileName.contains("/"));
+    }
+
+    @Test
+    public void downloadHeaderNamesStoredFileWithSingleExtension() throws Exception {
+        String storedFileName = generateStoredFileName("Visit Report");
+        File savedFile = File.createTempFile("format-download", extension);
+        savedFile.deleteOnExit();
+
+        ScheduledReport scheduledReport = new ScheduledReport("id-1", "Visit Report", "superman",
+                storedFileName, new Date(), new Date(), "Completed", responseType, new Date());
+        ReportsScheduler reportsScheduler = mock(ReportsScheduler.class);
+        when(reportsScheduler.getReportById("id-1")).thenReturn(scheduledReport);
+        when(reportsScheduler.getFilePath(scheduledReport)).thenReturn(savedFile.getAbsolutePath());
+
+        MainReportController controller = new MainReportController(new JasperResponseConverter(),
+                mock(BahmniReportsProperties.class), mock(AllDatasources.class), mock(HttpClient.class),
+                reportsScheduler, mock(OpenMRSAuthenticator.class));
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        controller.getScheduledReport("id-1", response);
+
+        assertEquals("attachment; filename=" + storedFileName, response.getHeader("Content-Disposition"));
     }
 
     // ReportsJob.generateFileName() is private; it is the only place the stored name is built.

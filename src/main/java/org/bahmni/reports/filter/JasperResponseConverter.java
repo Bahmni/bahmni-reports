@@ -99,6 +99,25 @@ public class JasperResponseConverter {
         }
     }
 
+    /**
+     * Sets the Content-Type and Content-Disposition headers for a report download.
+     *
+     * <p>The extension for {@code responseType} is appended to {@code fileName}, so pass the name
+     * without an extension. Passing a name that already ends with the extension produces a doubled
+     * extension (for example {@code report.pdf.pdf}).
+     *
+     * <p>Formats without a matching case (for example {@code text/html}, or an unknown type) set no
+     * Content-Disposition header. HTML only gets its Content-Type.
+     *
+     * @param responseType the MIME type of the response, one of the constants in this class, such as
+     *                     {@code application/pdf}. Selects the Content-Type and the extension to append.
+     * @param response     the response whose headers are set. Its Content-Type is set for every format
+     *                     except custom Excel, and its Content-Disposition for every format that has an
+     *                     extension.
+     * @param fileName     the download file name without an extension, for example
+     *                     {@code Visit Report}. Used as-is in the Content-Disposition header, so it is
+     *                     not quoted or escaped.
+     */
     public void applyHttpHeaders(String responseType, HttpServletResponse response, String fileName) {
         switch (responseType) {
             case TEXT_HTML:
