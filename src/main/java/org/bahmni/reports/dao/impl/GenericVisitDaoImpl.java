@@ -41,6 +41,7 @@ public class GenericVisitDaoImpl implements GenericDao {
             }
         }
         sqlTemplate.add("applyDateRangeFor", getDateRangeFor(report.getConfig()));
+        sqlTemplate.add("applyOpenVisitFallback", shouldIncludeOpenVisitsInDateRange(report.getConfig()));
         return SqlUtil.executeSqlWithStoredProc(connection, sqlTemplate.render());
     }
 
