@@ -69,14 +69,40 @@ public class ContentDispositionTest {
         assertTrue(header, header.contains("Visit_Report-2026-11-20_08:38:27.841_UTC"));
     }
 
+    // Regression test for BAH-5317: the stored name already ends in .pdf, so the header must not add a second one.
+    // Before the fix this header was "...UTC.pdf.pdf".
+    @Test
+    public void scheduledReportDownloadHeaderHasExactlyOneExtension() throws IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        downloadScheduledReport(response);
+
+        assertEquals("attachment; filename=" + STORED_FILE_NAME, response.getHeader("Content-Disposition"));
+    }
+
+    // End-to-end for an HTML scheduled report: the file is served, with a Content-Type and no Content-Disposition.
+    @Test
+    public void scheduledHtmlReportDownloadSetsContentTypeWithoutContentDisposition() throws IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        FileSystemResource resource = downloadScheduledReport(response, "text/html", "Visit_Report-2026-11-20_08:38:27.841_UTC.html");
+
+        assertNull(response.getHeader("Content-Disposition"));
+        assertEquals("text/html", response.getContentType());
+        assertEquals(SAVED_CONTENT, Files.readString(resource.getFile().toPath(), StandardCharsets.US_ASCII));
+    }
+
     // Serves a saved report through the real controller and converter, and returns the file it serves.
     private FileSystemResource downloadScheduledReport(MockHttpServletResponse response) throws IOException {
+        return downloadScheduledReport(response, "application/pdf", STORED_FILE_NAME);
+    }
+
+    private FileSystemResource downloadScheduledReport(MockHttpServletResponse response, String format,
+                                                       String storedFileName) throws IOException {
         File savedFile = Files.createTempFile("content-disposition", ".pdf").toFile();
         savedFile.deleteOnExit();
         Files.writeString(savedFile.toPath(), SAVED_CONTENT, StandardCharsets.US_ASCII);
 
         ScheduledReport scheduledReport = new ScheduledReport("id-1", "Visit Report", "superman",
-                STORED_FILE_NAME, new Date(), new Date(), "Completed", "application/pdf", new Date());
+                storedFileName, new Date(), new Date(), "Completed", format, new Date());
         ReportsScheduler reportsScheduler = mock(ReportsScheduler.class);
         when(reportsScheduler.getReportById("id-1")).thenReturn(scheduledReport);
         when(reportsScheduler.getFilePath(scheduledReport)).thenReturn(savedFile.getAbsolutePath());
