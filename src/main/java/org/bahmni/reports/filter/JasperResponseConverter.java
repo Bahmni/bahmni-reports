@@ -5,6 +5,7 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.jasper.builder.export.Exporters;
 import net.sf.dynamicreports.jasper.builder.export.JasperXlsExporterBuilder;
 import net.sf.dynamicreports.report.exception.DRException;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.template.Templates;
@@ -99,6 +100,25 @@ public class JasperResponseConverter {
         }
     }
 
+    /**
+     * Sets the Content-Type and Content-Disposition headers for a report download.
+     *
+     * <p>The extension for {@code responseType} is appended to {@code fileName}, so pass the name
+     * without an extension. Passing a name that already ends with the extension produces a doubled
+     * extension (for example {@code report.pdf.pdf}).
+     *
+     * <p>Formats without a matching case (for example {@code text/html}, or an unknown type) set no
+     * Content-Disposition header. HTML only gets its Content-Type.
+     *
+     * @param responseType the MIME type of the response, one of the constants in this class, such as
+     *                     {@code application/pdf}. Selects the Content-Type and the extension to append.
+     * @param response     the response whose headers are set. Its Content-Type is set for every format
+     *                     except custom Excel, and its Content-Disposition for every format that has an
+     *                     extension.
+     * @param fileName     the download file name without an extension, for example
+     *                     {@code Visit Report}. Used as-is in the Content-Disposition header, so it is
+     *                     not quoted or escaped.
+     */
     public void applyHttpHeaders(String responseType, HttpServletResponse response, String fileName) {
         switch (responseType) {
             case TEXT_HTML:
@@ -124,6 +144,15 @@ public class JasperResponseConverter {
                 response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".ods");
                 break;
         }
+    }
+
+    /**
+     * Returns {@code fileName} without the extension that {@link #applyHttpHeaders} appends for
+     * {@code responseType}, so the result can be passed to it without a doubled extension. A name
+     * that does not end with that extension is returned unchanged.
+     */
+    public static String stripFileExtension(String fileName, String responseType) {
+        return Strings.CS.removeEnd(fileName, getFileExtension(responseType));
     }
 
     public static String getFileExtension(String responseType) {
