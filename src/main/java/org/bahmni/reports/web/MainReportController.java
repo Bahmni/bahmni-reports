@@ -1,6 +1,5 @@
 package org.bahmni.reports.web;
 
-import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.BahmniReportsProperties;
@@ -105,8 +104,8 @@ public class MainReportController {
     public FileSystemResource getScheduledReport(@PathVariable("id") String id, HttpServletResponse httpServletResponse) {
         ScheduledReport scheduledReport = reportsScheduler.getReportById(id);
         // The stored file name already has the extension; applyHttpHeaders adds it again.
-        String downloadName = Strings.CS.removeEnd(scheduledReport.getFileName(),
-                JasperResponseConverter.getFileExtension(scheduledReport.getFormat()));
+        String downloadName = JasperResponseConverter.stripFileExtension(scheduledReport.getFileName(),
+                scheduledReport.getFormat());
         converter.applyHttpHeaders(scheduledReport.getFormat(), httpServletResponse, downloadName);
         return new FileSystemResource(reportsScheduler.getFilePath(scheduledReport));
     }

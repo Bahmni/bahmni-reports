@@ -5,6 +5,7 @@ import net.sf.dynamicreports.jasper.builder.JasperReportBuilder;
 import net.sf.dynamicreports.jasper.builder.export.Exporters;
 import net.sf.dynamicreports.jasper.builder.export.JasperXlsExporterBuilder;
 import net.sf.dynamicreports.report.exception.DRException;
+import org.apache.commons.lang3.Strings;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.template.Templates;
@@ -150,6 +151,15 @@ public class JasperResponseConverter {
                 response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".ods");
                 break;
         }
+    }
+
+    /**
+     * Returns {@code fileName} without the extension that {@link #applyHttpHeaders} appends for
+     * {@code responseType}, so the result can be passed to it without a doubled extension. A name
+     * that does not end with that extension is returned unchanged.
+     */
+    public static String stripFileExtension(String fileName, String responseType) {
+        return Strings.CS.removeEnd(fileName, getFileExtension(responseType));
     }
 
     public static String getFileExtension(String responseType) {
