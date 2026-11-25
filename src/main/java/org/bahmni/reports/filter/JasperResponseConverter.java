@@ -46,7 +46,7 @@ public class JasperResponseConverter {
                 Path macroTemplateFile = macroTemplateFilePath(macroTemplatesTempDirectory, reportParams.getMacroTemplateLocation());
                 File templateFile = macroTemplateFile.toFile();
                 if (!templateFile.exists()) {
-                    logger.error(String.format("Invalid Macro Template specified: %s", macroTemplateFile));
+                    logger.error("Invalid Macro Template specified: {}", sanitizeForLog(macroTemplateFile.toString()));
                     throw new RuntimeException(EX_INVALID_MACRO_TEMPLATE);
                 }
                 JasperXlsExporterBuilder exporterBuilder = Exporters.xlsExporter(outputStream).setDetectCellType(true);
@@ -73,6 +73,13 @@ public class JasperResponseConverter {
 
     private Path macroTemplateFilePath(String macroTemplatesTempDirectory, String macroTemplate) {
         return Paths.get(macroTemplatesTempDirectory, macroTemplate);
+    }
+
+    private String sanitizeForLog(String value) {
+        if (value == null) {
+            return null;
+        }
+        return value.replaceAll("[\\p{Cntrl}\\u2028\\u2029]", "_");
     }
 
     public void applyReportTemplates(List<JasperReportBuilder> reports, String responseType) {
