@@ -117,6 +117,26 @@ public class ContentDispositionTest {
         assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.getContentType());
     }
 
+    // Regression test for BAH-5317: a Completed report whose file is gone returned 200 with a Content-Disposition,
+    // then failed with a 500 page while the body was written, which a browser could save as a .pdf.
+    @Test
+    public void downloadOfCompletedReportWithMissingFileReturnsServerError() throws IOException {
+        File missingFile = new File(temporaryFolder.getRoot(), "Visit_Report-missing.pdf");
+        ScheduledReport scheduledReport = new ScheduledReport("id-1", "Visit Report", "superman",
+                "Visit_Report-missing.pdf", new Date(), new Date(), "Completed", "application/pdf", new Date());
+        ReportsScheduler reportsScheduler = mock(ReportsScheduler.class);
+        when(reportsScheduler.getReportById("id-1")).thenReturn(scheduledReport);
+        when(reportsScheduler.getFilePath(scheduledReport)).thenReturn(missingFile.getAbsolutePath());
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        ResponseEntity<FileSystemResource> resource = controllerFor(reportsScheduler).getScheduledReport("id-1", response);
+
+        assertNull(resource);
+        assertEquals(500, response.getStatus());
+        assertEquals("Report file is missing on the server", response.getErrorMessage());
+        assertNull(response.getHeader("Content-Disposition"));
+    }
+
     // Regression test for BAH-5317: an unknown id threw a NullPointerException (500).
     @Test
     public void downloadOfUnknownReportIdReturnsNotFound() throws IOException {

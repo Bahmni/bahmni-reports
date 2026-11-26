@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
@@ -106,6 +107,7 @@ public class MainReportController {
     @ResponseBody
     public ResponseEntity<FileSystemResource> getScheduledReport(@PathVariable("id") String id, HttpServletResponse httpServletResponse) {
         ScheduledReport scheduledReport = reportsScheduler.getReportById(id);
+        String filePath;
         try {
             if (scheduledReport == null) {
                 httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Report not found");
@@ -114,6 +116,15 @@ public class MainReportController {
             if (!ReportStatus.COMPLETED.equals(scheduledReport.getStatus())) {
                 httpServletResponse.sendError(HttpServletResponse.SC_CONFLICT,
                         "Report is not ready for download: " + scheduledReport.getStatus());
+                return null;
+            }
+            // Checked before any header is set: a missing file used to fail while the body was written,
+            // after Content-Disposition had already gone out.
+            filePath = reportsScheduler.getFilePath(scheduledReport);
+            if (!new File(filePath).isFile()) {
+                logger.error("Completed report {} has no file on the server at {}", id, filePath);
+                httpServletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        "Report file is missing on the server");
                 return null;
             }
         } catch (IOException e) {
@@ -131,7 +142,7 @@ public class MainReportController {
         if (contentType != null) {
             response.contentType(MediaType.parseMediaType(contentType));
         }
-        return response.body(new FileSystemResource(reportsScheduler.getFilePath(scheduledReport)));
+        return response.body(new FileSystemResource(filePath));
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
