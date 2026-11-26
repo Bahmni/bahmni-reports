@@ -8,6 +8,7 @@ import org.bahmni.reports.model.AllDatasources;
 import org.bahmni.reports.persistence.ScheduledReport;
 import org.bahmni.reports.scheduler.ReportStatus;
 import org.bahmni.reports.scheduler.ReportsScheduler;
+import org.bahmni.reports.util.LogSanitizer;
 import org.bahmni.reports.web.security.OpenMRSAuthenticator;
 import org.bahmni.reports.web.security.ReportAuthorization;
 import org.bahmni.webclients.HttpClient;
@@ -122,7 +123,8 @@ public class MainReportController {
             // after Content-Disposition had already gone out.
             filePath = reportsScheduler.getFilePath(scheduledReport);
             if (!new File(filePath).isFile()) {
-                logger.error("Completed report {} has no file on the server at {}", sanitizeForLog(id), filePath);
+                logger.error("Completed report {} has no file on the server at {}", LogSanitizer.sanitize(id),
+                        LogSanitizer.sanitize(filePath));
                 httpServletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
                         "Report file is missing on the server");
                 return null;
@@ -154,13 +156,6 @@ public class MainReportController {
             logger.error("Deleting report failed", e);
             httpServletResponse.setStatus(500);
         }
-    }
-
-    private static String sanitizeForLog(String value) {
-        if (value == null) {
-            return null;
-        }
-        return value.replace('\n', '_').replace('\r', '_');
     }
 
     private static void catchBlock(HttpServletResponse response, Throwable e) {
