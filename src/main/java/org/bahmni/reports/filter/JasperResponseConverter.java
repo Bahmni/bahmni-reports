@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bahmni.reports.template.Templates;
 import org.bahmni.reports.web.ReportParams;
+import org.springframework.http.ContentDisposition;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
@@ -119,12 +120,12 @@ public class JasperResponseConverter {
      *
      * @param responseType the MIME type of the response, one of the constants in this class, such as
      *                     {@code application/pdf}. Selects the Content-Type and the extension to append.
-     * @param response     the response whose headers are set. Its Content-Type is set for every format
-     *                     except custom Excel, and its Content-Disposition for every format that has an
-     *                     extension.
+     * @param response     the response whose headers are set. Its Content-Type and Content-Disposition
+     *                     are set for every format that has an extension.
      * @param fileName     the download file name without an extension, for example
-     *                     {@code Visit Report}. Used as-is in the Content-Disposition header, so it is
-     *                     not quoted or escaped.
+     *                     {@code Visit Report}. It is quoted and escaped
+     *                     (for example {@code Bad"Name} becomes {@code "Bad\"Name"}) in the
+     *                     Content-Disposition header.
      */
     public void applyHttpHeaders(String responseType, HttpServletResponse response, String fileName) {
         switch (responseType) {
@@ -133,24 +134,28 @@ public class JasperResponseConverter {
                 break;
             case APPLICATION_VND_MS_EXCEL:
                 response.setContentType(APPLICATION_VND_MS_EXCEL);
-                response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
+                response.setHeader("Content-Disposition", contentDisposition(fileName + ".xlsx"));
                 break;
             case APPLICATION_VND_MS_EXCEL_CUSTOM:
-                response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xls");
+                response.setHeader("Content-Disposition", contentDisposition(fileName + ".xls"));
                 break;
             case APPLICATION_PDF:
                 response.setContentType(APPLICATION_PDF);
-                response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".pdf");
+                response.setHeader("Content-Disposition", contentDisposition(fileName + ".pdf"));
                 break;
             case TEXT_CSV:
                 response.setContentType(TEXT_CSV);
-                response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".csv");
+                response.setHeader("Content-Disposition", contentDisposition(fileName + ".csv"));
                 break;
             case APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
                 response.setContentType(APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET);
-                response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".ods");
+                response.setHeader("Content-Disposition", contentDisposition(fileName + ".ods"));
                 break;
         }
+    }
+
+    private static String contentDisposition(String fileName) {
+        return ContentDisposition.attachment().filename(fileName).build().toString();
     }
 
     /**

@@ -84,7 +84,7 @@ public class ContentDispositionTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         downloadScheduledReport(response);
 
-        assertEquals("attachment; filename=" + STORED_FILE_NAME, response.getHeader("Content-Disposition"));
+        assertEquals("attachment; filename=\"" + STORED_FILE_NAME + "\"", response.getHeader("Content-Disposition"));
     }
 
     // End-to-end for an HTML scheduled report: the file is served, with a Content-Type and no Content-Disposition.
@@ -130,6 +130,15 @@ public class ContentDispositionTest {
     @Test
     public void downloadOfErrorReportIsRejected() throws IOException {
         assertUnfinishedReportIsRejected("Error", STORED_FILE_NAME);
+    }
+
+    // Regression test for BAH-5317: the file name was sent unquoted, so " and ; went out raw.
+    @Test
+    public void downloadHeaderQuotesAndEscapesFileName() throws IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        downloadScheduledReport(response, "application/pdf", "Bad\"Name;x.pdf");
+
+        assertEquals("attachment; filename=\"Bad\\\"Name;x.pdf\"", response.getHeader("Content-Disposition"));
     }
 
     private void assertUnfinishedReportIsRejected(String status, String storedFileName) throws IOException {

@@ -58,7 +58,7 @@ public class ContentDispositionFormatTest {
     public void reportDownloadAddsExactlyOneExtensionToReportName() {
         MockHttpServletResponse response = new MockHttpServletResponse();
         new JasperResponseConverter().applyHttpHeaders(responseType, response, "Visit Report");
-        assertEquals("attachment; filename=Visit Report" + extension, response.getHeader("Content-Disposition"));
+        assertEquals("attachment; filename=\"Visit Report" + extension + "\"", response.getHeader("Content-Disposition"));
     }
 
     @Test
@@ -92,7 +92,7 @@ public class ContentDispositionFormatTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
         controller.getScheduledReport("id-1", response);
 
-        assertEquals("attachment; filename=" + storedFileName, response.getHeader("Content-Disposition"));
+        assertEquals("attachment; filename=\"" + storedFileName + "\"", response.getHeader("Content-Disposition"));
     }
 
     // ReportsJob.generateFileName() is private; it is the only place the stored name is built.
