@@ -81,7 +81,14 @@ public class JasperResponseConverter {
         if (value == null) {
             return null;
         }
-        return value.replaceAll("[\\p{Cntrl}\\u2028\\u2029]", "_");
+        return value
+                .replace('\r', '_')
+                .replace('\n', '_')
+                .replace('\t', '_')
+                .replace('\f', '_')
+                .replace('\u0000', '_')
+                .replace('\u2028', '_')
+                .replace('\u2029', '_');
     }
 
     public void applyReportTemplates(List<JasperReportBuilder> reports, String responseType) {
