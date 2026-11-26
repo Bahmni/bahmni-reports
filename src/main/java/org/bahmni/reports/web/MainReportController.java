@@ -6,6 +6,7 @@ import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
 import org.bahmni.reports.persistence.ScheduledReport;
+import org.bahmni.reports.scheduler.ReportStatus;
 import org.bahmni.reports.scheduler.ReportsScheduler;
 import org.bahmni.reports.web.security.OpenMRSAuthenticator;
 import org.bahmni.reports.web.security.ReportAuthorization;
@@ -106,6 +107,11 @@ public class MainReportController {
         try {
             if (scheduledReport == null) {
                 httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Report not found");
+                return null;
+            }
+            if (!ReportStatus.COMPLETED.equals(scheduledReport.getStatus())) {
+                httpServletResponse.sendError(HttpServletResponse.SC_CONFLICT,
+                        "Report is not ready for download: " + scheduledReport.getStatus());
                 return null;
             }
         } catch (IOException e) {

@@ -114,6 +114,43 @@ public class ContentDispositionTest {
         verify(reportsScheduler, never()).getFilePath(any());
     }
 
+    // Regression test for BAH-5317: a Queued report has no file name yet, so the header was "filename=null.pdf".
+    @Test
+    public void downloadOfQueuedReportIsRejected() throws IOException {
+        assertUnfinishedReportIsRejected("Queued", null);
+    }
+
+    // Regression test for BAH-5317: a Processing report was served although its file is partial.
+    @Test
+    public void downloadOfProcessingReportIsRejected() throws IOException {
+        assertUnfinishedReportIsRejected("Processing", STORED_FILE_NAME);
+    }
+
+    // Regression test for BAH-5317: an Error report was served although its file is not a valid report.
+    @Test
+    public void downloadOfErrorReportIsRejected() throws IOException {
+        assertUnfinishedReportIsRejected("Error", STORED_FILE_NAME);
+    }
+
+    private void assertUnfinishedReportIsRejected(String status, String storedFileName) throws IOException {
+        File savedFile = temporaryFolder.newFile();
+
+        ScheduledReport scheduledReport = new ScheduledReport("id-1", "Visit Report", "superman",
+                storedFileName, new Date(), null, status, "application/pdf", new Date());
+        ReportsScheduler reportsScheduler = mock(ReportsScheduler.class);
+        when(reportsScheduler.getReportById("id-1")).thenReturn(scheduledReport);
+        when(reportsScheduler.getFilePath(scheduledReport)).thenReturn(savedFile.getAbsolutePath());
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        FileSystemResource resource = controllerFor(reportsScheduler).getScheduledReport("id-1", response);
+
+        assertNull(resource);
+        assertEquals(409, response.getStatus());
+        assertEquals("Report is not ready for download: " + status, response.getErrorMessage());
+        assertNull(response.getHeader("Content-Disposition"));
+        verify(reportsScheduler, never()).getFilePath(any());
+    }
+
     private MainReportController controllerFor(ReportsScheduler reportsScheduler) {
         return new MainReportController(new JasperResponseConverter(),
                 mock(BahmniReportsProperties.class), mock(AllDatasources.class), mock(HttpClient.class),
