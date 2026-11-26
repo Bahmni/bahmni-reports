@@ -34,6 +34,9 @@ public class DrugOrderReportTest extends BaseIntegrationTest {
     public void shouldRetrieveDrugOrderReportWithFourteenColmns() throws Exception {
         CsvReport drugOrderReport = fetchCsvReport("Drug Order report","2016-02-01","2016-02-29");
         assertEquals(14, drugOrderReport.columnsCount());
-        assertEquals(16, drugOrderReport.rowsCount());
+        // One row per order. The report joins patient_identifier on preferred = 1 and does not exclude voided
+        // identifiers. The voided identifier GAN123456 was marked preferred, which doubled every row (16).
+        // It is now not preferred, so only the live identifier matches.
+        assertEquals(8, drugOrderReport.rowsCount());
     }
 }
