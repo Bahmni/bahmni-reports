@@ -80,6 +80,41 @@ Liquibase skips the `CREATE FUNCTION`. It bites a hand-built OpenMRS database on
 `mysql:8.0`, or an existing MySQL 8 instance that has never run this service before, where the
 flag needs setting on the database server.
 
+### Docker for the integration tests
+
+Some tests (for example `SqlReportTemplateTest` and `OrderFulfillmentReportTest`) start MySQL with
+Testcontainers, so they need a working Docker daemon. If Docker is not found, those tests fail with
+`IllegalStateException: Could not find a valid Docker environment`. Some runs may also show
+`OrderFulfillmentReportTest` failing on an order number (for example `GAN1234` vs `GAN123456`). If
+the Docker setup is fine, re-run the test before investigating.
+
+Testcontainers looks for the socket at `/var/run/docker.sock` or at Docker Desktop's path. Other
+setups must say where the daemon is:
+
+**Docker Desktop:** run `docker info` to confirm the daemon is up. No extra settings are needed.
+
+**Colima (macOS):** Colima's socket is not at either default path. Set these before running Maven:
+
+```bash
+export DOCKER_HOST=unix://$HOME/.colima/default/docker.sock
+export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE=/var/run/docker.sock
+```
+
+- `DOCKER_HOST` points the Docker client at Colima's socket.
+- `TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE` is the socket path inside the Colima VM. Testcontainers
+  mounts it into its Ryuk cleanup container. Without the override, Ryuk tries to mount the macOS
+  path and fails with `operation not supported`.
+
+Then run the tests in the same shell:
+
+```bash
+./mvnw -o test                                  # full suite
+./mvnw -o test -Dtest=SqlReportTemplateTest     # one class
+```
+
+Check the Docker side first with `docker info` and `docker ps`. Docker runs in a Colima VM, so
+`docker info` must work from the same shell.
+
 ### SNOMED Integration Support
 
 bahmni-reports also integrates with SNOMED for descendant-based reporting by querying the terminology server. More details can be found in [this](https://bahmni.atlassian.net/wiki/spaces/BAH/pages/90472551/Reports) Reports documentation and also [this](https://bahmni.atlassian.net/wiki/spaces/BAH/pages/3132686337/SNOMED+FHIR+Terminology+Server+Integration+with+Bahmni) Wiki link
