@@ -103,6 +103,15 @@ public class MainReportController {
     @ResponseBody
     public FileSystemResource getScheduledReport(@PathVariable("id") String id, HttpServletResponse httpServletResponse) {
         ScheduledReport scheduledReport = reportsScheduler.getReportById(id);
+        try {
+            if (scheduledReport == null) {
+                httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Report not found");
+                return null;
+            }
+        } catch (IOException e) {
+            logger.error("Sending error response failed", e);
+            return null;
+        }
         // The stored file name already has the extension; applyHttpHeaders adds it again.
         String downloadName = JasperResponseConverter.stripFileExtension(scheduledReport.getFileName(),
                 scheduledReport.getFormat());

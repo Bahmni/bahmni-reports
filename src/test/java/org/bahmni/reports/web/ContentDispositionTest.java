@@ -23,7 +23,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 // Characterisation tests for Content-Disposition and file naming that do not depend on format (BAH-5317).
@@ -95,6 +98,28 @@ public class ContentDispositionTest {
         assertEquals(SAVED_CONTENT, Files.readString(resource.getFile().toPath(), StandardCharsets.US_ASCII));
     }
 
+    // Regression test for BAH-5317: an unknown id threw a NullPointerException (500).
+    @Test
+    public void downloadOfUnknownReportIdReturnsNotFound() throws IOException {
+        ReportsScheduler reportsScheduler = mock(ReportsScheduler.class);
+        when(reportsScheduler.getReportById("missing")).thenReturn(null);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+
+        FileSystemResource resource = controllerFor(reportsScheduler).getScheduledReport("missing", response);
+
+        assertNull(resource);
+        assertEquals(404, response.getStatus());
+        assertEquals("Report not found", response.getErrorMessage());
+        assertNull(response.getHeader("Content-Disposition"));
+        verify(reportsScheduler, never()).getFilePath(any());
+    }
+
+    private MainReportController controllerFor(ReportsScheduler reportsScheduler) {
+        return new MainReportController(new JasperResponseConverter(),
+                mock(BahmniReportsProperties.class), mock(AllDatasources.class), mock(HttpClient.class),
+                reportsScheduler, mock(OpenMRSAuthenticator.class));
+    }
+
     // Serves a saved report through the real controller and converter, and returns the file it serves.
     private FileSystemResource downloadScheduledReport(MockHttpServletResponse response) throws IOException {
         return downloadScheduledReport(response, "application/pdf", STORED_FILE_NAME);
@@ -111,9 +136,6 @@ public class ContentDispositionTest {
         when(reportsScheduler.getReportById("id-1")).thenReturn(scheduledReport);
         when(reportsScheduler.getFilePath(scheduledReport)).thenReturn(savedFile.getAbsolutePath());
 
-        MainReportController controller = new MainReportController(new JasperResponseConverter(),
-                mock(BahmniReportsProperties.class), mock(AllDatasources.class), mock(HttpClient.class),
-                reportsScheduler, mock(OpenMRSAuthenticator.class));
-        return controller.getScheduledReport("id-1", response);
+        return controllerFor(reportsScheduler).getScheduledReport("id-1", response);
     }
 }
