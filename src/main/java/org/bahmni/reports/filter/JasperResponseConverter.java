@@ -168,6 +168,28 @@ public class JasperResponseConverter {
         return Strings.CS.removeEnd(fileName, getFileExtension(responseType));
     }
 
+    /**
+     * Returns the Content-Type for {@code responseType}, or {@code null} for a format without one.
+     * Custom Excel is served as {@code application/vnd.ms-excel}.
+     */
+    public static String getContentType(String responseType) {
+        switch (responseType) {
+            case TEXT_HTML:
+                return TEXT_HTML;
+            case APPLICATION_VND_MS_EXCEL:
+            case APPLICATION_VND_MS_EXCEL_CUSTOM:
+                return APPLICATION_VND_MS_EXCEL;
+            case APPLICATION_PDF:
+                return APPLICATION_PDF;
+            case TEXT_CSV:
+                return TEXT_CSV;
+            case APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
+                return APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET;
+            default:
+                return null;
+        }
+    }
+
     public static String getFileExtension(String responseType) {
         switch (responseType) {
             case TEXT_HTML:

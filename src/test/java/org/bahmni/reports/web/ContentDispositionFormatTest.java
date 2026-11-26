@@ -14,6 +14,8 @@ import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.File;
@@ -93,6 +95,25 @@ public class ContentDispositionFormatTest {
         controller.getScheduledReport("id-1", response);
 
         assertEquals("attachment; filename=\"" + storedFileName + "\"", response.getHeader("Content-Disposition"));
+    }
+
+    // The Content-Type must be on the ResponseEntity, because Tomcat does not report a Content-Type set on the
+    // servlet response back to Spring (BAH-5317).
+    @Test
+    public void scheduledReportDownloadEntityCarriesContentType() throws Exception {
+        ScheduledReport scheduledReport = new ScheduledReport("id-1", "Visit Report", "superman",
+                generateStoredFileName("Visit Report"), new Date(), new Date(), "Completed", responseType, new Date());
+        ReportsScheduler reportsScheduler = mock(ReportsScheduler.class);
+        when(reportsScheduler.getReportById("id-1")).thenReturn(scheduledReport);
+        when(reportsScheduler.getFilePath(scheduledReport)).thenReturn(temporaryFolder.newFile().getAbsolutePath());
+
+        MainReportController controller = new MainReportController(new JasperResponseConverter(),
+                mock(BahmniReportsProperties.class), mock(AllDatasources.class), mock(HttpClient.class),
+                reportsScheduler, mock(OpenMRSAuthenticator.class));
+        ResponseEntity<FileSystemResource> entity = controller.getScheduledReport("id-1", new MockHttpServletResponse());
+
+        String expected = "application/vnd.ms-excel-custom".equals(responseType) ? "application/vnd.ms-excel" : responseType;
+        assertEquals(expected, entity.getHeaders().getContentType().toString());
     }
 
     // ReportsJob.generateFileName() is private; it is the only place the stored name is built.

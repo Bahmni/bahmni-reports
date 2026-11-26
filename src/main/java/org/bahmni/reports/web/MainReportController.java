@@ -15,6 +15,8 @@ import org.bahmni.webclients.WebClientsException;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -102,7 +104,7 @@ public class MainReportController {
 
     @RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public FileSystemResource getScheduledReport(@PathVariable("id") String id, HttpServletResponse httpServletResponse) {
+    public ResponseEntity<FileSystemResource> getScheduledReport(@PathVariable("id") String id, HttpServletResponse httpServletResponse) {
         ScheduledReport scheduledReport = reportsScheduler.getReportById(id);
         try {
             if (scheduledReport == null) {
@@ -122,7 +124,14 @@ public class MainReportController {
         String downloadName = JasperResponseConverter.stripFileExtension(scheduledReport.getFileName(),
                 scheduledReport.getFormat());
         converter.applyHttpHeaders(scheduledReport.getFormat(), httpServletResponse, downloadName);
-        return new FileSystemResource(reportsScheduler.getFilePath(scheduledReport));
+        // Content-Type goes in the ResponseEntity, not only on the servlet response: Tomcat's getHeader()
+        // does not return a Content-Type set with setContentType(), so Spring would negotiate its own.
+        ResponseEntity.BodyBuilder response = ResponseEntity.ok();
+        String contentType = JasperResponseConverter.getContentType(scheduledReport.getFormat());
+        if (contentType != null) {
+            response.contentType(MediaType.parseMediaType(contentType));
+        }
+        return response.body(new FileSystemResource(reportsScheduler.getFilePath(scheduledReport)));
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)

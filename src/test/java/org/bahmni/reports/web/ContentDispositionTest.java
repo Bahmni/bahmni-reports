@@ -11,6 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import java.io.File;
@@ -101,10 +102,10 @@ public class ContentDispositionTest {
     // Regression test for BAH-5317: custom Excel set no Content-Type, so Spring labelled the file bytes application/json.
     @Test
     public void customExcelDownloadSetsExcelContentType() throws IOException {
-        MockHttpServletResponse response = new MockHttpServletResponse();
-        downloadScheduledReport(response, "application/vnd.ms-excel-custom", "Visit_Report-2026-11-20_08:38:27.841_UTC.xls");
+        ResponseEntity<FileSystemResource> entity = serveScheduledReport(new MockHttpServletResponse(),
+                "application/vnd.ms-excel-custom", "Visit_Report-2026-11-20_08:38:27.841_UTC.xls");
 
-        assertEquals("application/vnd.ms-excel", response.getContentType());
+        assertEquals("application/vnd.ms-excel", entity.getHeaders().getContentType().toString());
     }
 
     // Regression test for BAH-5317: an unknown id threw a NullPointerException (500).
@@ -114,7 +115,7 @@ public class ContentDispositionTest {
         when(reportsScheduler.getReportById("missing")).thenReturn(null);
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        FileSystemResource resource = controllerFor(reportsScheduler).getScheduledReport("missing", response);
+        ResponseEntity<FileSystemResource> resource = controllerFor(reportsScheduler).getScheduledReport("missing", response);
 
         assertNull(resource);
         assertEquals(404, response.getStatus());
@@ -160,7 +161,7 @@ public class ContentDispositionTest {
         when(reportsScheduler.getFilePath(scheduledReport)).thenReturn(savedFile.getAbsolutePath());
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        FileSystemResource resource = controllerFor(reportsScheduler).getScheduledReport("id-1", response);
+        ResponseEntity<FileSystemResource> resource = controllerFor(reportsScheduler).getScheduledReport("id-1", response);
 
         assertNull(resource);
         assertEquals(409, response.getStatus());
@@ -182,6 +183,11 @@ public class ContentDispositionTest {
 
     private FileSystemResource downloadScheduledReport(MockHttpServletResponse response, String format,
                                                        String storedFileName) throws IOException {
+        return serveScheduledReport(response, format, storedFileName).getBody();
+    }
+
+    private ResponseEntity<FileSystemResource> serveScheduledReport(MockHttpServletResponse response, String format,
+                                                                    String storedFileName) throws IOException {
         File savedFile = temporaryFolder.newFile();
         Files.writeString(savedFile.toPath(), SAVED_CONTENT, StandardCharsets.US_ASCII);
 
