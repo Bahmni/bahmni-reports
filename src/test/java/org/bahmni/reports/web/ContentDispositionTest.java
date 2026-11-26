@@ -98,6 +98,15 @@ public class ContentDispositionTest {
         assertEquals(SAVED_CONTENT, Files.readString(resource.getFile().toPath(), StandardCharsets.US_ASCII));
     }
 
+    // Regression test for BAH-5317: custom Excel set no Content-Type, so Spring labelled the file bytes application/json.
+    @Test
+    public void customExcelDownloadSetsExcelContentType() throws IOException {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        downloadScheduledReport(response, "application/vnd.ms-excel-custom", "Visit_Report-2026-11-20_08:38:27.841_UTC.xls");
+
+        assertEquals("application/vnd.ms-excel", response.getContentType());
+    }
+
     // Regression test for BAH-5317: an unknown id threw a NullPointerException (500).
     @Test
     public void downloadOfUnknownReportIdReturnsNotFound() throws IOException {

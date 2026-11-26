@@ -137,6 +137,7 @@ public class JasperResponseConverter {
                 response.setHeader("Content-Disposition", contentDisposition(fileName + ".xlsx"));
                 break;
             case APPLICATION_VND_MS_EXCEL_CUSTOM:
+                response.setContentType(APPLICATION_VND_MS_EXCEL);
                 response.setHeader("Content-Disposition", contentDisposition(fileName + ".xls"));
                 break;
             case APPLICATION_PDF:
