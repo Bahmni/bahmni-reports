@@ -112,7 +112,9 @@ public class ContentDispositionFormatTest {
                 reportsScheduler, mock(OpenMRSAuthenticator.class));
         ResponseEntity<FileSystemResource> entity = controller.getScheduledReport("id-1", new MockHttpServletResponse());
 
-        String expected = "application/vnd.ms-excel-custom".equals(responseType) ? "application/vnd.ms-excel" : responseType;
+        String expected = "application/vnd.ms-excel-custom".equals(responseType) ? "application/vnd.ms-excel"
+                : "application/vnd.ms-excel".equals(responseType) ? "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                : responseType;
         assertEquals(expected, entity.getHeaders().getContentType().toString());
     }
 

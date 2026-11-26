@@ -108,6 +108,15 @@ public class ContentDispositionTest {
         assertEquals("application/vnd.ms-excel", entity.getHeaders().getContentType().toString());
     }
 
+    // Regression test for BAH-5317: .xlsx was labelled application/vnd.ms-excel, the legacy .xls type.
+    @Test
+    public void xlsxDownloadSetsOpenXmlContentType() {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        new JasperResponseConverter().applyHttpHeaders("application/vnd.ms-excel", response, "Visit Report");
+
+        assertEquals("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", response.getContentType());
+    }
+
     // Regression test for BAH-5317: an unknown id threw a NullPointerException (500).
     @Test
     public void downloadOfUnknownReportIdReturnsNotFound() throws IOException {

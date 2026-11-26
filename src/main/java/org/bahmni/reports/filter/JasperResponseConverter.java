@@ -27,6 +27,7 @@ public class JasperResponseConverter {
     private static final String TEXT_HTML = "text/html";
     private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
     private static final String APPLICATION_VND_MS_EXCEL_CUSTOM = "application/vnd.ms-excel-custom";
+    private static final String APPLICATION_VND_OPENXML_SPREADSHEET = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
     private static final String APPLICATION_PDF = "application/pdf";
     private static final String TEXT_CSV = "text/csv";
     private static final String APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET = "application/vnd.oasis.opendocument.spreadsheet";
@@ -133,7 +134,7 @@ public class JasperResponseConverter {
                 response.setContentType(TEXT_HTML);
                 break;
             case APPLICATION_VND_MS_EXCEL:
-                response.setContentType(APPLICATION_VND_MS_EXCEL);
+                response.setContentType(APPLICATION_VND_OPENXML_SPREADSHEET);
                 response.setHeader("Content-Disposition", contentDisposition(fileName + ".xlsx"));
                 break;
             case APPLICATION_VND_MS_EXCEL_CUSTOM:
@@ -170,13 +171,15 @@ public class JasperResponseConverter {
 
     /**
      * Returns the Content-Type for {@code responseType}, or {@code null} for a format without one.
-     * Custom Excel is served as {@code application/vnd.ms-excel}.
+     * Custom Excel is served as {@code application/vnd.ms-excel}. The {@code .xlsx} format
+     * ({@code application/vnd.ms-excel} as a request value) is served as the Open XML spreadsheet type.
      */
     public static String getContentType(String responseType) {
         switch (responseType) {
             case TEXT_HTML:
                 return TEXT_HTML;
             case APPLICATION_VND_MS_EXCEL:
+                return APPLICATION_VND_OPENXML_SPREADSHEET;
             case APPLICATION_VND_MS_EXCEL_CUSTOM:
                 return APPLICATION_VND_MS_EXCEL;
             case APPLICATION_PDF:
