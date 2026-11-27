@@ -4,7 +4,15 @@
     <!--http://dynamicreports.org/examples/dynamicreports-defaults-->
 
     <!-- DEFAULT FONT -->
-    <font fontName="SansSerif" fontSize="10" pdfFontName="Helvetica" pdfEncoding="Cp1252" pdfEmbedded="false"/>
+    <!-- A bundled, embedded font so PDF export can represent non-Latin scripts. Cp1252/Helvetica
+         silently dropped anything outside Latin-1. Go Noto Current merges ~80 Noto fonts into one
+         file and covers Latin, Greek, Cyrillic, Arabic, Hebrew, Devanagari and other Indic
+         scripts, and CJK. JasperReports/OpenPDF subsets and embeds only the glyphs a given PDF
+         actually uses, so this does not inflate every generated PDF. See fonts/README.md.
+         Scope: the pdfFontName/pdfEncoding/pdfEmbedded attributes below only affect PDF export;
+         fontName="SansSerif" (used for HTML/XLSX) is unchanged, so non-Latin rendering in those
+         formats still depends on fonts installed on the server. -->
+    <font fontName="SansSerif" fontSize="10" pdfFontName="fonts/GoNotoCurrent-Regular.ttf" pdfEncoding="Identity-H" pdfEmbedded="true"/>
 
     <!-- DEFAULT DATA TYPES -->
     <bigDecimalType pattern="#,##0.00#" horizontalAlignment="RIGHT"/>

@@ -11,7 +11,7 @@
 
     <properties>
         <spring.version>5.3.39</spring.version>
-        <dynamicreports.version>4.0.0</dynamicreports.version>
+        <dynamicreports.version>6.20.1</dynamicreports.version>
         <jackson.version>2.17.0</jackson.version>
         <skipDump>true</skipDump>
         <skipConfig>true</skipConfig>
@@ -29,6 +29,32 @@
     <build>
         <finalName>bahmnireports</finalName>
         <plugins>
+            <plugin>
+                <!-- Downloads the embedded PDF font at build time instead of committing a 14.7MB
+                     binary to the repo. sha256 below is pinned to the exact upstream release
+                     asset; a mismatch fails the build rather than silently using a different
+                     font. See src/main/resources/fonts/README.md. -->
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.9.0</version>
+                <executions>
+                    <execution>
+                        <id>download-pdf-font</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://github.com/satbyy/go-noto-universal/releases/download/v7.0/GoNotoCurrent-Regular.ttf</url>
+                            <sha256>882afbab965608c2d2bc627fd8016b962aa5a6be2d358f9de24a7b5967c5632e</sha256>
+                            <outputDirectory>${project.build.outputDirectory}/fonts</outputDirectory>
+                            <outputFileName>GoNotoCurrent-Regular.ttf</outputFileName>
+                            <skipCache>false</skipCache>
+                            <cacheDirectory>${settings.localRepository}/.cache/download-maven-plugin</cacheDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <artifactId>exec-maven-plugin</artifactId>
                 <groupId>org.codehaus.mojo</groupId>
@@ -106,6 +132,23 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- dynamicreports-core 6.20.1 is built against JasperReports 6.20.6, but 6.20.6
+                 changed JRResultSetDataSource's fallback for a field with no specific type
+                 mapping from ResultSet.getObject(int) to ResultSet.getObject(int, Class).
+                 AggregationReportTemplate declares its crosstab row/column/measure fields as
+                 Object.class, and MySQL Connector/J's getObject(int, Class<Object>) throws
+                 "Conversion not supported for type java.lang.Object" for that overload, a
+                 regression confirmed against a live MySQL 8 instance, not merely at compile
+                 time. 6.20.5 is the last JasperReports patch release before that change and
+                 still depends on OpenPDF (1.3.30.jaspersoft.2), so it is pinned here instead of
+                 letting DynamicReports pull its own 6.20.6. No CVE was found against 6.20.6 at
+                 the time of this pin, so this choice is not a security regression; re-check if
+                 a future advisory targets 6.20.5 specifically. -->
+            <dependency>
+                <groupId>net.sf.jasperreports</groupId>
+                <artifactId>jasperreports</artifactId>
+                <version>6.20.5</version>
+            </dependency>
             <!-- byte-buddy arrives transitively at compile scope (jackson-databind); mockito-core
                  already sits at exactly this version with no conflict, so it is openmrs-api's own
                  transitive graph (hibernate-core, hibernate-search, hibernate-entitymanager) that
@@ -191,26 +234,19 @@
             <artifactId>commons-lang3</artifactId>
             <version>3.18.0</version>
         </dependency>
-        <dependency>
-            <groupId>net.sourceforge.dynamicreports</groupId>
-            <artifactId>dynamicreports-adhoc</artifactId>
-            <version>${dynamicreports.version}</version>
-        </dependency>
+        <!-- dynamicreports-adhoc and dynamicreports-googlecharts (ad-hoc report designer UI and
+             Google Charts rendering) used to sit here too, unused by any class in this codebase.
+             They were dropped with the BAH-5213 OpenPDF migration because neither is published
+             past dynamicreports 6.12.1, which would have capped dynamicreports-core below the
+             6.20.1 release that is built against JasperReports 6.20.6 (the version pulling
+             OpenPDF). dynamicreports-core 6.12.1 against a forced JasperReports 6.20.6 compiles
+             but fails at runtime: JRDesignCrosstabDataset.setResetType(ResetTypeEnum) no longer
+             exists on that JasperReports line, breaking every crosstab-based report
+             (AggregationReportTest, and 7 of the 35 reports in AllReportsSmokeTest). -->
         <dependency>
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.dynamicreports</groupId>
-            <artifactId>dynamicreports-googlecharts</artifactId>
-            <version>${dynamicreports.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.velocity</groupId>
-                    <artifactId>velocity</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.mchange</groupId>
@@ -464,11 +500,6 @@
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
             <version>4.32.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.itextpdf</groupId>
-            <artifactId>itextpdf</artifactId>
-            <version>5.5.13.3</version>
         </dependency>
         <dependency>
             <groupId>com.google.protobuf</groupId>
