@@ -97,7 +97,7 @@ public class MainReportControllerTest {
             controller.getReport(reportParams, response, request);
         }
 
-        assertEquals(HttpServletResponse.SC_BAD_REQUEST, response.getStatus());
+        assertEquals(HttpServletResponse.SC_FORBIDDEN, response.getStatus());
         assertEquals("Privileges is required to access report", response.getErrorMessage());
         assertEquals(0, response.getContentAsByteArray().length);
         verify(converter, never()).applyHttpHeaders(any(), any(), any());
