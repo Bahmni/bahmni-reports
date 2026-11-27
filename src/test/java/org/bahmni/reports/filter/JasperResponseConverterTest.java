@@ -70,8 +70,8 @@ public class JasperResponseConverterTest {
 
     /*
      * AC1: guards the dependency graph from the test classpath's point of view. The packaged WAR
-     * is inspected separately (see BAH-5213_implementation_summary.md); this test fails loudly if
-     * an exclusion is ever replaced by a version pin again.
+     * must be inspected separately (mvn dependency:tree / unzip + find, per the AC); this test
+     * fails loudly if an exclusion is ever replaced by a version pin again.
      */
     @Test
     public void shouldNotShipItextAndShouldUseOpenPdf() {
@@ -107,9 +107,9 @@ public class JasperResponseConverterTest {
 
         byte[] xlsxBytes = convert(responseTypeParams(APPLICATION_VND_MS_EXCEL),
                 concatenate(reportWith("xlsx-marker", "Name")));
-        XSSFWorkbook xlsx = new XSSFWorkbook(new ByteArrayInputStream(xlsxBytes));
-        assertTrue(workbookContains(xlsx, "xlsx-marker"));
-        xlsx.close();
+        try (XSSFWorkbook xlsx = new XSSFWorkbook(new ByteArrayInputStream(xlsxBytes))) {
+            assertTrue(workbookContains(xlsx, "xlsx-marker"));
+        }
     }
 
     @Test
@@ -127,10 +127,10 @@ public class JasperResponseConverterTest {
         byte[] xlsBytes = convert(params, concatenate(reportWith("xls-marker", "Name")),
                 temporaryFolder.getRoot().getAbsolutePath());
 
-        HSSFWorkbook xls = new HSSFWorkbook(new ByteArrayInputStream(xlsBytes));
-        assertNotNull(xls.getSheet("Report"));
-        assertTrue(workbookContains(xls, "xls-marker"));
-        xls.close();
+        try (HSSFWorkbook xls = new HSSFWorkbook(new ByteArrayInputStream(xlsBytes))) {
+            assertNotNull(xls.getSheet("Report"));
+            assertTrue(workbookContains(xls, "xls-marker"));
+        }
     }
 
     @Test
@@ -167,7 +167,7 @@ public class JasperResponseConverterTest {
     @Test
     public void nonLatinContentShouldRenderWithEmbeddedFont() throws Exception {
         List<ReportRow> rows = new ArrayList<ReportRow>();
-        rows.add(new ReportRow(UNICODE_MARKER + " Журнал Ω مرحبا नमस्ते 中文"));
+        rows.add(new ReportRow(UNICODE_MARKER + " Журнал Ω مرحبا नमस्ते 中文 שלום"));
 
         JasperReportBuilder unicode = report()
                 .columns(col.column("مرحبا", "name", type.stringType()))
@@ -181,6 +181,7 @@ public class JasperResponseConverterTest {
         assertTrue("Arabic glyphs should be present, not dropped", containsArabicGlyph(text));
         assertTrue("Devanagari glyphs should be present, not dropped", text.contains("नमस्ते"));
         assertTrue("CJK glyphs should be present, not dropped", text.contains("中文"));
+        assertTrue("Hebrew glyphs should be present, not dropped", containsHebrewGlyph(text));
     }
 
     private JasperReportBuilder reportWith(String marker, String columnTitle) {
@@ -224,37 +225,35 @@ public class JasperResponseConverterTest {
     }
 
     private int pageCount(byte[] pdf) throws Exception {
-        PdfReader reader = new PdfReader(pdf);
-        try {
+        try (PdfReader reader = new PdfReader(pdf)) {
             return reader.getNumberOfPages();
-        } finally {
-            reader.close();
         }
     }
 
     private String extractText(byte[] pdf) throws Exception {
-        PdfReader reader = new PdfReader(pdf);
-        try {
+        try (PdfReader reader = new PdfReader(pdf)) {
             PdfTextExtractor extractor = new PdfTextExtractor(reader);
             StringBuilder text = new StringBuilder();
             for (int page = 1; page <= reader.getNumberOfPages(); page++) {
                 text.append(extractor.getTextFromPage(page)).append('\n');
             }
             return text.toString();
-        } finally {
-            reader.close();
         }
     }
 
     private boolean containsArabicGlyph(String text) {
-        for (int index = 0; index < text.length(); index++) {
-            char character = text.charAt(index);
-            if ((character >= '؀' && character <= 'ۿ')
-                    || (character >= 'ﹰ' && character <= '﻿')) {
-                return true;
-            }
-        }
-        return false;
+        return text.codePoints().anyMatch(codePoint -> {
+            Character.UnicodeBlock block = Character.UnicodeBlock.of(codePoint);
+            return block == Character.UnicodeBlock.ARABIC
+                    || block == Character.UnicodeBlock.ARABIC_SUPPLEMENT
+                    || block == Character.UnicodeBlock.ARABIC_PRESENTATION_FORMS_A
+                    || block == Character.UnicodeBlock.ARABIC_PRESENTATION_FORMS_B;
+        });
+    }
+
+    private boolean containsHebrewGlyph(String text) {
+        return text.codePoints().anyMatch(
+                codePoint -> Character.UnicodeBlock.of(codePoint) == Character.UnicodeBlock.HEBREW);
     }
 
     private boolean workbookContains(Workbook workbook, String marker) {

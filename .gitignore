@@ -31,3 +31,6 @@ README.html
 
 # Upgrade plan and evidence: local working notes, never shared #
 /docs/upgrade/
+
+# Downloaded at build time by download-maven-plugin, see src/main/resources/fonts/README.md #
+/src/main/resources/fonts/GoNotoCurrent-Regular.ttf

@@ -30,6 +30,32 @@
         <finalName>bahmnireports</finalName>
         <plugins>
             <plugin>
+                <!-- Downloads the embedded PDF font at build time instead of committing a 14.7MB
+                     binary to the repo. sha256 below is pinned to the exact upstream release
+                     asset; a mismatch fails the build rather than silently using a different
+                     font. See src/main/resources/fonts/README.md. -->
+                <groupId>com.googlecode.maven-download-plugin</groupId>
+                <artifactId>download-maven-plugin</artifactId>
+                <version>1.9.0</version>
+                <executions>
+                    <execution>
+                        <id>download-pdf-font</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>wget</goal>
+                        </goals>
+                        <configuration>
+                            <url>https://github.com/satbyy/go-noto-universal/releases/download/v7.0/GoNotoCurrent-Regular.ttf</url>
+                            <sha256>882afbab965608c2d2bc627fd8016b962aa5a6be2d358f9de24a7b5967c5632e</sha256>
+                            <outputDirectory>${project.build.outputDirectory}/fonts</outputDirectory>
+                            <outputFileName>GoNotoCurrent-Regular.ttf</outputFileName>
+                            <skipCache>false</skipCache>
+                            <cacheDirectory>${settings.localRepository}/.cache/download-maven-plugin</cacheDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>exec-maven-plugin</artifactId>
                 <groupId>org.codehaus.mojo</groupId>
                 <version>1.4.0</version>
@@ -115,7 +141,9 @@
                  regression confirmed against a live MySQL 8 instance, not merely at compile
                  time. 6.20.5 is the last JasperReports patch release before that change and
                  still depends on OpenPDF (1.3.30.jaspersoft.2), so it is pinned here instead of
-                 letting DynamicReports pull its own 6.20.6. -->
+                 letting DynamicReports pull its own 6.20.6. No CVE was found against 6.20.6 at
+                 the time of this pin, so this choice is not a security regression; re-check if
+                 a future advisory targets 6.20.5 specifically. -->
             <dependency>
                 <groupId>net.sf.jasperreports</groupId>
                 <artifactId>jasperreports</artifactId>
