@@ -84,7 +84,16 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.2.5</version>
                     <configuration>
-                        <argLine>-Xmx1024m -XX:MaxMetaspaceSize=2056m</argLine>
+                        <!-- The add-opens flag below is needed only for
+                             MainReportControllerEmbeddedTomcatTest's teardown: Tomcat 8.0.42's
+                             WebappClassLoaderBase.clearReferencesResourceBundles predates the JDK 9
+                             module system and reflectively opens java.util.ResourceBundle.cacheList
+                             when a context stops, which JDK 21 (see BAH-5103) refuses without it. The
+                             request-handling path that test exercises is unaffected either way;
+                             without this flag, container shutdown in @After throws
+                             InaccessibleObjectException and fails the test after its assertions have
+                             already run. -->
+                        <argLine>-Xmx1024m -XX:MaxMetaspaceSize=2056m --add-opens=java.base/java.util=ALL-UNNAMED</argLine>
                         <includes>
                             <include>**/*Test.java</include>
                         </includes>
@@ -320,6 +329,19 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>mysql</artifactId>
             <version>1.21.3</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Same 8.0.42 build the production bahmni-embedded-tomcat.jar (see Dockerfile) wraps,
+             confirmed by comparing class-file hashes of Response, OutputBuffer, ErrorReportValve,
+             StandardHost and Tomcat between the two jars: they are byte-for-byte identical. Used
+             only to run getReport() through a real servlet container in a test, because
+             MockHttpServletResponse.sendError() commits the response synchronously while the real
+             Response.sendError() only marks it suspended, so a real container is the only way to
+             observe what actually reaches an HTTP client. -->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-core</artifactId>
+            <version>8.0.42</version>
             <scope>test</scope>
         </dependency>
         <dependency>
