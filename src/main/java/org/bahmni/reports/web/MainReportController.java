@@ -6,7 +6,9 @@ import org.bahmni.reports.BahmniReportsProperties;
 import org.bahmni.reports.filter.JasperResponseConverter;
 import org.bahmni.reports.model.AllDatasources;
 import org.bahmni.reports.persistence.ScheduledReport;
+import org.bahmni.reports.scheduler.ReportStatus;
 import org.bahmni.reports.scheduler.ReportsScheduler;
+import org.bahmni.reports.util.LogSanitizer;
 import org.bahmni.reports.web.security.OpenMRSAuthenticator;
 import org.bahmni.reports.web.security.ReportAuthorization;
 import org.bahmni.webclients.HttpClient;
@@ -14,6 +16,8 @@ import org.bahmni.webclients.WebClientsException;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -23,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
@@ -101,10 +106,45 @@ public class MainReportController {
 
     @RequestMapping(value = "/download/{id}", method = RequestMethod.GET)
     @ResponseBody
-    public FileSystemResource getScheduledReport(@PathVariable("id") String id, HttpServletResponse httpServletResponse) {
+    public ResponseEntity<FileSystemResource> getScheduledReport(@PathVariable("id") String id, HttpServletResponse httpServletResponse) {
         ScheduledReport scheduledReport = reportsScheduler.getReportById(id);
-        converter.applyHttpHeaders(scheduledReport.getFormat(), httpServletResponse, scheduledReport.getFileName());
-        return new FileSystemResource(reportsScheduler.getFilePath(scheduledReport));
+        String filePath;
+        try {
+            if (scheduledReport == null) {
+                httpServletResponse.sendError(HttpServletResponse.SC_NOT_FOUND, "Report not found");
+                return null;
+            }
+            if (!ReportStatus.COMPLETED.equals(scheduledReport.getStatus())) {
+                httpServletResponse.sendError(HttpServletResponse.SC_CONFLICT,
+                        "Report is not ready for download: " + scheduledReport.getStatus());
+                return null;
+            }
+            // Checked before any header is set: a missing file used to fail while the body was written,
+            // after Content-Disposition had already gone out.
+            filePath = reportsScheduler.getFilePath(scheduledReport);
+            if (!new File(filePath).isFile()) {
+                logger.error("Completed report {} has no file on the server at {}", LogSanitizer.sanitize(id),
+                        LogSanitizer.sanitize(filePath));
+                httpServletResponse.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                        "Report file is missing on the server");
+                return null;
+            }
+        } catch (IOException e) {
+            logger.error("Sending error response failed", e);
+            return null;
+        }
+        // The stored file name already has the extension; applyHttpHeaders adds it again.
+        String downloadName = JasperResponseConverter.stripFileExtension(scheduledReport.getFileName(),
+                scheduledReport.getFormat());
+        converter.applyHttpHeaders(scheduledReport.getFormat(), httpServletResponse, downloadName);
+        // Content-Type goes in the ResponseEntity, not only on the servlet response: Tomcat's getHeader()
+        // does not return a Content-Type set with setContentType(), so Spring would negotiate its own.
+        ResponseEntity.BodyBuilder response = ResponseEntity.ok();
+        String contentType = JasperResponseConverter.getContentType(scheduledReport.getFormat());
+        if (contentType != null) {
+            response.contentType(MediaType.parseMediaType(contentType));
+        }
+        return response.body(new FileSystemResource(filePath));
     }
 
     @RequestMapping(value = "/delete/{id}", method = RequestMethod.GET)
