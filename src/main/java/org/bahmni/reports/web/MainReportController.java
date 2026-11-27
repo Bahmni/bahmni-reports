@@ -59,7 +59,7 @@ public class MainReportController {
             ReportAuthorization reportAuthorization = new ReportAuthorization(request, openMRSAuthenticator,
                     bahmniReportsProperties, httpClient);
             if (!reportAuthorization.hasPrivilege(reportParams.getName())) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST,
+                response.sendError(HttpServletResponse.SC_FORBIDDEN,
                         "Privileges is required to access report");
                 return;
             }
