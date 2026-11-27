@@ -20,18 +20,19 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class JasperResponseConverter {
 
     private static final Logger logger = LogManager.getLogger(JasperResponseConverter.class);
-    private static final String TEXT_HTML = "text/html";
-    private static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
-    private static final String APPLICATION_VND_MS_EXCEL_CUSTOM = "application/vnd.ms-excel-custom";
-    private static final String APPLICATION_VND_OPENXML_SPREADSHEET = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    private static final String APPLICATION_PDF = "application/pdf";
-    private static final String TEXT_CSV = "text/csv";
-    private static final String APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET = "application/vnd.oasis.opendocument.spreadsheet";
+    static final String TEXT_HTML = "text/html";
+    static final String APPLICATION_VND_MS_EXCEL = "application/vnd.ms-excel";
+    static final String APPLICATION_VND_MS_EXCEL_CUSTOM = "application/vnd.ms-excel-custom";
+    static final String APPLICATION_VND_OPENXML_SPREADSHEET = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    static final String APPLICATION_PDF = "application/pdf";
+    static final String TEXT_CSV = "text/csv";
+    static final String APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET = "application/vnd.oasis.opendocument.spreadsheet";
     private static final String EX_INVALID_MACRO_TEMPLATE = "Invalid Template";
 
     public void convertToResponseType(ReportParams reportParams,
@@ -57,10 +58,6 @@ public class JasperResponseConverter {
                 exporterBuilder.setWorkbookTemplate(macroTemplateFile.toString());
                 exporterBuilder.addSheetName("Report");
                 concatenatedReportBuilder.toXls(exporterBuilder);
-                // boolean delete = templateFile.delete();
-                // if (!delete) {
-                //    logger.warn(String.format("Uploaded report template file not deleted: %s", macroTemplateFile));
-                // }
                 break;
             case APPLICATION_PDF:
                 concatenatedReportBuilder.toPdf(outputStream);
@@ -81,22 +78,11 @@ public class JasperResponseConverter {
     public void applyReportTemplates(List<JasperReportBuilder> reports, String responseType) {
         for (JasperReportBuilder report : reports) {
             switch (responseType) {
-                case TEXT_HTML:
+                case TEXT_HTML, APPLICATION_PDF:
                     report.pageFooter(Templates.footerComponent);
                     break;
-                case APPLICATION_VND_MS_EXCEL:
-                    report.setTemplate(Templates.excelReportTemplate);
-                    break;
-                case APPLICATION_VND_MS_EXCEL_CUSTOM:
-                    report.setTemplate(Templates.excelReportTemplate);
-                    break;
-                case APPLICATION_PDF:
-                    report.pageFooter(Templates.footerComponent);
-                    break;
-                case TEXT_CSV:
-                    report.setTemplate(Templates.excelReportTemplate);
-                    break;
-                case APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
+                case APPLICATION_VND_MS_EXCEL, APPLICATION_VND_MS_EXCEL_CUSTOM, TEXT_CSV,
+                     APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
                     report.setTemplate(Templates.excelReportTemplate);
                     break;
             }
@@ -123,30 +109,13 @@ public class JasperResponseConverter {
      *                     Content-Disposition header.
      */
     public void applyHttpHeaders(String responseType, HttpServletResponse response, String fileName) {
-        switch (responseType) {
-            case TEXT_HTML:
-                response.setContentType(TEXT_HTML);
-                break;
-            case APPLICATION_VND_MS_EXCEL:
-                response.setContentType(APPLICATION_VND_OPENXML_SPREADSHEET);
-                response.setHeader("Content-Disposition", contentDisposition(fileName + ".xlsx"));
-                break;
-            case APPLICATION_VND_MS_EXCEL_CUSTOM:
-                response.setContentType(APPLICATION_VND_MS_EXCEL);
-                response.setHeader("Content-Disposition", contentDisposition(fileName + ".xls"));
-                break;
-            case APPLICATION_PDF:
-                response.setContentType(APPLICATION_PDF);
-                response.setHeader("Content-Disposition", contentDisposition(fileName + ".pdf"));
-                break;
-            case TEXT_CSV:
-                response.setContentType(TEXT_CSV);
-                response.setHeader("Content-Disposition", contentDisposition(fileName + ".csv"));
-                break;
-            case APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
-                response.setContentType(APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET);
-                response.setHeader("Content-Disposition", contentDisposition(fileName + ".ods"));
-                break;
+        Optional<DownloadFormat> format = DownloadFormat.fromRequestType(responseType);
+        if (format.isEmpty()) {
+            return;
+        }
+        response.setContentType(format.get().contentType());
+        if (format.get().isAttachment()) {
+            response.setHeader("Content-Disposition", contentDisposition(fileName + format.get().extension()));
         }
     }
 
@@ -169,40 +138,68 @@ public class JasperResponseConverter {
      * ({@code application/vnd.ms-excel} as a request value) is served as the Open XML spreadsheet type.
      */
     public static String getContentType(String responseType) {
-        switch (responseType) {
-            case TEXT_HTML:
-                return TEXT_HTML;
-            case APPLICATION_VND_MS_EXCEL:
-                return APPLICATION_VND_OPENXML_SPREADSHEET;
-            case APPLICATION_VND_MS_EXCEL_CUSTOM:
-                return APPLICATION_VND_MS_EXCEL;
-            case APPLICATION_PDF:
-                return APPLICATION_PDF;
-            case TEXT_CSV:
-                return TEXT_CSV;
-            case APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
-                return APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET;
-            default:
-                return null;
-        }
+        return DownloadFormat.fromRequestType(responseType).map(DownloadFormat::contentType).orElse(null);
     }
 
     public static String getFileExtension(String responseType) {
-        switch (responseType) {
-            case TEXT_HTML:
-                return ".html";
-            case APPLICATION_VND_MS_EXCEL:
-                return ".xlsx";
-            case APPLICATION_VND_MS_EXCEL_CUSTOM:
-                return ".xls";
-            case APPLICATION_PDF:
-                return ".pdf";
-            case TEXT_CSV:
-                return ".csv";
-            case APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET:
-                return ".ods";
-            default:
-                return "";
+        return DownloadFormat.fromRequestType(responseType).map(DownloadFormat::extension).orElse("");
+    }
+
+    /**
+     * The report formats a client can request, and what each one is served as.
+     *
+     * <p>The request key is the {@code responseType} sent by the client. It is not always the served
+     * type: a request for {@code application/vnd.ms-excel} is served as {@code .xlsx} with the Open XML
+     * spreadsheet Content-Type, and a request for {@code application/vnd.ms-excel-custom} is served as
+     * {@code .xls} with the legacy Excel Content-Type.
+     */
+    enum DownloadFormat {
+
+        HTML(TEXT_HTML, TEXT_HTML, ".html", false),
+        XLSX(APPLICATION_VND_MS_EXCEL, APPLICATION_VND_OPENXML_SPREADSHEET, ".xlsx", true),
+        CUSTOM_XLS(APPLICATION_VND_MS_EXCEL_CUSTOM, APPLICATION_VND_MS_EXCEL, ".xls", true),
+        PDF(APPLICATION_PDF, APPLICATION_PDF, ".pdf", true),
+        CSV(TEXT_CSV, TEXT_CSV, ".csv", true),
+        ODS(APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET, APPLICATION_VND_OASIS_OPENDOCUMENT_SPREADSHEET, ".ods", true);
+
+        private final String requestType;
+        private final String contentType;
+        private final String extension;
+        private final boolean attachment;
+
+        DownloadFormat(String requestType, String contentType, String extension, boolean attachment) {
+            this.requestType = requestType;
+            this.contentType = contentType;
+            this.extension = extension;
+            this.attachment = attachment;
+        }
+
+        String contentType() {
+            return contentType;
+        }
+
+        String extension() {
+            return extension;
+        }
+
+        /**
+         * Whether the format is sent with a Content-Disposition header. HTML is not: it is shown in the
+         * browser rather than saved.
+         */
+        boolean isAttachment() {
+            return attachment;
+        }
+
+        /**
+         * Returns the format for a client's {@code responseType}, or empty for an unknown or null value.
+         */
+        static Optional<DownloadFormat> fromRequestType(String requestType) {
+            for (DownloadFormat format : values()) {
+                if (format.requestType.equals(requestType)) {
+                    return Optional.of(format);
+                }
+            }
+            return Optional.empty();
         }
     }
 }
